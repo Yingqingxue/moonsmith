@@ -130,11 +130,15 @@ single-person; no second team member is recorded.
   its budget. Final reduction key was revalidated; this is not a global-minimum
   guarantee or a real compiler bug.
 
-## Known environment limitation
+## Native backend status and local environment limitation
 
-The `native` target cannot currently be tested on this workstation because no
-system C compiler (`cc`, `gcc`, or `clang`) is installed. Native remains a P1
-target; it is not counted as passing.
+The `native` target cannot be tested on this workstation because no system C
+compiler (`cc`, `gcc`, or `clang`) is installed. It is now validated remotely:
+GitHub Actions run `37967094871` for commit `0cfac5a` passed both
+`moon test --target native --deny-warn` and a deterministic seed-0/depth-4
+generate/reference/native differential execution. This is one native smoke
+case plus the package test suite, not the 1,245-case scan; local native replay
+still requires an appropriate C toolchain.
 
 ## Current vertical slice
 
