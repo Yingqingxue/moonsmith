@@ -74,6 +74,24 @@ These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
 discovery rate. No compiler defect was found in these runs.
 
+## Windows native CI scan
+
+GitHub Actions run [37973349079](https://github.com/Yingqingxue/moonsmith/actions/runs/37973349079)
+for commit `d0e418d` passed both Linux and Windows jobs. On `windows-latest`,
+MSVC `cl.exe` was configured and the native package tests passed. The retained
+artifact `moonsmith-windows-native-report` contains a depth-6 native scan of
+seeds 9000–9029: 30 unique program bodies, 30 reference checks, 30 consistent
+native executions, zero unexpected findings, and an unchanged harness digest.
+The probe appeared in 25 generated sources. The reference interpreter visited
+the modeled success path in 12 cases and error path in 14 (overlap possible);
+these are not backend runtime branch counts. No compiler defect was found.
+
+The first attempt at this scan (run `37971881681`, commit `f772858`) did not
+reach native compilation: a cold Windows generator startup exceeded the
+per-seed 10-second timeout. The workflow now allows 60 seconds for Windows seed
+generation and batch runs. This was a CI budget issue, not a native compiler
+failure; the subsequent run completed the scan and integration checks.
+
 ## Reproduce
 
 ```powershell
