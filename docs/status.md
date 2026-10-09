@@ -343,5 +343,7 @@ interpreter evaluated a loop expression in 68 cases and executed at least one
 iteration in 60 cases. These are source and reference-interpreter counts, not
 backend runtime coverage. The scan took 602,802 ms, not a controlled
 performance benchmark. Report:
-`.moonsmith/runs/batch_20261009_113414_316.json`. No real MoonBit compiler
-defect was found.
+`.moonsmith/runs/batch_20261009_113414_316.json` is the ignored local raw
+report and is not included in the public repository. Reproduce the scan with
+`pwsh -File scripts/run_batch.ps1 -SeedStart 0 -Count 100 -Depth 4`. No real
+MoonBit compiler defect was found.
