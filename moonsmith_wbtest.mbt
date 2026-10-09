@@ -17,3 +17,51 @@ test "leaf values stay in their intended small domain" {
     }
   }
 }
+
+///|
+test "variable-use analysis traverses every expression family" {
+  let expression = Let(
+    IntType,
+    "outer",
+    ArraySelect(IntType, IntLiteral(1), IntLiteral(2), false),
+    MatchBool(
+      IntType,
+      And(Not(BoolLiteral(false)), LessThan(IntLiteral(1), IntLiteral(2))),
+      MatchChoice(
+        IntType,
+        ChoiceValue(
+          IntType,
+          StructSelect(IntType, IntLiteral(3), BoolLiteral(true)),
+        ),
+        "number",
+        FunctionApply(
+          IntType,
+          "parameter",
+          Variable(IntType, "captured"),
+          Add(
+            Variable(IntType, "parameter"),
+            ForLoop(1, IntLiteral(0), Variable(IntType, "_ms_acc")),
+          ),
+        ),
+        "flag",
+        If(
+          IntType,
+          Variable(BoolType, "flag"),
+          Let(IntType, "inner", IntLiteral(3), IntLiteral(4)),
+          ValtypeRaiseProbe(Variable(IntType, "captured")),
+        ),
+      ),
+      EqualInt(IntLiteral(3), IntLiteral(3)),
+    ),
+  )
+  assert_false(expression.uses_variable("not-present"))
+  assert_true(expression.uses_variable("captured"))
+  assert_false(
+    Let(IntType, "x", IntLiteral(1), Variable(IntType, "x")).uses_variable("x"),
+  )
+  assert_false(
+    ForLoop(1, IntLiteral(0), Variable(IntType, "_ms_index")).uses_variable(
+      "_ms_index",
+    ),
+  )
+}

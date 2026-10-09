@@ -204,3 +204,50 @@ test "valtype raise probe reduction preserves the trigger scaffold" {
   }
   assert_true(candidates[0].to_source().contains("_ms_valtype_run"))
 }
+
+///|
+test "candidate manifest serializes a real reduction" {
+  let program = @moonsmith.generate_program(7, 2)
+  let manifest = program.candidates_json()
+  assert_true(manifest.has_prefix("{\"complexity\":"))
+  assert_true(manifest.contains("\"expectedOutput\":\""))
+  assert_true(manifest.contains("\"source\":"))
+  assert_true(manifest.contains("\"candidates\":["))
+  assert_true(manifest.has_suffix("]}"))
+}
+
+///|
+test "unused match arms can be removed without changing result type" {
+  let expression = @moonsmith.MatchChoice(
+    @moonsmith.IntType,
+    @moonsmith.ChoiceValue(@moonsmith.IntType, @moonsmith.IntLiteral(9)),
+    "number",
+    @moonsmith.IntLiteral(3),
+    "flag",
+    @moonsmith.IntLiteral(4),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 1)
+  assert_eq(candidates[0].to_source(), "3")
+  assert_eq(candidates[1].to_source(), "4")
+}
+
+///|
+test "unused function and let bindings can be removed" {
+  let function = @moonsmith.FunctionApply(
+    @moonsmith.IntType,
+    "unused_parameter",
+    @moonsmith.IntLiteral(5),
+    @moonsmith.IntLiteral(9),
+  )
+  let function_candidates = function.shrink_candidates()
+  assert_eq(function_candidates[0].to_source(), "5")
+  assert_eq(function_candidates[1].to_source(), "9")
+  let binding = @moonsmith.Let(
+    @moonsmith.IntType,
+    "unused_binding",
+    @moonsmith.IntLiteral(9),
+    @moonsmith.Add(@moonsmith.IntLiteral(3), @moonsmith.IntLiteral(4)),
+  )
+  assert_eq(binding.shrink_candidates()[0].to_source(), "(3 + 4)")
+}

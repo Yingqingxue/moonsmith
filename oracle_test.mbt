@@ -109,6 +109,32 @@ test "empty matrix is invalid evidence" {
   let report = @moonsmith.analyze_results([])
   assert_true(report.kind is NoResults)
   assert_eq(report.signature, "no-results")
+  assert_eq(report.reduction_key(), report.signature)
+}
+
+///|
+test "non-failing reports retain their exact signature as reduction key" {
+  let consistent = @moonsmith.analyze_results([
+    result("js", Succeeded, 0, "9", ""),
+  ])
+  let unavailable = @moonsmith.analyze_results([
+    result("native", Unavailable, -1, "", "no C compiler"),
+  ])
+  assert_eq(consistent.reduction_key(), consistent.signature)
+  assert_eq(unavailable.reduction_key(), unavailable.signature)
+}
+
+///|
+test "summary JSON escapes user-controlled fields" {
+  assert_eq(@moonsmith.json_escape("a\"\\\r\n\t"), "a\\\"\\\\\\r\\n\\t")
+  let report = @moonsmith.analyze_results(
+    [result("js", Succeeded, 0, "9\n", "")],
+    expected_output="9\n",
+  )
+  let summary = report.summary_json()
+  assert_true(summary.has_prefix("{\"kind\":\"consistent\""))
+  assert_true(summary.contains("\"referenceChecked\":true"))
+  assert_true(summary.contains("\"expectedOutput\":\"9\\n\"}"))
 }
 
 ///|

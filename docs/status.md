@@ -9,7 +9,12 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Sixty-one main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
+- Sixty-seven main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
+- JS coverage analysis reports 17 uncovered defensive branches across the
+  generator, oracle, reducer, and reference evaluator. Review shows these are
+  invalid `ChoiceType`/scope states or an exhaustive-classification fallback,
+  not untested normal `#valtype`/`raise` paths. Coverage was not inflated by
+  exercising malformed ASTs.
 - Regression package `issue_1071_coverage_ice` passes its instrumented JS test
   and package-scoped coverage analysis; `issue_1274_wasm_valtype_raise` passes
   its test on all three backends.
