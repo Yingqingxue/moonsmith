@@ -36,8 +36,13 @@ if (-not $minimalSource.Contains('(if')) {
     throw 'The reduced source lost the syntax that triggers the injected fault.'
 }
 
+$valtypeTargets = @('js', 'wasm', 'wasm-gc')
+if ($null -ne (Get-Command cc, gcc, clang -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+    $valtypeTargets += 'native'
+}
+
 $valtypeRaw = & $reduceScript -Seed 0 -Depth 4 `
-    -Targets @('js', 'wasm', 'wasm-gc') `
+    -Targets $valtypeTargets `
     -InjectOutputMismatchTarget 'wasm' `
     -InjectOnlyWhenSourceContains '_ms_valtype_run' `
     -MaxAttempts 10
@@ -76,6 +81,7 @@ if ($valtypeResult.injection.sourceTrigger -ne '_ms_valtype_run') {
     valtypeFinalComplexity = $valtypeResult.finalComplexity
     valtypeAcceptedSteps = $valtypeResult.acceptedSteps
     valtypeAttempts = $valtypeResult.attempts
+    valtypeTargets = $valtypeResult.targets
     valtypeMinimalPath = $valtypeMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0
