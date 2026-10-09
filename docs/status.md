@@ -32,6 +32,12 @@ single-person; no second team member is recorded.
   scans cover 500 distinct program bodies, 500 reference checks, and 900
   backend executions, all consistent. Raw report:
   `.moonsmith/runs/batch_20261009_143600_489.json` (local, ignored).
+  A further 30-seed depth-6 Wasm-only batch (run
+  `20261009_145621_257`) completed all 30 reference checks and executions in
+  92,701 ms, with no failures or harness changes; 26 sources contained the
+  probe and reference traces visited it in 21 cases (success 17, error 11;
+  overlap possible). Across all four runs the verified totals are 530 distinct
+  bodies, 530 reference checks, and 930 consistent backend executions.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
