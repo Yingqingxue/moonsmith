@@ -7,6 +7,24 @@ if (-not $doctor.ready -or $LASTEXITCODE -ne 0) {
     throw 'doctor did not validate the three default backends.'
 }
 
+$nativeCompiler = Get-Command cl, clang-cl, gcc, clang, cc `
+    -ErrorAction SilentlyContinue | Select-Object -First 1
+$nativeRaw = & pwsh -NoProfile -File $verify -Seed 0 -Depth 4 `
+    -Targets 'native' -NoPersist
+$nativeExitCode = $LASTEXITCODE
+$native = $nativeRaw | ConvertFrom-Json
+if ($null -eq $nativeCompiler) {
+    if ($nativeExitCode -ne 1 -or $native.finding -ne 'environment-failure' -or
+        $native.runs[0].status -ne 'unavailable' -or
+        $native.runs[0].error -notmatch 'cl, clang-cl, gcc, clang, or cc') {
+        throw 'native without a C toolchain was not classified as an environment failure.'
+    }
+}
+elseif ($nativeExitCode -ne 0 -or $native.finding -ne 'consistent' -or
+    $native.runs[0].status -ne 'succeeded') {
+    throw 'native with a compatible C toolchain did not pass the differential probe.'
+}
+
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
@@ -60,6 +78,8 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
 [pscustomobject]@{
     passed = $true
     doctorReady = $doctor.ready
+    nativeCompilerAvailable = ($null -ne $nativeCompiler)
+    nativeFinding = $native.finding
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies
     generatorLimitCount = $generatorLimit.counts.'generator-limit'
