@@ -82,6 +82,25 @@ Assert-ExpectedOutput -Name 'wasm-gc' -Result $wasmGc
 
 $nativeCompiler = Get-Command cl, clang-cl, gcc, clang, cc `
     -ErrorAction SilentlyContinue | Select-Object -First 1
+$nativeCompilerVersion = $null
+if ($nativeCompiler) {
+    $versionArguments = if ($nativeCompiler.Name -match '^cl(\.exe)?$') {
+        @('/Bv')
+    } else {
+        @('--version')
+    }
+    $versionLines = @(
+        & $nativeCompiler.Source @versionArguments 2>&1 |
+            ForEach-Object { $_.ToString() }
+    )
+    $nativeCompilerVersion = ($versionLines | Select-Object -First 12) -join "`n"
+    if ($nativeCompilerVersion.Length -gt 2048) {
+        $nativeCompilerVersion = $nativeCompilerVersion.Substring(0, 2048)
+    }
+    if ([string]::IsNullOrWhiteSpace($nativeCompilerVersion)) {
+        throw "Could not capture a version string from native compiler '$($nativeCompiler.Name)'."
+    }
+}
 $nativeDebugClassification = 'unavailable-no-c-compiler'
 $nativeReleaseClassification = 'unavailable-no-c-compiler'
 $nativeDebug = $null
@@ -152,6 +171,7 @@ $result = [pscustomobject]@{
     toolchain = (& moon version | Select-Object -First 1)
     runnerPlatform = if ($IsWindows) { 'windows' } elseif ($IsLinux) { 'linux' } elseif ($IsMacOS) { 'macos' } else { 'unknown' }
     nativeCompiler = if ($nativeCompiler) { $nativeCompiler.Name } else { $null }
+    nativeCompilerVersion = $nativeCompilerVersion
     nativeDebugClassification = $nativeDebugClassification
     nativeDebugExitCode = if ($nativeDebug) { $nativeDebug.exitCode } else { $null }
     nativeReleaseClassification = $nativeReleaseClassification
