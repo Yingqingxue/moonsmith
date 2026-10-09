@@ -196,7 +196,7 @@ the report's `backend: native` denotes the command-line target rather than a
 promise of identical internal lowering. This workstation has
 no compatible C compiler, so local integration verifies unavailable-state
 classification and report metadata, not execution of either native mode; CI
-run [37987637099](https://github.com/Yingqingxue/moonsmith/actions/runs/37987637099)
+run [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
 passed both Linux and Windows jobs with the new target. Linux recorded
 native-debug `compile-failed`, native-release `succeeded`, and Wasm-GC
 `succeeded`; Windows recorded native-debug and native-release `succeeded`.
@@ -204,9 +204,10 @@ The release outputs matched the upstream-provided expected output on both.
 Their evidence records GCC 13.3.0 on Linux and MSVC 19.51.36260 on Windows.
 In that run, the Linux smoke batch also checked 10 distinct generated programs
 across JS, Wasm, Wasm-GC, native debug, and native release (50 successful
-backend executions). Windows checked 10 generated programs in native debug
-and release (20 successful executions), plus the existing 120 native-debug
-cases; all were consistent and the harness digest stayed unchanged.
+backend executions). Windows checked 100 distinct depth-6 generated programs
+in native debug and release (200 successful executions), plus 30 depth-8
+native-debug cases; all were consistent and the harness digest stayed
+unchanged.
 
 ## Current vertical slice
 

@@ -24,6 +24,8 @@ fn run(i : Int64) -> Double {
 }
 
 ///|
-test "issue 1274 valtype returned from raise-capable function" {
-  assert_eq(run(123L), 123.0)
+test "issue 1274 valtype and raise result paths" {
+  assert_eq(run(-2147483648L), -1.0)
+  assert_eq(run(0L), 0.0)
+  assert_eq(run(2147483647L), 2147483647.0)
 }

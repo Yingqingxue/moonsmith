@@ -40,9 +40,11 @@ compiles.
   `try?`.
 - Local fixture: `regressions/issue_1274_wasm_valtype_raise/repro.mbt`.
 - Current validation: MoonBit `0.1.20260920`, `moonc v0.10.14+7d59c7ec9`;
-  JS, Wasm, and Wasm-GC tests each pass (1/1). The reported Wasm failure did not
-  reproduce on this toolchain. The source retains upstream's deprecated `try?`
-  construct intentionally to preserve the reported trigger shape.
+  JS, Wasm, and Wasm-GC tests each pass (1/1). The fixture asserts the
+  error-path result at `Int64` -2147483648, the success boundary at 0, and the
+  positive result at 2147483647. The reported Wasm failure did not reproduce on
+  this toolchain. The source retains upstream's deprecated `try?` construct
+  intentionally to preserve the reported trigger shape.
 - Scope: this is a historical regression test against a public issue, not a
   MoonSmith-discovered bug. MoonSmith now generates this trigger shape through
   a dedicated typed AST probe and compares the compiled result to its reference
@@ -90,14 +92,16 @@ construct may stop testing the original result-lowering path.
   not a guarantee of identical internal lowering. See the
   [MoonBit native backend note](https://docs.moonbitlang.com/next/language/ffi.html).
 - GitHub Actions run
-  [37987637099](https://github.com/Yingqingxue/moonsmith/actions/runs/37987637099)
+  [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
   passed both Linux and Windows jobs with the generic verifier included:
   Linux classified native debug as `compile-failed` and native-release plus
   Wasm-GC as `succeeded`; Windows classified native debug and native-release
   as `succeeded`. The artifact records native-release as `expected-output` on
-  both runners, with GCC 13.3.0 on Linux and MSVC 19.51.36260 on Windows. The
-  same run also passed native-release on ten generated cases on each platform;
-  the upstream fixture's runner/compiler discrepancy remains unexplained.
+  both runners, with GCC 13.3.0 on Linux and MSVC 19.51.36260 on Windows. In
+  this run, Linux passed 10 generated programs on all five configurations;
+  Windows passed 100 depth-6 generated programs in both native modes and 30
+  additional depth-8 native-debug programs. The upstream fixture's
+  runner/compiler discrepancy remains unexplained.
 - The script also sends the checked-in source and the upstream-reported
   expected output to `verify_seed.ps1`, exercising MoonSmith's existing
   differential classification and persisting its per-target status in the
