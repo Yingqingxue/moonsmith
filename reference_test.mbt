@@ -243,3 +243,29 @@ test "valtype raise probe models both success and error paths" {
   assert_true(failure.to_source().contains("_ms_valtype_run"))
   assert_true(failure.to_source().contains("_ms_valtype_expected"))
 }
+
+///|
+test "valtype raise probe keeps the sign boundary and upstream trigger shape" {
+  let error = @moonsmith.ValtypeRaiseProbe(IntLiteral(-1))
+  let zero = @moonsmith.ValtypeRaiseProbe(IntLiteral(0))
+  let positive = @moonsmith.ValtypeRaiseProbe(IntLiteral(1))
+  let (_, error_trace) = error.evaluate_with_trace()
+  let (_, zero_trace) = zero.evaluate_with_trace()
+  let (_, positive_trace) = positive.evaluate_with_trace()
+  assert_true(error_trace.contains("valtype-raise-error-path"))
+  assert_true(zero_trace.contains("valtype-raise-success-path"))
+  assert_true(positive_trace.contains("valtype-raise-success-path"))
+
+  let source = @moonsmith.generate_program(0, 4).to_source()
+  assert_true(
+    source.contains(
+      "#valtype\npriv struct MoonSmithValtype {\n  value : Double",
+    ),
+  )
+  assert_true(
+    source.contains(
+      "fn _ms_valtype_make(i : Int64) -> MoonSmithValtype raise MoonSmithValtypeError",
+    ),
+  )
+  assert_true(source.contains("match (try? _ms_valtype_make(i))"))
+}

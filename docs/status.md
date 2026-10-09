@@ -9,7 +9,7 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Fifty-nine main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
+- Sixty main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
 - Regression package `issue_1071_coverage_ice` passes its instrumented JS test
   and package-scoped coverage analysis; `issue_1274_wasm_valtype_raise` passes
   its test on all three backends.
@@ -24,6 +24,10 @@ single-person; no second team member is recorded.
 - Commit `ccdaada` passed remote GitHub Actions run `37939326747` (46 seconds);
   smoke-batch JSON reports are now uploaded as a 30-day CI artifact on both
   success and failure, making the evidence inspectable after the runner exits.
+- Boundary tests now lock down `-1` as the error case and `0`/`1` as success,
+  and assert the generated program retains the `#valtype` + first-`Double` +
+  raising function + `try?` trigger shape. All three backend suites pass 60/60;
+  reference, reducer, and CLI integration scripts pass as well.
 
 ## Known environment limitation
 
@@ -347,7 +351,7 @@ accumulator updates, zero-iteration exit, and records `for-loop`,
 loop, reduce its bound to zero, and simplify its initializer or body while
 preserving result type and loop-variable scope.
 
-All 59 main-package tests pass on each of `js`, `wasm`, and `wasm-gc`; both
+All 60 main-package tests pass on each of `js`, `wasm`, and `wasm-gc`; both
 historical regression packages pass, and static, reference, reducer, and CLI
 integration checks pass. After adding the targeted `ValtypeRaiseProbe`, a fixed
 100-seed depth-4 scan on MoonBit `0.1.20260920 (914d7da 2026-09-20)` completed
