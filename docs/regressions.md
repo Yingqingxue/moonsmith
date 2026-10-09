@@ -75,7 +75,7 @@ construct may stop testing the original result-lowering path.
   release control outputs, then classifies native debug as either the reported
   ICE signature or a successful result. The generic verifier now exposes
   `native-release` separately from `native` (debug), recording backend and
-  build mode in each run so optimization-mode differences can be compared
+  build mode in each run so debug/release configuration differences can be compared
   without changing the generated source. GitHub Actions run
   [37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
   on Linux reproduced the exact ICE signature under gcc; native release and
@@ -85,14 +85,19 @@ construct may stop testing the original result-lowering path.
   classifications. This difference is observed, not yet explained. This
   workstation has no compatible C compiler, so only Wasm-GC has been checked
   locally.
+  MoonBit's native debug and release configurations may select different
+  compiler backends; therefore `backend: native` identifies MoonBit's target,
+  not a guarantee of identical internal lowering. See the
+  [MoonBit native backend note](https://docs.moonbitlang.com/next/language/ffi.html).
 - GitHub Actions run
-  [37985370613](https://github.com/Yingqingxue/moonsmith/actions/runs/37985370613)
+  [37987637099](https://github.com/Yingqingxue/moonsmith/actions/runs/37987637099)
   passed both Linux and Windows jobs with the generic verifier included:
   Linux classified native debug as `compile-failed` and native-release plus
   Wasm-GC as `succeeded`; Windows classified native debug and native-release
   as `succeeded`. The artifact records native-release as `expected-output` on
-  both runners. This confirms the verifier path, while the runner/compiler
-  discrepancy remains unexplained.
+  both runners, with GCC 13.3.0 on Linux and MSVC 19.51.36260 on Windows. The
+  same run also passed native-release on ten generated cases on each platform;
+  the upstream fixture's runner/compiler discrepancy remains unexplained.
 - The script also sends the checked-in source and the upstream-reported
   expected output to `verify_seed.ps1`, exercising MoonSmith's existing
   differential classification and persisting its per-target status in the
