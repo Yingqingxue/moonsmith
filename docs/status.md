@@ -21,11 +21,11 @@ single-person; no second team member is recorded.
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
   `wasm-gc` for the same seed and depth.
-- Commit `709aacc` passed remote GitHub Actions run `37942071114` (1m21s),
-  including the probe-specific reduction replay. Its smoke-batch JSON report
-  artifact is available through 2026-11-08. The workflow uses the Node 24
-  artifact action runtime; only GitHub's future Ubuntu runner migration notice
-  remains.
+- Commit `dc2314f` passed remote GitHub Actions run `37943444203` (1m06s),
+  including the probe-specific reduction replay. Its artifact contains both
+  smoke-batch JSON and injected-reduction source/reports, is 9,840 bytes, and
+  is available through 2026-11-08. The workflow uses the Node 24 artifact
+  action runtime; only GitHub's future Ubuntu runner migration notice remains.
 - Boundary tests now lock down `-1` as the error case and `0`/`1` as success,
   assert the generated program retains the `#valtype` + first-`Double` +
   raising function + `try?` trigger shape, and verify helper declarations are
