@@ -48,11 +48,14 @@ claim of a local minimum or of a compiler bug.
 
 The same probe-specific injected reduction now includes both `native` and
 `native-release` when a C toolchain is available. CI run
-[37990588724](https://github.com/Yingqingxue/moonsmith/actions/runs/37990588724)
+[37992067092](https://github.com/Yingqingxue/moonsmith/actions/runs/37992067092)
 passed on Linux and Windows. The Linux artifact records the five-configuration
 matrix, 5 accepted steps in 10 attempts, and complexity 39,300 → 18,133; the
 attempt budget was reached. Windows also passed the reducer integration. Its
-artifact is configured to preserve the reduction JSON and minimized source.
+artifact contains both injected reduction records and their original/minimized
+source files; the `native-release` target is present in the five-configuration
+matrix. This verifies the upload path as well as configuration, without making
+the injected mismatch evidence of a real compiler bug.
 
 A separate workstation run used a 100-attempt budget on the same deterministic
 seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced

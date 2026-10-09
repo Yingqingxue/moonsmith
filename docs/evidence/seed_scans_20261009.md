@@ -129,3 +129,22 @@ failure; the subsequent run completed the scan and integration checks.
 The raw 100/100/300/30/100/30/100/30/100/30/100/30/100/100-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
+
+## Depth-11 size-boundary probe (2026-10-10)
+
+Run `20261009_212300_782` tested seeds 8300–8399 at requested depth 11 across
+JS, Wasm, and Wasm-GC. The 100 generated program bodies were unique and the
+harness digest was unchanged. Only 29 programs were below the runner's 16,300
+line safety bound; those 29 passed the reference check and all three backends
+(87 executions). The other 71 were classified as `generator-limit` before
+reference evaluation or compilation; their emitted sources ranged above the
+bound, with a maximum of 44,034 lines. There were no compiler/runtime failures,
+timeouts, differential mismatches, reference mismatches, or harness errors.
+
+This is evidence that depth 11 is currently an unreliable operating range for
+the generator, not evidence of a compiler problem. The existing safety check
+worked as intended and kept oversized sources out of the compiler. Until the
+generator has a size-aware budget, depth 10 or below is the practical range;
+depth 10 itself still had 5 `generator-limit` results among 230 prior seeds.
+Raw report: `.moonsmith/runs/batch_20261009_212300_782.json` (ignored and local
+only).

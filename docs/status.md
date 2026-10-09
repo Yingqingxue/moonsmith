@@ -116,6 +116,14 @@ single-person; no second team member is recorded.
   and 2,935 consistent backend executions, with five explicit size-limit cases.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
+- A depth-11 boundary scan of seeds 8300–8399 (run
+  `20261009_212300_782`) produced 29 programs below the 16,300-line safety
+  bound; all passed the reference evaluator and JS/Wasm/Wasm-GC (87 executions).
+  The other 71 were stopped as `generator-limit` before compilation; the largest
+  source was 44,034 lines. All 100 bodies were distinct, the harness digest was
+  unchanged, and there were no compiler/runtime errors or differential
+  mismatches. This makes depth 11 an unreliable range today; depth 10 also had
+  five limits in 230 cases. See [the boundary scan record](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
@@ -208,10 +216,11 @@ backend executions). Windows checked 100 distinct depth-6 generated programs
 in native debug and release (200 successful executions), plus 30 depth-8
 native-debug cases; all were consistent and the harness digest stayed
 unchanged.
-CI run [37990588724](https://github.com/Yingqingxue/moonsmith/actions/runs/37990588724)
+CI run [37992067092](https://github.com/Yingqingxue/moonsmith/actions/runs/37992067092)
 also passed the `#valtype` source-triggered reducer with the five-configuration
-matrix on both Linux and Windows; Windows CI now uploads its minimized source
-and reduction record for review.
+matrix on both Linux and Windows. The Windows artifact was downloaded and
+verified to contain both reducer JSON records, original and minimized source,
+and the native-release target in the probe-specific matrix.
 
 ## Current vertical slice
 
