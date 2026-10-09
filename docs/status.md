@@ -80,6 +80,13 @@ single-person; no second team member is recorded.
   cases (success 29, error 26; overlap possible). Across ten selected runs,
   body-hash comparison confirms 920 distinct bodies, 920 reference checks,
   and 1,960 consistent backend executions.
+- A 100-seed depth-9 full-matrix scan of seeds 7100–7199 (run
+  `20261009_161448_637`) completed 100 reference checks and 300 executions in
+  586,626 ms; all cases were consistent and the harness digest stayed fixed.
+  All sources contained the probe; reference traces visited it in 96 cases
+  (success 94, error 88; overlap possible). Across eleven selected runs,
+  body-hash comparison confirms 1,020 distinct bodies, 1,020 reference checks,
+  and 2,260 consistent backend executions.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
