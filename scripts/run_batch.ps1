@@ -169,6 +169,13 @@ $harnessDigestEnd = Get-HarnessDigest
 $harnessChangedDuringRun = $harnessDigestStart -ne $harnessDigestEnd
 $unexpectedCount = $Count - $counts.consistent
 $referenceCheckedCount = @($cases | Where-Object referenceChecked).Count
+$casesWithSourceLineCount = @($cases | Where-Object { $null -ne $_.sourceLineCount }).Count
+$sourceLineCountMaximum = if ($casesWithSourceLineCount -gt 0) {
+    ($cases | Where-Object { $null -ne $_.sourceLineCount } |
+        Measure-Object -Property sourceLineCount -Maximum).Maximum
+} else {
+    $null
+}
 $uniqueFailureSignatures = @(
     $cases |
         Where-Object { $_.finding -ne 'consistent' -and $null -ne $_.signature } |
@@ -200,7 +207,7 @@ $casesWithForIteration = @($cases | Where-Object { $_.referencePathKinds -contai
 $casesWithValtypeRaiseProbe = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.valtypeRaiseProbe -gt 0 }).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 5
+    schemaVersion           = 6
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
@@ -214,6 +221,8 @@ $summary = [pscustomobject]@{
     harnessChangedDuringRun  = $harnessChangedDuringRun
     unexpectedCount         = $unexpectedCount
     referenceCheckedCount   = $referenceCheckedCount
+    casesWithSourceLineCount = $casesWithSourceLineCount
+    sourceLineCountMaximum  = $sourceLineCountMaximum
     uniqueFailureSignatures = $uniqueFailureSignatures
     uniqueProgramBodies     = $uniqueProgramBodies
     casesWithLet            = $casesWithLet

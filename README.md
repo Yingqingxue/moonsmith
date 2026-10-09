@@ -45,6 +45,10 @@ Depth is a maximum recursive branching depth, not a promise that every seed
 will fit the source-size bound: observed scans had 6 size limits in 330 depth-10
 seeds and 71 in 100 depth-11 seeds. For routine batches, prefer depth 10 or
 lower and review `generator-limit` counts rather than silently discarding cases.
+Per-seed JSON reports include `sourceLineCount` and, for generated inputs, the
+applicable `sourceLineLimit`; batch JSON also reports how many cases have size
+data and the largest source. This makes the size guard auditable for successful
+as well as rejected inputs.
 Batch seed ranges must also stay within MoonBit's signed 32-bit `Int` domain;
 the runner rejects an overflowing range before starting any compiler process.
 

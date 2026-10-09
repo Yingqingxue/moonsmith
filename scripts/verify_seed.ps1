@@ -100,6 +100,8 @@ function Invoke-CapturedProcess {
 }
 
 New-Item -ItemType Directory -Force -Path $caseDirectory | Out-Null
+$sourceLineCount = $null
+$sourceLineLimit = $null
 
 if (-not $SourcePath) {
     $generation = Invoke-CapturedProcess -FilePath $moonExe `
@@ -115,10 +117,11 @@ if (-not $SourcePath) {
     $source = $generation.stdout.TrimEnd() + "`n"
     $sourceLineCount = [regex]::Matches($source, "`n").Count
     $maxSourceLines = 16300
+    $sourceLineLimit = $maxSourceLines
     Set-Content -LiteralPath $casePath -Value $source -Encoding utf8 -NoNewline
     if ($sourceLineCount -gt $maxSourceLines) {
         $sizeLimitReport = [pscustomobject]@{
-            schemaVersion = 4
+            schemaVersion = 5
             caseId = $null
             seed = $Seed
             depth = $Depth
@@ -136,7 +139,7 @@ if (-not $SourcePath) {
             powerShellVersion = $PSVersionTable.PSVersion.ToString()
             sourceSha256 = (Get-FileHash -LiteralPath $casePath -Algorithm SHA256).Hash.ToLowerInvariant()
             sourceLineCount = $sourceLineCount
-            sourceLineLimit = $maxSourceLines
+            sourceLineLimit = $sourceLineLimit
             error = "Generated source exceeds the safe $maxSourceLines-line limit; MoonBit reports a text-segment limit at 16384 lines. Reduce -Depth."
             savedTo = $null
             runs = @()
@@ -160,6 +163,9 @@ if (-not $SourcePath) {
         throw "Reference path trace failed for seed $Seed at depth $Depth.`n$($traceRun.stderr)"
     }
     $referenceTrace = $traceRun.stdout | ConvertFrom-Json
+} else {
+    $source = Get-Content -LiteralPath $casePath -Raw -Encoding utf8
+    $sourceLineCount = [regex]::Matches($source, "`n").Count
 }
 
 $runs = foreach ($target in $Targets) {
@@ -326,7 +332,7 @@ if ($NoPersist) {
 }
 
 $report = [pscustomobject]@{
-    schemaVersion = 4
+    schemaVersion = 5
     caseId        = $caseId
     seed          = $Seed
     depth         = $Depth
@@ -343,6 +349,8 @@ $report = [pscustomobject]@{
     hostOS = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
     powerShellVersion = $PSVersionTable.PSVersion.ToString()
     sourceSha256 = (Get-FileHash -LiteralPath $casePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    sourceLineCount = $sourceLineCount
+    sourceLineLimit = $sourceLineLimit
     savedTo       = $savedTo
     runs          = @($runs)
 }

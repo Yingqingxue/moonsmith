@@ -132,6 +132,22 @@ single-person; no second team member is recorded.
   cases, and 3,232 backend executions, with six explicit size-limit rejections.
   No compiler/runtime failures, mismatches, or harness changes occurred. See
   [the seed scan evidence](evidence/seed_scans_20261009.md).
+- Verifier report schema 5 now carries source line counts for successful
+  generated inputs as well as `generator-limit` cases; external `SourcePath`
+  reports also count lines but leave `sourceLineLimit` null because the generated
+  source guard is not applied there. Batch schema 6 reports the number of
+  measured cases and the maximum line count. CLI integration checks the per-case
+  values against the near-limit fixture and verifies batch aggregation.
+- A 500-seed depth-5 full-matrix scan (seeds 10000–10499, run
+  `20261009_214412_087`) passed all 500 reference checks and 1,500 backend
+  executions. A subsequent 100-seed depth-6 scan (seeds 11000–11099, run
+  `20261009_224035_689`) passed 100 checks and 300 executions; all 100 batch
+  records contained source-line measurements, with a maximum of 752. The probe
+  appeared in 319/500 and 90/100 sources respectively; reference traces visited
+  it in 220 and 68 cases. Across 17 depth-4–10 runs, cross-report body hashes
+  confirm 1,950 distinct programs, 1,944 consistent checks, 5,032 backend
+  executions, and six guarded size-limit cases. Neither scan changed the
+  harness digest or found a compiler/runtime mismatch.
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and

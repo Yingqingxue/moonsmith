@@ -111,11 +111,16 @@ foreach ($seed in @(-2147483648, -1, 2147483647)) {
 }
 
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
+$expectedSourceLineMaximum = ($batch.cases |
+    Measure-Object -Property sourceLineCount -Maximum).Maximum
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 5 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 6 -or $batch.casesWithChoiceMatch -lt 1 -or
     $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
+    $batch.casesWithSourceLineCount -ne $batch.count -or
+    $batch.sourceLineCountMaximum -ne $expectedSourceLineMaximum -or
+    @($batch.cases | Where-Object { $null -eq $_.sourceLineCount }).Count -ne 0 -or
     $batch.referencePathCaseCounts.'valtype-raise-success-path' -lt 1 -or
     $batch.referencePathCaseCounts.'valtype-raise-error-path' -lt 1) {
     throw 'fuzz did not return a clean two-seed batch.'
@@ -127,6 +132,8 @@ $generatorLimit = $generatorLimitRaw | ConvertFrom-Json
 if ($generatorLimitExitCode -ne 1 -or
     $generatorLimit.counts.'generator-limit' -ne 1 -or
     $generatorLimit.cases[0].finding -ne 'generator-limit' -or
+    $generatorLimit.cases[0].sourceLineCount -le 16300 -or
+    $generatorLimit.cases[0].sourceLineLimit -ne 16300 -or
     $generatorLimit.cases[0].error -notmatch 'text-segment limit at 16384 lines') {
     throw 'oversized generated source was not classified as generator-limit.'
 }
@@ -135,7 +142,9 @@ $nearLimitRaw = & $verify -Seed 8166 -Depth 10 -Targets @('wasm') -NoPersist
 $nearLimit = $nearLimitRaw | ConvertFrom-Json
 $nearLimitSource = Get-Content -LiteralPath $nearLimit.casePath -Raw -Encoding utf8
 $nearLimitLineCount = [regex]::Matches($nearLimitSource, "`n").Count
-if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300) {
+if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300 -or
+    $nearLimit.sourceLineCount -ne $nearLimitLineCount -or
+    $nearLimit.sourceLineLimit -ne 16300) {
     throw 'source below the configured line limit was incorrectly rejected.'
 }
 

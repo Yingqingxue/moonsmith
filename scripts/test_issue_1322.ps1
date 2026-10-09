@@ -139,6 +139,9 @@ if ($oracleExitCode -notin @(0, 1)) {
     throw "MoonSmith's differential verifier exited unexpectedly: $oracleExitCode"
 }
 $oracleReport = $oracleRaw | ConvertFrom-Json
+if ($oracleReport.sourceLineCount -le 0 -or $null -ne $oracleReport.sourceLineLimit) {
+    throw 'The source-path verification report did not record its line count without claiming the generated-source limit.'
+}
 $oracleNativeRun = $oracleReport.runs | Where-Object target -eq 'native' | Select-Object -First 1
 $oracleNativeReleaseRun = $oracleReport.runs | Where-Object target -eq 'native-release' | Select-Object -First 1
 $oracleWasmGcRun = $oracleReport.runs | Where-Object target -eq 'wasm-gc' | Select-Object -First 1

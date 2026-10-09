@@ -165,3 +165,26 @@ depth-4–10 evidence is therefore 1,344 checked/consistent cases, 3,232 backend
 executions, and six explicit size-limit rejections. The depth-11 scan above is
 kept separate and not included in these totals. Raw report:
 `.moonsmith/runs/batch_20261009_212902_452.json` (ignored and local only).
+
+## Broader depth-5 and depth-6 follow-ups (2026-10-10)
+
+Run `20261009_214412_087` scanned seeds 10000–10499 at depth 5 across JS,
+Wasm, and Wasm-GC. All 500 distinct bodies passed reference evaluation and
+1,500 backend executions in 2,779,274 ms. The probe appeared in 319 sources;
+the reference trace visited it in 220 cases (success 118, error 133; overlap
+possible). There were no size limits, failures, mismatches, or harness changes.
+
+Run `20261009_224035_689` scanned seeds 11000–11099 at depth 6 across the same
+three targets. All 100 distinct bodies passed reference evaluation and 300
+backend executions in 531,433 ms. All cases now report source line counts;
+the largest source was 752 lines. The probe appeared in 90 sources, with
+reference traces visiting it in 68 cases (success 45, error 36; overlap
+possible). There were no size limits, failures, mismatches, or harness changes.
+
+Cross-report SHA-256 comparison across the original fourteen depth-4–10 runs
+and these three follow-ups (the 100-seed depth-10, 500-seed depth-5, and
+100-seed depth-6 runs) confirms 1,950 unique bodies, 1,944 reference-checked
+and consistent cases, 5,032 backend executions, and six explicit
+`generator-limit` rejections. Depth-11 data above remains separate. Raw reports
+are local and ignored at `.moonsmith/runs/batch_20261009_214412_087.json` and
+`.moonsmith/runs/batch_20261009_224035_689.json`.
