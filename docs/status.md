@@ -208,6 +208,10 @@ backend executions). Windows checked 100 distinct depth-6 generated programs
 in native debug and release (200 successful executions), plus 30 depth-8
 native-debug cases; all were consistent and the harness digest stayed
 unchanged.
+CI run [37990588724](https://github.com/Yingqingxue/moonsmith/actions/runs/37990588724)
+also passed the `#valtype` source-triggered reducer with the five-configuration
+matrix on both Linux and Windows; Windows CI now uploads its minimized source
+and reduction record for review.
 
 ## Current vertical slice
 

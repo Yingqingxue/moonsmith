@@ -5,17 +5,20 @@ MoonBit compiler backends.
 
 Current maintainer: [Yingqingxue](https://github.com/Yingqingxue).
 
-The repository is in its first implementation stage. The current vertical
-slice provides:
+The current typed vertical slice provides:
 
-- a small typed expression IR;
-- a boolean pattern-match generator, interpreter, printer, and shrinker;
+- a small typed expression IR for arithmetic, arrays, structs, enums, local
+  functions, and bounded loops;
+- a dedicated `#valtype`/`raise`/`try?` probe for one historical trigger shape;
+- matching source generation, reference evaluation, differential execution,
+  and trigger-preserving AST shrinking for that probe;
 - deterministic generation from an integer seed;
 - a printer that emits a self-contained MoonBit program;
 - a MoonBit differential oracle with stable failure signatures;
 - an IR interpreter that computes an expected output for generated programs;
 - bounded subprocess execution, corpus persistence, and batch summaries;
 - deterministic, type-preserving AST shrink candidates;
+- CLI support for native debug and native release as separate configurations;
 - cross-target tests for generator determinism, classification, and reduction
   invariants.
 
@@ -30,8 +33,12 @@ Run the tests:
 moon test --target js
 moon test --target wasm
 moon test --target wasm-gc
-moon test --target native
 ```
+
+`native` tests require a compatible C toolchain. The PowerShell differential
+runner also accepts `native-release` to check the same source with MoonBit's
+native release configuration. The `#valtype`/`raise` node is a narrow regression
+probe, not general floating-point or exception support.
 
 Print the program generated for seed 42 at depth 4:
 
@@ -44,6 +51,13 @@ results:
 
 ```powershell
 pwsh -File scripts/verify_seed.ps1 -Seed 42 -Depth 4
+```
+
+With a C toolchain, include both native configurations explicitly:
+
+```powershell
+pwsh -File scripts/verify_seed.ps1 -Seed 42 -Depth 4 `
+  -Targets @('js','wasm','wasm-gc','native','native-release')
 ```
 
 Every generator, build, execution, and oracle subprocess has an independent

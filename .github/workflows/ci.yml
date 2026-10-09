@@ -125,6 +125,7 @@ jobs:
           name: moonsmith-windows-native-report
           path: |
             .moonsmith/runs/
+            .moonsmith/reduced/injected/
             .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30

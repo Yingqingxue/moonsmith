@@ -46,6 +46,14 @@ record confirms the four-target matrix. The attempt budget was reached, so
 this is proof of source-trigger preservation and replayable progress, not a
 claim of a local minimum or of a compiler bug.
 
+The same probe-specific injected reduction now includes both `native` and
+`native-release` when a C toolchain is available. CI run
+[37990588724](https://github.com/Yingqingxue/moonsmith/actions/runs/37990588724)
+passed on Linux and Windows. The Linux artifact records the five-configuration
+matrix, 5 accepted steps in 10 attempts, and complexity 39,300 → 18,133; the
+attempt budget was reached. Windows also passed the reducer integration. Its
+artifact is configured to preserve the reduction JSON and minimized source.
+
 A separate workstation run used a 100-attempt budget on the same deterministic
 seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced
 the source from 2,376 to 1,367 bytes and AST complexity from 39,300 to 11,014,
