@@ -100,12 +100,12 @@ jobs:
         run: |
           moon check --deny-warn
           moon test --target native --deny-warn
-          ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('native') -NoPersist
+          ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('native') -TimeoutSeconds 60 -NoPersist
 
       - name: Smoke-test Windows native generated programs
         shell: pwsh
         run: |
-          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 30 -Depth 6 -Targets @('native')
+          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 30 -Depth 6 -Targets @('native') -TimeoutSeconds 60
 
       - name: Check reference, reducer, and CLI integration
         shell: pwsh
