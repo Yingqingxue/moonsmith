@@ -79,7 +79,7 @@ See the [project plan](MoonSmith_项目计划书.md), [implementation status](do
 the [ecosystem comparison](docs/ecosystem_comparison.md),
 the [historical regression corpus](docs/regressions.md),
 the [pre-review risk gate](docs/pre_review_gate.md), and
-[reduction design](docs/reduction.md). The reproducible 760-seed scan summary
+[reduction design](docs/reduction.md). The reproducible 790-seed scan summary
 is in [seed scan evidence](docs/evidence/seed_scans_20261009.md).
 
 Licensed under Apache-2.0.

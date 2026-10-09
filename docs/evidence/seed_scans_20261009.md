@@ -16,9 +16,10 @@ at both the beginning and end of every run.
 | `20261009_150733_048` | 3000–3099 | 6 | Wasm | 100 | 100 | 100 | 0 | 310,515 ms |
 | `20261009_152126_201` | 4000–4029 | 7 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 162,050 ms |
 | `20261009_152857_146` | 5000–5099 | 7 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 543,907 ms |
-| **Combined** | — | — | — | **760** | **760** | **1,480** | **0** | **3,204,934 ms** |
+| `20261009_154042_081` | 6000–6029 | 8 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 164,444 ms |
+| **Combined** | — | — | — | **790** | **790** | **1,570** | **0** | **3,369,378 ms** |
 
-The body hashes were compared across all seven selected reports: all 760 program
+The body hashes were compared across all eight selected reports: all 790 program
 bodies were distinct. Every case was `consistent`; no compile/runtime failures,
 timeouts, reference mismatches, output mismatches, or harness errors were
 reported.
@@ -39,6 +40,8 @@ reported.
   interpreter visited it in 26 cases (success 19, error 19; overlap possible).
 - Depth-7 full-matrix run (100 seeds): probe source in 98 cases; reference
   interpreter visited it in 89 cases (success 60, error 68; overlap possible).
+- Depth-8 full-matrix run: all 30 sources contained the probe; reference
+  interpreter visited it in 28 cases (success 21, error 25; overlap possible).
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -54,8 +57,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 3000 -Count 100 -Depth 6 -Targets @('wasm')
 ./scripts/run_batch.ps1 -SeedStart 4000 -Count 30 -Depth 7
 ./scripts/run_batch.ps1 -SeedStart 5000 -Count 100 -Depth 7
+./scripts/run_batch.ps1 -SeedStart 6000 -Count 30 -Depth 8
 ```
 
-The raw 100/100/300/30/100/30/100-case JSON reports are machine-local under
+The raw 100/100/300/30/100/30/100/30-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
