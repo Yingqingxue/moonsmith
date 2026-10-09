@@ -84,21 +84,22 @@ $nativeCompiler = Get-Command cl, clang-cl, gcc, clang, cc `
     -ErrorAction SilentlyContinue | Select-Object -First 1
 $nativeCompilerVersion = $null
 if ($nativeCompiler) {
-    $versionArguments = if ($nativeCompiler.Name -match '^cl(\.exe)?$') {
-        @('/?')
+    $versionLines = if ($nativeCompiler.Name -match '^cl(\.exe)?$') {
+        @(& $nativeCompiler.Source '/?' 2>&1 | ForEach-Object { $_.ToString() })
     } else {
-        @('--version')
+        @(& $nativeCompiler.Source '--version' 2>&1 | ForEach-Object { $_.ToString() })
     }
-    $versionLines = @(
-        & $nativeCompiler.Source @versionArguments 2>&1 |
-            ForEach-Object { $_.ToString() }
-    )
     $nativeCompilerVersion = ($versionLines | Select-Object -First 12) -join "`n"
     if ($nativeCompilerVersion.Length -gt 2048) {
         $nativeCompilerVersion = $nativeCompilerVersion.Substring(0, 2048)
     }
-    if ([string]::IsNullOrWhiteSpace($nativeCompilerVersion)) {
-        throw "Could not capture a version string from native compiler '$($nativeCompiler.Name)'."
+    $versionPattern = if ($nativeCompiler.Name -match '^cl(\.exe)?$') {
+        'Microsoft.*(Compiler|C/C\+\+)'
+    } else {
+        '(?i)(gcc|clang|compiler|version|\bcc\s*\()'
+    }
+    if ($nativeCompilerVersion -notmatch $versionPattern) {
+        throw "Could not capture a recognizable version string from native compiler '$($nativeCompiler.Name)': $nativeCompilerVersion"
     }
 }
 $nativeDebugClassification = 'unavailable-no-c-compiler'
