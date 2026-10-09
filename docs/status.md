@@ -44,9 +44,14 @@ single-person; no second team member is recorded.
 - A depth-7 full-matrix scan of seeds 4000–4029 (run `20261009_152126_201`)
   completed 30 reference checks and 90 executions in 162,050 ms, with no
   failures or harness changes; all 30 sources contained the probe and traces
-  visited it in 26 cases (success 19, error 19; overlap possible). Across the
-  six selected runs the totals are 660 distinct bodies, 660 reference checks,
-  and 1,180 consistent backend executions.
+  visited it in 26 cases (success 19, error 19; overlap possible).
+- A 100-seed depth-7 full-matrix scan of seeds 5000–5099 (run
+  `20261009_152857_146`) completed 100 reference checks and 300 executions in
+  543,907 ms, with no failures or harness changes. The probe appeared in 98
+  sources; reference traces visited it in 89 cases (success 60, error 68;
+  overlap possible). Across the seven selected runs the totals are 760
+  distinct bodies, 760 reference checks, and 1,480 consistent backend
+  executions.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
