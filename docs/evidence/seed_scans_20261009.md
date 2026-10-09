@@ -201,3 +201,16 @@ all four follow-ups confirms 2,050 unique bodies, 2,044 reference-checked and
 consistent cases, 5,332 backend executions, and six explicit size-limit
 rejections. The depth-11 cohort remains outside these totals. Raw report:
 `.moonsmith/runs/batch_20261009_225236_634.json` (ignored and local only).
+
+Run `20261009_230253_164` added 100 depth-8 full-matrix cases (seeds
+13000–13099). All 100 unique bodies passed reference evaluation and 300
+backend executions in 430,266 ms. The schema-6 batch measured every source;
+the maximum was 4,221 lines. All sources contained the probe, and the reference
+trace visited it in 97 cases (success 84, error 90; overlap possible). There
+were no size limits, failures, mismatches, or harness changes.
+
+Cross-report SHA-256 comparison of the fourteen original depth-4–10 runs and
+all five follow-ups confirms 2,150 unique bodies, 2,144 reference-checked and
+consistent cases, 5,632 backend executions, and six explicit size-limit
+rejections. The depth-11 cohort remains separate. Raw report:
+`.moonsmith/runs/batch_20261009_230253_164.json` (ignored and local only).
