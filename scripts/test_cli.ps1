@@ -28,6 +28,14 @@ if ($generatorLimitExitCode -ne 1 -or
     throw 'oversized generated source was not classified as generator-limit.'
 }
 
+$nearLimitRaw = & $verify -Seed 8166 -Depth 10 -Targets @('wasm') -NoPersist
+$nearLimit = $nearLimitRaw | ConvertFrom-Json
+$nearLimitSource = Get-Content -LiteralPath $nearLimit.casePath -Raw -Encoding utf8
+$nearLimitLineCount = [regex]::Matches($nearLimitSource, "`n").Count
+if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300) {
+    throw 'source below the configured line limit was incorrectly rejected.'
+}
+
 $injected = (& $verify -Seed 0 -Depth 2 `
     -InjectOutputMismatchTarget wasm-gc `
     -InjectOnlyWhenSourceContains '(if' | ConvertFrom-Json)
@@ -55,6 +63,7 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies
     generatorLimitCount = $generatorLimit.counts.'generator-limit'
+    nearLimitLineCount = $nearLimitLineCount
     replayFinding = $replay.replayFinding
     reportPath = $rendered.reportPath
 } | ConvertTo-Json -Depth 3
