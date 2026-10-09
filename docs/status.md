@@ -21,6 +21,9 @@ single-person; no second team member is recorded.
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
   `wasm-gc` for the same seed and depth.
+- Commit `ccdaada` passed remote GitHub Actions run `37939326747` (46 seconds);
+  smoke-batch JSON reports are now uploaded as a 30-day CI artifact on both
+  success and failure, making the evidence inspectable after the runner exits.
 
 ## Known environment limitation
 

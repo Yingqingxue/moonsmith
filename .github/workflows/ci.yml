@@ -55,10 +55,11 @@ jobs:
           ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4
 
-      - name: Preserve smoke-test reports on failure
-        if: failure()
+      - name: Preserve smoke-test reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: moonsmith-smoke-report
           path: .moonsmith/runs/
           if-no-files-found: ignore
+          retention-days: 30
