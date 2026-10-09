@@ -20,6 +20,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if (([long]$SeedStart + [long]$Count - 1) -gt [int]::MaxValue) {
+    throw 'Seed range exceeds the 32-bit signed Int maximum; reduce -Count or lower -SeedStart.'
+}
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $verifyScript = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $runDirectory = Join-Path $projectRoot '.moonsmith\runs'

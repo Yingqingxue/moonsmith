@@ -1,6 +1,22 @@
 $ErrorActionPreference = 'Stop'
 $cli = Join-Path $PSScriptRoot 'moonsmith.ps1'
 $verify = Join-Path $PSScriptRoot 'verify_seed.ps1'
+$batchRunner = Join-Path $PSScriptRoot 'run_batch.ps1'
+
+$seedRangeRejected = $false
+try {
+    & $batchRunner -SeedStart ([int]::MaxValue) -Count 2 -Depth 0 `
+        -Targets @('js') | Out-Null
+}
+catch {
+    if ($_.Exception.Message -notmatch 'Seed range exceeds the 32-bit signed Int maximum') {
+        throw
+    }
+    $seedRangeRejected = $true
+}
+if (-not $seedRangeRejected) {
+    throw 'A seed batch extending beyond the signed Int range was not rejected.'
+}
 
 $doctor = (& $cli doctor | ConvertFrom-Json)
 if (-not $doctor.ready -or $LASTEXITCODE -ne 0) {
@@ -112,5 +128,6 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     generatorLimitCount = $generatorLimit.counts.'generator-limit'
     nearLimitLineCount = $nearLimitLineCount
     replayFinding = $replay.replayFinding
+    seedRangeOverflowRejected = $seedRangeRejected
     reportPath = $rendered.reportPath
 } | ConvertTo-Json -Depth 3

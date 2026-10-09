@@ -38,6 +38,8 @@ finding. `replay -CasePath PATH` takes a saved finding directory or its
 Generated sources over 16,300 lines are reported as `generator-limit` and are
 not sent to the reference evaluator or compiler backends; `fuzz` still exits
 nonzero so the size bound stays visible in batch results.
+Batch seed ranges must also stay within MoonBit's signed 32-bit `Int` domain;
+the runner rejects an overflowing range before starting any compiler process.
 
 For a repeatable demonstration of fault detection and reduction (an explicitly
 injected fault, **not** a MoonBit compiler bug):
