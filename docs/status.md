@@ -9,7 +9,9 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Sixty-seven main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
+- Sixty-seven main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
+  reference, reducer, and CLI integration scripts also pass after the added
+  report/JSON and variable-scope cases.
 - JS coverage analysis reports 17 uncovered defensive branches across the
   generator, oracle, reducer, and reference evaluator. Review shows these are
   invalid `ChoiceType`/scope states or an exhaustive-classification fallback,
@@ -71,6 +73,13 @@ single-person; no second team member is recorded.
   cases (success 86, error 78; overlap possible). Across nine selected runs,
   body-hash comparison confirms 890 distinct bodies, 890 reference checks,
   and 1,870 consistent backend executions.
+- A 30-seed depth-9 full-matrix scan of seeds 7000–7029 (run
+  `20261009_161038_538`) completed 30 reference checks and 90 executions in
+  172,209 ms; all cases were consistent and the harness digest stayed fixed.
+  All sources contained the probe; reference traces visited it in all 30
+  cases (success 29, error 26; overlap possible). Across ten selected runs,
+  body-hash comparison confirms 920 distinct bodies, 920 reference checks,
+  and 1,960 consistent backend executions.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
