@@ -134,11 +134,13 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no system C
 compiler (`cc`, `gcc`, or `clang`) is installed. It is now validated remotely:
-GitHub Actions run `37967094871` for commit `0cfac5a` passed both
-`moon test --target native --deny-warn` and a deterministic seed-0/depth-4
-generate/reference/native differential execution. This is one native smoke
-case plus the package test suite, not the 1,245-case scan; local native replay
-still requires an appropriate C toolchain.
+GitHub Actions run `37967661714` for commit `a40849d` passed the native package
+tests and a 10-seed full-matrix batch (seeds 0–9, depth 4): ten distinct
+program bodies, 40 executions across JS/Wasm/Wasm-GC/native, ten consistent
+cases, no findings, and an unchanged harness digest. The uploaded batch report
+was inspected directly. This small CI batch is separate from the 1,250-case
+scan documented below; local native replay still requires an appropriate C
+toolchain.
 
 ## Current vertical slice
 
