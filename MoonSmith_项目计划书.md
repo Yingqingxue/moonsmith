@@ -509,7 +509,7 @@ moonsmith/
 | 仓库组织/账号 | `Yingqingxue/moonsmith` | 创建远程仓库时 |
 | 许可证 | Apache-2.0 | 首次公开提交前 |
 | P0 后端 | js、wasm、wasm-gc | 10 月 9 日验证后 |
-| native 是否进入首发 | 先列 P1 | 10 月 12 日 |
+| native 是否进入首发 | 已作为可选 P1 接入 Windows MSVC CI：70 个 package tests、100 个 depth-6 与 30 个 depth-8 native 差分样本；本机仍因无 C 编译器不能复跑 | 2026 年 10 月 10 日已验证；是否提升为默认目标需考虑参赛者安装成本 |
 | 是否依赖官方 parser | 先以内部 AST 为主，按 reducer 输入需求评估 | 10 月 12 日 |
 | 官方截止日 | 未核实，必须问赛事群 | 立即 |
 | 当前成员 | `Yingqingxue`，单人开发 | 已确认 |
