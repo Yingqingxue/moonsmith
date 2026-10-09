@@ -21,9 +21,11 @@ single-person; no second team member is recorded.
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
   `wasm-gc` for the same seed and depth.
-- Commit `ccdaada` passed remote GitHub Actions run `37939326747` (46 seconds);
-  smoke-batch JSON reports are now uploaded as a 30-day CI artifact on both
-  success and failure, making the evidence inspectable after the runner exits.
+- Commit `709aacc` passed remote GitHub Actions run `37942071114` (1m21s),
+  including the probe-specific reduction replay. Its smoke-batch JSON report
+  artifact is available through 2026-11-08. The workflow uses the Node 24
+  artifact action runtime; only GitHub's future Ubuntu runner migration notice
+  remains.
 - Boundary tests now lock down `-1` as the error case and `0`/`1` as success,
   assert the generated program retains the `#valtype` + first-`Double` +
   raising function + `try?` trigger shape, and verify helper declarations are
