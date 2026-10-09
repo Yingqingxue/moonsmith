@@ -86,7 +86,7 @@ if ($null -ne $nativeCompiler) {
 
     if (-not $nativeDebug.timedOut -and $nativeDebug.exitCode -eq 0 -and
         $nativeDebug.output -eq $expectedOutput) {
-        $nativeDebugClassification = 'no-longer-reproduces'
+        $nativeDebugClassification = 'not-reproduced-on-this-runner'
     } elseif (-not $nativeDebug.timedOut -and
         $nativeDebug.output -match 'Machine_error\(kind=unsupported; who="Machine_of_clam_lower\.lower_array_make"; message="uninitialized non-null GC ref arrays are not lowered"') {
         $nativeDebugClassification = 'upstream-issue-signature-reproduced'
@@ -99,6 +99,7 @@ $result = [pscustomobject]@{
     upstreamIssue = 1322
     sourceIssue = 'https://github.com/moonbitlang/moonbit-docs/issues/1322'
     toolchain = (& moon version | Select-Object -First 1)
+    runnerPlatform = if ($IsWindows) { 'windows' } elseif ($IsLinux) { 'linux' } elseif ($IsMacOS) { 'macos' } else { 'unknown' }
     nativeCompiler = if ($nativeCompiler) { $nativeCompiler.Name } else { $null }
     nativeDebugClassification = $nativeDebugClassification
     nativeDebugExitCode = if ($nativeDebug) { $nativeDebug.exitCode } else { $null }

@@ -172,6 +172,19 @@ MSVC setup action currently emits a Node 20 deprecation warning while
 successfully running under Node 24 compatibility mode; monitor for an upstream
 action update.
 
+A separate fixture preserves upstream issue
+[#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322), which uses the
+same MoonBit version. On Linux x64, CI run
+[37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
+reproduced its native debug `lower_array_make` ICE signature; native release
+and Wasm-GC both returned the expected `0` and `x`. This reproduces an upstream
+report, not a MoonSmith discovery, and does not establish whether the behavior
+violates the language contract. In the same run, Windows/MSVC native debug did
+not reproduce the ICE and returned the expected output; release and Wasm-GC
+also passed. The runner difference is observed but unexplained, not evidence
+that the upstream report is fixed. Local native replay is unavailable without
+a C compiler.
+
 ## Current vertical slice
 
 ```text

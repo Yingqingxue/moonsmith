@@ -73,9 +73,15 @@ construct may stop testing the original result-lowering path.
 - Local fixture: `regressions/issue_1322_native_valtype_enum_array/repro.mbt`.
 - Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
   release control outputs, then classifies native debug as either the reported
-  ICE signature or a successful result. CI stores a JSON evidence artifact.
-  The current workstation has no compatible C compiler, so only Wasm-GC has
-  been checked locally; remote native results are pending.
+  ICE signature or a successful result. GitHub Actions run
+  [37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
+  on Linux reproduced the exact ICE signature under gcc; native release and
+  Wasm-GC both produced `0` and `x`. In the same run, Windows/MSVC native debug
+  did not reproduce the ICE and produced the expected output; release and
+  Wasm-GC also passed there. The artifacts record runner/compiler-specific
+  classifications. This difference is observed, not yet explained. This
+  workstation has no compatible C compiler, so only Wasm-GC has been checked
+  locally.
 - Scope: this is an upstream-reported unsupported lowering path, not a
   MoonSmith-discovered defect and not necessarily a language-contract violation.
   It tests whether the toolchain fails internally instead of issuing a normal
