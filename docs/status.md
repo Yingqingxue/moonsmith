@@ -124,6 +124,14 @@ single-person; no second team member is recorded.
   unchanged, and there were no compiler/runtime errors or differential
   mismatches. This makes depth 11 an unreliable range today; depth 10 also had
   five limits in 230 cases. See [the boundary scan record](evidence/seed_scans_20261009.md).
+- A new 100-seed depth-10 scan of seeds 8400–8499 (run
+  `20261009_212902_452`) completed 99 reference checks and 297 consistent
+  JS/Wasm/Wasm-GC executions. Seed 8482 was stopped at 16,816 lines by the
+  existing guard. All 100 bodies were unique against the prior fourteen depth-
+  4–10 runs; the expanded evidence totals 1,350 unique bodies, 1,344 checked
+  cases, and 3,232 backend executions, with six explicit size-limit rejections.
+  No compiler/runtime failures, mismatches, or harness changes occurred. See
+  [the seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and

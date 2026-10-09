@@ -148,3 +148,20 @@ generator has a size-aware budget, depth 10 or below is the practical range;
 depth 10 itself still had 5 `generator-limit` results among 230 prior seeds.
 Raw report: `.moonsmith/runs/batch_20261009_212300_782.json` (ignored and local
 only).
+
+## Depth-10 follow-up (2026-10-10)
+
+Run `20261009_212902_452` tested seeds 8400–8499 at depth 10 across the same
+three targets. It completed in 668,768 ms with 99 reference checks and 297
+consistent backend executions; seed 8482 emitted 16,816 lines and was safely
+classified as `generator-limit`. There were no compiler/runtime failures,
+timeouts, mismatches, or harness changes. All 100 sources contained the
+`#valtype`/`raise` probe; the reference trace visited each modeled success and
+error path in 98 cases (these are interpreter counts, not backend coverage).
+
+Cross-report SHA-256 comparison of this cohort against the previous fourteen
+depth-4–10 runs confirms all 1,350 source bodies are distinct. The combined
+depth-4–10 evidence is therefore 1,344 checked/consistent cases, 3,232 backend
+executions, and six explicit size-limit rejections. The depth-11 scan above is
+kept separate and not included in these totals. Raw report:
+`.moonsmith/runs/batch_20261009_212902_452.json` (ignored and local only).
