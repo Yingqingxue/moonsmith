@@ -1,4 +1,4 @@
-# Historical MoonBit compiler regression corpus
+# MoonBit compiler regression corpus and upstream repro probes
 
 This is a deliberately small, provenance-tracked starting corpus, not a
 representative benchmark and not evidence of MoonSmith's bug-finding rate.
@@ -61,6 +61,34 @@ moon test --target wasm-gc regressions/issue_1274_wasm_valtype_raise
 The fixture package disables only the `deprecated` warning because `try?` is
 part of the historical trigger. Do not replace it mechanically: changing the
 construct may stop testing the original result-lowering path.
+
+## Case 3: native debug array push of a `#valtype` record containing an enum
+
+- Upstream report: [moonbitlang/moonbit-docs#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322)
+- Reported: 2026-10-08, with MoonBit `0.1.20260920` and `moonc
+  v0.10.14+7d59c7ec9` (the same versions recorded by this project).
+- Reported symptom: native debug linking ICEs in `lower_array_make` for an
+  array append of a `#valtype` record containing a reference-carrying enum;
+  native release and Wasm-GC produce `0` and `x`.
+- Local fixture: `regressions/issue_1322_native_valtype_enum_array/repro.mbt`.
+- Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
+  release control outputs, then classifies native debug as either the reported
+  ICE signature or a successful result. CI stores a JSON evidence artifact.
+  The current workstation has no compatible C compiler, so only Wasm-GC has
+  been checked locally; remote native results are pending.
+- Scope: this is an upstream-reported unsupported lowering path, not a
+  MoonSmith-discovered defect and not necessarily a language-contract violation.
+  It tests whether the toolchain fails internally instead of issuing a normal
+  diagnostic while preserving release and Wasm-GC as controls.
+
+Reproduce the control path from the repository root:
+
+```powershell
+moon run regressions/issue_1322_native_valtype_enum_array/repro.mbt --target wasm-gc
+```
+
+With a compatible C compiler, run
+`pwsh -File scripts/test_issue_1322.ps1` to capture native debug/release results.
 
 ## Candidate not yet included
 

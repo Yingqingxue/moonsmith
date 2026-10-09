@@ -32,6 +32,7 @@ jobs:
           moon test --target wasm-gc --deny-warn
           gcc --version
           moon test --target native --deny-warn
+          pwsh -NoProfile -File scripts/test_issue_1322.ps1
 
       - name: Check historical MoonBit coverage ICE regression
         run: |
@@ -69,6 +70,7 @@ jobs:
           path: |
             .moonsmith/runs/
             .moonsmith/reduced/injected/
+            .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30
 
@@ -100,6 +102,7 @@ jobs:
         run: |
           moon check --deny-warn
           moon test --target native --deny-warn
+          pwsh -NoProfile -File scripts/test_issue_1322.ps1
           ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('native') -TimeoutSeconds 60 -NoPersist
 
       - name: Smoke-test Windows native generated programs
@@ -120,6 +123,8 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: moonsmith-windows-native-report
-          path: .moonsmith/runs/
+          path: |
+            .moonsmith/runs/
+            .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30
