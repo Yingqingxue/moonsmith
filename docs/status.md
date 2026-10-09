@@ -134,8 +134,8 @@ single-person; no second team member is recorded.
 
 ## Native backend status and local environment limitation
 
-The `native` target cannot be tested on this workstation because no system C
-compiler (`cc`, `gcc`, or `clang`) is installed. It is now validated remotely:
+The `native` target cannot be tested on this workstation because no compatible
+system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. It is now validated remotely:
 GitHub Actions run `37968510482` for commit `90e0395` passed native package
 tests, the probe-specific four-target reducer replay, and a 10-seed full-matrix
 batch (seeds 0–9, depth 4): ten distinct program bodies, 40 executions across

@@ -37,7 +37,7 @@ if (-not $minimalSource.Contains('(if')) {
 }
 
 $valtypeTargets = @('js', 'wasm', 'wasm-gc')
-if ($null -ne (Get-Command cc, gcc, clang -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
     $valtypeTargets += 'native'
 }
 

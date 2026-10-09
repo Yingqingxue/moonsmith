@@ -164,13 +164,13 @@ if (-not $SourcePath) {
 
 $runs = foreach ($target in $Targets) {
     $missingNativeCompiler = $target -eq 'native' -and
-        $null -eq (Get-Command cc, gcc, clang -ErrorAction SilentlyContinue | Select-Object -First 1)
+        $null -eq (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)
 
     if ($missingNativeCompiler) {
         $status = 'unavailable'
         $exitCode = -1
         $output = ''
-        $errorOutput = 'native backend unavailable: no system C compiler found (cc, gcc, or clang)'
+        $errorOutput = 'native backend unavailable: no compatible C compiler found (cl, clang-cl, gcc, clang, or cc)'
         $durationMs = 0
     }
     else {
