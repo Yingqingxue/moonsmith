@@ -27,6 +27,7 @@ pub(all) enum Expr {
   ChoiceValue(ValueType, Expr)
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
   FunctionApply(ValueType, String, Expr, Expr)
+  ForLoop(Int, Expr, Expr)
 }
 
 ///|
@@ -90,6 +91,28 @@ fn bool_leaf(seed : Int) -> Expr {
 }
 
 ///|
+/// Generate a bounded loop whose two loop variables are updated together.
+/// The body uses both the current index and accumulator, exercising MoonBit's
+/// loop-carried value semantics without allowing an unbounded test case.
+fn generate_for_loop(seed : Int, depth : Int) -> Expr {
+  let index_name = "_ms_index"
+  let accumulator_name = "_ms_acc"
+  let index = Variable(IntType, index_name)
+  let accumulator = Variable(IntType, accumulator_name)
+  let extra = generate_expr(child_seed(seed, 53), IntType, depth - 1)
+  let delta = if advance_seed(child_seed(seed, 54)) % 2 == 0 {
+    Add(index, extra)
+  } else {
+    Subtract(extra, index)
+  }
+  ForLoop(
+    advance_seed(child_seed(seed, 51)) % 6,
+    generate_expr(child_seed(seed, 52), IntType, depth - 1),
+    Add(accumulator, delta),
+  )
+}
+
+///|
 /// Generate an expression of exactly the requested type.
 pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
   if depth <= 0 {
@@ -100,7 +123,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
     }
   } else {
     // Two steps break the parity correlation between result type and branch.
-    let choice = advance_seed(advance_seed(seed)) % 10
+    let choice = advance_seed(advance_seed(seed)) % 11
     match expected {
       IntType =>
         match choice {
@@ -195,6 +218,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               ),
             )
           }
+          9 => generate_for_loop(seed, depth)
           _ => {
             let name = "p" + depth.to_string()
             FunctionApply(
@@ -281,6 +305,11 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               ),
             )
           }
+          9 =>
+            LessThan(
+              generate_for_loop(seed, depth),
+              generate_expr(child_seed(seed, 55), IntType, depth - 1),
+            )
           _ => {
             let name = "p" + depth.to_string()
             FunctionApply(
@@ -325,6 +354,7 @@ pub fn Expr::value_type(self : Expr) -> ValueType {
     ChoiceValue(_, _) => ChoiceType
     MatchChoice(result_type, _, _, _, _, _) => result_type
     FunctionApply(result_type, _, _, _) => result_type
+    ForLoop(_, _, _) => IntType
   }
 }
 
@@ -353,6 +383,8 @@ fn Expr::contains_struct(self : Expr) -> Bool {
       first.contains_struct() || second.contains_struct()
     FunctionApply(_, _, argument, body) =>
       argument.contains_struct() || body.contains_struct()
+    ForLoop(_, initial, body) =>
+      initial.contains_struct() || body.contains_struct()
   }
 }
 
@@ -378,6 +410,8 @@ fn Expr::contains_choice(self : Expr) -> Bool {
       number.contains_choice() || flag.contains_choice()
     FunctionApply(_, _, argument, body) =>
       argument.contains_choice() || body.contains_choice()
+    ForLoop(_, initial, body) =>
+      initial.contains_choice() || body.contains_choice()
   }
 }
 
@@ -479,6 +513,14 @@ pub fn Expr::to_source(self : Expr) -> String {
       argument.to_source() +
       ")\n  })"
     }
+    ForLoop(iterations, initial, body) =>
+      "({\n    for _ms_index = 0, _ms_acc = " +
+      initial.to_source() +
+      "; _ms_index < " +
+      iterations.to_string() +
+      "; _ms_index = _ms_index + 1, _ms_acc = " +
+      body.to_source() +
+      " {\n    } nobreak {\n      _ms_acc\n    }\n  })"
   }
 }
 

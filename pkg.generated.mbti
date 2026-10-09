@@ -52,6 +52,7 @@ pub(all) enum Expr {
   ChoiceValue(ValueType, Expr)
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
   FunctionApply(ValueType, String, Expr, Expr)
+  ForLoop(Int, Expr, Expr)
 }
 pub fn Expr::complexity(Self) -> Int
 pub fn Expr::evaluate(Self) -> EvaluatedValue

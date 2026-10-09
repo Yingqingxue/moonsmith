@@ -168,3 +168,24 @@ test "function reduction never exposes its bound parameter" {
   )
   assert_eq(identity.shrink_candidates()[0].to_source(), "7")
 }
+
+///|
+test "for-loop reduction preserves bound variables and result type" {
+  let expression = @moonsmith.ForLoop(
+    3,
+    IntLiteral(9),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_eq(candidates[0].to_source(), "9")
+  assert_true(candidates.length() > 1)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    match candidate.value_type() {
+      IntType => ()
+      BoolType | ChoiceType => abort("for-loop reducer changed result type")
+    }
+  }
+  let reduced_loop = candidates[1].to_source()
+  assert_true(reduced_loop.contains("for _ms_index"))
+}

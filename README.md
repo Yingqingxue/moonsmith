@@ -65,6 +65,9 @@ addition, subtraction, comparisons, short-circuit conjunction, negation,
 conditional expressions, boolean and tagged-enum pattern matching, scoped
 `let` bindings, two-element arrays with safe constant indexing, two-field
 structs, and typed local function application with captured outer bindings.
+It also generates bounded `for` loops with an index and accumulator updated
+together, and models loop-carried values in the reference evaluator and AST
+reducer.
 The reducer works on generated ASTs and verifies candidates against the
 original backend relationship. Arbitrary MoonBit source reduction is not
 implemented yet.

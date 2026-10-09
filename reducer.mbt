@@ -29,6 +29,8 @@ pub fn Expr::complexity(self : Expr) -> Int {
       flag_body.complexity()
     FunctionApply(_, _, argument, body) =>
       1000 + argument.complexity() + body.complexity()
+    ForLoop(iterations, initial, body) =>
+      1000 + iterations + initial.complexity() + body.complexity()
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
@@ -77,6 +79,9 @@ fn Expr::uses_variable(self : Expr, name : String) -> Bool {
     FunctionApply(_, parameter_name, argument, body) =>
       argument.uses_variable(name) ||
       (parameter_name != name && body.uses_variable(name))
+    ForLoop(_, initial, body) =>
+      initial.uses_variable(name) ||
+      (name != "_ms_index" && name != "_ms_acc" && body.uses_variable(name))
   }
 }
 
@@ -238,6 +243,30 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
           candidates,
           original_complexity,
           FunctionApply(result_type, name, argument, smaller),
+        )
+      }
+    }
+    ForLoop(iterations, initial, body) => {
+      push_if_smaller(candidates, original_complexity, initial)
+      if iterations > 0 {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ForLoop(0, initial, body),
+        )
+      }
+      for smaller in initial.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ForLoop(iterations, smaller, body),
+        )
+      }
+      for smaller in body.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ForLoop(iterations, initial, smaller),
         )
       }
     }

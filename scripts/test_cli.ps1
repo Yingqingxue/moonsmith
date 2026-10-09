@@ -10,7 +10,8 @@ if (-not $doctor.ready -or $LASTEXITCODE -ne 0) {
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 3 -or $batch.casesWithChoiceMatch -lt 1) {
+    $batch.schemaVersion -lt 4 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1) {
     throw 'fuzz did not return a clean two-seed batch.'
 }
 

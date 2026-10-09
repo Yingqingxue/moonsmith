@@ -122,3 +122,19 @@ test "generated corpus exercises both tagged enum payloads and match arms" {
   }
   assert_true(number_case && flag_case && number_payload && flag_payload)
 }
+
+///|
+test "generated corpus contains bounded integer loops" {
+  let mut has_loop = false
+  let mut compares_loop_result = false
+  for seed = 0; seed < 100; seed = seed + 1 {
+    let source = @moonsmith.generate_program(seed, 4).to_source()
+    if source.contains("for _ms_index = 0, _ms_acc =") {
+      has_loop = true
+    }
+    if source.contains("nobreak") && source.contains("_ms_index <") {
+      compares_loop_result = true
+    }
+  }
+  assert_true(has_loop && compares_loop_result)
+}

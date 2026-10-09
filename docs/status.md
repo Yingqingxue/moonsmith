@@ -318,3 +318,30 @@ not backend runtime coverage. The scan took 611,465 ms on this workstation and
 is not a controlled benchmark. Report:
 `.moonsmith/runs/batch_20261009_105218_451.json`. No real compiler defect was
 found.
+
+## Bounded `for` expressions with loop-carried state
+
+The typed IR and generator now include bounded `for` expressions with an
+integer index and accumulator updated simultaneously. Each generated loop runs
+0–5 iterations; its update expression reads both the current index and
+accumulator. The MoonBit printer emits the loop as an integer-valued expression
+with a `nobreak` result. The reference evaluator models loop-variable scope,
+accumulator updates, zero-iteration exit, and records `for-loop`,
+`for-iteration`, and `for-normal-exit` trace events. The reducer can remove the
+loop, reduce its bound to zero, and simplify its initializer or body while
+preserving result type and loop-variable scope.
+
+All 54 tests pass on each of `js`, `wasm`, and `wasm-gc`; static checks and
+reference, reducer, and CLI integration checks pass. The CLI integration batch
+confirms generated loops and dynamically executed iterations are included in
+the JSON summary. A fixed 100-seed depth-4 scan on MoonBit
+`0.1.20260920 (914d7da 2026-09-20)` completed 100 reference checks and 300
+backend executions across `js`, `wasm`, and `wasm-gc`. All cases were
+consistent, with 100 unique program bodies, zero harness errors, and an
+unchanged harness digest. Loops appeared in 78 generated sources; the reference
+interpreter evaluated a loop expression in 68 cases and executed at least one
+iteration in 60 cases. These are source and reference-interpreter counts, not
+backend runtime coverage. The scan took 602,802 ms, not a controlled
+performance benchmark. Report:
+`.moonsmith/runs/batch_20261009_113414_316.json`. No real MoonBit compiler
+defect was found.

@@ -147,6 +147,19 @@ fn Expr::evaluate_in_env(
       scoped.push((name, argument.evaluate_in_env(bindings, trace)))
       body.evaluate_in_env(scoped, trace)
     }
+    ForLoop(iterations, initial, body) => {
+      trace.push("for-loop")
+      let mut accumulator = initial.evaluate_in_env(bindings, trace).as_int()
+      for index = 0; index < iterations; index = index + 1 {
+        trace.push("for-iteration")
+        let scoped = bindings.copy()
+        scoped.push(("_ms_index", IntValue(index)))
+        scoped.push(("_ms_acc", IntValue(accumulator)))
+        accumulator = body.evaluate_in_env(scoped, trace).as_int()
+      }
+      trace.push("for-normal-exit")
+      IntValue(accumulator)
+    }
     Add(left, right) => {
       trace.push("add")
       IntValue(

@@ -199,3 +199,31 @@ test "function application binds parameters and captures outer values" {
   assert_true(boolean.to_source().contains("fn(flag : Bool)"))
   assert_true(boolean.to_source().contains("transform(true)"))
 }
+
+///|
+test "bounded for loop updates index and accumulator together" {
+  let expression = @moonsmith.ForLoop(
+    3,
+    IntLiteral(10),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let (value, trace) = expression.evaluate_with_trace()
+  assert_eq(value.to_output(), "13")
+  assert_true(trace.contains("for-loop"))
+  assert_true(trace.contains("for-iteration"))
+  assert_true(trace.contains("for-normal-exit"))
+  assert_true(expression.to_source().contains("_ms_index < 3"))
+  assert_true(expression.to_source().contains("nobreak"))
+}
+
+///|
+test "bounded for loop with zero iterations returns its initial accumulator" {
+  let expression = @moonsmith.ForLoop(
+    0,
+    IntLiteral(-4),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let (value, trace) = expression.evaluate_with_trace()
+  assert_eq(value.to_output(), "-4")
+  assert_true(!trace.contains("for-iteration"))
+}
