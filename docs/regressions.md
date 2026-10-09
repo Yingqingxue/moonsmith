@@ -123,6 +123,16 @@ With a compatible C compiler, run
 
 ## Candidate not yet included
 
+[moonbitlang/moonbit-docs#1272](https://github.com/moonbitlang/moonbit-docs/issues/1272)
+reports a Wasm `moon check` ICE on macOS arm64 with MoonBit `0.1.20260618` /
+`moonc v0.10.1`; the reporter could not reduce the linked project, and an
+upstream maintainer suggested keeping files below 16,383 lines as a workaround.
+This is relevant context for MoonSmith's conservative 16,300-line generated-
+source guard, but it is not a regression fixture: the available project is not
+a small self-contained reproducer, the issue predates the current toolchain,
+and current behavior on the reported platform has not been checked. Do not
+present the guard or this historical report as a MoonSmith discovery.
+
 [moonbitlang/core#1594](https://github.com/moonbitlang/core/issues/1594) reported
 undefined-behavior-sanitizer findings in generated C for signed integer
 overflow in the native backend; GitHub's issue API reports it closed since
