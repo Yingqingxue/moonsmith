@@ -9,12 +9,13 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Sixty-nine main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
+- Seventy main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
   reference, reducer, and CLI integration scripts also pass after the added
   report/JSON and variable-scope cases.
 - Signed-`Int` seed boundary checks now cover `-2147483648` and `2147483647`,
   including normalization, Park–Miller advancement, child seeds, deterministic
-  generation, and result typing. After adding these cases, 69/69 package tests
+  generation, and result typing. Standard Park–Miller vectors are also pinned
+  by white-box tests. After adding these cases, 70/70 package tests
   pass on each of `js`, `wasm`, and `wasm-gc`; the CLI integration also
   differentially checks the minimum, `-1`, and maximum seeds across JS, Wasm,
   Wasm-GC, and (on Windows CI) native. This workstation has no compatible C

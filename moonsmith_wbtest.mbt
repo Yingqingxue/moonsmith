@@ -19,6 +19,13 @@ test "seed normalization and stepping cover signed Int boundaries" {
 }
 
 ///|
+test "Park-Miller stepping matches known vectors" {
+  assert_eq(advance_seed(1), 48271)
+  assert_eq(advance_seed(48271), 182605794)
+  assert_eq(advance_seed(2147483646), 2147435376)
+}
+
+///|
 test "leaf values stay in their intended small domain" {
   for seed = -1000; seed < 1000; seed = seed + 1 {
     match int_leaf(seed) {
