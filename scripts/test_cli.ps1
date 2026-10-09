@@ -64,6 +64,26 @@ elseif ($nativeReleaseExitCode -ne 0 -or
     throw 'native-release with a compatible C toolchain did not pass the differential probe.'
 }
 
+$releaseBatchRaw = & $cli fuzz -SeedStart 0 -Count 1 -Depth 0 `
+    -Targets @('native-release')
+$releaseBatchExitCode = $LASTEXITCODE
+$releaseBatch = $releaseBatchRaw | ConvertFrom-Json
+if ($releaseBatch.count -ne 1 -or
+    $releaseBatch.targets.Count -ne 1 -or
+    $releaseBatch.targets[0] -ne 'native-release') {
+    throw 'fuzz did not preserve native-release through the batch CLI.'
+}
+if ($null -eq $nativeCompiler) {
+    if ($releaseBatchExitCode -ne 1 -or
+        $releaseBatch.counts.'environment-failure' -ne 1) {
+        throw 'native-release batch without a C toolchain was not classified as an environment failure.'
+    }
+}
+elseif ($releaseBatchExitCode -ne 0 -or
+    $releaseBatch.counts.consistent -ne 1) {
+    throw 'native-release batch with a compatible C toolchain did not pass.'
+}
+
 $boundaryTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne $nativeCompiler) {
     $boundaryTargets += 'native'
@@ -148,6 +168,7 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     nativeFinding = $native.finding
     nativeReleaseFinding = $nativeRelease.finding
     nativeReleaseBuildMode = $nativeRelease.runs[0].buildMode
+    nativeReleaseBatchFinding = if ($null -eq $nativeCompiler) { 'environment-failure' } else { 'consistent' }
     boundarySeeds = $boundaryResults
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies
