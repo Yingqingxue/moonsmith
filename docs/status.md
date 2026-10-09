@@ -24,6 +24,16 @@ single-person; no second team member is recorded.
   may include both). Raw report: `.moonsmith/runs/batch_20261009_142423_321.json`
   (local, ignored). These path counts are interpreter traces, not backend
   runtime instrumentation.
+- A separate depth-5 Wasm-only scan of seeds 1000–1299 completed 300 reference
+  checks and executions in 947,698 ms: all were consistent, with 300 unique
+  bodies and an unchanged harness digest. The probe appeared in 201 sources;
+  interpreter traces visited it in 140 cases (success 85, error 75; overlap
+  possible). Combined with the depth-4/5 full-matrix runs above, the three
+  scans cover 500 distinct program bodies, 500 reference checks, and 900
+  backend executions, all consistent. Raw report:
+  `.moonsmith/runs/batch_20261009_143600_489.json` (local, ignored).
+  Reproduction commands and combined summary are tracked in
+  [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
