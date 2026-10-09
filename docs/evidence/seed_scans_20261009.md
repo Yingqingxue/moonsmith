@@ -76,15 +76,21 @@ discovery rate. No compiler defect was found in these runs.
 
 ## Windows native CI scan
 
-GitHub Actions run [37973349079](https://github.com/Yingqingxue/moonsmith/actions/runs/37973349079)
-for commit `d0e418d` passed both Linux and Windows jobs. On `windows-latest`,
+GitHub Actions run [37973978393](https://github.com/Yingqingxue/moonsmith/actions/runs/37973978393)
+for commit `7001786` passed both Linux and Windows jobs. On `windows-latest`,
 MSVC `cl.exe` was configured and the native package tests passed. The retained
 artifact `moonsmith-windows-native-report` contains a depth-6 native scan of
-seeds 9000–9029: 30 unique program bodies, 30 reference checks, 30 consistent
-native executions, zero unexpected findings, and an unchanged harness digest.
-The probe appeared in 25 generated sources. The reference interpreter visited
-the modeled success path in 12 cases and error path in 14 (overlap possible);
-these are not backend runtime branch counts. No compiler defect was found.
+seeds 9000–9099: 100 unique program bodies (also independently confirmed from
+the report's SHA-256 body hashes), 100 reference checks, 100 consistent native
+executions, zero unexpected findings, and an unchanged harness digest. The
+probe appeared in 89 generated sources. The reference interpreter visited the
+modeled success path in 43 cases and error path in 39 (overlap possible); these
+are not backend runtime branch counts. No compiler defect was found.
+
+The preceding run [37973349079](https://github.com/Yingqingxue/moonsmith/actions/runs/37973349079)
+scanned seeds 9000–9029 (30/30 consistent); the expanded 100-seed run repeats
+those seeds and should not be added to the earlier 1,250 unique-body
+JS/Wasm/Wasm-GC totals.
 
 The first attempt at this scan (run `37971881681`, commit `f772858`) did not
 reach native compilation: a cold Windows generator startup exceeded the

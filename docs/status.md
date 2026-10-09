@@ -136,25 +136,28 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no compatible
 system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
-latest GitHub Actions run `37973349079` for commit `d0e418d` passed both Linux
+latest GitHub Actions run `37973978393` for commit `7001786` passed both Linux
 and Windows jobs. The Windows job configured MSVC, found `cl.exe`, passed
-`moon test --target native`, ran a 30-seed depth-6 native differential scan
-(seeds 9000–9029), and passed reference/reducer/CLI integration. Its retained
-artifact reports 30 distinct program bodies, 30 reference checks, 30
-consistent native executions, zero unexpected findings, an unchanged harness
-digest, and the `#valtype`/`raise` probe in 25 sources. Reference traces visited
-both modeled success (12 cases) and error (14 cases) paths; these counts are
-not native runtime instrumentation. The same workflow's cold Windows
+`moon test --target native`, ran a 100-seed depth-6 native differential scan
+(seeds 9000–9099), and passed reference/reducer/CLI integration. Its retained
+artifact reports 100 distinct program bodies (verified again by body hashes),
+100 reference checks, 100 consistent native executions, zero unexpected
+findings, and an unchanged harness digest. The `#valtype`/`raise` probe appeared
+in 89 sources; reference traces visited modeled success (43 cases) and error
+(39 cases) paths; these counts are not native runtime instrumentation. The
+same workflow's cold Windows
 generator timeout was corrected by increasing its per-seed budget from 10 to
 60 seconds; the previous allowance expired before seed 0 could be generated
 on a clean runner. The Linux job continues to cover the four-target smoke
-batch and probe-specific reducer. Run `37967661714` verified
+batch and probe-specific reducer. The preceding run `37973349079` verified 30
+native seeds; run `37967661714` verified
 a 10-seed full-matrix batch (seeds 0–9, depth 4): ten distinct program bodies,
 40 executions across JS/Wasm/Wasm-GC/native, ten consistent cases, no findings,
 and an unchanged harness digest. The uploaded batch and reduction reports were
-inspected directly. This small CI batch is separate from the 1,250-case scan
-documented below; local native replay still requires an appropriate C
-toolchain. Native randomized coverage is still small (30 seeds). The pinned
+inspected directly. These CI batches are separate from the 1,250-case
+JS/Wasm/Wasm-GC scan documented below; local native replay still requires an
+appropriate C toolchain. Native randomized coverage is useful but still limited
+to 100 seeds. The pinned
 MSVC setup action currently emits a Node 20 deprecation warning while
 successfully running under Node 24 compatibility mode; monitor for an upstream
 action update.
