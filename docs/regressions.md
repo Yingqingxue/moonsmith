@@ -82,6 +82,11 @@ construct may stop testing the original result-lowering path.
   classifications. This difference is observed, not yet explained. This
   workstation has no compatible C compiler, so only Wasm-GC has been checked
   locally.
+- The script also sends the checked-in source and the upstream-reported
+  expected output to `verify_seed.ps1`, exercising MoonSmith's existing
+  differential classification and persisting its per-target status in the
+  evidence JSON. That expected value is supplied by the upstream reproducer;
+  this fixture does not invoke MoonSmith's AST reference evaluator.
 - Scope: this is an upstream-reported unsupported lowering path, not a
   MoonSmith-discovered defect and not necessarily a language-contract violation.
   It tests whether the toolchain fails internally instead of issuing a normal

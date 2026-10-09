@@ -95,6 +95,42 @@ if ($null -ne $nativeCompiler) {
     }
 }
 
+$verifyScript = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'verify_seed.ps1'))
+$sourcePath = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $repro))
+$verifyForCommand = $verifyScript.Replace("'", "''")
+$sourceForCommand = $sourcePath.Replace("'", "''")
+$expectedForOracle = "$expectedOutput`n"
+$expectedBase64 = [System.Convert]::ToBase64String(
+    [System.Text.Encoding]::UTF8.GetBytes($expectedForOracle)
+)
+$oracleCommand = "`$expected = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('$expectedBase64')); & '$verifyForCommand' -Seed 0 -Depth 0 -Targets @('native','wasm-gc') -TimeoutSeconds 180 -SourcePath '$sourceForCommand' -ExpectedOutput `$expected -NoPersist"
+$oracleRaw = & pwsh -NoProfile -Command $oracleCommand
+$oracleExitCode = $LASTEXITCODE
+if ($oracleExitCode -notin @(0, 1)) {
+    throw "MoonSmith's differential verifier exited unexpectedly: $oracleExitCode"
+}
+$oracleReport = $oracleRaw | ConvertFrom-Json
+$oracleNativeRun = $oracleReport.runs | Where-Object target -eq 'native' | Select-Object -First 1
+$oracleWasmGcRun = $oracleReport.runs | Where-Object target -eq 'wasm-gc' | Select-Object -First 1
+if ($null -eq $oracleNativeRun -or $null -eq $oracleWasmGcRun -or
+    $oracleWasmGcRun.status -ne 'succeeded' -or
+    $oracleWasmGcRun.output.Trim() -ne $expectedOutput) {
+    throw "MoonSmith's differential verifier did not retain the expected Wasm-GC control."
+}
+if ($null -eq $nativeCompiler) {
+    if ($oracleNativeRun.status -ne 'unavailable') {
+        throw 'MoonSmith did not classify native as unavailable without a C compiler.'
+    }
+} elseif ($nativeDebugClassification -eq 'upstream-issue-signature-reproduced') {
+    if ($oracleNativeRun.status -ne 'compile-failed' -or
+        $oracleNativeRun.error -notmatch 'uninitialized non-null GC ref arrays are not lowered') {
+        throw "MoonSmith's verifier did not classify the known native debug failure as a compile failure."
+    }
+} elseif ($oracleNativeRun.status -ne 'succeeded' -or
+    $oracleNativeRun.output.Trim() -ne $expectedOutput) {
+    throw "MoonSmith's verifier did not retain the expected native output on this runner."
+}
+
 $result = [pscustomobject]@{
     upstreamIssue = 1322
     sourceIssue = 'https://github.com/moonbitlang/moonbit-docs/issues/1322'
@@ -106,6 +142,11 @@ $result = [pscustomobject]@{
     nativeReleaseClassification = $nativeReleaseClassification
     nativeReleaseExitCode = if ($nativeRelease) { $nativeRelease.exitCode } else { $null }
     wasmGcExitCode = $wasmGc.exitCode
+    moonSmithOracleFinding = $oracleReport.finding
+    moonSmithOracleExpectedOutputChecked = $oracleReport.referenceChecked
+    moonSmithOracleNativeStatus = $oracleNativeRun.status
+    moonSmithOracleWasmGcStatus = $oracleWasmGcRun.status
+    moonSmithOracleExpectedOutputSource = 'Explicitly recorded by upstream issue #1322; not produced by the MoonSmith reference evaluator.'
     expectedOutput = @('0', 'x')
     outputSource = 'External upstream reproducer; not discovered by MoonSmith.'
 }

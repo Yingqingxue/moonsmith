@@ -184,6 +184,10 @@ not reproduce the ICE and returned the expected output; release and Wasm-GC
 also passed. The runner difference is observed but unexplained, not evidence
 that the upstream report is fixed. Local native replay is unavailable without
 a C compiler.
+The fixture's latest harness version also passes the source and upstream-known
+expected output through `verify_seed.ps1`, validating the existing Oracle's
+per-target classification; because the expected value is supplied externally,
+this path does not use the MoonSmith AST reference evaluator.
 
 ## Current vertical slice
 
