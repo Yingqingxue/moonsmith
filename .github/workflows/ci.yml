@@ -1,0 +1,52 @@
+name: MoonSmith CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Show toolchain version
+        run: moon version --all
+
+      - name: Check and test all supported backends
+        run: |
+          moon check --deny-warn
+          moon test --target js --deny-warn
+          moon test --target wasm --deny-warn
+          moon test --target wasm-gc --deny-warn
+
+      - name: Check reference and reducer integration
+        shell: pwsh
+        run: |
+          ./scripts/test_reference.ps1
+          ./scripts/test_reducer.ps1
+          ./scripts/test_cli.ps1
+
+      - name: Smoke-test generated programs
+        shell: pwsh
+        run: |
+          ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4
+
+      - name: Preserve smoke-test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moonsmith-smoke-report
+          path: .moonsmith/runs/
+          if-no-files-found: ignore

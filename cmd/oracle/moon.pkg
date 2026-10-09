@@ -1,0 +1,7 @@
+import {
+  "Yingqingxue/moonsmith" @lib,
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+}
+
+pkgtype(kind: "executable")

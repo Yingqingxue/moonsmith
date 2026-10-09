@@ -1,0 +1,114 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Yingqingxue/moonsmith"
+
+// Values
+pub fn analyze_results(Array[RunResult], expected_output? : String) -> DifferentialReport
+
+pub fn generate_expr(Int, ValueType, Int) -> Expr
+
+pub fn generate_program(Int, Int) -> Program
+
+pub fn json_escape(String) -> String
+
+pub fn normalize_stderr(String, diagnostic_root? : String, diagnostic_case? : String) -> String
+
+pub fn normalize_stdout(String) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct DifferentialReport {
+  kind : FindingKind
+  signature : String
+  results : Array[RunResult]
+  expected_output : String
+}
+pub fn DifferentialReport::reduction_key(Self) -> String
+pub fn DifferentialReport::summary_json(Self) -> String
+
+pub(all) enum EvaluatedValue {
+  IntValue(Int)
+  BoolValue(Bool)
+  ChoiceNumberValue(Int)
+  ChoiceFlagValue(Bool)
+}
+pub fn EvaluatedValue::to_output(Self) -> String
+
+pub(all) enum Expr {
+  IntLiteral(Int)
+  BoolLiteral(Bool)
+  Variable(ValueType, String)
+  Add(Expr, Expr)
+  Subtract(Expr, Expr)
+  And(Expr, Expr)
+  LessThan(Expr, Expr)
+  EqualInt(Expr, Expr)
+  Not(Expr)
+  If(ValueType, Expr, Expr, Expr)
+  MatchBool(ValueType, Expr, Expr, Expr)
+  Let(ValueType, String, Expr, Expr)
+  ArraySelect(ValueType, Expr, Expr, Bool)
+  StructSelect(ValueType, Expr, Expr)
+  ChoiceValue(ValueType, Expr)
+  MatchChoice(ValueType, Expr, String, Expr, String, Expr)
+  FunctionApply(ValueType, String, Expr, Expr)
+}
+pub fn Expr::complexity(Self) -> Int
+pub fn Expr::evaluate(Self) -> EvaluatedValue
+pub fn Expr::evaluate_with_trace(Self) -> (EvaluatedValue, Array[String])
+pub fn Expr::shrink_candidates(Self) -> Array[Self]
+pub fn Expr::to_source(Self) -> String
+pub fn Expr::value_type(Self) -> ValueType
+
+pub(all) enum FindingKind {
+  Consistent
+  CompileFailure
+  RuntimeFailure
+  Timeout
+  OutputMismatch
+  ReferenceMismatch
+  MixedFailure
+  EnvironmentFailure
+  NoResults
+}
+pub fn FindingKind::label(Self) -> String
+
+pub(all) struct Program {
+  seed : Int
+  result_type : ValueType
+  result : Expr
+}
+pub fn Program::candidates_json(Self) -> String
+pub fn Program::expected_output(Self) -> String
+pub fn Program::shrink_candidates(Self) -> Array[Self]
+pub fn Program::to_source(Self) -> String
+
+pub(all) struct RunResult {
+  target : String
+  status : RunStatus
+  exit_code : Int
+  stdout : String
+  stderr : String
+  duration_ms : Int
+  diagnostic_root : String
+  diagnostic_case : String
+}
+
+pub(all) enum RunStatus {
+  Succeeded
+  CompileFailed
+  RuntimeFailed
+  TimedOut
+  Unavailable
+}
+pub fn RunStatus::label(Self) -> String
+
+pub(all) enum ValueType {
+  IntType
+  BoolType
+  ChoiceType
+}
+
+// Type aliases
+
+// Traits
