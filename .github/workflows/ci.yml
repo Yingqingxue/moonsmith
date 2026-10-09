@@ -60,7 +60,7 @@ jobs:
           ./scripts/verify_seed.ps1 -Seed 6000 -Depth 8 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/verify_seed.ps1 -Seed 7000 -Depth 9 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/verify_seed.ps1 -Seed 8000 -Depth 10 -Targets @('js','wasm','wasm-gc') -NoPersist
-          ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4 -Targets @('js','wasm','wasm-gc','native')
+          ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4 -Targets @('js','wasm','wasm-gc','native','native-release')
 
       - name: Preserve smoke-test reports
         if: always()
@@ -108,7 +108,8 @@ jobs:
       - name: Smoke-test Windows native generated programs
         shell: pwsh
         run: |
-          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 100 -Depth 6 -Targets @('native') -TimeoutSeconds 60
+          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 10 -Depth 6 -Targets @('native','native-release') -TimeoutSeconds 60
+          ./scripts/run_batch.ps1 -SeedStart 9010 -Count 90 -Depth 6 -Targets @('native') -TimeoutSeconds 60
           ./scripts/run_batch.ps1 -SeedStart 9200 -Count 30 -Depth 8 -Targets @('native') -TimeoutSeconds 60
 
       - name: Check reference, reducer, and CLI integration
