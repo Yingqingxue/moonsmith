@@ -9,16 +9,16 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Sixty-seven main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
+- Sixty-nine main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
   reference, reducer, and CLI integration scripts also pass after the added
   report/JSON and variable-scope cases.
 - Signed-`Int` seed boundary checks now cover `-2147483648` and `2147483647`,
   including normalization, Park–Miller advancement, child seeds, deterministic
   generation, and result typing. After adding these cases, 69/69 package tests
   pass on each of `js`, `wasm`, and `wasm-gc`; the CLI integration also
-  differentially checks the minimum, `-1`, and maximum seeds across those three
-  backends. Windows CI additionally runs those seeds through native when MSVC
-  is available; this local workstation has no compatible C compiler.
+  differentially checks the minimum, `-1`, and maximum seeds across JS, Wasm,
+  Wasm-GC, and (on Windows CI) native. This workstation has no compatible C
+  compiler.
 - JS coverage analysis reports 17 uncovered defensive branches across the
   generator, oracle, reducer, and reference evaluator. Review shows these are
   invalid `ChoiceType`/scope states or an exhaustive-classification fallback,
@@ -143,28 +143,30 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no compatible
 system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
-latest completed GitHub Actions run `37975037019` for commit `6ce714a` passed both Linux
+latest completed GitHub Actions run `37977586946` for commit `9f54fb5` passed
+both Linux
 and Windows jobs. The Windows job configured MSVC, found `cl.exe`, passed
-`moon test --target native`, ran a 100-seed depth-6 native differential scan
-(seeds 9000–9099), and passed reference/reducer/CLI integration. Its retained
-artifact reports 100 distinct program bodies (verified again by body hashes),
-100 reference checks, 100 consistent native executions, zero unexpected
-findings, and an unchanged harness digest. The `#valtype`/`raise` probe appeared
-in 89 sources; reference traces visited modeled success (43 cases) and error
-(39 cases) paths; these counts are not native runtime instrumentation. The
-same workflow's cold Windows
+`moon test --target native`, ran a 100-seed depth-6 scan (seeds 9000–9099) and
+a 30-seed depth-8 scan (seeds 9200–9229), and passed reference/reducer/CLI
+integration. Retained artifacts report 130 distinct program bodies, 130
+reference checks, 130 consistent native executions, zero unexpected findings,
+and unchanged harness digests. The `#valtype`/`raise` probe appeared in 89
+depth-6 sources; reference traces visited modeled success (43 cases) and error
+(39 cases) paths. Every depth-8 source contained the probe; traces visited
+success (29 cases) and error (24 cases). These counts are not native runtime
+instrumentation. The same workflow's cold Windows
 generator timeout was corrected by increasing its per-seed budget from 10 to
 60 seconds; the previous allowance expired before seed 0 could be generated
 on a clean runner. The Linux job continues to cover the four-target smoke
-batch and probe-specific reducer. The preceding run `37973349079` verified 30
-native seeds; run `37967661714` verified
+batch and probe-specific reducer. Earlier runs independently verified the
+30-seed depth-6 native baseline; run `37967661714` verified
 a 10-seed full-matrix batch (seeds 0–9, depth 4): ten distinct program bodies,
 40 executions across JS/Wasm/Wasm-GC/native, ten consistent cases, no findings,
 and an unchanged harness digest. The uploaded batch and reduction reports were
 inspected directly. These CI batches are separate from the 1,250-case
 JS/Wasm/Wasm-GC scan documented below; local native replay still requires an
 appropriate C toolchain. Native randomized coverage is useful but still limited
-to 100 seeds. The pinned
+to 130 seeds (100 depth 6, 30 depth 8). The pinned
 MSVC setup action currently emits a Node 20 deprecation warning while
 successfully running under Node 24 compatibility mode; monitor for an upstream
 action update.

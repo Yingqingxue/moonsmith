@@ -33,7 +33,8 @@ compiles.
 ## Case 2: `#valtype` Double returned through `raise` on Wasm
 
 - Upstream report: [moonbitlang/moonbit-docs#1274](https://github.com/moonbitlang/moonbit-docs/issues/1274)
-- Reported: 2026-06-26; the issue is still open as of 2026-10-09.
+- Reported: 2026-06-26; GitHub's issue API still reports it open on
+  2026-10-10 (last updated 2026-07-01).
 - Reported symptom: Wasm validation fails when a `#valtype` struct whose first
   field is `Double` is returned from a `raise`-capable function and consumed via
   `try?`.
@@ -63,14 +64,15 @@ construct may stop testing the original result-lowering path.
 
 ## Candidate not yet included
 
-[moonbitlang/core#1594](https://github.com/moonbitlang/core/issues/1594) reports
+[moonbitlang/core#1594](https://github.com/moonbitlang/core/issues/1594) reported
 undefined-behavior-sanitizer findings in generated C for signed integer
-overflow in the native backend. The linked reproducer is a full third-party
-project, not a small self-contained source fixture; the report concerns native
-runtime semantics and does not directly match MoonSmith's current JS/wasm/
-wasm-gc matrix. Do not count it as a MoonSmith-detected bug or a validated
-regression until its source, license, exact toolchain, sanitizer setup, and
-current reproduction status are audited.
+overflow in the native backend; GitHub's issue API reports it closed since
+2025-02-11. The linked reproducer is a full third-party project, not a small
+self-contained source fixture; the report concerns native runtime semantics
+and does not directly match MoonSmith's current JS/wasm/wasm-gc matrix. It is
+not included as a regression because its source, license, exact toolchain,
+sanitizer setup, and current reproduction status have not been audited. It is
+not a MoonSmith-discovered bug.
 
 ## What this corpus can and cannot show
 

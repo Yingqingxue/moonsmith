@@ -1,6 +1,6 @@
 # Seeded differential scan evidence
 
-Date: 2026-10-09 (Asia/Shanghai)  
+Dates: 2026-10-09 to 2026-10-10 (Asia/Shanghai); GitHub runner-generated run IDs use UTC.
 Toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`  
 Harness digest: `cfe0663a2d37b86d00f63065b22555d60fff48623aab82dfdc6916ecf7cc6b67`
 at both the beginning and end of the first twelve selected runs. The two
@@ -76,8 +76,8 @@ discovery rate. No compiler defect was found in these runs.
 
 ## Windows native CI scan
 
-GitHub Actions run [37973978393](https://github.com/Yingqingxue/moonsmith/actions/runs/37973978393)
-for commit `7001786` passed both Linux and Windows jobs. On `windows-latest`,
+GitHub Actions run [37977586946](https://github.com/Yingqingxue/moonsmith/actions/runs/37977586946)
+for commit `9f54fb5` passed both Linux and Windows jobs. On `windows-latest`,
 MSVC `cl.exe` was configured and the native package tests passed. The retained
 artifact `moonsmith-windows-native-report` contains a depth-6 native scan of
 seeds 9000–9099: 100 unique program bodies (also independently confirmed from
@@ -87,10 +87,17 @@ probe appeared in 89 generated sources. The reference interpreter visited the
 modeled success path in 43 cases and error path in 39 (overlap possible); these
 are not backend runtime branch counts. No compiler defect was found.
 
-The preceding run [37973349079](https://github.com/Yingqingxue/moonsmith/actions/runs/37973349079)
-scanned seeds 9000–9029 (30/30 consistent); the expanded 100-seed run repeats
-those seeds and should not be added to the earlier 1,250 unique-body
-JS/Wasm/Wasm-GC totals.
+The 100-seed depth-6 run repeats seeds 9000–9029 from the preceding
+[30-seed scan](https://github.com/Yingqingxue/moonsmith/actions/runs/37973349079)
+and should not be added to the earlier 1,250 unique-body JS/Wasm/Wasm-GC totals.
+The same CI run also added a deeper native scan: seeds 9200–9229 at depth 8
+completed 30 reference checks and 30 consistent native executions in 59,285 ms,
+with zero unexpected findings and a stable harness digest. All 30 sources
+contained the probe; reference traces visited its modeled success path in 29
+cases and error path in 24 (overlap possible). Body-hash checks show these 30
+cases are distinct. Across both scans in run `37977586946`, 130 bodies were
+reference-checked and agreed with native. These two depth/seed cohorts are not a
+substitute for broader native fuzzing.
 
 The first attempt at this scan (run `37971881681`, commit `f772858`) did not
 reach native compilation: a cold Windows generator startup exceeded the
