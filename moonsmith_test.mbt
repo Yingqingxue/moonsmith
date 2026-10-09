@@ -153,3 +153,12 @@ test "generated boolean corpus exercises valtype raise probes" {
   }
   assert_true(has_probe && has_scaffold)
 }
+
+///|
+test "valtype raise support declarations are emitted only when needed" {
+  let probe_program = @moonsmith.generate_program(0, 4).to_source()
+  let ordinary_program = @moonsmith.generate_program(0, 0).to_source()
+  assert_true(probe_program.contains("#valtype\npriv struct MoonSmithValtype"))
+  assert_true(!ordinary_program.contains("#valtype"))
+  assert_true(!ordinary_program.contains("_ms_valtype_run"))
+}
