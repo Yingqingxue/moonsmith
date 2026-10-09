@@ -14,10 +14,11 @@ at both the beginning and end of every run.
 | `20261009_143600_489` | 1000–1299 | 5 | Wasm | 300 | 300 | 300 | 0 | 947,698 ms |
 | `20261009_150151_741` | 2000–2029 | 6 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 162,745 ms |
 | `20261009_150733_048` | 3000–3099 | 6 | Wasm | 100 | 100 | 100 | 0 | 310,515 ms |
-| **Combined** | — | — | — | **630** | **630** | **1,090** | **0** | **2,498,977 ms** |
+| `20261009_151606_796` | 4000–4029 | 7 | Wasm | 30 | 30 | 30 | 0 | 93,991 ms |
+| **Combined** | — | — | — | **660** | **660** | **1,120** | **0** | **2,592,968 ms** |
 
-The body hashes were compared across all five selected reports: all 630 program bodies
-were distinct. Every case was `consistent`; no compile/runtime failures,
+The body hashes were compared across all six selected reports: all 660 program
+bodies were distinct. Every case was `consistent`; no compile/runtime failures,
 timeouts, reference mismatches, output mismatches, or harness errors were
 reported.
 
@@ -33,6 +34,8 @@ reported.
   visited the probe in 21 cases (success 17, error 11; overlap is possible).
 - Depth-6 Wasm-only run: probe source in 89 cases; reference interpreter
   visited the probe in 69 cases (success 43, error 40; overlap is possible).
+- Depth-7 Wasm-only run: all 30 sources contained the probe; reference
+  interpreter visited it in 26 cases (success 19, error 19; overlap possible).
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -46,8 +49,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 1000 -Count 300 -Depth 5 -Targets @('wasm')
 ./scripts/run_batch.ps1 -SeedStart 2000 -Count 30 -Depth 6
 ./scripts/run_batch.ps1 -SeedStart 3000 -Count 100 -Depth 6 -Targets @('wasm')
+./scripts/run_batch.ps1 -SeedStart 4000 -Count 30 -Depth 7 -Targets @('wasm')
 ```
 
-The raw 100/100/300/30/100-case JSON reports are machine-local under
+The raw 100/100/300/30/100/30-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
