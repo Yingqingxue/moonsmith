@@ -73,6 +73,7 @@ original backend relationship. Arbitrary MoonBit source reduction is not
 implemented yet.
 
 See the [project plan](MoonSmith_项目计划书.md), [implementation status](docs/status.md),
+the [ecosystem comparison](docs/ecosystem_comparison.md),
 the [pre-review risk gate](docs/pre_review_gate.md), and
 [reduction design](docs/reduction.md).
 

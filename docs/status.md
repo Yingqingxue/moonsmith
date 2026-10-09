@@ -347,3 +347,15 @@ performance benchmark. Report:
 report and is not included in the public repository. Reproduce the scan with
 `pwsh -File scripts/run_batch.ps1 -SeedStart 0 -Count 100 -Depth 4`. No real
 MoonBit compiler defect was found.
+
+## Ecosystem comparison baseline
+
+A source-based comparison of Csmith, YARPGen, C-Reduce, and MoonBit QuickCheck
+is recorded in `docs/ecosystem_comparison.md`. It distinguishes the current
+MoonSmith implementation from unverified claims: the tool has a MoonBit-targeted
+typed generator, reference evaluator, three-backend comparison, and generated-AST
+reducer, but no proven real compiler bug, arbitrary-source reducer, or
+optimizer-directed generator. This is desk research, not an external review or
+a comparative effectiveness experiment. The next validation gap is a
+redistributable set of previously reported MoonBit compiler regressions and an
+external scope review.
