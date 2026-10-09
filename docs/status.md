@@ -100,6 +100,12 @@ single-person; no second team member is recorded.
   98 reference checks and 294 backend executions. Across thirteen selected
   runs, body hashes confirm 1,150 distinct bodies, 1,148 reference checks, and
   2,644 consistent backend executions; two size-limit cases remain explicit.
+- A second 100-seed depth-10 scan of seeds 8200–8299 (run
+  `20261009_171554_872`) completed 97 reference checks and 291 consistent
+  backend executions; three generated sources exceeded the 16,300-line bound
+  and were reported as `generator-limit` without compiling. Across fourteen
+  selected runs, hashes confirm 1,250 distinct bodies, 1,245 reference checks,
+  and 2,935 consistent backend executions, with five explicit size-limit cases.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as

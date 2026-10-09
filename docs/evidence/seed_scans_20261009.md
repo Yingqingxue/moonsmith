@@ -3,8 +3,8 @@
 Date: 2026-10-09 (Asia/Shanghai)  
 Toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`  
 Harness digest: `cfe0663a2d37b86d00f63065b22555d60fff48623aab82dfdc6916ecf7cc6b67`
-at both the beginning and end of the first twelve selected runs. The guarded
-depth-10 rerun uses digest
+at both the beginning and end of the first twelve selected runs. The two
+guarded depth-10 runs use digest
 `139408356f4636814ff028179bfcf3c351005ba761c052fbdc1eeaec71cfa23e`, also
 unchanged from start to end.
 
@@ -25,16 +25,18 @@ unchanged from start to end.
 | `20261009_161448_637` | 7100–7199 | 9 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 586,626 ms |
 | `20261009_162727_808` | 8000–8029 | 10 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 208,573 ms |
 | `20261009_165647_384` | 8100–8199 | 10 | JS, Wasm, Wasm-GC | 100 | 98 | 294 | 2 | 641,906 ms |
-| **Combined** | — | — | — | **1,150** | **1,148** | **2,644** | **2** | **5,534,132 ms** |
+| `20261009_171554_872` | 8200–8299 | 10 | JS, Wasm, Wasm-GC | 100 | 97 | 291 | 3 | 675,202 ms |
+| **Combined** | — | — | — | **1,250** | **1,245** | **2,935** | **5** | **6,209,334 ms** |
 
-The body hashes were compared across all thirteen selected reports: all 1,150
-program bodies were distinct. Of these, 1,148 completed reference and backend
-checks consistently. Two depth-10 sources (seeds 8163 and 8167) exceeded the
-runner's 16,300-line safety bound; an earlier unguarded scan showed MoonBit's
-`text_segment_excceed` diagnostic at line 16,384 on all three targets. The
-guarded rerun classified both as `generator-limit` before reference/backend
-execution. There were no backend disagreements, timeouts, reference mismatches,
-output mismatches, or harness errors.
+The body hashes were compared across all fourteen selected reports: all 1,250
+program bodies were distinct. Of these, 1,245 completed reference and backend
+checks consistently. Five depth-10 sources (seeds 8163, 8167, 8236, 8238, and
+8242) exceeded the runner's 16,300-line safety bound. An earlier unguarded scan
+showed MoonBit's `text_segment_excceed` diagnostic at line 16,384 for two such
+inputs on all three targets. The guarded runs classified all five as
+`generator-limit` before reference/backend execution. There were no backend
+disagreements, timeouts, reference mismatches, output mismatches, compiler
+failures, or harness errors.
 
 ## `#valtype`/`raise` probe observations
 
@@ -63,12 +65,10 @@ output mismatches, or harness errors.
 - Depth-9 full-matrix run (100 seeds): all 100 sources contained the probe;
   reference interpreter visited it in 96 cases (success 94, error 88; overlap
   possible).
-- Depth-10 full-matrix run: all 30 sources contained the probe; reference
-  interpreter visited it in all 30 cases (success 30, error 30; overlap
-  possible).
-- Depth-10 full-matrix run (100 seeds): all sources contained the probe; 98
-  reference traces visited it (success 98, error 98; overlap possible). The
-  two size-limited source cases were not interpreted or executed.
+- Depth-10 full-matrix runs (230 seeds): all sources contained the probe;
+  reference interpreter visited it in 224 cases (success 223, error 224;
+  overlap possible). Five size-limited source cases were not interpreted or
+  executed.
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -90,8 +90,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 7100 -Count 100 -Depth 9
 ./scripts/run_batch.ps1 -SeedStart 8000 -Count 30 -Depth 10
 ./scripts/run_batch.ps1 -SeedStart 8100 -Count 100 -Depth 10
+./scripts/run_batch.ps1 -SeedStart 8200 -Count 100 -Depth 10
 ```
 
-The raw 100/100/300/30/100/30/100/30/100/30/100/30/100-case JSON reports are machine-local under
+The raw 100/100/300/30/100/30/100/30/100/30/100/30/100/100-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
