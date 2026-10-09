@@ -91,9 +91,15 @@ single-person; no second team member is recorded.
   `20261009_162727_808`) completed 30 reference checks and 90 executions in
   208,573 ms; all cases were consistent and the harness digest stayed fixed.
   All sources contained the probe and reference traces visited it in all 30
-  cases (success 30, error 30; overlap possible). Across twelve selected runs,
-  body-hash comparison confirms 1,050 distinct bodies, 1,050 reference checks,
-  and 2,350 consistent backend executions.
+  cases (success 30, error 30; overlap possible).
+- A 100-seed depth-10 full-matrix scan of seeds 8100–8199 (run
+  `20261009_165647_384`) produced 98 fully consistent programs and two explicit
+  `generator-limit` results. Those two generated sources were 18,299 and 17,739
+  lines, exceeding the runner's safe 16,300-line source-segment limit; neither
+  was sent to the reference evaluator or a backend. The other 98 samples passed
+  98 reference checks and 294 backend executions. Across thirteen selected
+  runs, body hashes confirm 1,150 distinct bodies, 1,148 reference checks, and
+  2,644 consistent backend executions; two size-limit cases remain explicit.
   Reproduction commands and combined summary are tracked in
   [seed scan evidence](evidence/seed_scans_20261009.md).
 - An explicitly labelled injected difference on `wasm-gc` is classified as

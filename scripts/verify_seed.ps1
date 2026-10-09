@@ -113,7 +113,37 @@ if (-not $SourcePath) {
     }
 
     $source = $generation.stdout.TrimEnd() + "`n"
+    $sourceLineCount = [regex]::Matches($source, "`n").Count
+    $maxSourceLines = 16300
     Set-Content -LiteralPath $casePath -Value $source -Encoding utf8 -NoNewline
+    if ($sourceLineCount -gt $maxSourceLines) {
+        $sizeLimitReport = [pscustomobject]@{
+            schemaVersion = 3
+            caseId = $null
+            seed = $Seed
+            depth = $Depth
+            casePath = $casePath
+            finding = 'generator-limit'
+            signature = $null
+            reductionKey = $null
+            referenceChecked = $false
+            expectedOutput = $null
+            referenceTrace = $null
+            injection = $null
+            timeoutSeconds = $TimeoutSeconds
+            toolchainVersion = (& $moonExe version | Select-Object -First 1)
+            hostOS = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+            powerShellVersion = $PSVersionTable.PSVersion.ToString()
+            sourceSha256 = (Get-FileHash -LiteralPath $casePath -Algorithm SHA256).Hash.ToLowerInvariant()
+            sourceLineCount = $sourceLineCount
+            sourceLineLimit = $maxSourceLines
+            error = "Generated source exceeds the safe $maxSourceLines-line limit; MoonBit reports a text-segment limit at 16384 lines. Reduce -Depth."
+            savedTo = $null
+            runs = @()
+        }
+        $sizeLimitReport | ConvertTo-Json -Depth 3
+        return
+    }
 
     $referenceRun = Invoke-CapturedProcess -FilePath $moonExe `
         -Arguments @('run', '--target', 'js', 'cmd/main', [string]$Seed, [string]$Depth, '--expected') `

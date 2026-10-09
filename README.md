@@ -29,6 +29,9 @@ reference evaluator, differential oracle, and AST reducer are implemented in
 MoonBit. `fuzz` returns a JSON batch report and exits nonzero on an unexpected
 finding. `replay -CasePath PATH` takes a saved finding directory or its
 `report.json` and succeeds only if the finding and reduction key match again.
+Generated sources over 16,300 lines are reported as `generator-limit` and are
+not sent to the reference evaluator or compiler backends; `fuzz` still exits
+nonzero so the size bound stays visible in batch results.
 
 For a repeatable demonstration of fault detection and reduction (an explicitly
 injected fault, **not** a MoonBit compiler bug):
@@ -79,7 +82,7 @@ See the [project plan](MoonSmith_项目计划书.md), [implementation status](do
 the [ecosystem comparison](docs/ecosystem_comparison.md),
 the [historical regression corpus](docs/regressions.md),
 the [pre-review risk gate](docs/pre_review_gate.md), and
-[reduction design](docs/reduction.md). The reproducible 1,050-seed scan summary
+[reduction design](docs/reduction.md). The reproducible 1,150-program scan summary
 is in [seed scan evidence](docs/evidence/seed_scans_20261009.md).
 
 Licensed under Apache-2.0.

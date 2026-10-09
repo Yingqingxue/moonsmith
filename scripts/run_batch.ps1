@@ -59,6 +59,7 @@ $counts = [ordered]@{
     'mixed-failure'   = 0
     'environment-failure' = 0
     'no-results'      = 0
+    'generator-limit'  = 0
     'harness-error'   = 0
 }
 $cases = [System.Collections.Generic.List[object]]::new()
@@ -133,20 +134,29 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
             sourceConstructCounts = $sourceConstructCounts
             referencePathKinds = $referencePathKinds
             referencePath = $report.referenceTrace
+            error = $report.error
+            sourceLineCount = $report.sourceLineCount
+            sourceLineLimit = $report.sourceLineLimit
         })
     }
     catch {
-        $counts['harness-error']++
+        $errorMessage = $_.Exception.Message
+        $finding = if ($errorMessage -like 'MoonSmith generator-limit:*') {
+            'generator-limit'
+        } else {
+            'harness-error'
+        }
+        $counts[$finding]++
         $cases.Add([pscustomobject]@{
             seed       = $seed
-            finding    = 'harness-error'
+            finding    = $finding
             referenceChecked = $false
             expectedOutput = $null
             signature  = $null
             caseId     = $null
             exitCode   = -1
             durationMs = 0
-            error      = $_.Exception.Message
+            error      = $errorMessage
         })
     }
 }

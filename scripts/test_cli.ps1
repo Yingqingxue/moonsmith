@@ -18,6 +18,16 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     throw 'fuzz did not return a clean two-seed batch.'
 }
 
+$generatorLimitRaw = & $cli fuzz -SeedStart 8163 -Count 1 -Depth 10
+$generatorLimitExitCode = $LASTEXITCODE
+$generatorLimit = $generatorLimitRaw | ConvertFrom-Json
+if ($generatorLimitExitCode -ne 1 -or
+    $generatorLimit.counts.'generator-limit' -ne 1 -or
+    $generatorLimit.cases[0].finding -ne 'generator-limit' -or
+    $generatorLimit.cases[0].error -notmatch 'text-segment limit at 16384 lines') {
+    throw 'oversized generated source was not classified as generator-limit.'
+}
+
 $injected = (& $verify -Seed 0 -Depth 2 `
     -InjectOutputMismatchTarget wasm-gc `
     -InjectOnlyWhenSourceContains '(if' | ConvertFrom-Json)
@@ -44,6 +54,7 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     doctorReady = $doctor.ready
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies
+    generatorLimitCount = $generatorLimit.counts.'generator-limit'
     replayFinding = $replay.replayFinding
     reportPath = $rendered.reportPath
 } | ConvertTo-Json -Depth 3

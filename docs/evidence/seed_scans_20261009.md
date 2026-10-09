@@ -3,7 +3,10 @@
 Date: 2026-10-09 (Asia/Shanghai)  
 Toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`  
 Harness digest: `cfe0663a2d37b86d00f63065b22555d60fff48623aab82dfdc6916ecf7cc6b67`
-at both the beginning and end of every run.
+at both the beginning and end of the first twelve selected runs. The guarded
+depth-10 rerun uses digest
+`139408356f4636814ff028179bfcf3c351005ba761c052fbdc1eeaec71cfa23e`, also
+unchanged from start to end.
 
 ## Runs
 
@@ -21,12 +24,17 @@ at both the beginning and end of every run.
 | `20261009_161038_538` | 7000–7029 | 9 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 172,209 ms |
 | `20261009_161448_637` | 7100–7199 | 9 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 586,626 ms |
 | `20261009_162727_808` | 8000–8029 | 10 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 208,573 ms |
-| **Combined** | — | — | — | **1,050** | **1,050** | **2,350** | **0** | **4,892,226 ms** |
+| `20261009_165647_384` | 8100–8199 | 10 | JS, Wasm, Wasm-GC | 100 | 98 | 294 | 2 | 641,906 ms |
+| **Combined** | — | — | — | **1,150** | **1,148** | **2,644** | **2** | **5,534,132 ms** |
 
-The body hashes were compared across all twelve selected reports: all 1,050 program
-bodies were distinct. Every case was `consistent`; no compile/runtime failures,
-timeouts, reference mismatches, output mismatches, or harness errors were
-reported.
+The body hashes were compared across all thirteen selected reports: all 1,150
+program bodies were distinct. Of these, 1,148 completed reference and backend
+checks consistently. Two depth-10 sources (seeds 8163 and 8167) exceeded the
+runner's 16,300-line safety bound; an earlier unguarded scan showed MoonBit's
+`text_segment_excceed` diagnostic at line 16,384 on all three targets. The
+guarded rerun classified both as `generator-limit` before reference/backend
+execution. There were no backend disagreements, timeouts, reference mismatches,
+output mismatches, or harness errors.
 
 ## `#valtype`/`raise` probe observations
 
@@ -58,6 +66,9 @@ reported.
 - Depth-10 full-matrix run: all 30 sources contained the probe; reference
   interpreter visited it in all 30 cases (success 30, error 30; overlap
   possible).
+- Depth-10 full-matrix run (100 seeds): all sources contained the probe; 98
+  reference traces visited it (success 98, error 98; overlap possible). The
+  two size-limited source cases were not interpreted or executed.
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -78,8 +89,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 7000 -Count 30 -Depth 9
 ./scripts/run_batch.ps1 -SeedStart 7100 -Count 100 -Depth 9
 ./scripts/run_batch.ps1 -SeedStart 8000 -Count 30 -Depth 10
+./scripts/run_batch.ps1 -SeedStart 8100 -Count 100 -Depth 10
 ```
 
-The raw 100/100/300/30/100/30/100/30/100/30/100/30-case JSON reports are machine-local under
+The raw 100/100/300/30/100/30/100/30/100/30/100/30/100-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
