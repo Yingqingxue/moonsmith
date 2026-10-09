@@ -17,6 +17,13 @@ single-person; no second team member is recorded.
   300 backend executions with zero mismatches, compile/runtime failures,
   timeouts, or harness errors. It produced 100 distinct program bodies with an
   unchanged harness digest.
+- A deeper 100-seed depth-5 batch completed in 543,728 ms with 100 distinct
+  bodies, 100 reference checks, and 300 consistent backend executions; there
+  were no failures or harness changes. The probe appeared in 67 sources;
+  reference traces visited its path in 46 cases (success 20, error 31; cases
+  may include both). Raw report: `.moonsmith/runs/batch_20261009_142423_321.json`
+  (local, ignored). These path counts are interpreter traces, not backend
+  runtime instrumentation.
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
