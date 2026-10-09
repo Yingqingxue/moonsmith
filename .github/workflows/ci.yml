@@ -108,8 +108,7 @@ jobs:
       - name: Smoke-test Windows native generated programs
         shell: pwsh
         run: |
-          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 10 -Depth 6 -Targets @('native','native-release') -TimeoutSeconds 60
-          ./scripts/run_batch.ps1 -SeedStart 9010 -Count 90 -Depth 6 -Targets @('native') -TimeoutSeconds 60
+          ./scripts/run_batch.ps1 -SeedStart 9000 -Count 100 -Depth 6 -Targets @('native','native-release') -TimeoutSeconds 60
           ./scripts/run_batch.ps1 -SeedStart 9200 -Count 30 -Depth 8 -Targets @('native') -TimeoutSeconds 60
 
       - name: Check reference, reducer, and CLI integration
