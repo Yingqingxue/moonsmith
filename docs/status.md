@@ -136,16 +136,19 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no compatible
 system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
-latest GitHub Actions run `37970253034` for commit `90bd92c` passed; its CLI
-integration log confirms the runner detected a C compiler and the native
-differential probe returned `consistent`. Run `37968510482` additionally
-passed native package tests and the probe-specific four-target reducer replay.
-Run `37967661714` verified a 10-seed full-matrix batch (seeds 0–9, depth 4):
-ten distinct program bodies, 40 executions across JS/Wasm/Wasm-GC/native, ten
-consistent cases, no findings, and an unchanged harness digest. The uploaded
-batch and reduction reports were inspected directly. This small CI batch is
-separate from the 1,250-case scan documented below; local native replay still
-requires an appropriate C toolchain.
+latest GitHub Actions run `37970880027` for commit `6993183` passed both Linux
+and Windows jobs. The Windows job configured MSVC, found `cl.exe`, passed
+`moon test --target native`, ran a seed-0 native differential probe, and
+passed reference/reducer/CLI integration. The Linux job continues to cover the
+four-target smoke batch and probe-specific reducer. Run `37967661714` verified
+a 10-seed full-matrix batch (seeds 0–9, depth 4): ten distinct program bodies,
+40 executions across JS/Wasm/Wasm-GC/native, ten consistent cases, no findings,
+and an unchanged harness digest. The uploaded batch and reduction reports were
+inspected directly. This small CI batch is separate from the 1,250-case scan
+documented below; local native replay still requires an appropriate C
+toolchain. The pinned MSVC setup action currently emits a Node 20 deprecation
+warning while successfully running under Node 24 compatibility mode; monitor
+for an upstream action update.
 
 ## Current vertical slice
 
