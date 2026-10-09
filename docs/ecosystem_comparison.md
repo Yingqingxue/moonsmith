@@ -48,11 +48,11 @@ effectiveness; or uniqueness relative to all MoonBit tooling. The current
    distributions, but do not call interpreter traces backend coverage. Add
    grammar policies tied to identifiable MoonBit compiler behaviors rather
    than only increasing the seed count.
-2. **Measure against a known corpus.** A useful next evaluation is a small
-   corpus of fixed, previously reported MoonBit compiler regressions (if
-   available and redistributable). Check whether MoonSmith can compile,
-   classify, replay, and reduce each one. No such regression corpus has yet
-   been assembled, so capability here remains untested.
+2. **Measure against a known corpus.** A one-case starting corpus is now
+   tracked in [`docs/regressions.md`](regressions.md): a historical coverage
+   ICE fixture passes on the current toolchain. This checks one old failure
+   mode but not MoonSmith's ability to detect, classify, replay, or reduce
+   regressions. Expand the corpus only with verified, redistributable cases.
 3. **Keep the oracle honest.** The reference interpreter catches a common
    wrong result when it disagrees, but it shares the MoonBit toolchain and
    semantics assumptions. Continue using cross-backend comparison as a second

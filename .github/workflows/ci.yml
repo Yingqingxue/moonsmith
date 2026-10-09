@@ -31,6 +31,11 @@ jobs:
           moon test --target wasm --deny-warn
           moon test --target wasm-gc --deny-warn
 
+      - name: Check historical MoonBit coverage ICE regression
+        run: |
+          moon test --target js --enable-coverage --deny-warn regressions/issue_1071_coverage_ice
+          moon coverage analyze -p Yingqingxue/moonsmith/regressions/issue_1071_coverage_ice
+
       - name: Check reference and reducer integration
         shell: pwsh
         run: |

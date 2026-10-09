@@ -356,6 +356,9 @@ MoonSmith implementation from unverified claims: the tool has a MoonBit-targeted
 typed generator, reference evaluator, three-backend comparison, and generated-AST
 reducer, but no proven real compiler bug, arbitrary-source reducer, or
 optimizer-directed generator. This is desk research, not an external review or
-a comparative effectiveness experiment. The next validation gap is a
+a comparative effectiveness experiment. The next validation gap is a larger
 redistributable set of previously reported MoonBit compiler regressions and an
-external scope review.
+external scope review. One minimal coverage-tool ICE regression from
+`moonbitlang/moonbit-docs#1071` is now included and passes under the current
+toolchain; see `docs/regressions.md`. This is one historical tooling case, not
+a MoonSmith-discovered defect or a useful estimate of detection recall.

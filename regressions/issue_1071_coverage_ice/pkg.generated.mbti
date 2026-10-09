@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Yingqingxue/moonsmith/regressions/issue_1071_coverage_ice"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub type CoverageIssue1071
+pub fn CoverageIssue1071::main() -> String
+
+// Type aliases
+
+// Traits
