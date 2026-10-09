@@ -43,7 +43,7 @@ MoonSmith commands:
   reduce -Seed N -Depth N         Reduce a reproducible generated finding.
   report -CasePath PATH           Render a saved finding as Markdown.
 
-Common options: -Depth N -Targets js,wasm,wasm-gc -TimeoutSeconds N
+Common options: -Depth N -Targets js,wasm,wasm-gc,native -TimeoutSeconds N
 The reduce command also accepts -MaxAttempts and explicit fault-injection options.
 The report command accepts -ReductionPath PATH and -Force to replace report.md.
 This is a PowerShell host adapter; the generator, oracle, and AST reducer are MoonBit.

@@ -24,6 +24,11 @@ pwsh -File scripts/moonsmith.ps1 doctor
 pwsh -File scripts/moonsmith.ps1 fuzz -SeedStart 0 -Count 100 -Depth 4
 ```
 
+To include the optional `native` target, pass
+`-Targets @('js','wasm','wasm-gc','native')`; native requires a compatible
+system C toolchain. If it is missing, the runner reports an environment
+failure rather than treating it as a compiler finding.
+
 The PowerShell entry point is a thin process/IO adapter. The generator,
 reference evaluator, differential oracle, and AST reducer are implemented in
 MoonBit. `fuzz` returns a JSON batch report and exits nonzero on an unexpected
