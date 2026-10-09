@@ -6,6 +6,22 @@ test "same seed produces the same program" {
 }
 
 ///|
+test "extreme Int seeds generate reproducible well-typed programs" {
+  let min_int = -2147483647 - 1
+  let seeds = [min_int, -1, 0, 1, 2147483647]
+  for seed in seeds {
+    let first = @moonsmith.generate_program(seed, 3)
+    let second = @moonsmith.generate_program(seed, 3)
+    assert_eq(first.to_source(), second.to_source())
+    match (first.result.value_type(), first.result_type) {
+      (@moonsmith.IntType, @moonsmith.IntType)
+      | (@moonsmith.BoolType, @moonsmith.BoolType) => ()
+      _ => abort("extreme seed generated an ill-typed result")
+    }
+  }
+}
+
+///|
 test "the former 997-seed cycle is gone" {
   let first = @moonsmith.generate_program(0, 4).to_source()
   let later = @moonsmith.generate_program(997, 4).to_source()

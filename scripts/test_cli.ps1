@@ -25,6 +25,32 @@ elseif ($nativeExitCode -ne 0 -or $native.finding -ne 'consistent' -or
     throw 'native with a compatible C toolchain did not pass the differential probe.'
 }
 
+$boundaryTargets = @('js', 'wasm', 'wasm-gc')
+if ($null -ne $nativeCompiler) {
+    $boundaryTargets += 'native'
+}
+$boundaryResults = @()
+$verifyForCommand = $verify.Replace("'", "''")
+$targetsForCommand = ($boundaryTargets | ForEach-Object { "'$_'" }) -join ','
+foreach ($seed in @(-2147483648, -1, 2147483647)) {
+    $boundaryCommand = "& '$verifyForCommand' -Seed $seed -Depth 3 -Targets @($targetsForCommand) -NoPersist"
+    $boundaryRaw = & pwsh -NoProfile -Command $boundaryCommand
+    $boundaryExitCode = $LASTEXITCODE
+    $boundary = $boundaryRaw | ConvertFrom-Json
+    if ($boundaryExitCode -ne 0 -or $boundary.finding -ne 'consistent' -or
+        -not $boundary.referenceChecked -or
+        $boundary.runs.Count -ne $boundaryTargets.Count -or
+        @($boundary.runs | Where-Object status -ne 'succeeded').Count -ne 0) {
+        throw "extreme seed $seed did not pass the complete backend differential check."
+    }
+    $boundaryResults += [pscustomobject]@{
+        seed = $seed
+        finding = $boundary.finding
+        targets = @($boundary.runs | ForEach-Object target)
+        expectedOutput = $boundary.expectedOutput
+    }
+}
+
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
@@ -80,6 +106,7 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     doctorReady = $doctor.ready
     nativeCompilerAvailable = ($null -ne $nativeCompiler)
     nativeFinding = $native.finding
+    boundarySeeds = $boundaryResults
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies
     generatorLimitCount = $generatorLimit.counts.'generator-limit'

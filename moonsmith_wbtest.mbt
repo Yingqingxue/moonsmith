@@ -6,6 +6,19 @@ test "negative seeds are normalized deterministically" {
 }
 
 ///|
+test "seed normalization and stepping cover signed Int boundaries" {
+  let min_int = -2147483647 - 1
+  let max_int = 2147483647
+  assert_eq(normalize_seed(min_int), 2147483646)
+  assert_eq(normalize_seed(max_int), 2147483646)
+  assert_eq(normalize_seed(2147483646), 2147483646)
+  assert_true(advance_seed(min_int) > 0)
+  assert_true(advance_seed(max_int) > 0)
+  assert_true(child_seed(min_int, 58) > 0)
+  assert_true(child_seed(max_int, 58) > 0)
+}
+
+///|
 test "leaf values stay in their intended small domain" {
   for seed = -1000; seed < 1000; seed = seed + 1 {
     match int_leaf(seed) {

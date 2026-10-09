@@ -12,6 +12,13 @@ single-person; no second team member is recorded.
 - Sixty-seven main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
   reference, reducer, and CLI integration scripts also pass after the added
   report/JSON and variable-scope cases.
+- Signed-`Int` seed boundary checks now cover `-2147483648` and `2147483647`,
+  including normalization, Park–Miller advancement, child seeds, deterministic
+  generation, and result typing. After adding these cases, 69/69 package tests
+  pass on each of `js`, `wasm`, and `wasm-gc`; the CLI integration also
+  differentially checks the minimum, `-1`, and maximum seeds across those three
+  backends. Windows CI additionally runs those seeds through native when MSVC
+  is available; this local workstation has no compatible C compiler.
 - JS coverage analysis reports 17 uncovered defensive branches across the
   generator, oracle, reducer, and reference evaluator. Review shows these are
   invalid `ChoiceType`/scope states or an exhaustive-classification fallback,
@@ -136,7 +143,7 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no compatible
 system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
-latest GitHub Actions run `37973978393` for commit `7001786` passed both Linux
+latest completed GitHub Actions run `37975037019` for commit `6ce714a` passed both Linux
 and Windows jobs. The Windows job configured MSVC, found `cl.exe`, passed
 `moon test --target native`, ran a 100-seed depth-6 native differential scan
 (seeds 9000–9099), and passed reference/reducer/CLI integration. Its retained
