@@ -68,6 +68,15 @@ function Assert-ExpectedOutput {
     }
 }
 
+function Normalize-ProgramOutput {
+    param([AllowNull()][string]$Value)
+
+    if ($null -eq $Value) {
+        return ''
+    }
+    return ($Value -replace "`r`n", "`n" -replace "`r", "`n").Trim()
+}
+
 $wasmGc = Invoke-MoonRun -Arguments @('run', $repro, '--target', 'wasm-gc') -TimeoutSeconds 180
 Assert-ExpectedOutput -Name 'wasm-gc' -Result $wasmGc
 
@@ -114,8 +123,8 @@ $oracleNativeRun = $oracleReport.runs | Where-Object target -eq 'native' | Selec
 $oracleWasmGcRun = $oracleReport.runs | Where-Object target -eq 'wasm-gc' | Select-Object -First 1
 if ($null -eq $oracleNativeRun -or $null -eq $oracleWasmGcRun -or
     $oracleWasmGcRun.status -ne 'succeeded' -or
-    $oracleWasmGcRun.output.Trim() -ne $expectedOutput) {
-    throw "MoonSmith's differential verifier did not retain the expected Wasm-GC control."
+    (Normalize-ProgramOutput $oracleWasmGcRun.output) -ne $expectedOutput) {
+    throw "MoonSmith's differential verifier did not retain the expected Wasm-GC control. Status=$($oracleWasmGcRun.status); output=[$(Normalize-ProgramOutput $oracleWasmGcRun.output)]"
 }
 if ($null -eq $nativeCompiler) {
     if ($oracleNativeRun.status -ne 'unavailable') {
@@ -127,8 +136,8 @@ if ($null -eq $nativeCompiler) {
         throw "MoonSmith's verifier did not classify the known native debug failure as a compile failure."
     }
 } elseif ($oracleNativeRun.status -ne 'succeeded' -or
-    $oracleNativeRun.output.Trim() -ne $expectedOutput) {
-    throw "MoonSmith's verifier did not retain the expected native output on this runner."
+    (Normalize-ProgramOutput $oracleNativeRun.output) -ne $expectedOutput) {
+    throw "MoonSmith's verifier did not retain the expected native output on this runner. Status=$($oracleNativeRun.status); output=[$(Normalize-ProgramOutput $oracleNativeRun.output)]"
 }
 
 $result = [pscustomobject]@{
