@@ -39,6 +39,7 @@ if (-not $minimalSource.Contains('(if')) {
 $valtypeTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
     $valtypeTargets += 'native'
+    $valtypeTargets += 'native-release'
 }
 
 $valtypeRaw = & $reduceScript -Seed 0 -Depth 4 `
@@ -52,6 +53,10 @@ if ($valtypeResult.finding -ne 'output-mismatch' -or
     $valtypeResult.acceptedSteps -lt 1 -or
     $valtypeResult.finalComplexity -ge $valtypeResult.originalComplexity) {
     throw 'The valtype probe did not retain a reducible injected mismatch.'
+}
+if ($valtypeTargets -contains 'native-release' -and
+    $valtypeResult.targets -notcontains 'native-release') {
+    throw 'The valtype reducer did not include native-release in its replay matrix.'
 }
 if ($valtypeExitCode -ne 1) {
     throw "Expected the valtype-injected mismatch workflow to retain exit 1, got $valtypeExitCode."
