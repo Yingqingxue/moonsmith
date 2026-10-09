@@ -13,9 +13,10 @@ at both the beginning and end of every run.
 | `20261009_142423_321` | 0–99 | 5 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 543,728 ms |
 | `20261009_143600_489` | 1000–1299 | 5 | Wasm | 300 | 300 | 300 | 0 | 947,698 ms |
 | `20261009_150151_741` | 2000–2029 | 6 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 162,745 ms |
-| **Combined** | — | — | — | **530** | **530** | **990** | **0** | **2,188,462 ms** |
+| `20261009_150733_048` | 3000–3099 | 6 | Wasm | 100 | 100 | 100 | 0 | 310,515 ms |
+| **Combined** | — | — | — | **630** | **630** | **1,090** | **0** | **2,498,977 ms** |
 
-The body hashes were compared across all four reports: all 530 program bodies
+The body hashes were compared across all five selected reports: all 630 program bodies
 were distinct. Every case was `consistent`; no compile/runtime failures,
 timeouts, reference mismatches, output mismatches, or harness errors were
 reported.
@@ -30,6 +31,8 @@ reported.
   visited the probe in 140 cases (success 85, error 75; overlap is possible).
 - Depth-6 full-matrix run: probe source in 26 cases; reference interpreter
   visited the probe in 21 cases (success 17, error 11; overlap is possible).
+- Depth-6 Wasm-only run: probe source in 89 cases; reference interpreter
+  visited the probe in 69 cases (success 43, error 40; overlap is possible).
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -42,8 +45,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 0 -Count 100 -Depth 5
 ./scripts/run_batch.ps1 -SeedStart 1000 -Count 300 -Depth 5 -Targets @('wasm')
 ./scripts/run_batch.ps1 -SeedStart 2000 -Count 30 -Depth 6
+./scripts/run_batch.ps1 -SeedStart 3000 -Count 100 -Depth 6 -Targets @('wasm')
 ```
 
-The raw 100/100/300/30-case JSON reports are machine-local under
+The raw 100/100/300/30/100-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
