@@ -3,7 +3,8 @@
 MoonSmith is a MoonBit compiler backend differential tester. It generates a
 deterministic, typed MoonBit program, evaluates its expected output with a
 small reference interpreter, executes it on the `js`, `wasm`, and `wasm-gc`
-backends, classifies differences, and reduces reproducible findings.
+backends (plus optional `native` when a C toolchain is available), classifies
+differences, and reduces reproducible findings.
 
 Current maintainer: [Yingqingxue](https://github.com/Yingqingxue).
 
@@ -87,7 +88,8 @@ See the [project plan](MoonSmith_项目计划书.md), [implementation status](do
 the [ecosystem comparison](docs/ecosystem_comparison.md),
 the [historical regression corpus](docs/regressions.md),
 the [pre-review risk gate](docs/pre_review_gate.md), and
-[reduction design](docs/reduction.md). The reproducible 1,250-program scan summary
-is in [seed scan evidence](docs/evidence/seed_scans_20261009.md).
+[reduction design](docs/reduction.md). The reproducible 1,250-program
+JS/Wasm/Wasm-GC scan and 130-program Windows native scan summaries are in
+[seed scan evidence](docs/evidence/seed_scans_20261009.md).
 
 Licensed under Apache-2.0.
