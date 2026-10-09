@@ -135,14 +135,17 @@ single-person; no second team member is recorded.
 ## Native backend status and local environment limitation
 
 The `native` target cannot be tested on this workstation because no compatible
-system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. It is now validated remotely:
-GitHub Actions run `37968510482` for commit `90e0395` passed native package
-tests, the probe-specific four-target reducer replay, and a 10-seed full-matrix
-batch (seeds 0–9, depth 4): ten distinct program bodies, 40 executions across
-JS/Wasm/Wasm-GC/native, ten consistent cases, no findings, and an unchanged
-harness digest. The uploaded batch and reduction reports were inspected
-directly. This small CI batch is separate from the 1,250-case scan documented
-below; local native replay still requires an appropriate C toolchain.
+system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
+latest GitHub Actions run `37970253034` for commit `90bd92c` passed; its CLI
+integration log confirms the runner detected a C compiler and the native
+differential probe returned `consistent`. Run `37968510482` additionally
+passed native package tests and the probe-specific four-target reducer replay.
+Run `37967661714` verified a 10-seed full-matrix batch (seeds 0–9, depth 4):
+ten distinct program bodies, 40 executions across JS/Wasm/Wasm-GC/native, ten
+consistent cases, no findings, and an unchanged harness digest. The uploaded
+batch and reduction reports were inspected directly. This small CI batch is
+separate from the 1,250-case scan documented below; local native replay still
+requires an appropriate C toolchain.
 
 ## Current vertical slice
 
