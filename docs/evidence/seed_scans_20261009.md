@@ -17,9 +17,10 @@ at both the beginning and end of every run.
 | `20261009_152126_201` | 4000–4029 | 7 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 162,050 ms |
 | `20261009_152857_146` | 5000–5099 | 7 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 543,907 ms |
 | `20261009_154042_081` | 6000–6029 | 8 | JS, Wasm, Wasm-GC | 30 | 30 | 90 | 0 | 164,444 ms |
-| **Combined** | — | — | — | **790** | **790** | **1,570** | **0** | **3,369,378 ms** |
+| `20261009_154604_335` | 6100–6199 | 8 | JS, Wasm, Wasm-GC | 100 | 100 | 300 | 0 | 555,440 ms |
+| **Combined** | — | — | — | **890** | **890** | **1,870** | **0** | **3,924,818 ms** |
 
-The body hashes were compared across all eight selected reports: all 790 program
+The body hashes were compared across all nine selected reports: all 890 program
 bodies were distinct. Every case was `consistent`; no compile/runtime failures,
 timeouts, reference mismatches, output mismatches, or harness errors were
 reported.
@@ -42,6 +43,9 @@ reported.
   interpreter visited it in 89 cases (success 60, error 68; overlap possible).
 - Depth-8 full-matrix run: all 30 sources contained the probe; reference
   interpreter visited it in 28 cases (success 21, error 25; overlap possible).
+- Depth-8 full-matrix run (100 seeds): all 100 sources contained the probe;
+  reference interpreter visited it in 95 cases (success 86, error 78; overlap
+  possible).
 
 These path counts come from MoonSmith's reference interpreter. They do not
 instrument branch execution inside JS/Wasm/Wasm-GC backends and are not a bug
@@ -58,8 +62,9 @@ discovery rate. No compiler defect was found in these runs.
 ./scripts/run_batch.ps1 -SeedStart 4000 -Count 30 -Depth 7
 ./scripts/run_batch.ps1 -SeedStart 5000 -Count 100 -Depth 7
 ./scripts/run_batch.ps1 -SeedStart 6000 -Count 30 -Depth 8
+./scripts/run_batch.ps1 -SeedStart 6100 -Count 100 -Depth 8
 ```
 
-The raw 100/100/300/30/100/30/100/30-case JSON reports are machine-local under
+The raw 100/100/300/30/100/30/100/30/100-case JSON reports are machine-local under
 `.moonsmith/runs/` and are ignored by Git. This page records their verified
 summary; a fresh run is needed to recreate the raw reports on another machine.
