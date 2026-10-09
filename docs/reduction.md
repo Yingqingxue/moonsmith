@@ -45,6 +45,17 @@ raising function, and `try?`. The attempt budget was reached, so this is proof
 of source-trigger preservation and replayable progress, not a claim of a local
 minimum or of a compiler bug.
 
+A separate workstation run used a 100-attempt budget on the same deterministic
+seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced
+the source from 2,376 to 1,367 bytes and AST complexity from 39,300 to 11,014,
+and exhausted the current one-step candidate set without exhausting its budget.
+The final three-backend replay retained the same reduction key and all trigger
+fragments. This is only a local minimum relative to the current AST candidate
+set, not a globally minimal program. The JSON and minimized source are in the
+ignored local run directory `.moonsmith/reduced/injected/0c412107c3170279/`
+on the development workstation; CI uploads the test-run versions as an
+artifact for 30 days.
+
 Current limits:
 
 - Only MoonSmith generated programs can be reduced; arbitrary `.mbt` parsing

@@ -60,6 +60,8 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: moonsmith-smoke-report
-          path: .moonsmith/runs/
+          path: |
+            .moonsmith/runs/
+            .moonsmith/reduced/injected/
           if-no-files-found: ignore
           retention-days: 30

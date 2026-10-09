@@ -32,9 +32,12 @@ single-person; no second team member is recorded.
   omitted from programs that do not use the probe. All backends pass 61/61;
   reference, reducer, and CLI integration scripts pass as well.
 - A probe-scoped injected mismatch was replayed and reduced across all three
-  backends: 5 accepted steps in 10 attempts, complexity 39,300 → 18,133, with
-  the trigger scaffold retained and final reduction key revalidated. The run
-  hit its attempt budget; it does not claim a local minimum or real bug.
+  backends in CI: 5 accepted steps in 10 attempts, complexity 39,300 → 18,133,
+  with the trigger scaffold retained. A separate 100-budget local run accepted
+  15 steps in 84 attempts, reduced bytes 2,376 → 1,367 and complexity
+  39,300 → 11,014, then exhausted the current candidate set without hitting
+  its budget. Final reduction key was revalidated; this is not a global-minimum
+  guarantee or a real compiler bug.
 
 ## Known environment limitation
 
