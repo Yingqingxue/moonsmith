@@ -71,3 +71,40 @@ jobs:
             .moonsmith/reduced/injected/
           if-no-files-found: ignore
           retention-days: 30
+
+  windows-native:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Configure MSVC environment
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+
+      - name: Install MoonBit
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          Add-Content -LiteralPath $env:GITHUB_PATH -Value "$env:USERPROFILE\.moon\bin"
+
+      - name: Show toolchain and native compiler
+        shell: pwsh
+        run: |
+          moon version --all
+          (Get-Command cl -ErrorAction Stop).Source
+
+      - name: Check and test native backend
+        shell: pwsh
+        run: |
+          moon check --deny-warn
+          moon test --target native --deny-warn
+          ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('native') -NoPersist
+
+      - name: Check reference, reducer, and CLI integration
+        shell: pwsh
+        run: |
+          ./scripts/test_reference.ps1
+          ./scripts/test_reducer.ps1
+          ./scripts/test_cli.ps1
