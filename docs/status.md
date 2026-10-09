@@ -29,6 +29,10 @@ single-person; no second team member is recorded.
   raising function + `try?` trigger shape, and verify helper declarations are
   omitted from programs that do not use the probe. All backends pass 61/61;
   reference, reducer, and CLI integration scripts pass as well.
+- A probe-scoped injected mismatch was replayed and reduced across all three
+  backends: 5 accepted steps in 10 attempts, complexity 39,300 → 18,133, with
+  the trigger scaffold retained and final reduction key revalidated. The run
+  hit its attempt budget; it does not claim a local minimum or real bug.
 
 ## Known environment limitation
 

@@ -37,6 +37,14 @@ MoonBit defect. The `-InjectOnlyWhenSourceContains` option makes this test
 source dependent, so the reducer must reject candidates that remove the
 triggering syntax.
 
+CI additionally injects a mismatch only when seed 0's source contains
+`_ms_valtype_run`, then reduces it with the three supported backends. The
+checked run accepted 5 steps in 10 attempts, lowering AST complexity from
+39,300 to 18,133 while preserving `#valtype`, the first `Double` field, the
+raising function, and `try?`. The attempt budget was reached, so this is proof
+of source-trigger preservation and replayable progress, not a claim of a local
+minimum or of a compiler bug.
+
 Current limits:
 
 - Only MoonSmith generated programs can be reduced; arbitrary `.mbt` parsing
