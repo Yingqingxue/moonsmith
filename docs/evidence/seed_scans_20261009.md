@@ -76,8 +76,8 @@ discovery rate. No compiler defect was found in these runs.
 
 ## Windows native CI scan
 
-GitHub Actions run [37977586946](https://github.com/Yingqingxue/moonsmith/actions/runs/37977586946)
-for commit `9f54fb5` passed both Linux and Windows jobs. On `windows-latest`,
+GitHub Actions run [37978979627](https://github.com/Yingqingxue/moonsmith/actions/runs/37978979627)
+for commit `01cbfa2` passed both Linux and Windows jobs. On `windows-latest`,
 MSVC `cl.exe` was configured and the native package tests passed. The retained
 artifact `moonsmith-windows-native-report` contains a depth-6 native scan of
 seeds 9000–9099: 100 unique program bodies (also independently confirmed from
@@ -95,9 +95,11 @@ completed 30 reference checks and 30 consistent native executions in 59,285 ms,
 with zero unexpected findings and a stable harness digest. All 30 sources
 contained the probe; reference traces visited its modeled success path in 29
 cases and error path in 24 (overlap possible). Body-hash checks show these 30
-cases are distinct. Across both scans in run `37977586946`, 130 bodies were
-reference-checked and agreed with native. These two depth/seed cohorts are not a
-substitute for broader native fuzzing.
+cases are distinct. Cross-report body-hash comparison confirms all 130 bodies
+across both scans in run `37977586946` are unique; each was reference-checked
+and agreed with native. These two depth/seed cohorts are not a substitute for
+broader native fuzzing. Run `37978979627` repeated the same corpus and passed
+after the PRNG reference-vector tests were added.
 
 The first attempt at this scan (run `37971881681`, commit `f772858`) did not
 reach native compilation: a cold Windows generator startup exceeded the

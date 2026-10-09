@@ -144,10 +144,10 @@ single-person; no second team member is recorded.
 
 The `native` target cannot be tested on this workstation because no compatible
 system C compiler (`cl`, `clang-cl`, `gcc`, `clang`, or `cc`) is installed. The
-latest completed GitHub Actions run `37977586946` for commit `9f54fb5` passed
+latest completed GitHub Actions run `37978979627` for commit `01cbfa2` passed
 both Linux
 and Windows jobs. The Windows job configured MSVC, found `cl.exe`, passed
-`moon test --target native`, ran a 100-seed depth-6 scan (seeds 9000–9099) and
+`moon test --target native` (70/70 package tests), ran a 100-seed depth-6 scan (seeds 9000–9099) and
 a 30-seed depth-8 scan (seeds 9200–9229), and passed reference/reducer/CLI
 integration. Retained artifacts report 130 distinct program bodies, 130
 reference checks, 130 consistent native executions, zero unexpected findings,
