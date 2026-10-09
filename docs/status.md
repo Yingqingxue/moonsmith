@@ -122,30 +122,32 @@ single-person; no second team member is recorded.
   raising function + `try?` trigger shape, and verify helper declarations are
   omitted from programs that do not use the probe. All backends pass 61/61;
   reference, reducer, and CLI integration scripts pass as well.
-- A probe-scoped injected mismatch was replayed and reduced across all three
-  backends in CI: 5 accepted steps in 10 attempts, complexity 39,300 → 18,133,
-  with the trigger scaffold retained. A separate 100-budget local run accepted
-  15 steps in 84 attempts, reduced bytes 2,376 → 1,367 and complexity
-  39,300 → 11,014, then exhausted the current candidate set without hitting
-  its budget. Final reduction key was revalidated; this is not a global-minimum
-  guarantee or a real compiler bug.
+- A probe-scoped injected mismatch was replayed and reduced across all four
+  targets in GitHub Actions run `37968510482` for commit `90e0395`: 5 accepted
+  steps in 10 attempts, complexity 39,300 → 18,133, with the trigger scaffold
+  retained. The uploaded `reduction.json` confirms the target matrix includes
+  native. A separate 100-budget local three-backend run accepted 15 steps in
+  84 attempts, reduced bytes 2,376 → 1,367 and complexity 39,300 → 11,014,
+  then exhausted the current candidate set without hitting its budget. Final
+  reduction key was revalidated; this is not a global-minimum guarantee or a
+  real compiler bug.
 
 ## Native backend status and local environment limitation
 
 The `native` target cannot be tested on this workstation because no system C
 compiler (`cc`, `gcc`, or `clang`) is installed. It is now validated remotely:
-GitHub Actions run `37967661714` for commit `a40849d` passed the native package
-tests and a 10-seed full-matrix batch (seeds 0–9, depth 4): ten distinct
-program bodies, 40 executions across JS/Wasm/Wasm-GC/native, ten consistent
-cases, no findings, and an unchanged harness digest. The uploaded batch report
-was inspected directly. This small CI batch is separate from the 1,250-case
-scan documented below; local native replay still requires an appropriate C
-toolchain.
+GitHub Actions run `37968510482` for commit `90e0395` passed native package
+tests, the probe-specific four-target reducer replay, and a 10-seed full-matrix
+batch (seeds 0–9, depth 4): ten distinct program bodies, 40 executions across
+JS/Wasm/Wasm-GC/native, ten consistent cases, no findings, and an unchanged
+harness digest. The uploaded batch and reduction reports were inspected
+directly. This small CI batch is separate from the 1,250-case scan documented
+below; local native replay still requires an appropriate C toolchain.
 
 ## Current vertical slice
 
 ```text
-seed + depth -> typed Expr -> MoonBit source -> three target executions
+seed + depth -> typed Expr -> MoonBit source -> selected target matrix
                                       -> JSON comparison report
 ```
 

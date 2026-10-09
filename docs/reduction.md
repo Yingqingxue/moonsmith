@@ -38,12 +38,13 @@ source dependent, so the reducer must reject candidates that remove the
 triggering syntax.
 
 CI additionally injects a mismatch only when seed 0's source contains
-`_ms_valtype_run`, then reduces it with the three supported backends. The
-checked run accepted 5 steps in 10 attempts, lowering AST complexity from
-39,300 to 18,133 while preserving `#valtype`, the first `Double` field, the
-raising function, and `try?`. The attempt budget was reached, so this is proof
-of source-trigger preservation and replayable progress, not a claim of a local
-minimum or of a compiler bug.
+`_ms_valtype_run`, then reduces it with JS, Wasm, Wasm-GC, and native when the
+runner has a C compiler. Run `37968510482` accepted 5 steps in 10 attempts,
+lowering AST complexity from 39,300 to 18,133 while preserving `#valtype`, the
+first `Double` field, the raising function, and `try?`. The uploaded reduction
+record confirms the four-target matrix. The attempt budget was reached, so
+this is proof of source-trigger preservation and replayable progress, not a
+claim of a local minimum or of a compiler bug.
 
 A separate workstation run used a 100-attempt budget on the same deterministic
 seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced
