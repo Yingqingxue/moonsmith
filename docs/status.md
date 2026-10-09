@@ -188,6 +188,12 @@ The fixture's latest harness version also passes the source and upstream-known
 expected output through `verify_seed.ps1`, validating the existing Oracle's
 per-target classification; because the expected value is supplied externally,
 this path does not use the MoonSmith AST reference evaluator.
+The generic verifier now also exposes `native-release` beside `native` (debug),
+recording the underlying backend and build mode in each per-target result so
+optimization-mode comparisons can use identical source. This workstation has
+no compatible C compiler, so local integration verifies unavailable-state
+classification and report metadata, not execution of either native mode; CI
+must validate native release execution.
 
 ## Current vertical slice
 

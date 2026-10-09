@@ -112,7 +112,7 @@ $expectedForOracle = "$expectedOutput`n"
 $expectedBase64 = [System.Convert]::ToBase64String(
     [System.Text.Encoding]::UTF8.GetBytes($expectedForOracle)
 )
-$oracleCommand = "`$expected = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('$expectedBase64')); & '$verifyForCommand' -Seed 0 -Depth 0 -Targets @('native','wasm-gc') -TimeoutSeconds 180 -SourcePath '$sourceForCommand' -ExpectedOutput `$expected -NoPersist"
+$oracleCommand = "`$expected = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('$expectedBase64')); & '$verifyForCommand' -Seed 0 -Depth 0 -Targets @('native','native-release','wasm-gc') -TimeoutSeconds 180 -SourcePath '$sourceForCommand' -ExpectedOutput `$expected -NoPersist"
 $oracleRaw = & pwsh -NoProfile -Command $oracleCommand
 $oracleExitCode = $LASTEXITCODE
 if ($oracleExitCode -notin @(0, 1)) {
@@ -120,24 +120,30 @@ if ($oracleExitCode -notin @(0, 1)) {
 }
 $oracleReport = $oracleRaw | ConvertFrom-Json
 $oracleNativeRun = $oracleReport.runs | Where-Object target -eq 'native' | Select-Object -First 1
+$oracleNativeReleaseRun = $oracleReport.runs | Where-Object target -eq 'native-release' | Select-Object -First 1
 $oracleWasmGcRun = $oracleReport.runs | Where-Object target -eq 'wasm-gc' | Select-Object -First 1
-if ($null -eq $oracleNativeRun -or $null -eq $oracleWasmGcRun -or
+if ($null -eq $oracleNativeRun -or $null -eq $oracleNativeReleaseRun -or $null -eq $oracleWasmGcRun -or
     $oracleWasmGcRun.status -ne 'succeeded' -or
     (Normalize-ProgramOutput $oracleWasmGcRun.output) -ne $expectedOutput) {
     throw "MoonSmith's differential verifier did not retain the expected Wasm-GC control. Status=$($oracleWasmGcRun.status); output=[$(Normalize-ProgramOutput $oracleWasmGcRun.output)]"
 }
 if ($null -eq $nativeCompiler) {
-    if ($oracleNativeRun.status -ne 'unavailable') {
-        throw 'MoonSmith did not classify native as unavailable without a C compiler.'
+    if ($oracleNativeRun.status -ne 'unavailable' -or
+        $oracleNativeReleaseRun.status -ne 'unavailable') {
+        throw 'MoonSmith did not classify both native modes as unavailable without a C compiler.'
     }
 } elseif ($nativeDebugClassification -eq 'upstream-issue-signature-reproduced') {
     if ($oracleNativeRun.status -ne 'compile-failed' -or
-        $oracleNativeRun.error -notmatch 'uninitialized non-null GC ref arrays are not lowered') {
+        $oracleNativeRun.error -notmatch 'uninitialized non-null GC ref arrays are not lowered' -or
+        $oracleNativeReleaseRun.status -ne 'succeeded' -or
+        (Normalize-ProgramOutput $oracleNativeReleaseRun.output) -ne $expectedOutput) {
         throw "MoonSmith's verifier did not classify the known native debug failure as a compile failure."
     }
 } elseif ($oracleNativeRun.status -ne 'succeeded' -or
-    (Normalize-ProgramOutput $oracleNativeRun.output) -ne $expectedOutput) {
-    throw "MoonSmith's verifier did not retain the expected native output on this runner. Status=$($oracleNativeRun.status); output=[$(Normalize-ProgramOutput $oracleNativeRun.output)]"
+    (Normalize-ProgramOutput $oracleNativeRun.output) -ne $expectedOutput -or
+    $oracleNativeReleaseRun.status -ne 'succeeded' -or
+    (Normalize-ProgramOutput $oracleNativeReleaseRun.output) -ne $expectedOutput) {
+    throw "MoonSmith's verifier did not retain expected output in both native modes. Debug=$($oracleNativeRun.status):[$(Normalize-ProgramOutput $oracleNativeRun.output)]; Release=$($oracleNativeReleaseRun.status):[$(Normalize-ProgramOutput $oracleNativeReleaseRun.output)]"
 }
 
 $result = [pscustomobject]@{
@@ -154,6 +160,7 @@ $result = [pscustomobject]@{
     moonSmithOracleFinding = $oracleReport.finding
     moonSmithOracleExpectedOutputChecked = $oracleReport.referenceChecked
     moonSmithOracleNativeStatus = $oracleNativeRun.status
+    moonSmithOracleNativeReleaseStatus = $oracleNativeReleaseRun.status
     moonSmithOracleWasmGcStatus = $oracleWasmGcRun.status
     moonSmithOracleExpectedOutputSource = 'Explicitly recorded by upstream issue #1322; not produced by the MoonSmith reference evaluator.'
     expectedOutput = @('0', 'x')

@@ -7,7 +7,7 @@ param(
     [int]$Depth = 4,
 
     [Parameter()]
-    [ValidateSet('js', 'wasm', 'wasm-gc', 'native')]
+    [ValidateSet('js', 'wasm', 'wasm-gc', 'native', 'native-release')]
     [string[]]$Targets = @('js', 'wasm', 'wasm-gc'),
 
     [Parameter()]

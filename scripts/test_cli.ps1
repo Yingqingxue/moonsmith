@@ -41,6 +41,29 @@ elseif ($nativeExitCode -ne 0 -or $native.finding -ne 'consistent' -or
     throw 'native with a compatible C toolchain did not pass the differential probe.'
 }
 
+$nativeReleaseRaw = & pwsh -NoProfile -File $verify -Seed 0 -Depth 4 `
+    -Targets 'native-release' -NoPersist
+$nativeReleaseExitCode = $LASTEXITCODE
+$nativeRelease = $nativeReleaseRaw | ConvertFrom-Json
+if ($nativeRelease.runs.Count -ne 1 -or
+    $nativeRelease.runs[0].target -ne 'native-release' -or
+    $nativeRelease.runs[0].backend -ne 'native' -or
+    $nativeRelease.runs[0].buildMode -ne 'release') {
+    throw 'native-release did not preserve its public target, native backend, and release build mode.'
+}
+if ($null -eq $nativeCompiler) {
+    if ($nativeReleaseExitCode -ne 1 -or
+        $nativeRelease.finding -ne 'environment-failure' -or
+        $nativeRelease.runs[0].status -ne 'unavailable') {
+        throw 'native-release without a C toolchain was not classified as an environment failure.'
+    }
+}
+elseif ($nativeReleaseExitCode -ne 0 -or
+    $nativeRelease.finding -ne 'consistent' -or
+    $nativeRelease.runs[0].status -ne 'succeeded') {
+    throw 'native-release with a compatible C toolchain did not pass the differential probe.'
+}
+
 $boundaryTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne $nativeCompiler) {
     $boundaryTargets += 'native'
@@ -122,6 +145,8 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     doctorReady = $doctor.ready
     nativeCompilerAvailable = ($null -ne $nativeCompiler)
     nativeFinding = $native.finding
+    nativeReleaseFinding = $nativeRelease.finding
+    nativeReleaseBuildMode = $nativeRelease.runs[0].buildMode
     boundarySeeds = $boundaryResults
     batchCount = $batch.count
     uniqueProgramBodies = $batch.uniqueProgramBodies

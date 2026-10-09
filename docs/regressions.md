@@ -73,7 +73,10 @@ construct may stop testing the original result-lowering path.
 - Local fixture: `regressions/issue_1322_native_valtype_enum_array/repro.mbt`.
 - Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
   release control outputs, then classifies native debug as either the reported
-  ICE signature or a successful result. GitHub Actions run
+  ICE signature or a successful result. The generic verifier now exposes
+  `native-release` separately from `native` (debug), recording backend and
+  build mode in each run so optimization-mode differences can be compared
+  without changing the generated source. GitHub Actions run
   [37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
   on Linux reproduced the exact ICE signature under gcc; native release and
   Wasm-GC both produced `0` and `x`. In the same run, Windows/MSVC native debug

@@ -7,7 +7,7 @@ param(
     [int]$Depth = 4,
 
     [Parameter()]
-    [ValidateSet('js', 'wasm', 'wasm-gc', 'native')]
+    [ValidateSet('js', 'wasm', 'wasm-gc', 'native', 'native-release')]
     [string[]]$Targets = @('js', 'wasm', 'wasm-gc'),
 
     [Parameter()]
@@ -118,7 +118,7 @@ if (-not $SourcePath) {
     Set-Content -LiteralPath $casePath -Value $source -Encoding utf8 -NoNewline
     if ($sourceLineCount -gt $maxSourceLines) {
         $sizeLimitReport = [pscustomobject]@{
-            schemaVersion = 3
+            schemaVersion = 4
             caseId = $null
             seed = $Seed
             depth = $Depth
@@ -163,7 +163,9 @@ if (-not $SourcePath) {
 }
 
 $runs = foreach ($target in $Targets) {
-    $missingNativeCompiler = $target -eq 'native' -and
+    $backendTarget = if ($target -eq 'native-release') { 'native' } else { $target }
+    $buildMode = if ($backendTarget -ne 'native') { 'default' } elseif ($target -eq 'native-release') { 'release' } else { 'debug' }
+    $missingNativeCompiler = $backendTarget -eq 'native' -and
         $null -eq (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)
 
     if ($missingNativeCompiler) {
@@ -174,8 +176,11 @@ $runs = foreach ($target in $Targets) {
         $durationMs = 0
     }
     else {
+        $buildArguments = @('run', '--target', $backendTarget, $casePath)
+        if ($target -eq 'native-release') { $buildArguments += '--release' }
+        $buildArguments += @('--build-only', '--deny-warn')
         $build = Invoke-CapturedProcess -FilePath $moonExe `
-            -Arguments @('run', '--target', $target, $casePath, '--build-only', '--deny-warn') `
+            -Arguments $buildArguments `
             -TimeoutSeconds $TimeoutSeconds
     }
 
@@ -194,8 +199,11 @@ $runs = foreach ($target in $Targets) {
         $durationMs = $build.durationMs
     }
     elseif (-not $missingNativeCompiler) {
+        $executionArguments = @('run', '--target', $backendTarget, $casePath)
+        if ($target -eq 'native-release') { $executionArguments += '--release' }
+        $executionArguments += '--deny-warn'
         $execution = Invoke-CapturedProcess -FilePath $moonExe `
-            -Arguments @('run', '--target', $target, $casePath, '--deny-warn') `
+            -Arguments $executionArguments `
             -TimeoutSeconds $TimeoutSeconds
         $durationMs = $build.durationMs + $execution.durationMs
         if ($execution.timedOut) {
@@ -220,6 +228,8 @@ $runs = foreach ($target in $Targets) {
 
     [pscustomobject]@{
         target     = $target
+        backend    = $backendTarget
+        buildMode  = $buildMode
         status     = $status
         exitCode   = $exitCode
         output     = $output
@@ -316,7 +326,7 @@ if ($NoPersist) {
 }
 
 $report = [pscustomobject]@{
-    schemaVersion = 3
+    schemaVersion = 4
     caseId        = $caseId
     seed          = $Seed
     depth         = $Depth
