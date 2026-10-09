@@ -85,6 +85,14 @@ construct may stop testing the original result-lowering path.
   classifications. This difference is observed, not yet explained. This
   workstation has no compatible C compiler, so only Wasm-GC has been checked
   locally.
+- GitHub Actions run
+  [37985370613](https://github.com/Yingqingxue/moonsmith/actions/runs/37985370613)
+  passed both Linux and Windows jobs with the generic verifier included:
+  Linux classified native debug as `compile-failed` and native-release plus
+  Wasm-GC as `succeeded`; Windows classified native debug and native-release
+  as `succeeded`. The artifact records native-release as `expected-output` on
+  both runners. This confirms the verifier path, while the runner/compiler
+  discrepancy remains unexplained.
 - The script also sends the checked-in source and the upstream-reported
   expected output to `verify_seed.ps1`, exercising MoonSmith's existing
   differential classification and persisting its per-target status in the

@@ -114,10 +114,15 @@ Add-Line "- Reference checked: $([bool]$finding.referenceChecked)"
 Add-Line
 Add-Line '## Backend results'
 Add-Line
-Add-Line '| Target | Status | Exit code | Duration (ms) |'
-Add-Line '|---|---|---:|---:|'
+Add-Line '| Target | Backend / mode | Status | Exit code | Duration (ms) |'
+Add-Line '|---|---|---|---:|---:|'
 foreach ($run in $finding.runs) {
-    Add-Line "| $($run.target) | $($run.status) | $($run.exitCode) | $($run.durationMs) |"
+    $backendMode = if ($run.backend -and $run.buildMode) {
+        "$($run.backend) / $($run.buildMode)"
+    } else {
+        'not recorded'
+    }
+    Add-Line "| $($run.target) | $backendMode | $($run.status) | $($run.exitCode) | $($run.durationMs) |"
 }
 Add-Line
 if ($finding.referenceChecked) {

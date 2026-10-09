@@ -119,7 +119,7 @@ if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300) {
     throw 'source below the configured line limit was incorrectly rejected.'
 }
 
-$injected = (& $verify -Seed 0 -Depth 2 `
+$injected = (& $verify -Seed 0 -Depth 3 `
     -InjectOutputMismatchTarget wasm-gc `
     -InjectOnlyWhenSourceContains '(if' | ConvertFrom-Json)
 if ($injected.finding -ne 'output-mismatch' -or -not $injected.savedTo) {
@@ -136,6 +136,7 @@ $reportMarkdown = Get-Content -LiteralPath $rendered.reportPath -Raw
 if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     -not $reportMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
     -not $reportMarkdown.Contains('## Backend results') -or
+    -not $reportMarkdown.Contains('wasm-gc / default') -or
     -not $reportMarkdown.Contains('## Reproduce')) {
     throw 'report did not render a clearly labelled Markdown finding.'
 }

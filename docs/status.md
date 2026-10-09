@@ -193,7 +193,11 @@ recording the underlying backend and build mode in each per-target result so
 optimization-mode comparisons can use identical source. This workstation has
 no compatible C compiler, so local integration verifies unavailable-state
 classification and report metadata, not execution of either native mode; CI
-must validate native release execution.
+run [37985370613](https://github.com/Yingqingxue/moonsmith/actions/runs/37985370613)
+passed both Linux and Windows jobs with the new target. Linux recorded
+native-debug `compile-failed`, native-release `succeeded`, and Wasm-GC
+`succeeded`; Windows recorded native-debug and native-release `succeeded`.
+The release outputs matched the upstream-provided expected output on both.
 
 ## Current vertical slice
 
