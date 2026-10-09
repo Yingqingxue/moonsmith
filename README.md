@@ -43,8 +43,10 @@ not sent to the reference evaluator or compiler backends; `fuzz` still exits
 nonzero so the size bound stays visible in batch results.
 Depth is a maximum recursive branching depth, not a promise that every seed
 will fit the source-size bound: observed scans had 6 size limits in 330 depth-10
-seeds and 71 in 100 depth-11 seeds. For routine batches, prefer depth 10 or
-lower and review `generator-limit` counts rather than silently discarding cases.
+seeds and 71 in 100 depth-11 seeds. A further 100-seed depth-10 scan brought
+the observed depth-10 total to 9 limits in 430 seeds; depth 11 remains much less
+reliable. For routine batches, prefer depth 10 or lower and review
+`generator-limit` counts rather than silently discarding cases.
 Per-seed JSON reports include `sourceLineCount` and, for generated inputs, the
 applicable `sourceLineLimit`; batch JSON also reports how many cases have size
 data and the largest source. This makes the size guard auditable for successful

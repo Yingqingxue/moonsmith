@@ -229,3 +229,20 @@ all six follow-ups confirms 2,250 unique bodies, 2,244 reference-checked and
 consistent cases, 5,932 backend executions, and six explicit size-limit
 rejections. The depth-11 cohort remains separate. Raw report:
 `.moonsmith/runs/batch_20261009_231924_625.json` (ignored and local only).
+
+## Depth-10 follow-up (2026-10-10)
+
+Run `20261009_233158_232` scanned seeds 15000–15099 at depth 10 across JS,
+Wasm, and Wasm-GC. Ninety-seven distinct bodies passed reference evaluation
+and 291 backend executions in 672,921 ms. Three sources exceeded the 16,300
+line safety bound and were classified as `generator-limit` before reference
+evaluation or compilation; the largest had 21,308 lines. The schema-6 batch
+measured all 100 sources. All contained the probe; reference traces visited it
+in 97 cases (success 97, error 95; overlap possible). There were no compiler
+failures, timeouts, mismatches, or harness changes.
+
+Cross-report SHA-256 comparison of the fourteen original depth-4–10 runs and
+all seven follow-ups confirms 2,350 unique bodies, 2,341 reference-checked and
+consistent cases, 6,223 backend executions, and nine explicit size-limit
+rejections. Depth 11 remains a separate cohort. Raw report:
+`.moonsmith/runs/batch_20261009_233158_232.json` (ignored and local only).
