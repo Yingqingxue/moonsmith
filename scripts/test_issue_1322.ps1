@@ -85,7 +85,7 @@ $nativeCompiler = Get-Command cl, clang-cl, gcc, clang, cc `
 $nativeCompilerVersion = $null
 if ($nativeCompiler) {
     $versionArguments = if ($nativeCompiler.Name -match '^cl(\.exe)?$') {
-        @('/Bv')
+        @('/?')
     } else {
         @('--version')
     }
