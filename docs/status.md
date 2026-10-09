@@ -359,6 +359,7 @@ optimizer-directed generator. This is desk research, not an external review or
 a comparative effectiveness experiment. The next validation gap is a larger
 redistributable set of previously reported MoonBit compiler regressions and an
 external scope review. One minimal coverage-tool ICE regression from
-`moonbitlang/moonbit-docs#1071` is now included and passes under the current
-toolchain; see `docs/regressions.md`. This is one historical tooling case, not
-a MoonSmith-discovered defect or a useful estimate of detection recall.
+`moonbitlang/moonbit-docs#1071` and one reported Wasm backend regression from
+`moonbitlang/moonbit-docs#1274` are now included; both pass under the current
+toolchain. See `docs/regressions.md`. The Wasm issue remains open upstream, and
+neither case was discovered by MoonSmith or estimates detection recall.

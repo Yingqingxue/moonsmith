@@ -36,6 +36,12 @@ jobs:
           moon test --target js --enable-coverage --deny-warn regressions/issue_1071_coverage_ice
           moon coverage analyze -p Yingqingxue/moonsmith/regressions/issue_1071_coverage_ice
 
+      - name: Check historical MoonBit Wasm valtype regression
+        run: |
+          moon test --target js --deny-warn regressions/issue_1274_wasm_valtype_raise
+          moon test --target wasm --deny-warn regressions/issue_1274_wasm_valtype_raise
+          moon test --target wasm-gc --deny-warn regressions/issue_1274_wasm_valtype_raise
+
       - name: Check reference and reducer integration
         shell: pwsh
         run: |

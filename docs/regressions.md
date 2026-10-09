@@ -30,6 +30,35 @@ The first command is part of CI. The second checks that coverage reporting can
 consume the instrumentation output, rather than only checking that the fixture
 compiles.
 
+## Case 2: `#valtype` Double returned through `raise` on Wasm
+
+- Upstream report: [moonbitlang/moonbit-docs#1274](https://github.com/moonbitlang/moonbit-docs/issues/1274)
+- Reported: 2026-06-26; the issue is still open as of 2026-10-09.
+- Reported symptom: Wasm validation fails when a `#valtype` struct whose first
+  field is `Double` is returned from a `raise`-capable function and consumed via
+  `try?`.
+- Local fixture: `regressions/issue_1274_wasm_valtype_raise/repro.mbt`.
+- Current validation: MoonBit `0.1.20260920`, `moonc v0.10.14+7d59c7ec9`;
+  JS, Wasm, and Wasm-GC tests each pass (1/1). The reported Wasm failure did not
+  reproduce on this toolchain. The source retains upstream's deprecated `try?`
+  construct intentionally to preserve the reported trigger shape.
+- Scope: this is a historical regression test against a public issue, not a
+  MoonSmith-discovered bug. The current generator does not support `#valtype`
+  or `raise`, so this case is not evidence that MoonSmith itself can find or
+  reduce this failure.
+
+Reproduce from the repository root:
+
+```powershell
+moon test --target js regressions/issue_1274_wasm_valtype_raise
+moon test --target wasm regressions/issue_1274_wasm_valtype_raise
+moon test --target wasm-gc regressions/issue_1274_wasm_valtype_raise
+```
+
+The fixture package disables only the `deprecated` warning because `try?` is
+part of the historical trigger. Do not replace it mechanically: changing the
+construct may stop testing the original result-lowering path.
+
 ## Candidate not yet included
 
 [moonbitlang/core#1594](https://github.com/moonbitlang/core/issues/1594) reports
