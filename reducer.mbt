@@ -31,6 +31,7 @@ pub fn Expr::complexity(self : Expr) -> Int {
       1000 + argument.complexity() + body.complexity()
     ForLoop(iterations, initial, body) =>
       1000 + iterations + initial.complexity() + body.complexity()
+    ValtypeRaiseProbe(value) => 1000 + value.complexity()
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
@@ -82,6 +83,7 @@ fn Expr::uses_variable(self : Expr, name : String) -> Bool {
     ForLoop(_, initial, body) =>
       initial.uses_variable(name) ||
       (name != "_ms_index" && name != "_ms_acc" && body.uses_variable(name))
+    ValtypeRaiseProbe(value) => value.uses_variable(name)
   }
 }
 
@@ -270,6 +272,14 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
         )
       }
     }
+    ValtypeRaiseProbe(value) =>
+      for smaller in value.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ValtypeRaiseProbe(smaller),
+        )
+      }
     Let(binding_type, name, value, body) => {
       if !body.uses_variable(name) {
         push_if_smaller(candidates, original_complexity, body)

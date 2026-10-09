@@ -52,6 +52,7 @@ jobs:
       - name: Smoke-test generated programs
         shell: pwsh
         run: |
+          ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4
 
       - name: Preserve smoke-test reports on failure

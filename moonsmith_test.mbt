@@ -138,3 +138,18 @@ test "generated corpus contains bounded integer loops" {
   }
   assert_true(has_loop && compares_loop_result)
 }
+
+///|
+test "generated boolean corpus exercises valtype raise probes" {
+  let mut has_probe = false
+  let mut has_scaffold = false
+  for seed = 0; seed < 200; seed = seed + 1 {
+    let program = @moonsmith.generate_program(seed, 4)
+    if program.to_source().contains("_ms_valtype_run") {
+      has_probe = true
+      has_scaffold = program.to_source().contains("#valtype") &&
+        program.to_source().contains("try? _ms_valtype_make")
+    }
+  }
+  assert_true(has_probe && has_scaffold)
+}

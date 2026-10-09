@@ -9,12 +9,14 @@ single-person; no second team member is recorded.
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Forty-two tests pass on `js`, `wasm`, and `wasm-gc`.
-- Seeds 0 through 19 at depth 4 all compile and produce matching output across
-  the three bootstrap backends (60 executions, zero mismatches).
-- After integrating the MoonBit oracle, seeds 0 through 9 were rerun through
-  the complete collection and classification path (30 executions, all
-  classified `consistent`).
+- Fifty-nine main-package tests pass on each of `js`, `wasm`, and `wasm-gc`.
+- Regression package `issue_1071_coverage_ice` passes its instrumented JS test
+  and package-scoped coverage analysis; `issue_1274_wasm_valtype_raise` passes
+  its test on all three backends.
+- The post-probe 100-seed depth-4 batch completed all 100 reference checks and
+  300 backend executions with zero mismatches, compile/runtime failures,
+  timeouts, or harness errors. It produced 100 distinct program bodies with an
+  unchanged harness digest.
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
@@ -32,6 +34,17 @@ target; it is not counted as passing.
 seed + depth -> typed Expr -> MoonBit source -> three target executions
                                       -> JSON comparison report
 ```
+
+The typed generator now includes a narrow `ValtypeRaiseProbe` node motivated
+by public issue #1274. Its printer emits the `#valtype`/`Double`-first/raising
+function shape, the reference evaluator checks the expected returned value and
+records success/error paths, and the reducer shrinks the probe's input without
+removing the trigger scaffold. It is deliberately not general `Double` or
+exception support. Seed 0 generated the probe and passed reference plus `js`,
+`wasm`, and `wasm-gc` execution; a 10-seed depth-4 batch included the probe in 6
+programs (3 cases visited the modeled error path, 4 the success path; these are
+reference traces, not backend runtime coverage). The report is local and ignored
+at `.moonsmith/runs/batch_20261009_133053_806.json`.
 
 The comparison script is a bootstrap host adapter. Differential result types,
 stdout/stderr normalization, failure classification, stable signatures, and an
@@ -331,22 +344,20 @@ accumulator updates, zero-iteration exit, and records `for-loop`,
 loop, reduce its bound to zero, and simplify its initializer or body while
 preserving result type and loop-variable scope.
 
-All 54 tests pass on each of `js`, `wasm`, and `wasm-gc`; static checks and
-reference, reducer, and CLI integration checks pass. The CLI integration batch
-confirms generated loops and dynamically executed iterations are included in
-the JSON summary. A fixed 100-seed depth-4 scan on MoonBit
-`0.1.20260920 (914d7da 2026-09-20)` completed 100 reference checks and 300
-backend executions across `js`, `wasm`, and `wasm-gc`. All cases were
-consistent, with 100 unique program bodies, zero harness errors, and an
-unchanged harness digest. Loops appeared in 78 generated sources; the reference
-interpreter evaluated a loop expression in 68 cases and executed at least one
-iteration in 60 cases. These are source and reference-interpreter counts, not
-backend runtime coverage. The scan took 602,802 ms, not a controlled
-performance benchmark. Report:
-`.moonsmith/runs/batch_20261009_113414_316.json` is the ignored local raw
-report and is not included in the public repository. Reproduce the scan with
-`pwsh -File scripts/run_batch.ps1 -SeedStart 0 -Count 100 -Depth 4`. No real
-MoonBit compiler defect was found.
+All 59 main-package tests pass on each of `js`, `wasm`, and `wasm-gc`; both
+historical regression packages pass, and static, reference, reducer, and CLI
+integration checks pass. After adding the targeted `ValtypeRaiseProbe`, a fixed
+100-seed depth-4 scan on MoonBit `0.1.20260920 (914d7da 2026-09-20)` completed
+100 reference checks and 300 backend executions across `js`, `wasm`, and
+`wasm-gc`. All cases were consistent, with 100 unique program bodies, zero
+harness errors, and an unchanged harness digest. The probe appeared in 43
+generated sources and was visited in 29 reference traces: 18 success-path and
+14 error-path case occurrences (some cases visited both). Loops appeared in 68
+sources and reference iteration traces in 59 cases. These are source and
+reference-interpreter counts, not backend runtime coverage. The scan took
+534,291 ms, not a controlled performance benchmark. Raw report:
+`.moonsmith/runs/batch_20261009_133613_232.json` (ignored and local only). No
+real MoonBit compiler defect was found.
 
 ## Ecosystem comparison baseline
 

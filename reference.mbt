@@ -160,6 +160,16 @@ fn Expr::evaluate_in_env(
       trace.push("for-normal-exit")
       IntValue(accumulator)
     }
+    ValtypeRaiseProbe(value) => {
+      let input = value.evaluate_in_env(bindings, trace).as_int()
+      trace.push("valtype-raise-probe")
+      if input < 0 {
+        trace.push("valtype-raise-error-path")
+      } else {
+        trace.push("valtype-raise-success-path")
+      }
+      BoolValue(true)
+    }
     Add(left, right) => {
       trace.push("add")
       IntValue(

@@ -43,9 +43,11 @@ compiles.
   reproduce on this toolchain. The source retains upstream's deprecated `try?`
   construct intentionally to preserve the reported trigger shape.
 - Scope: this is a historical regression test against a public issue, not a
-  MoonSmith-discovered bug. The current generator does not support `#valtype`
-  or `raise`, so this case is not evidence that MoonSmith itself can find or
-  reduce this failure.
+  MoonSmith-discovered bug. MoonSmith now generates this trigger shape through
+  a dedicated typed AST probe and compares the compiled result to its reference
+  model. It still does not generate arbitrary `#valtype` layouts or general
+  `raise` expressions; this narrow probe is not evidence of broad exception or
+  floating-point coverage.
 
 Reproduce from the repository root:
 

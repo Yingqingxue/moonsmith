@@ -227,3 +227,19 @@ test "bounded for loop with zero iterations returns its initial accumulator" {
   assert_eq(value.to_output(), "-4")
   assert_true(!trace.contains("for-iteration"))
 }
+
+///|
+test "valtype raise probe models both success and error paths" {
+  let success = @moonsmith.ValtypeRaiseProbe(IntLiteral(8))
+  let (success_value, success_trace) = success.evaluate_with_trace()
+  assert_eq(success_value.to_output(), "true")
+  assert_true(success_trace.contains("valtype-raise-success-path"))
+
+  let failure = @moonsmith.ValtypeRaiseProbe(IntLiteral(-8))
+  let (failure_value, failure_trace) = failure.evaluate_with_trace()
+  assert_eq(failure_value.to_output(), "true")
+  assert_true(failure_trace.contains("valtype-raise-error-path"))
+
+  assert_true(failure.to_source().contains("_ms_valtype_run"))
+  assert_true(failure.to_source().contains("_ms_valtype_expected"))
+}

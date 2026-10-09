@@ -189,3 +189,18 @@ test "for-loop reduction preserves bound variables and result type" {
   let reduced_loop = candidates[1].to_source()
   assert_true(reduced_loop.contains("for _ms_index"))
 }
+
+///|
+test "valtype raise probe reduction preserves the trigger scaffold" {
+  let expression = @moonsmith.ValtypeRaiseProbe(IntLiteral(-16))
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 0)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    match candidate.value_type() {
+      BoolType => ()
+      IntType | ChoiceType => abort("valtype reducer changed result type")
+    }
+  }
+  assert_true(candidates[0].to_source().contains("_ms_valtype_run"))
+}

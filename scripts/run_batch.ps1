@@ -117,6 +117,7 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 choiceFlag = [regex]::Matches($body, 'Choice::Flag\(').Count
                 forLoop = [regex]::Matches($body, '\bfor _ms_index = 0, _ms_acc =').Count
                 forNobreak = [regex]::Matches($body, '\bnobreak\s*\{').Count
+                valtypeRaiseProbe = [regex]::Matches($body, '_ms_valtype_run\(').Count
             }
         }
         $cases.Add([pscustomobject]@{
@@ -183,9 +184,10 @@ $casesWithNumberConstructor = @($cases | Where-Object { $_.sourceConstructCounts
 $casesWithFlagConstructor = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.choiceFlag -gt 0 }).Count
 $casesWithForLoop = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.forLoop -gt 0 }).Count
 $casesWithForIteration = @($cases | Where-Object { $_.referencePathKinds -contains 'for-iteration' }).Count
+$casesWithValtypeRaiseProbe = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.valtypeRaiseProbe -gt 0 }).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 4
+    schemaVersion           = 5
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
@@ -220,6 +222,7 @@ $summary = [pscustomobject]@{
     casesWithFlagConstructor = $casesWithFlagConstructor
     casesWithForLoop        = $casesWithForLoop
     casesWithForIteration   = $casesWithForIteration
+    casesWithValtypeRaiseProbe = $casesWithValtypeRaiseProbe
     referenceTraceSource    = 'MoonBit reference interpreter; not backend runtime instrumentation'
     referencePathCaseCounts = $referencePathCaseCounts
     counts                  = $counts
