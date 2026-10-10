@@ -71,6 +71,7 @@ jobs:
           path: |
             .moonsmith/runs/
             .moonsmith/reduced/injected/
+            .moonsmith/reduction/
             .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30
@@ -127,6 +128,7 @@ jobs:
           path: |
             .moonsmith/runs/
             .moonsmith/reduced/injected/
+            .moonsmith/reduction/
             .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30

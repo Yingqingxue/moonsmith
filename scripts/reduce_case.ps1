@@ -125,6 +125,10 @@ while ($attempts -lt $MaxAttempts) {
             if ([int]$current.complexity -ne [int]$candidate.complexity) {
                 throw 'Reconstructed AST differs from the accepted candidate.'
             }
+            if ([string]$current.source -ne [string]$candidate.source -or
+                [string]$current.expectedOutput -ne [string]$candidate.expectedOutput) {
+                throw "Reconstructed AST changed the accepted source or reference output at attempt $attempts."
+            }
             $accepted = $true
             break
         }
@@ -140,7 +144,7 @@ $finalConfirmation = Invoke-Verification -Path $candidatePath `
     -ReferenceOutput ([string]$current.expectedOutput)
 if ($finalConfirmation.finding -ne $baseline.finding -or
     $finalConfirmation.reductionKey -ne $baseline.reductionKey) {
-    throw 'Minimal case did not preserve the failure on final replay.'
+    throw "Minimal case did not preserve the failure on final replay. Seed=$Seed Depth=$Depth Attempts=$attempts Baseline=[$($baseline.reductionKey)] Final=[$($finalConfirmation.reductionKey)] SourceSha256=$($finalConfirmation.sourceSha256)"
 }
 $lastReport = $finalConfirmation
 $signatureBytes = [System.Text.Encoding]::UTF8.GetBytes([string]$baseline.signature)
