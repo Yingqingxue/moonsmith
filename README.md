@@ -103,8 +103,11 @@ See the [project plan](MoonSmith_项目计划书.md), [implementation status](do
 the [ecosystem comparison](docs/ecosystem_comparison.md),
 the [historical regression corpus](docs/regressions.md),
 the [pre-review risk gate](docs/pre_review_gate.md), and
-[reduction design](docs/reduction.md). The reproducible 1,250-program
-JS/Wasm/Wasm-GC scan and 130-program Windows native scan summaries are in
-[seed scan evidence](docs/evidence/seed_scans_20261009.md).
+[reduction design](docs/reduction.md). The scan evidence records 3,750
+distinct depth-4–10 program bodies checked against the reference evaluator and
+JS/Wasm/Wasm-GC, plus separate Windows native runs; size-guarded inputs and
+upstream-reported regressions are explicitly distinguished from compiler
+findings. See [seed scan evidence](docs/evidence/seed_scans_20261009.md) for
+the reproducible report IDs and limits.
 
 Licensed under Apache-2.0.
