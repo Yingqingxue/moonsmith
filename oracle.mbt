@@ -118,8 +118,31 @@ pub fn normalize_stdout(output : String) -> String {
 }
 
 ///|
+/// Normalize an absolute source path and the Moon compiler's per-source build
+/// directory so a generated case and its relocated reduction compare alike.
+fn normalize_case_paths(output : String, case_path : String) -> String {
+  if case_path == "" {
+    return output
+  }
+  let mut file_name = case_path
+  while file_name.contains("/") {
+    file_name = file_name.split_once("/").unwrap().1.to_owned()
+  }
+  if file_name == case_path {
+    return output.replace_all(old=case_path, new="<case>")
+  }
+  let case_directory = case_path.replace_all(old="/" + file_name, new="")
+  let case_build = case_directory + "/_build/" + file_name
+  output
+  .replace_all(old=case_build, new="<case-build>")
+  .replace_all(old=case_path, new="<case>")
+  .replace_all(old=case_directory, new="<case-dir>")
+}
+
+///|
 /// Diagnostic normalization unifies path separators and masks the source path
-/// and workspace root supplied by the runner.
+/// and workspace root supplied by the runner, including its compiler build
+/// directory when the case is moved into the reducer's temporary directory.
 pub fn normalize_stderr(
   output : String,
   diagnostic_root? : String = "",
@@ -136,11 +159,7 @@ pub fn normalize_stderr(
     .trim_end(chars="/")
     .to_owned()
   let source = diagnostic_case.replace_all(old="\\", new="/")
-  let without_source = if source == "" {
-    normalized
-  } else {
-    normalized.replace_all(old=source, new="<case>")
-  }
+  let without_source = normalize_case_paths(normalized, source)
   if root == "" {
     without_source
   } else {

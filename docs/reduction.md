@@ -16,10 +16,10 @@ output. It permits literal output values to change while preserving the same
 backend partition. For compile, runtime, timeout, and mixed failures, the key
 records the failing backend, status, exit code, and normalized diagnostic.
 Outputs from successful backends may change. Source file paths are masked as
-`<case>` and the workspace root as `<workspace>`. Diagnostic text remains an
-exact match; changing line numbers or message wording can still prevent
-reduction. A future version may use a carefully verified diagnostic
-fingerprint for those cases.
+`<case>`, per-case build artifacts as `<case-build>`/`<case-dir>`, and the
+workspace root as `<workspace>`. Diagnostic text remains an exact match;
+changing line numbers or message wording can still prevent reduction. A future
+version may use a carefully verified diagnostic fingerprint for those cases.
 
 When a reference output is available, the output mismatch key also records
 which backends match that reference. A `reference-mismatch` key records that

@@ -219,6 +219,23 @@ test "compile reduction key rejects a changed failure diagnostic" {
 }
 
 ///|
+test "compile reduction key masks relocated Moon build artifacts" {
+  let initial = @moonsmith.normalize_stderr(
+    "Error: Machine_error in /work/project/.moonsmith/generated/_build/seed_0_depth_4.mbt/native/debug/build/single.core; package=/work/project/.moonsmith/generated/moon.pkg.json; source=/work/project/.moonsmith/generated/seed_0_depth_4.mbt",
+    diagnostic_root="/work/project",
+    diagnostic_case="/work/project/.moonsmith/generated/seed_0_depth_4.mbt",
+  )
+  let reduced = @moonsmith.normalize_stderr(
+    "Error: Machine_error in /work/project/.moonsmith/reduction/_build/seed_0_candidate.mbt/native/debug/build/single.core; package=/work/project/.moonsmith/reduction/moon.pkg.json; source=/work/project/.moonsmith/reduction/seed_0_candidate.mbt",
+    diagnostic_root="/work/project",
+    diagnostic_case="/work/project/.moonsmith/reduction/seed_0_candidate.mbt",
+  )
+  assert_eq(initial, reduced)
+  assert_true(initial.contains("<case-build>/native/debug/build/single.core"))
+  assert_true(initial.contains("<case-dir>/moon.pkg.json"))
+}
+
+///|
 test "timeout reduction key retains the affected backend and phase" {
   let build = @moonsmith.analyze_results([
     result("js", Succeeded, 0, "9", ""),
