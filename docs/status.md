@@ -15,21 +15,31 @@ scaffold while reducing its input. On this workstation, seed 4 at depth 3
 returned `-96` in the reference evaluator and on JS, Wasm, and Wasm-GC. A
 source-triggered injected mismatch on Wasm-GC reduced the same program from
 complexity 10,110 to 1,001 in four attempts, preserving the enum/array probe;
-this injection is a harness check, not a compiler defect.
+this injection is a harness check, not a compiler defect. The probe uses an
+initialized array literal; the exact empty-array-plus-`push` pattern associated
+with upstream issue #1322 remains in its separate regression fixture.
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
 generator, not a measured distribution or defect-finding rate for the new
-branch. Native execution of this new probe has not yet been checked locally;
-this workstation has no compatible C compiler.
+branch. This workstation has no compatible C compiler, but hosted CI has now
+verified native behavior on Linux GCC and Windows MSVC.
 
 ## Verified today
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.
-- Seventy main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
-  reference, reducer, and CLI integration scripts also pass after the added
-  report/JSON and variable-scope cases.
+- Seventy-four main-package tests pass on each of `js`, `wasm`, and `wasm-gc`;
+  reference, reducer, and CLI integration scripts also pass.
+- The current generator revision passed [CI run 38029911973](https://github.com/Yingqingxue/moonsmith/actions/runs/38029911973):
+  Linux verification and 10-seed, five-configuration smoke; Windows native
+  verification and 130-seed native smoke.
+- A fresh 100-seed depth-4 scan after the enum-array probe change completed in
+  575,172 ms: all 100 reference checks and 300 JS/Wasm/Wasm-GC executions were
+  consistent, with 100 distinct program bodies and no harness changes. The
+  enum-array probe appeared in 51 sources and was visited by the reference
+  evaluator in 51 cases; the `#valtype`/`raise` probe appeared in 41 sources.
+  Raw report: `.moonsmith/runs/batch_20261010_061907_455.json` (local, ignored).
 - Signed-`Int` seed boundary checks now cover `-2147483648` and `2147483647`,
   including normalization, Park–Miller advancement, child seeds, deterministic
   generation, and result typing. Standard Park–Miller vectors are also pinned
