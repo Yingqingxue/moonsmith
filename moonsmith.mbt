@@ -582,8 +582,7 @@ pub fn Program::to_source(self : Program) -> String {
     "priv enum MoonSmithEntryKind {\n  Ref(String)\n}\n\n" +
     "#valtype\npriv struct MoonSmithEntry {\n  id : Int\n  kind : MoonSmithEntryKind\n}\n\n" +
     "fn _ms_valtype_array_run(i : Int) -> Int {\n" +
-    "  let values : Array[MoonSmithEntry] = []\n" +
-    "  values.push({ id: i, kind: MoonSmithEntryKind::Ref(\"x\") })\n" +
+    "  let values : Array[MoonSmithEntry] = [{ id: i, kind: MoonSmithEntryKind::Ref(\"x\") }]\n" +
     "  match values[0].kind {\n" +
     "    MoonSmithEntryKind::Ref(value) => if value == \"x\" { values[0].id } else { -1 }\n" +
     "  }\n" +

@@ -8,7 +8,7 @@ single-person; no second team member is recorded.
 ## Current generator change
 
 The generator now has a second, deliberately narrow `#valtype` probe. It
-constructs a struct with an enum field, pushes it into an array, matches the
+constructs a struct with an enum field in an initialized array, matches the
 indexed enum, and returns the indexed integer field. The MoonBit reference
 evaluator predicts that integer directly, and AST shrinking keeps the probe
 scaffold while reducing its input. On this workstation, seed 4 at depth 3
