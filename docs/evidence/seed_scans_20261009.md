@@ -291,3 +291,18 @@ backend executions, and twelve size-limit rejections. Depth 8/9/10 cohorts
 contain 430/430/630 cases, with all depth-8 and depth-9 cases checked; depth
 10's twelve oversized inputs remained excluded before compilation. Depth 11
 remains separate.
+
+Run `20261010_005354_875` added 200 full-matrix depth-7 seeds (19000–19199).
+All 200 bodies passed reference evaluation and 600 backend executions in
+1,138,754 ms. All source line counts were measured; the maximum was 1,459.
+The probe occurred in 198 sources and was visited in 178 reference traces
+(success 132, error 133; overlap possible). There were no size limits,
+failures, mismatches, or harness changes. Raw report:
+`.moonsmith/runs/batch_20261010_005354_875.json` (ignored and local only).
+
+Across the fourteen original depth-4–10 reports and eleven follow-ups, the
+cross-report SHA-256 check confirms 3,150 unique bodies, 3,138 reference-
+checked and consistent cases, 8,614 backend executions, and twelve explicit
+size-limit rejections. Depth 7/8/9/10 now contain 430/430/430/630 cases;
+depth 10 remains the only cohort with size-limit rejections. Depth 11 remains
+separate.
