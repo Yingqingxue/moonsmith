@@ -269,3 +269,23 @@ test "valtype raise probe keeps the sign boundary and upstream trigger shape" {
   )
   assert_true(source.contains("match (try? _ms_valtype_make(i))"))
 }
+
+///|
+test "valtype enum array probe returns the indexed field after enum matching" {
+  for input in [-8, 0, 8] {
+    let probe = @moonsmith.ValtypeEnumArrayProbe(IntLiteral(input))
+    let (value, trace) = probe.evaluate_with_trace()
+    assert_eq(value.to_output(), input.to_string())
+    assert_true(trace.contains("valtype-enum-array-probe"))
+    assert_true(probe.to_source().contains("_ms_valtype_array_run("))
+  }
+  let program : @moonsmith.Program = {
+    seed: 1,
+    result_type: IntType,
+    result: ValtypeEnumArrayProbe(IntLiteral(-8)),
+  }
+  let source = program.to_source()
+  assert_true(source.contains("MoonSmithEntryKind::Ref(\"x\")"))
+  assert_true(source.contains("MoonSmithEntryKind::Ref(value)"))
+  assert_true(source.contains("values[0].id"))
+}

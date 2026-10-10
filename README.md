@@ -91,10 +91,11 @@ conditional expressions, boolean and tagged-enum pattern matching, scoped
 structs, and typed local function application with captured outer bindings.
 It also generates bounded `for` loops with an index and accumulator updated
 together, and models loop-carried values in the reference evaluator and AST
-reducer. A narrow, issue-motivated probe emits a `#valtype` struct with a
-`Double` first field through a `raise`/`try?` path, with reference evaluation
-and shrinking. This does not imply general floating-point or exception
-generation support.
+reducer. One narrow probe emits a `#valtype` struct with a `Double` first field
+through a `raise`/`try?` path. A second probe stores a `#valtype` struct with
+an enum field in an array, then matches that field and returns the indexed
+integer. Both have reference evaluation and AST shrinking; they do not imply
+general floating-point, exception, enum, or array generation support.
 The reducer works on generated ASTs and verifies candidates against the
 original backend relationship. Arbitrary MoonBit source reduction is not
 implemented yet.
@@ -108,6 +109,8 @@ distinct depth-4–10 program bodies checked against the reference evaluator and
 JS/Wasm/Wasm-GC, plus separate Windows native runs; size-guarded inputs and
 upstream-reported regressions are explicitly distinguished from compiler
 findings. See [seed scan evidence](docs/evidence/seed_scans_20261009.md) for
-the reproducible report IDs and limits.
+the reproducible report IDs and limits. Those scans were recorded before the
+enum/array probe changed the integer branch of the generator; their totals are
+historical evidence, not measurements of the current generator distribution.
 
 Licensed under Apache-2.0.

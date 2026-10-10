@@ -13,6 +13,14 @@ if (@($normal.runs | Where-Object { $_.output -ne $normal.expectedOutput }).Coun
     throw 'A backend output differs from the reference value in the normal case.'
 }
 
+$arrayRaw = & $verifyScript -Seed 4 -Depth 3 -NoPersist
+$array = $arrayRaw | ConvertFrom-Json
+if ($array.finding -ne 'consistent' -or
+    $array.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
+    @($array.runs | Where-Object { $_.output -ne $array.expectedOutput }).Count -ne 0) {
+    throw 'Valtype enum array output did not agree with the reference evaluator.'
+}
+
 $injectedRaw = & $verifyScript -Seed 42 -Depth 4 -NoPersist `
     -InjectCommonWrongOutput '999'
 $injectedExitCode = $LASTEXITCODE
@@ -30,6 +38,7 @@ if (@($injected.runs | Select-Object -ExpandProperty output -Unique).Count -ne 1
 [pscustomobject]@{
     passed         = $true
     normalFinding = $normal.finding
+    arrayFinding = $array.finding
     injectedFinding = $injected.finding
     expectedOutput = $normal.expectedOutput.Trim()
 } | ConvertTo-Json -Depth 3

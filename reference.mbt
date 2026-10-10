@@ -170,6 +170,11 @@ fn Expr::evaluate_in_env(
       }
       BoolValue(true)
     }
+    ValtypeEnumArrayProbe(value) => {
+      trace.push("valtype-enum-array-probe")
+      let input = value.evaluate_in_env(bindings, trace).as_int()
+      IntValue(input)
+    }
     Add(left, right) => {
       trace.push("add")
       IntValue(

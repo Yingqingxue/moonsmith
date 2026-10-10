@@ -178,3 +178,18 @@ test "valtype raise support declarations are emitted only when needed" {
   assert_true(!ordinary_program.contains("#valtype"))
   assert_true(!ordinary_program.contains("_ms_valtype_run"))
 }
+
+///|
+test "generated integer corpus includes valtype enum array programs" {
+  let mut found = false
+  for seed = 0; seed < 200; seed = seed + 1 {
+    let source = @moonsmith.generate_program(seed, 3).to_source()
+    if source.contains("_ms_valtype_array_run(") {
+      found = true
+      assert_true(source.contains("#valtype\npriv struct MoonSmithEntry"))
+      assert_true(source.contains("let values : Array[MoonSmithEntry] = []"))
+      assert_true(source.contains("match values[0].kind"))
+    }
+  }
+  assert_true(found)
+}

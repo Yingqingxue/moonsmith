@@ -206,6 +206,22 @@ test "valtype raise probe reduction preserves the trigger scaffold" {
 }
 
 ///|
+test "valtype enum array reduction preserves its array and match call" {
+  let expression = @moonsmith.ValtypeEnumArrayProbe(IntLiteral(-16))
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 0)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    assert_true(candidate.to_source().contains("_ms_valtype_array_run("))
+    match candidate.value_type() {
+      IntType => ()
+      BoolType | ChoiceType =>
+        abort("valtype array reducer changed result type")
+    }
+  }
+}
+
+///|
 test "candidate manifest serializes a real reduction" {
   let program = @moonsmith.generate_program(7, 2)
   let manifest = program.candidates_json()

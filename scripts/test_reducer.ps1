@@ -75,6 +75,28 @@ if ($valtypeResult.injection.sourceTrigger -ne '_ms_valtype_run') {
     throw 'The valtype reduction was not guarded by the intended source trigger.'
 }
 
+$arrayRaw = & $reduceScript -Seed 4 -Depth 3 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains '_ms_valtype_array_run' `
+    -MaxAttempts 12
+$arrayExitCode = $LASTEXITCODE
+$arrayResult = $arrayRaw | ConvertFrom-Json
+if ($arrayResult.finding -ne 'output-mismatch' -or
+    $arrayResult.acceptedSteps -lt 1 -or
+    $arrayResult.finalComplexity -ge $arrayResult.originalComplexity -or
+    $arrayResult.injection.sourceTrigger -ne '_ms_valtype_array_run' -or
+    $arrayExitCode -ne 1) {
+    throw 'The valtype enum array reduction did not preserve its injected mismatch.'
+}
+$arrayMinimalPath = Join-Path $arrayResult.outputDirectory 'minimal.mbt'
+$arrayMinimalSource = Get-Content -LiteralPath $arrayMinimalPath -Raw -Encoding utf8
+foreach ($trigger in @('#valtype', 'Array[MoonSmithEntry]', 'match values[0].kind', '_ms_valtype_array_run')) {
+    if (-not $arrayMinimalSource.Contains($trigger)) {
+        throw "The valtype enum array reduction lost required trigger fragment: $trigger"
+    }
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -88,5 +110,9 @@ if ($valtypeResult.injection.sourceTrigger -ne '_ms_valtype_run') {
     valtypeAttempts = $valtypeResult.attempts
     valtypeTargets = $valtypeResult.targets
     valtypeMinimalPath = $valtypeMinimalPath
+    arrayOriginalComplexity = $arrayResult.originalComplexity
+    arrayFinalComplexity = $arrayResult.finalComplexity
+    arrayAcceptedSteps = $arrayResult.acceptedSteps
+    arrayMinimalPath = $arrayMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0

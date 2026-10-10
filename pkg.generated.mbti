@@ -54,6 +54,7 @@ pub(all) enum Expr {
   FunctionApply(ValueType, String, Expr, Expr)
   ForLoop(Int, Expr, Expr)
   ValtypeRaiseProbe(Expr)
+  ValtypeEnumArrayProbe(Expr)
 }
 pub fn Expr::complexity(Self) -> Int
 pub fn Expr::evaluate(Self) -> EvaluatedValue

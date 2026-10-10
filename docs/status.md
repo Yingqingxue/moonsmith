@@ -5,6 +5,24 @@ Last updated: 2026-10-10
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
 
+## Current generator change
+
+The generator now has a second, deliberately narrow `#valtype` probe. It
+constructs a struct with an enum field, pushes it into an array, matches the
+indexed enum, and returns the indexed integer field. The MoonBit reference
+evaluator predicts that integer directly, and AST shrinking keeps the probe
+scaffold while reducing its input. On this workstation, seed 4 at depth 3
+returned `-96` in the reference evaluator and on JS, Wasm, and Wasm-GC. A
+source-triggered injected mismatch on Wasm-GC reduced the same program from
+complexity 10,110 to 1,001 in four attempts, preserving the enum/array probe;
+this injection is a harness check, not a compiler defect.
+
+The 3,750-program scan totals below were collected before this generator
+branch changed. They remain historical evidence for that version of the
+generator, not a measured distribution or defect-finding rate for the new
+branch. Native execution of this new probe has not yet been checked locally;
+this workstation has no compatible C compiler.
+
 ## Verified today
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.

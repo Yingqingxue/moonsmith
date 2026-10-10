@@ -126,7 +126,7 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     throw 'fuzz did not return a clean two-seed batch.'
 }
 
-$generatorLimitRaw = & $cli fuzz -SeedStart 8163 -Count 1 -Depth 10
+$generatorLimitRaw = & $cli fuzz -SeedStart 8302 -Count 1 -Depth 11
 $generatorLimitExitCode = $LASTEXITCODE
 $generatorLimit = $generatorLimitRaw | ConvertFrom-Json
 if ($generatorLimitExitCode -ne 1 -or

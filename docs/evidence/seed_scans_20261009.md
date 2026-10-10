@@ -2,6 +2,9 @@
 
 Dates: 2026-10-09 to 2026-10-10 (Asia/Shanghai); GitHub runner-generated run IDs use UTC.
 Toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`  
+These runs predate the generated `#valtype` enum/array probe. Seed mappings and
+construct frequencies changed after that addition; the table is retained as
+evidence for the earlier generator revision.
 Harness digest: `cfe0663a2d37b86d00f63065b22555d60fff48623aab82dfdc6916ecf7cc6b67`
 at both the beginning and end of the first twelve selected runs. The two
 guarded depth-10 runs use digest
