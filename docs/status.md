@@ -175,6 +175,13 @@ single-person; no second team member is recorded.
   reference traces visited it. Across 21 selected depth-4–10 runs, cross-report
   hashes confirm 2,350 distinct programs, 2,341 consistent checks, 6,223
   backend executions, and nine guarded size limits. The digest was unchanged.
+- A further 200 depth-10 seeds (16000–16199, run `20261009_234550_219`)
+  produced 200 unique bodies and 200 line measurements (maximum 21,980); 197
+  reference checks and 591 executions passed, with three safe size-limit
+  rejections. All sources contained the probe; 196 reference traces visited
+  it. Across 22 selected depth-4–10 runs, hashes confirm 2,550 distinct
+  programs, 2,538 consistent checks, 6,814 backend executions, and twelve
+  guarded size limits. The harness digest remained unchanged.
 - An explicitly labelled injected difference on `wasm-gc` is classified as
   `output-mismatch` and makes the verification command fail as intended.
 - The generator CLI emits byte-identical source on `js`, `wasm`, and
