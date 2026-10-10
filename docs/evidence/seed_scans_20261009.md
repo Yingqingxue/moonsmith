@@ -246,3 +246,18 @@ all seven follow-ups confirms 2,350 unique bodies, 2,341 reference-checked and
 consistent cases, 6,223 backend executions, and nine explicit size-limit
 rejections. Depth 11 remains a separate cohort. Raw report:
 `.moonsmith/runs/batch_20261009_233158_232.json` (ignored and local only).
+
+Run `20261009_234550_219` added 200 depth-10 seeds (16000–16199). All 200
+bodies were unique, with line counts recorded; the largest had 21,980 lines.
+One hundred ninety-seven cases passed reference evaluation and 591 backend
+executions in 1,346,965 ms. Three inputs were rejected by the 16,300-line
+guard before reference evaluation or compilation. The probe appeared in all
+200 sources; 196 reference traces visited it (success 193, error 194; overlap
+possible). There were no other findings or harness changes.
+
+Cross-report comparison now covers the fourteen original depth-4–10 runs and
+all eight follow-ups: 2,550 unique program bodies, 2,538 reference-checked and
+consistent cases, 6,814 backend executions, and twelve size-limit rejections.
+The six depth-10 cohorts contain 630 samples; 12 exceeded the source bound.
+Depth-11 remains separate. Raw report:
+`.moonsmith/runs/batch_20261009_234550_219.json` (ignored and local only).
