@@ -14,14 +14,18 @@ checked-in fixture continues to preserve the exact upstream source separately;
 the generated extension is not claimed to be the original reproducer. The
 MoonBit reference evaluator models both inserted values and traces the two
 pushes and indexed reads; AST shrinking keeps the probe scaffold while reducing
-its input. The extension is pending remote CI validation. #1322 remains an
-upstream-reported issue, not a MoonSmith-discovered defect.
+its input. The extension passed the Linux, Windows, and extended-seed jobs in
+[GitHub Actions run 38246227150](https://github.com/Yingqingxue/moonsmith/actions/runs/38246227150).
+The current-generator scan covered 230 distinct bodies and 690 JS/Wasm/Wasm-GC
+executions; see the [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
+#1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
-generator, not a measured distribution or defect-finding rate for the new
-branch. This workstation has no compatible C compiler, but hosted CI has now
-verified native behavior on Linux GCC and Windows MSVC.
+generator, not a measured distribution or defect-finding rate for the current
+branch. The smaller current-generator sample is documented separately and
+must not be added to those historical totals. This workstation has no
+compatible C compiler, so native behavior is checked on hosted CI.
 
 ## Latest completed local verification (2026-10-12, before array-growth extension)
 
@@ -37,9 +41,10 @@ it against the known upstream signature, while the ordinary Linux native
 release batch avoids treating that known debug failure as an unexpected
 finding.
 
-The current uncommitted array-growth extension has not been validated locally
-at the user's request; it must pass remote CI before being described as
-verified.
+The local-verification section above is a historical snapshot from before the
+array-growth extension and should not be read as the current validation state.
+The extension has since passed the remote checks and current-generator scan
+linked above; this machine still lacks a compatible C compiler.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

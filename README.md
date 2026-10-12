@@ -116,5 +116,7 @@ findings. See [seed scan evidence](docs/evidence/seed_scans_20261009.md) for
 the reproducible report IDs and limits. Those scans were recorded before the
 enum/array probe changed the integer branch of the generator; their totals are
 historical evidence, not measurements of the current generator distribution.
+The current generator was separately scanned on 230 fixed seeds across depths
+4, 6, and 8; see [current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md).
 
 Licensed under Apache-2.0.
