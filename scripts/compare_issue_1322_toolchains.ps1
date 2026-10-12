@@ -62,12 +62,17 @@ foreach ($entry in $versions) {
     $savedReport = Join-Path $ArtifactDirectory "issue_1322_$($entry.label).json"
     Copy-Item -LiteralPath $sourceReport -Destination $savedReport
     $reports[$entry.label] = Get-Content -LiteralPath $savedReport -Raw | ConvertFrom-Json
+    $reports[$entry.label] | Add-Member -NotePropertyName moonCCompilerVersion `
+        -NotePropertyValue $entry.value -Force
+    $reports[$entry.label] | ConvertTo-Json -Depth 6 |
+        Set-Content -LiteralPath $savedReport -Encoding utf8
 }
 
 $comparison = [pscustomobject]@{
     platform = if ($IsWindows) { 'windows' } else { 'linux' }
     baseline = [pscustomobject]@{
         toolchain = $reports.baseline.toolchain
+        moonCCompilerVersion = $reports.baseline.moonCCompilerVersion
         nativeCompiler = $reports.baseline.nativeCompiler
         nativeCompilerVersion = $reports.baseline.nativeCompilerVersion
         nativeDebugClassification = $reports.baseline.nativeDebugClassification
@@ -76,6 +81,7 @@ $comparison = [pscustomobject]@{
     }
     candidate = [pscustomobject]@{
         toolchain = $reports.candidate.toolchain
+        moonCCompilerVersion = $reports.candidate.moonCCompilerVersion
         nativeCompiler = $reports.candidate.nativeCompiler
         nativeCompilerVersion = $reports.candidate.nativeCompilerVersion
         nativeDebugClassification = $reports.candidate.nativeDebugClassification
@@ -85,7 +91,7 @@ $comparison = [pscustomobject]@{
     nativeCompilerVersionsMatch = (
         $reports.baseline.nativeCompilerVersion -eq $reports.candidate.nativeCompilerVersion
     )
-    note = 'Same hosted runner per platform; this comparison does not pin runner images or isolate every dependency.'
+    note = 'Same hosted runner per platform; MoonC and bundled core change together. The runner image and every dependency are not independently pinned.'
 }
 $comparison | ConvertTo-Json -Depth 6 |
     Set-Content -LiteralPath (Join-Path $ArtifactDirectory 'comparison.json') -Encoding utf8

@@ -117,6 +117,16 @@ construct may stop testing the original result-lowering path.
   within each platform better than comparing runs from different dates, but it
   does not pin the hosted image or every dependency; a changed result is still
   not, by itself, proof of the compiler root cause.
+- Completed comparison: [run 38270631591](https://github.com/Yingqingxue/moonsmith/actions/runs/38270631591)
+  used MoonC `0.10.14+7d59c7ec9` then `0.10.15+943464bfa` on each runner.
+  Linux reproduced the native-debug signature on both; Windows changed from
+  non-reproduction to reproduction. GCC 13.3.0 and MSVC 19.51.36260 were the
+  same within their respective runner jobs, and native release plus Wasm-GC
+  controls passed for both versions. See the
+  [captured comparison evidence](evidence/issue_1322_toolchain_comparison_20261012.md).
+  This associates the observed change with the MoonBit toolchain bundle on one
+  Windows runner, not a proven root cause: `moon`, `moonc`, and core were
+  upgraded together, and the hosted image/dependencies were not fully pinned.
 - The older run [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
   passed both Linux and Windows jobs with the generic verifier included:
   Linux classified native debug as `compile-failed`; Windows classified it as
