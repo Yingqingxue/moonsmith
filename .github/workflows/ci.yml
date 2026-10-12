@@ -11,7 +11,7 @@ on:
         type: boolean
         default: false
       extended_windows_crosscheck:
-        description: Run Windows native-release on a matching range from a successful Linux extended scan
+        description: Run Windows native-release for matching seeds; enable extended_scan too for automatic comparison
         required: false
         type: boolean
         default: false
@@ -72,6 +72,7 @@ jobs:
           ./scripts/test_reference.ps1
           ./scripts/test_reducer.ps1
           ./scripts/test_cli.ps1
+          ./scripts/test_batch_reports.ps1
 
       - name: Smoke-test generated programs
         shell: pwsh
@@ -243,7 +244,7 @@ jobs:
             throw 'The Windows cross-check start must be a non-negative 32-bit integer.'
           }
           if ($seedStart -lt 13000 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
-            throw 'Choose the start of a completed Linux extended scan (currently 13000 or 13300) and leave room for 230 32-bit seeds.'
+            throw 'Choose the start of a completed Linux extended scan and leave room for 230 32-bit seeds.'
           }
           ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('native-release') -TimeoutSeconds 60
           ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('native-release') -TimeoutSeconds 60
@@ -256,4 +257,44 @@ jobs:
           name: moonsmith-windows-current-generator-crosscheck
           path: .moonsmith/runs/batch_*.json
           if-no-files-found: error
+          retention-days: 30
+
+  compare-current-generator-reports:
+    if: github.event_name == 'workflow_dispatch' && inputs.extended_scan && inputs.extended_windows_crosscheck
+    needs:
+      - extended-seed-scan
+      - extended-windows-crosscheck
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download Linux reports
+        uses: actions/download-artifact@v8
+        with:
+          name: moonsmith-current-generator-seed-scan
+          path: .moonsmith/crosscheck/linux
+
+      - name: Download Windows reports
+        uses: actions/download-artifact@v8
+        with:
+          name: moonsmith-windows-current-generator-crosscheck
+          path: .moonsmith/crosscheck/windows
+
+      - name: Require matching seeds, source hashes, and outcomes
+        shell: pwsh
+        run: |
+          ./scripts/compare_batch_reports.ps1 `
+            -LinuxReportDirectory .moonsmith/crosscheck/linux `
+            -WindowsReportDirectory .moonsmith/crosscheck/windows `
+            -OutputPath .moonsmith/crosscheck/summary.json
+
+      - name: Preserve cross-platform comparison summary
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: moonsmith-cross-platform-seed-comparison
+          path: .moonsmith/crosscheck/summary.json
+          if-no-files-found: ignore
           retention-days: 30

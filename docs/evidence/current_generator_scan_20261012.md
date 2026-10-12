@@ -54,10 +54,13 @@ The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
 Linux batch (depth 4: 100; depth 6: 100; depth 8: 30). After recording the
 13000–13229 and 13300–13529 scans below, the next default start is 13530; the workflow rejects
 smaller values to avoid the documented samples. To compare Windows
-native-release against a completed Linux range, set
-`extended_windows_crosscheck` and select that range's start. Each batch needs
-its own run/artifact link; seed volume alone is not a measured defect-finding
-rate.
+native-release against identical seeds in the same workflow, set both
+`extended_scan` and `extended_windows_crosscheck`. CI then compares the report
+artifacts and fails on differing seeds, MoonBit toolchain, generated source
+hashes, or findings; it preserves a JSON summary artifact. A Windows-only
+cross-check may also be run against a previously completed Linux range by
+selecting that range's start. Each batch needs its own run/artifact link; seed
+volume alone is not a measured defect-finding rate.
 
 Additional scan (2026-10-12 UTC): [manual CI run 38274803979](https://github.com/Yingqingxue/moonsmith/actions/runs/38274803979), source commit `4fdfd52`, used the default fresh range starting at 13000. The extended scan and Linux verification jobs passed. The artifact's three reports shared toolchain `moon 0.1.20261012 (748b63c 2026-10-12)` and the same harness digest at start and end (`a08ed04fe0597aa6e1e3b8f97fa6e39c27eb39eb68cf551beea6f6714db762e0`).
 
