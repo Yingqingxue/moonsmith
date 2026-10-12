@@ -222,6 +222,26 @@ test "valtype enum array reduction preserves its array and match call" {
 }
 
 ///|
+test "combined valtype reduction preserves both probe layers" {
+  let expression : @moonsmith.Expr = @moonsmith.ValtypeRaiseProbe(
+    @moonsmith.ValtypeEnumArrayProbe(@moonsmith.IntLiteral(-16)),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 0)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    match candidate.value_type() {
+      @moonsmith.BoolType => ()
+      @moonsmith.IntType | @moonsmith.ChoiceType =>
+        abort("combined valtype reducer changed result type")
+    }
+    let source = candidate.to_source()
+    assert_true(source.contains("_ms_valtype_array_run("))
+    assert_true(source.contains("_ms_valtype_run("))
+  }
+}
+
+///|
 test "candidate manifest serializes a real reduction" {
   let program = @moonsmith.generate_program(7, 2)
   let manifest = program.candidates_json()

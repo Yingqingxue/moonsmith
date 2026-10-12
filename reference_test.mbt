@@ -289,3 +289,25 @@ test "valtype enum array probe returns the indexed field after enum matching" {
   assert_true(source.contains("MoonSmithEntryKind::Ref(value)"))
   assert_true(source.contains("values[0].id"))
 }
+
+///|
+test "enum array result flows through valtype raise reference evaluation" {
+  let expression : @moonsmith.Expr = @moonsmith.ValtypeRaiseProbe(
+    @moonsmith.ValtypeEnumArrayProbe(@moonsmith.IntLiteral(8)),
+  )
+  let (value, trace) = expression.evaluate_with_trace()
+  assert_eq(value.to_output(), "true")
+  assert_true(trace.contains("valtype-enum-array-probe"))
+  assert_true(trace.contains("valtype-raise-success-path"))
+
+  let program : @moonsmith.Program = {
+    seed: 1,
+    result_type: @moonsmith.BoolType,
+    result: expression,
+  }
+  let source = program.to_source()
+  assert_true(source.contains("_ms_valtype_array_run(8)"))
+  assert_true(source.contains("_ms_valtype_run(_ms_valtype_input.to_int64())"))
+  assert_true(source.contains("#valtype\npriv struct MoonSmithEntry"))
+  assert_true(source.contains("#valtype\npriv struct MoonSmithValtype"))
+}

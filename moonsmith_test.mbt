@@ -195,3 +195,23 @@ test "generated integer corpus includes valtype enum array programs" {
   }
   assert_true(found)
 }
+
+///|
+test "generated boolean corpus combines enum array and valtype raise paths" {
+  let mut found = false
+  for seed = 1; seed < 1000; seed = seed + 2 {
+    let program = @moonsmith.generate_program(seed, 4)
+    let source = program.to_source()
+    let (_, trace) = program.result.evaluate_with_trace()
+    if source.contains("_ms_valtype_array_run(") &&
+      source.contains("_ms_valtype_run(") &&
+      trace.contains("valtype-enum-array-probe") &&
+      (
+        trace.contains("valtype-raise-success-path") ||
+        trace.contains("valtype-raise-error-path")
+      ) {
+      found = true
+    }
+  }
+  assert_true(found)
+}
