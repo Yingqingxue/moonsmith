@@ -131,19 +131,22 @@ native-release, for 3,680 consistent backend executions across 920 distinct
 generated bodies. See
 [current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md);
 these measurements do not include the extension and must not be read as its
-coverage evidence. The fixed-seed nightly corpus described below also predates
-this change; a fresh run is required before making claims about the updated
-generator distribution.
+coverage evidence. The original fixed-seed nightly runs described below
+predate this change. A fresh same-toolchain, same-seed comparison now covers the
+Choice-returning extension: 1,000 bodies, with 251 changed source hashes and
+305 additional local-function nodes. See
+[the updated generator evidence](docs/evidence/choice_function_corpus_20261013.md).
 When both extended workflow inputs are enabled, CI also downloads and compares
 the Linux and Windows reports, failing on a seed-set, toolchain, source-hash,
 reference-output, or finding mismatch.
 
 The nightly Actions workflow scans fixed seeds 14990–15989 on Linux across
 JS/Wasm/Wasm-GC and retains its machine-readable report for 30 days. Its first
-manual validation run checked 1,000 distinct generated bodies against the
-reference evaluator and completed 3,000 backend executions without findings;
-this nightly corpus does not cover native backends. A later end-to-end manual run
-also verified the coverage gate and uploaded both JSON and HTML artifacts. The
+manual validation run and a later end-to-end workflow check both predate the
+Choice-returning extension. A fresh run on the updated generator checked 1,000
+distinct bodies and 3,000 backend executions without findings; see the
+[updated corpus evidence](docs/evidence/choice_function_corpus_20261013.md).
+These nightly scans are Linux-only and do not cover native backends. The
 workflow generates a self-contained HTML summary with separate generated-source
 and reference-trace coverage, finding counts, failure clusters, and per-seed
 results; for a local batch, use

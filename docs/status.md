@@ -128,11 +128,15 @@ batch-report integration scripts also pass. Seed 4, whose generated source
 contains the new Choice-returning function, was consistent across JS, Wasm,
 and Wasm-GC. A source-triggered injected mismatch on that seed reduced from
 complexity 24,167 to 7,007 in 20 attempts (7 accepted steps), retaining the
-trigger; this validates reducer behavior and is not a compiler finding. Older
-large scans and the nightly corpus predate this generator extension and do not
-measure its distribution. These are host-side MoonSmith tests, not runtime
-coverage inside generated compiler backends. Native remains a hosted-CI check
-because this workstation has no compatible C compiler.
+trigger; this validates reducer behavior and is not a compiler finding. The
+updated generator also passed a fresh 1,000-seed Linux corpus; compared against
+the immediately preceding same-toolchain corpus, 251 source hashes changed
+and 305 local-function nodes were added. Details and artifact checks are in
+[the updated corpus evidence](evidence/choice_function_corpus_20261013.md).
+Earlier large scans remain historical and do not measure this extension. The
+new corpus is Linux-only, and reference traces are not runtime coverage inside
+generated compiler backends. Native remains a hosted-CI check because this
+workstation has no compatible C compiler.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
