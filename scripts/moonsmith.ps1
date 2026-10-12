@@ -41,11 +41,11 @@ MoonSmith commands:
   fuzz   -SeedStart N -Count N    Run a deterministic seed range.
   replay -CasePath PATH           Replay a saved finding directory or report.json.
   reduce -Seed N -Depth N         Reduce a reproducible generated finding.
-  report -CasePath PATH           Render a saved finding as Markdown.
+  report -CasePath PATH           Render saved finding as Markdown and offline HTML.
 
 Common options: -Depth N -Targets js,wasm,wasm-gc,native,native-release -TimeoutSeconds N
 The reduce command also accepts -MaxAttempts and explicit fault-injection options.
-The report command accepts -ReductionPath PATH and -Force to replace report.md.
+The report command accepts -ReductionPath PATH and -Force to replace report.md and report.html.
 This is a PowerShell host adapter; the generator, oracle, and AST reducer are MoonBit.
 '@
         exit 0

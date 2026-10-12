@@ -67,11 +67,12 @@ pwsh -File scripts/moonsmith.ps1 reduce -Seed 20 -Depth 2 `
 Saved findings and batch summaries live under the ignored `.moonsmith`
 directory. A saved injected output mismatch can be replayed with
 `pwsh -File scripts/moonsmith.ps1 replay -CasePath <finding-directory>`.
-To create a Markdown case report, run
+To create a Markdown and standalone offline HTML case report, run
 `pwsh -File scripts/moonsmith.ps1 report -CasePath <finding-directory>`.
 Pass `-ReductionPath <reduction-directory>` to include verified reduction
-metrics and minimal source. Existing `report.md` files are kept unless
-`-Force` is supplied.
+metrics and minimal source. Both reports include escaped source/output,
+backend results, evidence classification, and a replay command. Existing
+`report.md` or `report.html` files are kept unless `-Force` is supplied.
 
 The reference check also detects when every backend returns the same wrong
 value. Its interpreter is written in MoonBit and runs through the MoonBit

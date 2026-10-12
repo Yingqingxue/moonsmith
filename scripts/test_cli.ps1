@@ -175,12 +175,25 @@ if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced) {
 
 $rendered = (& $cli report -CasePath $injected.savedTo -Force | ConvertFrom-Json)
 $reportMarkdown = Get-Content -LiteralPath $rendered.reportPath -Raw
+$reportHtml = Get-Content -LiteralPath $rendered.htmlReportPath -Raw
 if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
+    -not $rendered.htmlReportPath -or
     -not $reportMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
     -not $reportMarkdown.Contains('## Backend results') -or
     -not $reportMarkdown.Contains('wasm-gc / default') -or
     -not $reportMarkdown.Contains('## Reproduce')) {
     throw 'report did not render a clearly labelled Markdown finding.'
+}
+if (-not $reportHtml.StartsWith('<!doctype html>') -or
+    -not $reportHtml.Contains('HARNESS-INJECTED DEMONSTRATION') -or
+    -not $reportHtml.Contains('<table>') -or
+    -not $reportHtml.Contains('Source SHA-256') -or
+    -not $reportHtml.Contains('Original source') -or
+    -not $reportHtml.Contains('&lt;') -or
+    $reportHtml.Contains('if i < 0L') -or
+    -not $reportHtml.Contains('Replay compares the finding kind') -or
+    $reportHtml -match '<script\b|\son[a-z]+\s*=') {
+    throw 'report did not render a standalone, escaped HTML case page.'
 }
 
 [pscustomobject]@{
@@ -198,5 +211,5 @@ if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
     nearLimitLineCount = $nearLimitLineCount
     replayFinding = $replay.replayFinding
     seedRangeOverflowRejected = $seedRangeRejected
-    reportPath = $rendered.reportPath
+    reportPaths = @($rendered.reportPath, $rendered.htmlReportPath)
 } | ConvertTo-Json -Depth 3

@@ -571,19 +571,21 @@ batch runner; `replay` rechecks a saved finding against its original finding
 kind and reduction key; `reduce` runs the generated-seed reducer. A CLI
 integration test validates `doctor`, a two-seed batch, and an explicitly
 injected saved-case replay. This is a PowerShell host adapter, not yet a
-standalone native MoonBit executable. HTML case reports and arbitrary-source
-reduction remain unfinished.
+standalone native MoonBit executable. Arbitrary-source reduction remains
+unfinished.
 
-## Markdown finding report
+## Finding reports
 
 The host CLI now renders a saved finding and optional matching reduction as
-`report.md`. It includes the source hash, toolchain and host metadata for new
-cases, per-backend status/output/diagnostics, reference output, reduction
-metrics, and a replay command. Reports explicitly mark injected demonstrations
+both `report.md` and a self-contained `report.html` that opens offline. They
+include the source hash, toolchain and host metadata for new cases, per-backend
+status/output/diagnostics, reference output, reduction metrics, and a replay
+command. HTML-encodes saved source and diagnostics, with no script elements.
+Reports explicitly mark injected demonstrations
 and environment failures as non-defects; real findings are labelled
 unconfirmed candidates. Source hashes, reduction identity, and equality of
 the reduction's original source with the saved canonical case are checked
-before rendering. The CLI integration test exercises this path. Existing
+before rendering. CLI integration tests exercise both formats. Existing
 reports are not overwritten without `-Force`.
 
 ## Fixed-size array expressions
