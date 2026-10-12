@@ -51,10 +51,13 @@ compiler defect is claimed from this scan.
 # Fresh follow-up scans
 
 The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
-batch (depth 4: 100; depth 6: 100; depth 8: 30). It rejects values below
-13000 so a default dispatch cannot overlap the documented ranges above. Each
-batch still needs its own run/artifact link before its counts are added here;
-seed volume alone is not a measured defect-finding rate.
+Linux batch (depth 4: 100; depth 6: 100; depth 8: 30). After recording the
+13000–13229 scan below, the next default start is 13300; the workflow rejects
+smaller values to avoid the documented samples. To compare Windows
+native-release against a completed Linux range, set
+`extended_windows_crosscheck` and select that range's start. Each batch needs
+its own run/artifact link; seed volume alone is not a measured defect-finding
+rate.
 
 Additional scan (2026-10-12 UTC): [manual CI run 38274803979](https://github.com/Yingqingxue/moonsmith/actions/runs/38274803979), source commit `4fdfd52`, used the default fresh range starting at 13000. The extended scan and Linux verification jobs passed. The artifact's three reports shared toolchain `moon 0.1.20261012 (748b63c 2026-10-12)` and the same harness digest at start and end (`a08ed04fe0597aa6e1e3b8f97fa6e39c27eb39eb68cf551beea6f6714db762e0`).
 
@@ -72,3 +75,7 @@ reference-interpreter path observations, not backend runtime coverage. This
 sample is reported separately from the earlier fixed scan; no combined
 cross-run body-hash deduplication is claimed here. It found no new compiler
 defect.
+
+Windows same-seed cross-check (2026-10-12 UTC): [manual CI run 38276715973](https://github.com/Yingqingxue/moonsmith/actions/runs/38276715973), source commit `eb7c59a`, ran the same 230 seeds at depths 4, 6, and 8 on Windows `native-release`. All 230 checks were consistent, with zero unexpected findings, generator limits, or harness errors. The three Windows reports shared MoonBit `0.1.20261012 (748b63c)` and an unchanged Windows harness digest (`d6866c1ad10ebfc3bae7cedcccd64b04a6d3cf5b0660a9bdb28128e5f9bbd1dc`).
+
+I compared the per-seed report `bodySha256` values with Linux run 38274803979: all 230 seeds had matching hashes and consistent findings on both platforms. The 230 Linux inputs were also pairwise distinct by body hash. Together these runs cover 230 distinct generated bodies and 920 backend executions (JS, Wasm, Wasm-GC, and Windows native-release per body), all consistent. This is a bounded sample, not proof of language-wide equivalence; native-debug is intentionally excluded because upstream issue #1322 has a known native-debug ICE. The Windows C compiler file version was not recorded in this run; later CI now emits the `cl.exe` file/product versions so future reports can state it explicitly.
