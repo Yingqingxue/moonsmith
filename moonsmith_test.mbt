@@ -203,7 +203,7 @@ test "generated boolean corpus combines enum array and valtype raise paths" {
     let program = @moonsmith.generate_program(seed, 4)
     let source = program.to_source()
     let (_, trace) = program.result.evaluate_with_trace()
-    if source.contains("_ms_valtype_array_run(") &&
+    if source.contains("let _ms_valtype_input = _ms_valtype_array_run(") &&
       source.contains("_ms_valtype_run(") &&
       trace.contains("valtype-enum-array-probe") &&
       (

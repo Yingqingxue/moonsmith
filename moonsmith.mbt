@@ -328,10 +328,14 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               ),
             )
           }
-          _ =>
-            ValtypeRaiseProbe(
-              generate_expr(child_seed(seed, 56), IntType, depth - 1),
-            )
+          _ => {
+            let value = generate_expr(child_seed(seed, 56), IntType, depth - 1)
+            if advance_seed(seed) % 2 == 0 {
+              ValtypeRaiseProbe(ValtypeEnumArrayProbe(value))
+            } else {
+              ValtypeRaiseProbe(value)
+            }
+          }
         }
       ChoiceType => abort("cannot generate Choice expressions directly")
     }

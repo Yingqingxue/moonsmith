@@ -97,6 +97,28 @@ foreach ($trigger in @('#valtype', 'Array[MoonSmithEntry]', 'match values[0].kin
     }
 }
 
+$combinedRaw = & $reduceScript -Seed 44607 -Depth 4 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains 'let _ms_valtype_input = _ms_valtype_array_run(' `
+    -MaxAttempts 20
+$combinedExitCode = $LASTEXITCODE
+$combinedResult = $combinedRaw | ConvertFrom-Json
+if ($combinedResult.finding -ne 'output-mismatch' -or
+    $combinedResult.acceptedSteps -lt 1 -or
+    $combinedResult.finalComplexity -ge $combinedResult.originalComplexity -or
+    $combinedResult.injection.sourceTrigger -ne 'let _ms_valtype_input = _ms_valtype_array_run(' -or
+    $combinedExitCode -ne 1) {
+    throw 'The combined valtype probe reduction did not preserve its injected mismatch.'
+}
+$combinedMinimalPath = Join-Path $combinedResult.outputDirectory 'minimal.mbt'
+$combinedMinimalSource = Get-Content -LiteralPath $combinedMinimalPath -Raw -Encoding utf8
+foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valtype', 'Array[MoonSmithEntry]', 'try? _ms_valtype_make', '_ms_valtype_run')) {
+    if (-not $combinedMinimalSource.Contains($trigger)) {
+        throw "The combined valtype reduction lost required trigger fragment: $trigger"
+    }
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -114,5 +136,9 @@ foreach ($trigger in @('#valtype', 'Array[MoonSmithEntry]', 'match values[0].kin
     arrayFinalComplexity = $arrayResult.finalComplexity
     arrayAcceptedSteps = $arrayResult.acceptedSteps
     arrayMinimalPath = $arrayMinimalPath
+    combinedOriginalComplexity = $combinedResult.originalComplexity
+    combinedFinalComplexity = $combinedResult.finalComplexity
+    combinedAcceptedSteps = $combinedResult.acceptedSteps
+    combinedMinimalPath = $combinedMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0

@@ -21,6 +21,16 @@ if ($array.finding -ne 'consistent' -or
     throw 'Valtype enum array output did not agree with the reference evaluator.'
 }
 
+$combinedRaw = & $verifyScript -Seed 44607 -Depth 4 -NoPersist
+$combined = $combinedRaw | ConvertFrom-Json
+if ($combined.finding -ne 'consistent' -or
+    $combined.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
+    ($combined.referenceTrace.visited -notcontains 'valtype-raise-success-path' -and
+        $combined.referenceTrace.visited -notcontains 'valtype-raise-error-path') -or
+    @($combined.runs | Where-Object { $_.output -ne $combined.expectedOutput }).Count -ne 0) {
+    throw 'Combined enum array and valtype raise output did not agree across backends and reference.'
+}
+
 $injectedRaw = & $verifyScript -Seed 42 -Depth 4 -NoPersist `
     -InjectCommonWrongOutput '999'
 $injectedExitCode = $LASTEXITCODE
@@ -39,6 +49,7 @@ if (@($injected.runs | Select-Object -ExpandProperty output -Unique).Count -ne 1
     passed         = $true
     normalFinding = $normal.finding
     arrayFinding = $array.finding
+    combinedFinding = $combined.finding
     injectedFinding = $injected.finding
     expectedOutput = $normal.expectedOutput.Trim()
 } | ConvertTo-Json -Depth 3
