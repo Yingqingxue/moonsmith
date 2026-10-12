@@ -12,8 +12,9 @@ included. We do not copy third-party project snapshots into this repository.
 - Reported symptom: `moon coverage analyze` ICEs when a type defines
   `fn X::main() -> String`.
 - Local fixture: `regressions/issue_1071_coverage_ice/repro.mbt`.
-- Current validation: MoonBit `0.1.20260920`, `moonc v0.10.14+7d59c7ec9`,
-  JavaScript target; the instrumented test passes (1/1) and the package-scoped
+- Current validation: [CI run 38272335209](https://github.com/Yingqingxue/moonsmith/actions/runs/38272335209)
+  passed under MoonBit `0.1.20261012` / MoonC `0.10.15+943464bfa`; the
+  JavaScript instrumented test passes (1/1) and package-scoped
   `moon coverage analyze` succeeds.
 - Scope: this confirms the historical trigger is handled by the current
   toolchain. It is not a backend miscompilation, and this fixture does not
@@ -39,8 +40,9 @@ compiles.
   field is `Double` is returned from a `raise`-capable function and consumed via
   `try?`.
 - Local fixture: `regressions/issue_1274_wasm_valtype_raise/repro.mbt`.
-- Current validation: MoonBit `0.1.20260920`, `moonc v0.10.14+7d59c7ec9`;
-  JS, Wasm, and Wasm-GC tests each pass (1/1). The fixture asserts the
+- Current validation: [CI run 38272335209](https://github.com/Yingqingxue/moonsmith/actions/runs/38272335209)
+  passed under MoonBit `0.1.20261012` / MoonC `0.10.15+943464bfa`; JS, Wasm,
+  and Wasm-GC tests each pass (1/1). The fixture asserts the
   error-path result at `Int64` -2147483648, the success boundary at 0, and the
   positive result at 2147483647. The reported Wasm failure did not reproduce on
   this toolchain. The source retains upstream's deprecated `try?` construct
@@ -117,7 +119,7 @@ construct may stop testing the original result-lowering path.
   within each platform better than comparing runs from different dates, but it
   does not pin the hosted image or every dependency; a changed result is still
   not, by itself, proof of the compiler root cause.
-- Completed comparison: [run 38270631591](https://github.com/Yingqingxue/moonsmith/actions/runs/38270631591)
+- Completed comparison: [run 38272857808](https://github.com/Yingqingxue/moonsmith/actions/runs/38272857808)
   used MoonC `0.10.14+7d59c7ec9` then `0.10.15+943464bfa` on each runner.
   Linux reproduced the native-debug signature on both; Windows changed from
   non-reproduction to reproduction. GCC 13.3.0 and MSVC 19.51.36260 were the
@@ -169,8 +171,9 @@ With a compatible C compiler, run
 - Local fixture: the standalone module at
   `regressions/issue_1133_js_link_core_trait_identity/` with `lib` and `main`
   packages.
-- Current validation: MoonBit `0.1.20260920`, `moonc
-  v0.10.14+7d59c7ec9`; JS-targeted `moon check` and `moon run` both pass.
+- Current validation: [CI run 38272335209](https://github.com/Yingqingxue/moonsmith/actions/runs/38272335209)
+  passed under MoonBit `0.1.20261012` / MoonC `0.10.15+943464bfa`; JS-targeted
+  `moon check` and `moon run` both pass.
 - Target scope: the fixture is an independent MoonBit module with
   `supported_targets = "js"`. The historical `%identity` pattern is
   JS-linker-specific and is not a valid cross-backend semantic test; the module

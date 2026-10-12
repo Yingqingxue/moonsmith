@@ -546,10 +546,9 @@ broader semantic coverage and a more usable CLI/reporting surface, not merely
 more seed counts.
 
 A structural-diversity regression test now requires at least 95 distinct
-expression bodies from the first 100 seeds. A GitHub Actions workflow has
-been added for static checks, the three backend test suites, integration
-tests, and a 10-seed smoke scan. It has only been checked locally; no remote
-GitHub CI run is available yet because this checkout has no commit or remote.
+expression bodies from the first 100 seeds. The early bootstrap note that CI
+had only been checked locally is historical and no longer applies: the remote
+workflow has passed repeatedly, most recently in [run 38272335209](https://github.com/Yingqingxue/moonsmith/actions/runs/38272335209).
 
 ## Unified host CLI
 

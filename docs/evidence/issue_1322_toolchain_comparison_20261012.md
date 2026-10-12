@@ -1,6 +1,6 @@
 # Issue 1322 same-runner toolchain comparison (2026-10-12)
 
-Workflow: [GitHub Actions run 38270631591](https://github.com/Yingqingxue/moonsmith/actions/runs/38270631591), commit `af067cf`. Both Linux and Windows jobs succeeded. Each job installed the two official MoonBit toolchain bundles sequentially on the same hosted runner, cleaned `_build` between them, and ran `scripts/test_issue_1322.ps1` against the same checked-in fixture and generated probe. The downloaded run artifacts contain each per-version JSON report and a comparison summary.
+Workflow: [GitHub Actions run 38272857808](https://github.com/Yingqingxue/moonsmith/actions/runs/38272857808), commit `958745f`. Both Linux and Windows jobs succeeded. Each job installed the two official MoonBit toolchain bundles sequentially on the same hosted runner, verified each requested MoonC version against `moon version --all`, cleaned `_build` between them, and ran `scripts/test_issue_1322.ps1` against the same checked-in fixture and generated probe. The downloaded run artifacts contain each per-version JSON report (including exact MoonC versions) and a comparison summary.
 
 | Runner | MoonC version | C compiler (same for both versions in this job) | Native-debug fixture | Native release | Wasm-GC | Generated probe native debug |
 | --- | --- | --- | --- | --- | --- | --- |
