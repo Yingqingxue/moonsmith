@@ -20,6 +20,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'failure_clusters.ps1')
 if (([long]$SeedStart + [long]$Count - 1) -gt [int]::MaxValue) {
     throw 'Seed range exceeds the 32-bit signed Int maximum; reduce -Count or lower -SeedStart.'
 }
@@ -36,7 +37,8 @@ function Get-HarnessDigest {
         'moonsmith.mbt', 'oracle.mbt', 'reducer.mbt', 'reference.mbt',
         'cmd\main\main.mbt', 'cmd\main\moon.pkg',
         'cmd\oracle\main.mbt', 'cmd\oracle\moon.pkg',
-        'scripts\verify_seed.ps1', 'scripts\run_batch.ps1'
+        'scripts\verify_seed.ps1', 'scripts\run_batch.ps1',
+        'scripts\failure_clusters.ps1'
     )
     $entries = foreach ($relativePath in $relativePaths) {
         $absolutePath = Join-Path $projectRoot $relativePath
@@ -185,6 +187,7 @@ $uniqueFailureSignatures = @(
         Where-Object { $_.finding -ne 'consistent' -and $null -ne $_.signature } |
         Select-Object -ExpandProperty signature -Unique
 ).Count
+$failureClusters = @(Get-MoonSmithFailureClusters -Cases @($cases))
 $uniqueProgramBodies = @(
     $cases | Where-Object { $null -ne $_.bodySha256 } |
         Select-Object -ExpandProperty bodySha256 -Unique
@@ -240,6 +243,7 @@ $summary = [pscustomobject]@{
     casesWithSourceLineCount = $casesWithSourceLineCount
     sourceLineCountMaximum  = $sourceLineCountMaximum
     uniqueFailureSignatures = $uniqueFailureSignatures
+    failureClusters         = $failureClusters
     uniqueProgramBodies     = $uniqueProgramBodies
     casesWithLet            = $casesWithLet
     casesWithMatch          = $casesWithMatch

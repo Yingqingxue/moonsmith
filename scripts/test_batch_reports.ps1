@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $scriptPath = Join-Path $PSScriptRoot 'compare_batch_reports.ps1'
+. (Join-Path $PSScriptRoot 'failure_clusters.ps1')
 $tempDirectory = [IO.Path]::GetTempPath()
 $testRoot = Join-Path $tempDirectory ('moonsmith-batch-report-test-' + [guid]::NewGuid().ToString('N'))
 $linuxDirectory = Join-Path $testRoot 'linux'
@@ -71,6 +72,28 @@ function Assert-ComparisonRejected {
 }
 
 try {
+    $clusterCases = @(
+        [pscustomobject]@{ seed = 21; finding = 'output-mismatch'; signature = 'sig-a'; caseId = 'case-21' }
+        [pscustomobject]@{ seed = 7; finding = 'output-mismatch'; signature = 'sig-a'; caseId = 'case-7' }
+        [pscustomobject]@{ seed = 25; finding = 'runtime-failure'; signature = 'sig-a'; caseId = 'case-25' }
+        [pscustomobject]@{ seed = 30; finding = 'output-mismatch'; signature = 'sig-b'; caseId = 'case-30' }
+        [pscustomobject]@{ seed = 31; finding = 'output-mismatch'; signature = $null; caseId = $null }
+        [pscustomobject]@{ seed = 32; finding = 'consistent'; signature = 'sig-a'; caseId = $null }
+    )
+    $clusters = @(Get-MoonSmithFailureClusters -Cases $clusterCases)
+    if ($clusters.Count -ne 3 -or
+        $clusters[0].finding -ne 'output-mismatch' -or
+        $clusters[0].signature -ne 'sig-a' -or
+        $clusters[0].count -ne 2 -or
+        $clusters[0].firstSeed -ne 7 -or
+        $clusters[0].representativeCaseId -ne 'case-7' -or
+        ($clusters[0].seeds -join ',') -ne '7,21' -or
+        ($clusters[0].caseIds -join ',') -ne 'case-7,case-21' -or
+        $clusters[1].finding -ne 'runtime-failure' -or
+        $clusters[2].signature -ne 'sig-b') {
+        throw 'failure clusters did not group by finding and signature or select the lowest-seed representative.'
+    }
+
     $linuxReport = New-TestReport -SeedStart 41000 -Targets @('js', 'wasm', 'wasm-gc')
     $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release')
     $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
@@ -122,6 +145,7 @@ try {
         rejectedSeedMismatch = $true
         rejectedToolchainMismatch = $true
         rejectedExpectedOutputMismatch = $true
+        failureClusters = $clusters.Count
     } | ConvertTo-Json
 }
 catch {

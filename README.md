@@ -51,6 +51,10 @@ Per-seed JSON reports include `sourceLineCount` and, for generated inputs, the
 applicable `sourceLineLimit`; batch JSON also reports how many cases have size
 data and the largest source. This makes the size guard auditable for successful
 as well as rejected inputs.
+Batch JSON groups non-consistent cases by finding kind and stable signature,
+listing affected seeds and case IDs and selecting the lowest-seed representative
+for triage. Cases without a signature (such as harness failures) are not
+misrepresented as a cluster.
 Batch seed ranges must also stay within MoonBit's signed 32-bit `Int` domain;
 the runner rejects an overflowing range before starting any compiler process.
 

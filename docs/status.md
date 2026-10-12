@@ -456,6 +456,10 @@ reduction is now implemented for the supported expression subset.
   `compile-failure`, and are isolated under `.moonsmith/environment`.
 - `scripts/run_batch.ps1` runs deterministic seed ranges and stores aggregate
   counts, unique failure signatures, durations, and per-seed summaries.
+- Batch reports also group signed non-consistent cases by finding kind and
+  signature, list their seeds/case IDs, and select the lowest-seed representative.
+  Harness errors without a signature remain outside clusters; synthetic tests
+  cover duplicates, distinct findings, and missing signatures.
 - The first persisted 10-seed batch completed 30 backend executions with zero
   unexpected findings in 13.8 seconds on the development workstation.
 
