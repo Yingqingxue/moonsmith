@@ -13,8 +13,8 @@ on:
       scan_start:
         description: First seed for a fresh scan (must be >=13000; uses 230 seeds across depths 4, 6, and 8)
         required: false
-        type: number
-        default: 13000
+        type: string
+        default: '13000'
 
 permissions:
   contents: read
@@ -178,7 +178,11 @@ jobs:
         env:
           SCAN_START: ${{ inputs.scan_start }}
         run: |
-          $seedStart = [int]$env:SCAN_START
+          $seedStart = 0
+          if ($env:SCAN_START -notmatch '^\d+$' -or
+              -not [int]::TryParse($env:SCAN_START, [ref]$seedStart)) {
+            throw 'scan_start must be a non-negative 32-bit integer.'
+          }
           if ($seedStart -lt 13000 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
             throw 'scan_start must be >= 13000 to avoid the documented samples and leave room for 230 32-bit seeds.'
           }
