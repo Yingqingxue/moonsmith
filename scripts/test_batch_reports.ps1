@@ -151,6 +151,43 @@ try {
         throw "batch-report did not render an offline, escaped batch summary (count=$($batchReport.count), rows=$batchHtmlRows, doctype=$($batchHtml.StartsWith('<!doctype html>')), script=$($batchHtml -match '<script\b|<img\b'))."
     }
 
+    $nightlySummary = [pscustomobject]@{
+        count = 2
+        uniqueProgramBodies = 2
+        referenceCheckedCount = 2
+        unexpectedCount = 0
+        harnessChangedDuringRun = $false
+        casesWithValtypeRaiseProbe = 1
+        casesWithDirectValtypeRaiseArrayComposition = 1
+        casesVisitingBothValtypeProbeKinds = 1
+        referencePathCaseCounts = [pscustomobject]@{
+            'valtype-raise-success-path' = 1
+            'valtype-raise-error-path' = 1
+        }
+    }
+    $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+        -Summary $nightlySummary -ExpectedCount 2)
+    if (-not $coverageValidation.valid -or
+        $coverageValidation.bothProbeTraceCases -ne 1 -or
+        $coverageValidation.raiseErrorPathCases -ne 1) {
+        throw 'nightly summary validation accepted an incorrect coverage summary.'
+    }
+    $nightlySummary.casesVisitingBothValtypeProbeKinds = 0
+    $nightlyCoverageRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'casesVisitingBothValtypeProbeKinds') {
+            throw "nightly coverage gate rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $nightlyCoverageRejected = $true
+    }
+    if (-not $nightlyCoverageRejected) {
+        throw 'nightly coverage gate accepted a report with no composed-probe reference traces.'
+    }
+
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
     $legacyReport = [ordered]@{}
@@ -222,6 +259,7 @@ try {
         batchHtmlRows = $batchHtmlRows
         legacyHtmlHandled = $true
         sourceJsonProtected = $true
+        nightlyCoverageGate = $true
     } | ConvertTo-Json
 }
 catch {

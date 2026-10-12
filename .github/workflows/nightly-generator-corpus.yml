@@ -39,13 +39,7 @@ jobs:
           $summary = ./scripts/run_batch.ps1 -SeedStart 14990 -Count 1000 `
             -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30 |
             ConvertFrom-Json
-          if ($summary.count -ne 1000 -or
-              $summary.uniqueProgramBodies -ne 1000 -or
-              $summary.referenceCheckedCount -ne 1000 -or
-              $summary.unexpectedCount -ne 0 -or
-              $summary.harnessChangedDuringRun) {
-            throw 'The nightly fixed-seed corpus did not complete with 1,000 unique, reference-checked cases.'
-          }
+          ./scripts/validate_nightly_summary.ps1 -Summary $summary | ConvertTo-Json -Compress | Write-Output
           $batchFile = Get-ChildItem -LiteralPath '.moonsmith/runs' -Filter 'batch_*.json' -File |
             Sort-Object -Property LastWriteTimeUtc -Descending |
             Select-Object -First 1

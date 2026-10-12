@@ -28,6 +28,9 @@ generator/reference coverage, finding counts, signature clusters, and per-seed r
 future nightly artifacts; local rendering was verified against the saved
 1,000-case report, and synthetic tests verify encoding of hostile report text.
 The first scheduled run exercising the new artifact-upload path is pending.
+The nightly workflow also enforces nonzero source and reference-trace coverage
+for the valtype raise probe, its array composition, and both raise outcomes;
+the gate is covered by batch integration tests.
 
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
