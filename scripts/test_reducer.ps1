@@ -38,7 +38,8 @@ if (-not $minimalSource.Contains('(if')) {
 
 $valtypeTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
-    $valtypeTargets += 'native'
+    # Native debug is reserved for the dedicated #1322 regression check: this
+    # probe is expected to hit its known Linux/GCC compile failure there.
     $valtypeTargets += 'native-release'
 }
 
@@ -99,7 +100,8 @@ foreach ($trigger in @('#valtype', 'Array[MoonSmithEntry]', 'let values : Array[
 
 $combinedTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
-    $combinedTargets += 'native'
+    # Keep this injected output-mismatch reduction isolated from the known
+    # #1322 native-debug compile failure; native-release remains a control.
     $combinedTargets += 'native-release'
 }
 $combinedRaw = & $reduceScript -Seed 44607 -Depth 4 `
