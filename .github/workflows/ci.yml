@@ -45,6 +45,11 @@ jobs:
           moon test --target wasm --deny-warn regressions/issue_1274_wasm_valtype_raise
           moon test --target wasm-gc --deny-warn regressions/issue_1274_wasm_valtype_raise
 
+      - name: Check historical MoonBit JS link-core regression
+        run: |
+          moon check --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+          moon run --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+
       - name: Check reference and reducer integration
         shell: pwsh
         run: |

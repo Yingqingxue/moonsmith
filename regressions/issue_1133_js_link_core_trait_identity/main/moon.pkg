@@ -1,0 +1,5 @@
+import {
+  "Yingqingxue/moonsmith/regressions/issue_1133_js_link_core_trait_identity/lib",
+}
+
+pkgtype(kind: "executable")

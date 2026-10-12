@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Yingqingxue/moonsmith/regressions/issue_1133_js_link_core_trait_identity/lib"
+
+// Values
+pub fn make(actions? : Array[Int]) -> Int
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait TJsValue {
+  fn to_js(Self) -> Int
+}
+pub impl TJsValue for Int
+pub impl[T : TJsValue] TJsValue for Array[T]

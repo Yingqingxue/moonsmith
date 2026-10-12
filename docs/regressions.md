@@ -121,6 +121,38 @@ moon run regressions/issue_1322_native_valtype_enum_array/repro.mbt --target was
 With a compatible C compiler, run
 `pwsh -File scripts/test_issue_1322.ps1` to capture native debug/release results.
 
+## Case 4: JS link-core ICE for cross-package generic trait identity
+
+- Upstream report: [moonbitlang/moonbit-docs#1133](https://github.com/moonbitlang/moonbit-docs/issues/1133)
+- Narrowed reproducer: [upstream comment with the standalone four-file case](https://github.com/moonbitlang/moonbit-docs/issues/1133#issuecomment-3904217755).
+- Reported symptom: JS `link-core` raised `Key_not_found` when a cross-package
+  call reached a generic helper using a trait implemented for `Array[T]` with
+  `= "%identity"`, while the exported function accepted an optional
+  `Array[Int]` argument. The issue report says `moon check` passed and the ICE
+  occurred during JS linking. A follow-up narrowed the trigger and says the
+  minimized case was independently reproduced by an upstream maintainer and
+  fixed on nightly. The checked-in fixture follows that narrowed case: it uses
+  `Int` as the identity result and omits the `#external`/FFI wrapper, which the
+  follow-up identifies as unnecessary for reproducing the linker failure.
+- Local fixture:
+  `regressions/issue_1133_js_link_core_trait_identity/{lib,main}`.
+- Current validation: MoonBit `0.1.20260920`, `moonc
+  v0.10.14+7d59c7ec9`; JS-targeted `moon check` and `moon run` both pass.
+- Scope: this is a standalone compiler-linker regression fixture, not syntax
+  currently emitted by MoonSmith's generator. It does not exercise MoonSmith's
+  reference evaluator, differential verifier, or reducer, and it is not a
+  MoonSmith-discovered issue. The identity implementation is target-specific;
+  do not run this fixture on Wasm-GC as a cross-backend control. Supporting the
+  pattern in generated programs would require modeling generic traits and
+  cross-package linking, far beyond the current generator grammar.
+
+Reproduce from the repository root:
+
+```powershell
+moon check --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+moon run --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+```
+
 ## Candidate not yet included
 
 [moonbitlang/moonbit-docs#1272](https://github.com/moonbitlang/moonbit-docs/issues/1272)
