@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-13
 
+## Offline HTML case reports
+
+The `report` command now writes a self-contained `report.html` alongside the
+existing Markdown report. It includes evidence classification, toolchain and
+host metadata, backend results, reference output, source hash, original and
+optionally minimized source, aggregate reduction metrics, and a replay command.
+Saved source and process output are HTML-encoded; the page has no JavaScript or
+external assets. The CLI integration passed locally and on Linux/Windows in
+[CI run 38284749943](https://github.com/Yingqingxue/moonsmith/actions/runs/38284749943).
+This is a static case summary, not a step-by-step reduction-history viewer.
+
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
 
