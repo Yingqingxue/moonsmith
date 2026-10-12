@@ -119,6 +119,7 @@ test "generated corpus exercises both typed record fields" {
 test "generated corpus exercises both tagged enum payloads and match arms" {
   let mut number_case = false
   let mut flag_case = false
+  let mut choice_function = false
   let mut number_payload = false
   let mut flag_payload = false
   for seed = 0; seed < 100; seed = seed + 1 {
@@ -129,6 +130,9 @@ test "generated corpus exercises both tagged enum payloads and match arms" {
     if source.contains("Choice::Flag") {
       flag_case = true
     }
+    if source.contains("fn(q") {
+      choice_function = true
+    }
     if source.contains("let selected_choice = Choice::Number(") {
       number_payload = true
     }
@@ -136,7 +140,31 @@ test "generated corpus exercises both tagged enum payloads and match arms" {
       flag_payload = true
     }
   }
-  assert_true(number_case && flag_case && number_payload && flag_payload)
+  assert_true(
+    number_case &&
+    flag_case &&
+    choice_function &&
+    number_payload &&
+    flag_payload,
+  )
+}
+
+///|
+test "Choice results include typed local functions" {
+  let mut choice_values = false
+  let mut choice_functions = false
+  for seed = 0; seed < 100; seed = seed + 1 {
+    let expression = @moonsmith.generate_expr(seed, @moonsmith.ChoiceType, 4)
+    assert_true(expression.value_type() is @moonsmith.ChoiceType)
+    let source = expression.to_source()
+    if source.contains("Choice::Number") || source.contains("Choice::Flag") {
+      choice_values = true
+    }
+    if source.contains("fn(q") {
+      choice_functions = true
+    }
+  }
+  assert_true(choice_values && choice_functions)
 }
 
 ///|

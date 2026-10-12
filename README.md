@@ -94,6 +94,9 @@ addition, subtraction, comparisons, short-circuit conjunction, negation,
 conditional expressions, boolean and tagged-enum pattern matching, scoped
 `let` bindings, two-element arrays with safe constant indexing, two-field
 structs, and typed local function application with captured outer bindings.
+Generated tagged-enum matches can also receive `Choice` values returned by a
+typed local function, exercising payload typing through generation, printing,
+reference evaluation, and reduction.
 It also generates bounded `for` loops with an index and accumulator updated
 together, and models loop-carried values in the reference evaluator and AST
 reducer. One narrow probe emits a `#valtype` struct with a `Double` first field
@@ -121,11 +124,16 @@ findings. See [seed scan evidence](docs/evidence/seed_scans_20261009.md) for
 the reproducible report IDs and limits. Those scans were recorded before the
 enum/array probe changed the integer branch of the generator; their totals are
 historical evidence, not measurements of the current generator distribution.
-The current generator was checked on an initial 360-program fixed-seed scan
-and four paired 230-seed samples: each paired source hash matched between
-Linux JS/Wasm/Wasm-GC and Windows native-release, for 3,680 consistent backend
-executions across 920 distinct generated bodies. See
-[current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md).
+Before the Choice-returning function extension, the generator was checked on
+an initial 360-program fixed-seed scan and four paired 230-seed samples: each
+paired source hash matched between Linux JS/Wasm/Wasm-GC and Windows
+native-release, for 3,680 consistent backend executions across 920 distinct
+generated bodies. See
+[current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md);
+these measurements do not include the extension and must not be read as its
+coverage evidence. The fixed-seed nightly corpus described below also predates
+this change; a fresh run is required before making claims about the updated
+generator distribution.
 When both extended workflow inputs are enabled, CI also downloads and compares
 the Linux and Windows reports, failing on a seed-set, toolchain, source-hash,
 reference-output, or finding mismatch.

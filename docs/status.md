@@ -116,11 +116,23 @@ linked above; this machine still lacks a compatible C compiler.
 ## Targeted test additions (2026-10-13)
 
 Added whitebox coverage for `ChoiceType` value typing and typed local-function
-printing, plus relative single-filename path normalization in diagnostics. The
-main package now passes 78/78 tests on each of JS, Wasm, and Wasm-GC locally.
-The latter is host-side MoonSmith test coverage; it does not represent runtime
-coverage inside the generated compiler backends. Native remains a hosted-CI
-check because this workstation has no compatible C compiler.
+printing, plus relative single-filename path normalization in diagnostics. A
+follow-up review found and fixed a real generator gap: `ChoiceType` expressions
+were rejected even though the IR, evaluator, and reducer support them. The
+generator now composes Choice values through typed local functions, and the
+printer uses the argument's type for the function parameter instead of assuming
+the return type matches it. The reducer now only offers the function argument
+as a replacement when its type matches the function result. The main package
+passes 81 tests locally on JS, Wasm, and Wasm-GC. Reference, reducer, CLI, and
+batch-report integration scripts also pass. Seed 4, whose generated source
+contains the new Choice-returning function, was consistent across JS, Wasm,
+and Wasm-GC. A source-triggered injected mismatch on that seed reduced from
+complexity 24,167 to 7,007 in 20 attempts (7 accepted steps), retaining the
+trigger; this validates reducer behavior and is not a compiler finding. Older
+large scans and the nightly corpus predate this generator extension and do not
+measure its distribution. These are host-side MoonSmith tests, not runtime
+coverage inside generated compiler backends. Native remains a hosted-CI check
+because this workstation has no compatible C compiler.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

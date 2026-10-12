@@ -170,6 +170,22 @@ test "function reduction never exposes its bound parameter" {
 }
 
 ///|
+test "Choice-returning function reduction preserves its result type" {
+  let expression = @moonsmith.FunctionApply(
+    ChoiceType,
+    "payload",
+    IntLiteral(7),
+    @moonsmith.ChoiceValue(IntType, @moonsmith.Variable(IntType, "payload")),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 0)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    assert_true(candidate.value_type() is ChoiceType)
+  }
+}
+
+///|
 test "for-loop reduction preserves bound variables and result type" {
   let expression = @moonsmith.ForLoop(
     3,

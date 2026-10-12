@@ -220,7 +220,11 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
       }
     }
     FunctionApply(result_type, name, argument, body) => {
-      push_if_smaller(candidates, original_complexity, argument)
+      match (argument.value_type(), result_type) {
+        (IntType, IntType) | (BoolType, BoolType) | (ChoiceType, ChoiceType) =>
+          push_if_smaller(candidates, original_complexity, argument)
+        _ => ()
+      }
       if !body.uses_variable(name) {
         push_if_smaller(candidates, original_complexity, body)
       }

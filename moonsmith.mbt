@@ -115,13 +115,57 @@ fn generate_for_loop(seed : Int, depth : Int) -> Expr {
 }
 
 ///|
+/// Generate a Choice value, sometimes through a typed local function. This
+/// exercises Choice as a function result rather than only as a match input.
+fn generate_choice(seed : Int, depth : Int) -> Expr {
+  let payload_type = if advance_seed(child_seed(seed, 60)) % 2 == 0 {
+    IntType
+  } else {
+    BoolType
+  }
+  if depth <= 0 {
+    ChoiceValue(
+      payload_type,
+      generate_expr(child_seed(seed, 61), payload_type, 0),
+    )
+  } else {
+    generate_choice_with_payload(seed, depth - 1, payload_type, 61)
+  }
+}
+
+///|
+fn generate_choice_with_payload(
+  seed : Int,
+  depth : Int,
+  payload_type : ValueType,
+  argument_branch : Int,
+) -> Expr {
+  let argument = generate_expr(
+    child_seed(seed, argument_branch),
+    payload_type,
+    depth,
+  )
+  if advance_seed(child_seed(seed, argument_branch + 20)) % 5 == 0 {
+    let name = "q" + depth.to_string()
+    FunctionApply(
+      ChoiceType,
+      name,
+      argument,
+      ChoiceValue(payload_type, Variable(payload_type, name)),
+    )
+  } else {
+    ChoiceValue(payload_type, argument)
+  }
+}
+
+///|
 /// Generate an expression of exactly the requested type.
 pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
   if depth <= 0 {
     match expected {
       IntType => int_leaf(seed)
       BoolType => bool_leaf(seed)
-      ChoiceType => abort("cannot generate a Choice result expression")
+      ChoiceType => generate_choice(seed, 0)
     }
   } else {
     // Two steps break the parity correlation between result type and branch.
@@ -202,10 +246,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
             let flag_name = "b" + depth.to_string()
             MatchChoice(
               IntType,
-              ChoiceValue(
-                payload_type,
-                generate_expr(child_seed(seed, 42), payload_type, depth - 1),
-              ),
+              generate_choice_with_payload(seed, depth - 1, payload_type, 42),
               number_name,
               Add(
                 Variable(IntType, number_name),
@@ -295,10 +336,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
             let flag_name = "b" + depth.to_string()
             MatchChoice(
               BoolType,
-              ChoiceValue(
-                payload_type,
-                generate_expr(child_seed(seed, 47), payload_type, depth - 1),
-              ),
+              generate_choice_with_payload(seed, depth - 1, payload_type, 47),
               number_name,
               LessThan(
                 Variable(IntType, number_name),
@@ -337,7 +375,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
             }
           }
         }
-      ChoiceType => abort("cannot generate Choice expressions directly")
+      ChoiceType => generate_choice(seed, depth)
     }
   }
 }
@@ -516,8 +554,8 @@ pub fn Expr::to_source(self : Expr) -> String {
       ") => " +
       flag_body.to_source() +
       "\n    }\n  })"
-    FunctionApply(result_type, name, argument, body) => {
-      let type_source = match result_type {
+    FunctionApply(_, name, argument, body) => {
+      let type_source = match argument.value_type() {
         IntType => "Int"
         BoolType => "Bool"
         ChoiceType => "Choice"

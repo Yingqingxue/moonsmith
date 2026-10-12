@@ -201,6 +201,26 @@ test "function application binds parameters and captures outer values" {
 }
 
 ///|
+test "Choice-returning local functions preserve payload types" {
+  let expression = @moonsmith.MatchChoice(
+    IntType,
+    @moonsmith.FunctionApply(
+      ChoiceType,
+      "payload",
+      IntLiteral(7),
+      @moonsmith.ChoiceValue(IntType, Variable(IntType, "payload")),
+    ),
+    "number",
+    Variable(IntType, "number"),
+    "flag",
+    If(IntType, Variable(BoolType, "flag"), IntLiteral(1), IntLiteral(0)),
+  )
+  assert_eq(expression.evaluate().to_output(), "7")
+  assert_true(expression.to_source().contains("fn(payload : Int)"))
+  assert_true(expression.to_source().contains("transform(7)"))
+}
+
+///|
 test "bounded for loop updates index and accumulator together" {
   let expression = @moonsmith.ForLoop(
     3,
