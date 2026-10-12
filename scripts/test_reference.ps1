@@ -1,6 +1,12 @@
 $ErrorActionPreference = 'Stop'
 $verifyScript = Join-Path $PSScriptRoot 'verify_seed.ps1'
 
+function Normalize-Output {
+    param([AllowNull()][string]$Output)
+    if ($null -eq $Output) { return '' }
+    return $Output.Replace("`r`n", "`n")
+}
+
 $normalRaw = & $verifyScript -Seed 42 -Depth 4 -NoPersist
 $normal = $normalRaw | ConvertFrom-Json
 if ($normal.finding -ne 'consistent' -or -not $normal.referenceChecked) {
@@ -9,7 +15,9 @@ if ($normal.finding -ne 'consistent' -or -not $normal.referenceChecked) {
 if (-not $normal.expectedOutput) {
     throw 'The reference evaluator returned no expected output.'
 }
-if (@($normal.runs | Where-Object { $_.output -ne $normal.expectedOutput }).Count -ne 0) {
+if (@($normal.runs | Where-Object {
+        (Normalize-Output $_.output) -ne (Normalize-Output $normal.expectedOutput)
+    }).Count -ne 0) {
     throw 'A backend output differs from the reference value in the normal case.'
 }
 
@@ -17,7 +25,9 @@ $arrayRaw = & $verifyScript -Seed 4 -Depth 3 -NoPersist
 $array = $arrayRaw | ConvertFrom-Json
 if ($array.finding -ne 'consistent' -or
     $array.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
-    @($array.runs | Where-Object { $_.output -ne $array.expectedOutput }).Count -ne 0) {
+    @($array.runs | Where-Object {
+        (Normalize-Output $_.output) -ne (Normalize-Output $array.expectedOutput)
+    }).Count -ne 0) {
     throw 'Valtype enum array output did not agree with the reference evaluator.'
 }
 
@@ -33,7 +43,9 @@ if ($combined.finding -ne 'consistent' -or
     $combined.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
     ($combined.referenceTrace.visited -notcontains 'valtype-raise-success-path' -and
         $combined.referenceTrace.visited -notcontains 'valtype-raise-error-path') -or
-    @($combined.runs | Where-Object { $_.output -ne $combined.expectedOutput }).Count -ne 0) {
+    @($combined.runs | Where-Object {
+        (Normalize-Output $_.output) -ne (Normalize-Output $combined.expectedOutput)
+    }).Count -ne 0) {
     $diagnostics = [pscustomobject]@{
         finding = $combined.finding
         expectedOutput = $combined.expectedOutput
