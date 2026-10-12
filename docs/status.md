@@ -19,11 +19,12 @@ its input. The extension passed the Linux, Windows, and extended-seed jobs in
 The current-generator scan covered 360 distinct bodies and 820 executions
 (690 across JS/Wasm/Wasm-GC and 130 Windows native-release); see the
 [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
-An additional paired scan on seeds 13000–13229 passed all 230 Linux reference
-checks and 690 JS/Wasm/Wasm-GC executions, plus 230 Windows native-release
-executions. Per-seed source hashes matched across platforms, all 920 backend
-executions were consistent, and there were no size limits or unexpected
-findings. See the evidence document for runs 38274803979 and 38276715973 and
+Two additional paired scans on seeds 13000–13229 and 13300–13529 passed all 460
+Linux reference checks and 1,380 JS/Wasm/Wasm-GC executions, plus 460 Windows
+native-release executions. Per-seed source hashes matched across platforms
+and across the two ranges (460 distinct bodies total); all 1,840 backend
+executions were consistent, with no size limits or unexpected findings. See
+the evidence document for runs 38274803979, 38276715973, and 38278202679 and
 per-depth counts. Native-debug remains excluded from this broad sample because
 of the upstream-reported #1322 ICE.
 #1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.

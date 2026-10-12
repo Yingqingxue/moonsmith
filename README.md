@@ -117,8 +117,9 @@ the reproducible report IDs and limits. Those scans were recorded before the
 enum/array probe changed the integer branch of the generator; their totals are
 historical evidence, not measurements of the current generator distribution.
 The current generator was checked on an initial 360-program fixed-seed scan
-and a later paired 230-seed sample: each paired source hash matched between
-Linux JS/Wasm/Wasm-GC and Windows native-release, for 920 consistent backend
-executions. See [current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md).
+and two paired 230-seed samples: each paired source hash matched between Linux
+JS/Wasm/Wasm-GC and Windows native-release, for 1,840 consistent backend
+executions across 460 distinct generated bodies. See
+[current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md).
 
 Licensed under Apache-2.0.

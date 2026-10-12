@@ -16,10 +16,10 @@ on:
         type: boolean
         default: false
       scan_start:
-        description: Linux scan start (>=13300); Windows cross-check may use a completed Linux range such as 13000.
+        description: Linux scan start (>=13530); Windows cross-check may use a completed Linux range such as 13000 or 13300.
         required: false
         type: string
-        default: '13300'
+        default: '13530'
 
 permissions:
   contents: read
@@ -190,8 +190,8 @@ jobs:
               -not [int]::TryParse($env:SCAN_START, [ref]$seedStart)) {
             throw 'scan_start must be a non-negative 32-bit integer.'
           }
-          if ($seedStart -lt 13300 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
-            throw 'scan_start must be >= 13300 to avoid the documented samples and leave room for 230 32-bit seeds.'
+          if ($seedStart -lt 13530 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
+            throw 'scan_start must be >= 13530 to avoid the documented samples and leave room for 230 32-bit seeds.'
           }
           ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
           ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
@@ -243,7 +243,7 @@ jobs:
             throw 'The Windows cross-check start must be a non-negative 32-bit integer.'
           }
           if ($seedStart -lt 13000 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
-            throw 'Choose the start of a completed Linux extended scan (currently 13000) and leave room for 230 32-bit seeds.'
+            throw 'Choose the start of a completed Linux extended scan (currently 13000 or 13300) and leave room for 230 32-bit seeds.'
           }
           ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('native-release') -TimeoutSeconds 60
           ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('native-release') -TimeoutSeconds 60

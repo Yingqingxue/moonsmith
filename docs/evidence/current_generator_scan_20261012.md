@@ -52,7 +52,7 @@ compiler defect is claimed from this scan.
 
 The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
 Linux batch (depth 4: 100; depth 6: 100; depth 8: 30). After recording the
-13000–13229 scan below, the next default start is 13300; the workflow rejects
+13000–13229 and 13300–13529 scans below, the next default start is 13530; the workflow rejects
 smaller values to avoid the documented samples. To compare Windows
 native-release against a completed Linux range, set
 `extended_windows_crosscheck` and select that range's start. Each batch needs
@@ -79,3 +79,5 @@ defect.
 Windows same-seed cross-check (2026-10-12 UTC): [manual CI run 38276715973](https://github.com/Yingqingxue/moonsmith/actions/runs/38276715973), source commit `eb7c59a`, ran the same 230 seeds at depths 4, 6, and 8 on Windows `native-release`. All 230 checks were consistent, with zero unexpected findings, generator limits, or harness errors. The three Windows reports shared MoonBit `0.1.20261012 (748b63c)` and an unchanged Windows harness digest (`d6866c1ad10ebfc3bae7cedcccd64b04a6d3cf5b0660a9bdb28128e5f9bbd1dc`).
 
 I compared the per-seed report `bodySha256` values with Linux run 38274803979: all 230 seeds had matching hashes and consistent findings on both platforms. The 230 Linux inputs were also pairwise distinct by body hash. Together these runs cover 230 distinct generated bodies and 920 backend executions (JS, Wasm, Wasm-GC, and Windows native-release per body), all consistent. This is a bounded sample, not proof of language-wide equivalence; native-debug is intentionally excluded because upstream issue #1322 has a known native-debug ICE. The Windows C compiler file version was not recorded in this run; later CI now emits the `cl.exe` file/product versions so future reports can state it explicitly.
+
+Second paired scan (2026-10-12 UTC): [manual CI run 38278202679](https://github.com/Yingqingxue/moonsmith/actions/runs/38278202679), source commit `1b5ac73`, repeated the same Linux/Windows design on seeds 13300–13529. Linux JS/Wasm/Wasm-GC and Windows native-release each passed all 230 cases, with no unexpected findings, generator limits, or harness errors. Their per-seed `bodySha256` values matched for all 230 seeds; those bodies were also distinct from the first paired range, giving 460 distinct generated bodies over 1,840 backend executions with consistent outcomes. All four jobs in the workflow succeeded. The Windows job now records `cl.exe` file and product versions in its Actions log; the downloadable batch reports themselves still do not include the C compiler metadata.
