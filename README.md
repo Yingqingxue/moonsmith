@@ -139,6 +139,7 @@ also verified the coverage gate and uploaded both JSON and HTML artifacts. The
 workflow generates a self-contained HTML summary with separate generated-source
 and reference-trace coverage, finding counts, failure clusters, and per-seed
 results; for a local batch, use
-`pwsh -File scripts/moonsmith.ps1 batch-report -BatchPath <batch-json>`.
+`pwsh -File scripts/moonsmith.ps1 batch-report -BatchPath <batch-json>`, adding
+`-BatchOutputPath <summary.html>` when you want to choose the HTML destination.
 
 Licensed under Apache-2.0.

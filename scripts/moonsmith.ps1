@@ -20,6 +20,7 @@ param(
 
     [string]$CasePath = '',
     [string]$BatchPath = '',
+    [string]$BatchOutputPath = '',
     [string]$ReductionPath = '',
     [switch]$Force,
 
@@ -44,6 +45,7 @@ MoonSmith commands:
   reduce -Seed N -Depth N         Reduce a reproducible generated finding.
   report -CasePath PATH           Render saved finding as Markdown and offline HTML.
   batch-report -BatchPath PATH    Render batch JSON as an offline HTML summary.
+                 -BatchOutputPath PATH optionally selects the HTML output path.
 
 Common options: -Depth N -Targets js,wasm,wasm-gc,native,native-release -TimeoutSeconds N
 The reduce command also accepts -MaxAttempts and explicit fault-injection options.
@@ -161,7 +163,7 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
             throw 'batch-report requires -BatchPath pointing to a batch JSON file or directory.'
         }
         & (Join-Path $PSScriptRoot 'render_batch_report.ps1') -BatchPath $BatchPath `
-            -Force:$Force
+            -OutputPath $BatchOutputPath -Force:$Force
         exit 0
     }
 }

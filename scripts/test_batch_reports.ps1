@@ -131,11 +131,15 @@ try {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
 
+    $customBatchHtmlPath = Join-Path $testRoot 'custom-batch-summary.html'
     $batchReport = (& $cliPath batch-report `
-        -BatchPath (Join-Path $linuxDirectory 'batch_linux.json') -Force | ConvertFrom-Json)
+        -BatchPath (Join-Path $linuxDirectory 'batch_linux.json') `
+        -BatchOutputPath $customBatchHtmlPath | ConvertFrom-Json)
     $batchHtml = Get-Content -LiteralPath $batchReport.htmlReportPath -Raw
     $batchHtmlRows = [regex]::Matches($batchHtml, '<tr>').Count
     if ($batchReport.count -ne 2 -or
+        $batchReport.htmlReportPath -ne $customBatchHtmlPath -or
+        -not (Test-Path -LiteralPath $customBatchHtmlPath -PathType Leaf) -or
         $batchHtmlRows -ne 15 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
