@@ -92,10 +92,13 @@ structs, and typed local function application with captured outer bindings.
 It also generates bounded `for` loops with an index and accumulator updated
 together, and models loop-carried values in the reference evaluator and AST
 reducer. One narrow probe emits a `#valtype` struct with a `Double` first field
-through a `raise`/`try?` path. A second probe stores a `#valtype` struct with
-an enum field in an array, then matches that field and returns the indexed
-integer. Both have reference evaluation and AST shrinking; they do not imply
-general floating-point, exception, enum, or array generation support.
+through a `raise`/`try?` path. A second probe creates an empty array, pushes a
+`#valtype` struct with an enum field, then matches that field and returns the
+indexed integer. This mirrors the relevant source shape from upstream issue
+[#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322), which
+MoonSmith did not discover. Both probes have reference evaluation and AST
+shrinking, but do not imply general floating-point, exception, enum, or array
+generation support.
 The reducer works on generated ASTs and verifies candidates against the
 original backend relationship. Arbitrary MoonBit source reduction is not
 implemented yet.

@@ -66,7 +66,8 @@ jobs:
           ./scripts/verify_seed.ps1 -Seed 6000 -Depth 8 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/verify_seed.ps1 -Seed 7000 -Depth 9 -Targets @('js','wasm','wasm-gc') -NoPersist
           ./scripts/verify_seed.ps1 -Seed 8000 -Depth 10 -Targets @('js','wasm','wasm-gc') -NoPersist
-          ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4 -Targets @('js','wasm','wasm-gc','native','native-release')
+          # Native debug's known #1322 signature is checked explicitly above.
+          ./scripts/run_batch.ps1 -SeedStart 0 -Count 10 -Depth 4 -Targets @('js','wasm','wasm-gc','native-release')
 
       - name: Preserve smoke-test reports
         if: always()

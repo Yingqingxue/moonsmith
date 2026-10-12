@@ -187,8 +187,11 @@ test "generated integer corpus includes valtype enum array programs" {
     if source.contains("_ms_valtype_array_run(") {
       found = true
       assert_true(source.contains("#valtype\npriv struct MoonSmithEntry"))
+      assert_true(source.contains("let values : Array[MoonSmithEntry] = []"))
       assert_true(
-        source.contains("let values : Array[MoonSmithEntry] = [{ id: i"),
+        source.contains(
+          "values.push({ id: i, kind: MoonSmithEntryKind::Ref(\"x\") })",
+        ),
       )
       assert_true(source.contains("match values[0].kind"))
     }

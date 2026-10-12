@@ -169,6 +169,72 @@ if ($null -eq $nativeCompiler) {
     throw "MoonSmith's verifier did not retain expected output in both native modes. Debug=$($oracleNativeRun.status):[$(Normalize-ProgramOutput $oracleNativeRun.output)]; Release=$($oracleNativeReleaseRun.status):[$(Normalize-ProgramOutput $oracleNativeReleaseRun.output)]"
 }
 
+# Exercise the same upstream trigger through MoonSmith's generated AST, its
+# independent reference evaluator, and the generic differential verifier.
+$generatedTargets = @('js', 'wasm', 'wasm-gc')
+if ($null -ne $nativeCompiler) {
+    $generatedTargets += 'native'
+    $generatedTargets += 'native-release'
+}
+$global:LASTEXITCODE = 0
+$generatedRaw = & $verifyScript -Seed 4 -Depth 3 `
+    -Targets $generatedTargets -TimeoutSeconds 180 -NoPersist
+$generatedExitCode = $LASTEXITCODE
+$generated = $generatedRaw | ConvertFrom-Json
+$generatedSource = Get-Content -LiteralPath $generated.casePath -Raw -Encoding utf8
+foreach ($fragment in @(
+    '#valtype',
+    'let values : Array[MoonSmithEntry] = []',
+    'values.push({ id: i, kind: MoonSmithEntryKind::Ref("x") })',
+    'match values[0].kind',
+    'values[0].id'
+)) {
+    if (-not $generatedSource.Contains($fragment)) {
+        throw "Generated #1322 probe is missing required trigger fragment: $fragment"
+    }
+}
+if (-not $generated.referenceChecked -or
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-empty-init' -or
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-push' -or
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-index') {
+    throw 'Generated #1322 probe did not traverse the reference model for empty-init, push, and indexed read.'
+}
+
+$generatedControls = @($generated.runs | Where-Object target -in @('js', 'wasm', 'wasm-gc', 'native-release'))
+if ($generatedControls.Count -ne $generatedTargets.Count - 1 -and $null -ne $nativeCompiler) {
+    throw 'Generated #1322 probe did not run every required non-debug control target.'
+}
+if ($null -eq $nativeCompiler -and $generatedControls.Count -ne 3) {
+    throw 'Generated #1322 probe did not run all available non-native targets.'
+}
+foreach ($control in $generatedControls) {
+    if ($control.status -ne 'succeeded' -or
+        (Normalize-ProgramOutput $control.output) -ne (Normalize-ProgramOutput $generated.expectedOutput)) {
+        throw "Generated #1322 control $($control.target) disagreed with the reference output. Status=$($control.status); output=[$($control.output)]"
+    }
+}
+$generatedNativeDebug = $generated.runs | Where-Object target -eq 'native' | Select-Object -First 1
+$generatedNativeDebugClassification = 'unavailable-no-c-compiler'
+if ($null -ne $generatedNativeDebug) {
+    if ($generatedNativeDebug.status -eq 'compile-failed' -and
+        $generatedNativeDebug.error -match 'Machine_error\(kind=unsupported; who="Machine_of_clam_lower\.lower_array_make"; message="uninitialized non-null GC ref arrays are not lowered"') {
+        $generatedNativeDebugClassification = 'upstream-issue-signature-reproduced-in-generated-program'
+    } elseif ($generatedNativeDebug.status -eq 'succeeded' -and
+        (Normalize-ProgramOutput $generatedNativeDebug.output) -eq (Normalize-ProgramOutput $generated.expectedOutput)) {
+        $generatedNativeDebugClassification = 'not-reproduced-in-generated-program'
+    } else {
+        throw "Generated #1322 native debug did not match the known issue signature or reference output. Status=$($generatedNativeDebug.status); error=$($generatedNativeDebug.error)"
+    }
+}
+if ($generatedExitCode -notin @(0, 1) -or
+    ($generated.finding -eq 'consistent' -and $generatedExitCode -ne 0) -or
+    ($generated.finding -ne 'consistent' -and
+        ($generated.finding -ne 'compile-failed' -or
+            $generatedNativeDebugClassification -ne 'upstream-issue-signature-reproduced-in-generated-program' -or
+            $generatedExitCode -ne 1))) {
+    throw "Generated #1322 probe produced an unexpected verifier classification. Finding=$($generated.finding); exit=$generatedExitCode; nativeDebug=$generatedNativeDebugClassification"
+}
+
 $result = [pscustomobject]@{
     upstreamIssue = 1322
     sourceIssue = 'https://github.com/moonbitlang/moonbit-docs/issues/1322'
@@ -187,6 +253,11 @@ $result = [pscustomobject]@{
     moonSmithOracleNativeReleaseStatus = $oracleNativeReleaseRun.status
     moonSmithOracleWasmGcStatus = $oracleWasmGcRun.status
     moonSmithOracleExpectedOutputSource = 'Explicitly recorded by upstream issue #1322; not produced by the MoonSmith reference evaluator.'
+    generatedProbeFinding = $generated.finding
+    generatedProbeReferenceChecked = $generated.referenceChecked
+    generatedProbeExpectedOutput = $generated.expectedOutput
+    generatedProbeTargets = @($generated.runs | ForEach-Object target)
+    generatedProbeNativeDebugClassification = $generatedNativeDebugClassification
     expectedOutput = @('0', 'x')
     outputSource = 'External upstream reproducer; not discovered by MoonSmith.'
 }

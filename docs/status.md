@@ -1,23 +1,20 @@
 # Implementation status
 
-Last updated: 2026-10-10
+Last updated: 2026-10-12
 
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
 
 ## Current generator change
 
-The generator now has a second, deliberately narrow `#valtype` probe. It
-constructs a struct with an enum field in an initialized array, matches the
-indexed enum, and returns the indexed integer field. The MoonBit reference
-evaluator predicts that integer directly, and AST shrinking keeps the probe
-scaffold while reducing its input. On this workstation, seed 4 at depth 3
-returned `-96` in the reference evaluator and on JS, Wasm, and Wasm-GC. A
-source-triggered injected mismatch on Wasm-GC reduced the same program from
-complexity 10,110 to 1,001 in four attempts, preserving the enum/array probe;
-this injection is a harness check, not a compiler defect. The probe uses an
-initialized array literal; the exact empty-array-plus-`push` pattern associated
-with upstream issue #1322 remains in its separate regression fixture.
+The second, deliberately narrow `#valtype` probe now exercises the exact
+empty-array-plus-`push` shape from upstream issue #1322: it pushes a struct
+with an enum field, matches the indexed enum, and returns the indexed integer
+field. The MoonBit reference evaluator models the input value and traces the
+empty initialization, append, and indexed read; AST shrinking keeps the probe
+scaffold while reducing its input. The known upstream fixture separately
+checks native debug/release behavior. This is an upstream-reported trigger,
+not a MoonSmith-discovered defect.
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
@@ -25,7 +22,26 @@ generator, not a measured distribution or defect-finding rate for the new
 branch. This workstation has no compatible C compiler, but hosted CI has now
 verified native behavior on Linux GCC and Windows MSVC.
 
-## Verified today
+## Latest local verification (2026-10-12)
+
+On `main` at `af9ed83` with the current local changes, `moon info`, `moon fmt`,
+and `moon check --deny-warn` completed successfully. The main package passed 77/77
+tests on each of JS, Wasm, and Wasm-GC. The reference, reducer, CLI, and #1322
+integration scripts passed. Generated seed 4 at depth 3 contains the empty
+array + `push` trigger, is reference-checked, and agrees on JS/Wasm/Wasm-GC;
+reducer tests retain the `push` scaffold. The `git diff --check` validation
+was clean. This workstation has no compatible C compiler, so generated native
+debug behavior was not validated locally; the dedicated CI regression checks
+it against the known upstream signature, while the ordinary Linux native
+release batch avoids treating that known debug failure as an unexpected
+finding.
+
+The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
+are documented below; those scans predate the push-pattern change and remain
+historical, not measurements of the current generator revision. No newly
+discovered compiler defect is claimed.
+
+## Verified baseline (2026-10-10)
 
 - MoonBit toolchain: `moon 0.1.20260920 (914d7da 2026-09-20)`.
 - The library and tests compile without warnings.

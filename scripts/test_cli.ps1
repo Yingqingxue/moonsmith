@@ -25,7 +25,7 @@ if (-not $doctor.ready -or $LASTEXITCODE -ne 0) {
 
 $nativeCompiler = Get-Command cl, clang-cl, gcc, clang, cc `
     -ErrorAction SilentlyContinue | Select-Object -First 1
-$nativeRaw = & pwsh -NoProfile -File $verify -Seed 0 -Depth 4 `
+$nativeRaw = & pwsh -NoProfile -File $verify -Seed 1 -Depth 4 `
     -Targets 'native' -NoPersist
 $nativeExitCode = $LASTEXITCODE
 $native = $nativeRaw | ConvertFrom-Json
@@ -41,7 +41,7 @@ elseif ($nativeExitCode -ne 0 -or $native.finding -ne 'consistent' -or
     throw 'native with a compatible C toolchain did not pass the differential probe.'
 }
 
-$nativeReleaseRaw = & pwsh -NoProfile -File $verify -Seed 0 -Depth 4 `
+$nativeReleaseRaw = & pwsh -NoProfile -File $verify -Seed 1 -Depth 4 `
     -Targets 'native-release' -NoPersist
 $nativeReleaseExitCode = $LASTEXITCODE
 $nativeRelease = $nativeReleaseRaw | ConvertFrom-Json

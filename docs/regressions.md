@@ -73,6 +73,13 @@ construct may stop testing the original result-lowering path.
   array append of a `#valtype` record containing a reference-carrying enum;
   native release and Wasm-GC produce `0` and `x`.
 - Local fixture: `regressions/issue_1322_native_valtype_enum_array/repro.mbt`.
+- Generator mapping: `ValtypeEnumArrayProbe` now emits the same key operation
+  shape (empty `Array[MoonSmithEntry]`, then `push` a `#valtype` record whose
+  enum carries a `String` reference, followed by indexed enum matching). Seed
+  4 at depth 3 exercises this probe through the generated-program path on JS,
+  Wasm, and Wasm-GC; the reference trace records initialization, push, and
+  indexed read. The generated probe is semantically modeled by its input
+  integer and does not claim native behavior is correct.
 - Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
   release control outputs, then classifies native debug as either the reported
   ICE signature or a successful result. The generic verifier now exposes
@@ -179,6 +186,33 @@ and does not directly match MoonSmith's current JS/wasm/wasm-gc matrix. It is
 not included as a regression because its source, license, exact toolchain,
 sanitizer setup, and current reproduction status have not been audited. It is
 not a MoonSmith-discovered bug.
+
+Additional candidates reviewed on 2026-10-12:
+
+- [moonbitlang/moonbit-docs#1123](https://github.com/moonbitlang/moonbit-docs/issues/1123)
+  reports invalid Wasm-GC validation when `#external` values flow through
+  trait-object/supertrait casts. The report explicitly says the standalone
+  minimal source may not trigger reliably; the required external types,
+  trait-object conversion, and imports are outside the current generator. The
+  linked [compiler PR #6](https://github.com/moonbitlang/moonbit-compiler/pull/6)
+  describes the corresponding cast fix, but is still open in the reviewed
+  snapshot. Not added: no stable small reproducer or verified current-toolchain
+  outcome, and it cannot enter the generated differential pipeline.
+- [moonbitlang/moonbit-docs#1289](https://github.com/moonbitlang/moonbit-docs/issues/1289)
+  reports a native link ICE while building a 31,323,407-byte whitebox-test
+  core. The author's standalone attempts with 30,000 functions and 1,000
+  layouts did not reproduce it. Not added: the only verified trigger depends
+  on a large third-party test project, and the issue says a single selected
+  test still builds that package-wide core. This is not a valid small fixture;
+  current-toolchain status is also unverified.
+- [moonbitlang/moonbit-docs#1292](https://github.com/moonbitlang/moonbit-docs/issues/1292)
+  reports that an `implicit_impl_as_method` warning's suggested `pub extend`
+  fix can be invalid for tuple types or use a package name not in scope. The
+  report's reproduction is enabling a warning in `moonbitlang/core`, not a
+  self-contained case in MoonSmith's generated expression language. Not added
+  to this backend-regression corpus: it is a diagnostic/actionability issue
+  and would need a separate warning/fix-it test harness plus a current
+  toolchain reproduction.
 
 ## What this corpus can and cannot show
 
