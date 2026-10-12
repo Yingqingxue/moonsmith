@@ -25,6 +25,11 @@ Linux/GCC and Windows/MSVC, while native-release and Wasm-GC passed; an earlier
 MoonBit `0.1.20260920` run had not reproduced it on Windows. The apparent change
 coincides with a MoonBit toolchain update, but causation is not established.
 See the [regression notes](regressions.md#case-3-native-debug-array-push-of-a-valtype-record-containing-an-enum).
+The manually triggered [same-runner toolchain comparison](../.github/workflows/issue-1322-toolchain-comparison.yml)
+now reruns the identical regression under two selected MoonBit versions on one
+Linux runner and one Windows runner, preserving per-version reports. It has not
+yet been run; its outputs are needed before making a stronger version-specific
+claim.
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
@@ -336,17 +341,18 @@ successfully running under Node 24 compatibility mode; monitor for an upstream
 action update.
 
 A separate fixture preserves upstream issue
-[#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322), which uses the
-same MoonBit version. On Linux x64, CI run
-[37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
-reproduced its native debug `lower_array_make` ICE signature; native release
-and Wasm-GC both returned the expected `0` and `x`. This reproduces an upstream
-report, not a MoonSmith discovery, and does not establish whether the behavior
-violates the language contract. In the same run, Windows/MSVC native debug did
-not reproduce the ICE and returned the expected output; release and Wasm-GC
-also passed. The runner difference is observed but unexplained, not evidence
-that the upstream report is fixed. Local native replay is unavailable without
-a C compiler.
+[#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322). The initial
+2026-10-09 run on MoonBit `0.1.20260920` reproduced its native-debug
+`lower_array_make` ICE on Linux/GCC but not Windows/MSVC. A later successful
+[CI run 38246227150](https://github.com/Yingqingxue/moonsmith/actions/runs/38246227150)
+on MoonBit `0.1.20261012` reproduced the same signature on both platforms, for
+both the upstream fixture and the generated extension. Native release and
+Wasm-GC returned the expected `0` and `x` in both runs. The results changed
+alongside the MoonBit toolchain version, but the runner images and other
+dependencies were not controlled in an A/B experiment; this is correlation,
+not an established cause. This reproduces an upstream report, not a MoonSmith
+discovery, and does not establish whether the behavior violates the language
+contract. Local native replay is unavailable without a C compiler.
 The fixture's latest harness version also passes the source and upstream-known
 expected output through `verify_seed.ps1`, validating the existing Oracle's
 per-target classification; because the expected value is supplied externally,

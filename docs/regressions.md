@@ -107,6 +107,15 @@ construct may stop testing the original result-lowering path.
   compiler backends; therefore `backend: native` identifies MoonBit's target,
   not a guarantee of identical internal lowering. See the
   [MoonBit native backend note](https://docs.moonbitlang.com/next/language/ffi.html).
+- For a same-runner version comparison, manually trigger
+  [Issue 1322 Toolchain Comparison](../.github/workflows/issue-1322-toolchain-comparison.yml)
+  with the desired dated release identifiers. Each Linux or Windows job
+  installs the baseline and candidate versions sequentially, runs this same
+  regression script, and uploads the two raw JSON reports plus a compact
+  comparison summary. This controls the runner instance and source revision
+  within each platform better than comparing runs from different dates, but it
+  does not pin the hosted image or every dependency; a changed result is still
+  not, by itself, proof of the compiler root cause.
 - The older run [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
   passed both Linux and Windows jobs with the generic verifier included:
   Linux classified native debug as `compile-failed`; Windows classified it as

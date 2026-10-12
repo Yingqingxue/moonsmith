@@ -1,0 +1,66 @@
+name: Issue 1322 Toolchain Comparison
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_version:
+        description: MoonBit release to compare from
+        required: true
+        default: 0.1.20260920
+        type: string
+      candidate_version:
+        description: MoonBit release to compare against the baseline
+        required: true
+        default: 0.1.20261012
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    name: Compare on ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runs-on: ubuntu-latest
+          - platform: windows
+            runs-on: windows-latest
+    runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Configure MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+
+      - name: Install PowerShell on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+
+      - name: Run issue 1322 under both MoonBit versions
+        shell: pwsh
+        env:
+          BASELINE_VERSION: ${{ inputs.baseline_version }}
+          CANDIDATE_VERSION: ${{ inputs.candidate_version }}
+        run: |
+          $artifactDirectory = Join-Path $env:RUNNER_TEMP 'issue-1322-comparison'
+          ./scripts/compare_issue_1322_toolchains.ps1 `
+            -BaselineVersion $env:BASELINE_VERSION `
+            -CandidateVersion $env:CANDIDATE_VERSION `
+            -ArtifactDirectory $artifactDirectory
+
+      - name: Preserve comparison reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: issue-1322-${{ matrix.platform }}-toolchain-comparison
+          path: ${{ runner.temp }}/issue-1322-comparison/
+          if-no-files-found: ignore
+          retention-days: 30
