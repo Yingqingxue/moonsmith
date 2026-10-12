@@ -169,8 +169,9 @@ if ($null -eq $nativeCompiler) {
     throw "MoonSmith's verifier did not retain expected output in both native modes. Debug=$($oracleNativeRun.status):[$(Normalize-ProgramOutput $oracleNativeRun.output)]; Release=$($oracleNativeReleaseRun.status):[$(Normalize-ProgramOutput $oracleNativeReleaseRun.output)]"
 }
 
-# Exercise the same upstream trigger through MoonSmith's generated AST, its
-# independent reference evaluator, and the generic differential verifier.
+# Exercise the upstream trigger and a two-element growth extension through
+# MoonSmith's generated AST, reference evaluator, and generic verifier. The
+# checked-in source fixture above remains the exact upstream reproducer.
 $generatedTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne $nativeCompiler) {
     $generatedTargets += 'native'
@@ -186,8 +187,9 @@ foreach ($fragment in @(
     '#valtype',
     'let values : Array[MoonSmithEntry] = []',
     'values.push({ id: i, kind: MoonSmithEntryKind::Ref("x") })',
+    'values.push({ id: i + 1, kind: MoonSmithEntryKind::Ref("x") })',
     'match values[0].kind',
-    'values[0].id'
+    'values[1].id'
 )) {
     if (-not $generatedSource.Contains($fragment)) {
         throw "Generated #1322 probe is missing required trigger fragment: $fragment"
@@ -196,8 +198,10 @@ foreach ($fragment in @(
 if (-not $generated.referenceChecked -or
     $generated.referenceTrace.visited -notcontains 'valtype-enum-array-empty-init' -or
     $generated.referenceTrace.visited -notcontains 'valtype-enum-array-push' -or
-    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-index') {
-    throw 'Generated #1322 probe did not traverse the reference model for empty-init, push, and indexed read.'
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-growth-push' -or
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-index' -or
+    $generated.referenceTrace.visited -notcontains 'valtype-enum-array-index-after-growth') {
+    throw 'Generated #1322 extension did not traverse the reference model for empty-init, both pushes, and both indexed reads.'
 }
 
 $generatedControls = @($generated.runs | Where-Object target -in @('js', 'wasm', 'wasm-gc', 'native-release'))

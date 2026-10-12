@@ -193,7 +193,13 @@ test "generated integer corpus includes valtype enum array programs" {
           "values.push({ id: i, kind: MoonSmithEntryKind::Ref(\"x\") })",
         ),
       )
+      assert_true(
+        source.contains(
+          "values.push({ id: i + 1, kind: MoonSmithEntryKind::Ref(\"x\") })",
+        ),
+      )
       assert_true(source.contains("match values[0].kind"))
+      assert_true(source.contains("values[1].id"))
     }
   }
   assert_true(found)

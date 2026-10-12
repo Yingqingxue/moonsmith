@@ -93,8 +93,9 @@ It also generates bounded `for` loops with an index and accumulator updated
 together, and models loop-carried values in the reference evaluator and AST
 reducer. One narrow probe emits a `#valtype` struct with a `Double` first field
 through a `raise`/`try?` path. A second probe creates an empty array, pushes a
-`#valtype` struct with an enum field, then matches that field and returns the
-indexed integer. This mirrors the relevant source shape from upstream issue
+`#valtype` struct with an enum field, reads the first element's enum, appends a
+second element, then reads its integer field to exercise array growth. Its
+first append mirrors the relevant source shape from upstream issue
 [#1322](https://github.com/moonbitlang/moonbit-docs/issues/1322), which
 MoonSmith did not discover. Both probes have reference evaluation and AST
 shrinking, but do not imply general floating-point, exception, enum, or array

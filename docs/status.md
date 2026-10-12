@@ -7,14 +7,15 @@ single-person; no second team member is recorded.
 
 ## Current generator change
 
-The second, deliberately narrow `#valtype` probe now exercises the exact
-empty-array-plus-`push` shape from upstream issue #1322: it pushes a struct
-with an enum field, matches the indexed enum, and returns the indexed integer
-field. The MoonBit reference evaluator models the input value and traces the
-empty initialization, append, and indexed read; AST shrinking keeps the probe
-scaffold while reducing its input. The known upstream fixture separately
-checks native debug/release behavior. This is an upstream-reported trigger,
-not a MoonSmith-discovered defect.
+The second, deliberately narrow `#valtype` probe starts with the empty-array
+plus `push` shape from upstream issue #1322, then appends a second reference-
+carrying enum record and reads it by index to exercise array growth. The
+checked-in fixture continues to preserve the exact upstream source separately;
+the generated extension is not claimed to be the original reproducer. The
+MoonBit reference evaluator models both inserted values and traces the two
+pushes and indexed reads; AST shrinking keeps the probe scaffold while reducing
+its input. The extension is pending remote CI validation. #1322 remains an
+upstream-reported issue, not a MoonSmith-discovered defect.
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
@@ -22,9 +23,9 @@ generator, not a measured distribution or defect-finding rate for the new
 branch. This workstation has no compatible C compiler, but hosted CI has now
 verified native behavior on Linux GCC and Windows MSVC.
 
-## Latest local verification (2026-10-12)
+## Latest completed local verification (2026-10-12, before array-growth extension)
 
-On `main` at `af9ed83` with the current local changes, `moon info`, `moon fmt`,
+On `main` at `c8d71f9`, `moon info`, `moon fmt`,
 and `moon check --deny-warn` completed successfully. The main package passed 77/77
 tests on each of JS, Wasm, and Wasm-GC. The reference, reducer, CLI, and #1322
 integration scripts passed. Generated seed 4 at depth 3 contains the empty
@@ -35,6 +36,10 @@ debug behavior was not validated locally; the dedicated CI regression checks
 it against the known upstream signature, while the ordinary Linux native
 release batch avoids treating that known debug failure as an unexpected
 finding.
+
+The current uncommitted array-growth extension has not been validated locally
+at the user's request; it must pass remote CI before being described as
+verified.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

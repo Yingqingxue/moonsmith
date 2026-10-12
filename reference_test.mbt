@@ -275,11 +275,13 @@ test "valtype enum array probe returns the indexed field after enum matching" {
   for input in [-8, 0, 8] {
     let probe = @moonsmith.ValtypeEnumArrayProbe(IntLiteral(input))
     let (value, trace) = probe.evaluate_with_trace()
-    assert_eq(value.to_output(), input.to_string())
+    assert_eq(value.to_output(), (input + 1).to_string())
     assert_true(trace.contains("valtype-enum-array-probe"))
     assert_true(trace.contains("valtype-enum-array-empty-init"))
     assert_true(trace.contains("valtype-enum-array-push"))
+    assert_true(trace.contains("valtype-enum-array-growth-push"))
     assert_true(trace.contains("valtype-enum-array-index"))
+    assert_true(trace.contains("valtype-enum-array-index-after-growth"))
     assert_true(probe.to_source().contains("_ms_valtype_array_run("))
   }
   let program : @moonsmith.Program = {
@@ -296,7 +298,12 @@ test "valtype enum array probe returns the indexed field after enum matching" {
       "values.push({ id: i, kind: MoonSmithEntryKind::Ref(\"x\") })",
     ),
   )
-  assert_true(source.contains("values[0].id"))
+  assert_true(
+    source.contains(
+      "values.push({ id: i + 1, kind: MoonSmithEntryKind::Ref(\"x\") })",
+    ),
+  )
+  assert_true(source.contains("values[1].id"))
 }
 
 ///|

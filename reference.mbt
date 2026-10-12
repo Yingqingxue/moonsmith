@@ -175,8 +175,10 @@ fn Expr::evaluate_in_env(
       let input = value.evaluate_in_env(bindings, trace).as_int()
       trace.push("valtype-enum-array-empty-init")
       trace.push("valtype-enum-array-push")
+      trace.push("valtype-enum-array-growth-push")
       trace.push("valtype-enum-array-index")
-      IntValue(input)
+      trace.push("valtype-enum-array-index-after-growth")
+      IntValue(input + 1)
     }
     Add(left, right) => {
       trace.push("add")

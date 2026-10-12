@@ -73,13 +73,16 @@ construct may stop testing the original result-lowering path.
   array append of a `#valtype` record containing a reference-carrying enum;
   native release and Wasm-GC produce `0` and `x`.
 - Local fixture: `regressions/issue_1322_native_valtype_enum_array/repro.mbt`.
-- Generator mapping: `ValtypeEnumArrayProbe` now emits the same key operation
-  shape (empty `Array[MoonSmithEntry]`, then `push` a `#valtype` record whose
-  enum carries a `String` reference, followed by indexed enum matching). Seed
-  4 at depth 3 exercises this probe through the generated-program path on JS,
-  Wasm, and Wasm-GC; the reference trace records initialization, push, and
-  indexed read. The generated probe is semantically modeled by its input
-  integer and does not claim native behavior is correct.
+- Generator mapping: `ValtypeEnumArrayProbe` begins with the reported key
+  operation shape (empty `Array[MoonSmithEntry]`, then `push` a `#valtype`
+  record whose enum carries a `String` reference, followed by indexed enum
+  matching) and adds a second append plus indexed read to exercise array
+  growth. The checked-in fixture above remains the exact upstream reproducer;
+  the generated extension must not be described as that exact reproducer.
+  Seed 4 at depth 3 exercises the generated path; its reference trace records
+  initialization, both pushes, and both indexed reads. The generated probe is
+  semantically modeled by its input integer and does not claim native behavior
+  is correct. The extension is pending remote CI validation.
 - Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
   release control outputs, then classifies native debug as either the reported
   ICE signature or a successful result. The generic verifier now exposes
