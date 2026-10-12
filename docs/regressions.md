@@ -138,6 +138,10 @@ With a compatible C compiler, run
   `regressions/issue_1133_js_link_core_trait_identity/{lib,main}`.
 - Current validation: MoonBit `0.1.20260920`, `moonc
   v0.10.14+7d59c7ec9`; JS-targeted `moon check` and `moon run` both pass.
+- Target scope: both fixture packages declare `supported_targets = "js"`.
+  The historical `%identity` pattern is JS-linker-specific and is not a valid
+  cross-backend semantic test; excluding these packages from other targets
+  keeps the unrelated backend suites from treating it as a portable program.
 - Scope: this is a standalone compiler-linker regression fixture, not syntax
   currently emitted by MoonSmith's generator. It does not exercise MoonSmith's
   reference evaluator, differential verifier, or reducer, and it is not a
