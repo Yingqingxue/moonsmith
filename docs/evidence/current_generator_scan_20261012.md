@@ -47,3 +47,11 @@ upstream-reported #1322 ICE is checked by its dedicated regression. The two
 Windows batches exercised only native-release; they do not establish Windows
 native-debug consistency for the generated growth probe. No MoonSmith-discovered
 compiler defect is claimed from this scan.
+
+# Fresh follow-up scans
+
+The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
+batch (depth 4: 100; depth 6: 100; depth 8: 30). It rejects values below
+13000 so a default dispatch cannot overlap the documented ranges above. Each
+batch still needs its own run/artifact link before its counts are added here;
+seed volume alone is not a measured defect-finding rate.

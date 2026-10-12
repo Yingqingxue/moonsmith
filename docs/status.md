@@ -26,12 +26,12 @@ MoonBit `0.1.20260920` run had not reproduced it on Windows. The apparent change
 coincides with a MoonBit toolchain update, but causation is not established.
 See the [regression notes](regressions.md#case-3-native-debug-array-push-of-a-valtype-record-containing-an-enum).
 The same-runner [toolchain comparison](evidence/issue_1322_toolchain_comparison_20261012.md)
-completed on October 12: Linux reproduced the signature with both MoonC
-versions, while Windows changed from non-reproduction to reproduction; GCC and
-MSVC versions matched within their respective jobs. This strengthens an
-association with the MoonBit toolchain bundle, but one run per OS does not
-isolate `moonc` from `moon`/core or establish a root cause. The comparison can
-be repeated from the [manual workflow](../.github/workflows/issue-1322-toolchain-comparison.yml).
+completed twice on October 12: Linux reproduced the signature with both MoonC
+versions in both workflow runs, while Windows changed from non-reproduction to
+reproduction in both runs; GCC and MSVC versions matched within each job. This
+is repeatable association evidence across two hosted runners per OS, but does
+not isolate `moonc` from `moon`/core or establish a root cause. The comparison
+can be repeated from the [manual workflow](../.github/workflows/issue-1322-toolchain-comparison.yml).
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the
