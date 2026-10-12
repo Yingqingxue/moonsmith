@@ -19,14 +19,16 @@ its input. The extension passed the Linux, Windows, and extended-seed jobs in
 The current-generator scan covered 360 distinct bodies and 820 executions
 (690 across JS/Wasm/Wasm-GC and 130 Windows native-release); see the
 [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
-Two additional paired scans on seeds 13000–13229 and 13300–13529 passed all 460
-Linux reference checks and 1,380 JS/Wasm/Wasm-GC executions, plus 460 Windows
-native-release executions. Per-seed source hashes matched across platforms
-and across the two ranges (460 distinct bodies total); all 1,840 backend
-executions were consistent, with no size limits or unexpected findings. See
-the evidence document for runs 38274803979, 38276715973, and 38278202679 and
-per-depth counts. Native-debug remains excluded from this broad sample because
-of the upstream-reported #1322 ICE.
+Three paired scans on seeds 13000–13229, 13300–13529, and 13530–13759 covered
+690 distinct generated bodies. Linux reference checks and JS/Wasm/Wasm-GC
+totaled 2,070 executions; Windows native-release added 690, for 2,760
+consistent backend executions with matching source hashes and no size limits
+or unexpected findings. See the evidence document for runs 38274803979,
+38276715973, 38278202679, and 38280242793 and per-depth counts. Run 38280242793's
+scan/comparison jobs succeeded but its overall workflow failed due to the test
+helper's unset `$env:TEMP` assumption; this was fixed with `Path.GetTempPath()`
+and the follow-up Linux verify passed in run 38281145225. Native-debug remains
+excluded from these samples because of the upstream-reported #1322 ICE.
 #1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.
 In the 2026-10-12 CI run, its native-debug signature reproduced on both
 Linux/GCC and Windows/MSVC, while native-release and Wasm-GC passed; an earlier

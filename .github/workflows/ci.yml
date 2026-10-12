@@ -16,10 +16,10 @@ on:
         type: boolean
         default: false
       scan_start:
-        description: Linux scan start (>=13530); Windows cross-check may use a completed Linux range such as 13000 or 13300.
+        description: Linux scan start (>=13760); Windows cross-check may use completed Linux ranges such as 13000, 13300, or 13530.
         required: false
         type: string
-        default: '13530'
+        default: '13760'
 
 permissions:
   contents: read
@@ -191,8 +191,8 @@ jobs:
               -not [int]::TryParse($env:SCAN_START, [ref]$seedStart)) {
             throw 'scan_start must be a non-negative 32-bit integer.'
           }
-          if ($seedStart -lt 13530 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
-            throw 'scan_start must be >= 13530 to avoid the documented samples and leave room for 230 32-bit seeds.'
+          if ($seedStart -lt 13760 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
+            throw 'scan_start must be >= 13760 to avoid the documented samples and leave room for 230 32-bit seeds.'
           }
           ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
           ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30

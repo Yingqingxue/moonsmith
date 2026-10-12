@@ -52,8 +52,9 @@ compiler defect is claimed from this scan.
 
 The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
 Linux batch (depth 4: 100; depth 6: 100; depth 8: 30). After recording the
-13000–13229 and 13300–13529 scans below, the next default start is 13530; the workflow rejects
-smaller values to avoid the documented samples. To compare Windows
+13000–13229, 13300–13529, and 13530–13759 scans below, the next default start
+is 13760; the workflow rejects smaller values to avoid the documented samples.
+To compare Windows
 native-release against identical seeds in the same workflow, set both
 `extended_scan` and `extended_windows_crosscheck`. CI then compares the report
 artifacts and fails on differing seeds, MoonBit toolchain, generated source
@@ -84,3 +85,7 @@ Windows same-seed cross-check (2026-10-12 UTC): [manual CI run 38276715973](http
 I compared the per-seed report `bodySha256` values with Linux run 38274803979: all 230 seeds had matching hashes and consistent findings on both platforms. The 230 Linux inputs were also pairwise distinct by body hash. Together these runs cover 230 distinct generated bodies and 920 backend executions (JS, Wasm, Wasm-GC, and Windows native-release per body), all consistent. This is a bounded sample, not proof of language-wide equivalence; native-debug is intentionally excluded because upstream issue #1322 has a known native-debug ICE. The Windows C compiler file version was not recorded in this run; later CI now emits the `cl.exe` file/product versions so future reports can state it explicitly.
 
 Second paired scan (2026-10-12 UTC): [manual CI run 38278202679](https://github.com/Yingqingxue/moonsmith/actions/runs/38278202679), source commit `1b5ac73`, repeated the same Linux/Windows design on seeds 13300–13529. Linux JS/Wasm/Wasm-GC and Windows native-release each passed all 230 cases, with no unexpected findings, generator limits, or harness errors. Their per-seed `bodySha256` values matched for all 230 seeds; those bodies were also distinct from the first paired range, giving 460 distinct generated bodies over 1,840 backend executions with consistent outcomes. All four jobs in the workflow succeeded. The Windows job now records `cl.exe` file and product versions in its Actions log; the downloadable batch reports themselves still do not include the C compiler metadata.
+
+Third paired scan (2026-10-12 UTC): [manual CI run 38280242793](https://github.com/Yingqingxue/moonsmith/actions/runs/38280242793), source commit `448ead6`, used seeds 13530–13759. The Linux and Windows scan jobs and the automated comparison job all passed: 230 distinct source hashes matched across platforms and all 920 backend executions were consistent. The summary artifact records the compared range and toolchain. The overall workflow concluded failure only because the then-new test helper assumed `$env:TEMP`, which is unset on Ubuntu; see the follow-up fix below.
+
+After the third scan, the comparison script also began checking reference `expectedOutput` equality, in addition to seed sets, toolchain, source hashes, and findings. Its unit tests cover each mismatch type; the newer expected-output check was exercised locally against the downloaded run 38280242793 reports. The `$env:TEMP` assumption was replaced with `[IO.Path]::GetTempPath()` and the Linux `verify` job passed in follow-up run 38281145225. Native-debug remains excluded from these broad samples because of the upstream #1322 ICE.
