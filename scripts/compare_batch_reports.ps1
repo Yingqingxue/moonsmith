@@ -90,6 +90,7 @@ function Read-BatchReportSet {
                 seed = $seed
                 bodySha256 = [string]$case.bodySha256
                 finding = [string]$case.finding
+                expectedOutput = [string]$case.expectedOutput
             }
         }
     }
@@ -119,14 +120,22 @@ if (($linuxSeeds -join ',') -ne ($windowsSeeds -join ',')) {
 }
 
 $hashMismatches = [System.Collections.Generic.List[int]]::new()
+$outputMismatches = [System.Collections.Generic.List[int]]::new()
 foreach ($seedKey in $linuxSeeds) {
     if ($linux.CasesBySeed[$seedKey].bodySha256 -ne
         $windows.CasesBySeed[$seedKey].bodySha256) {
         $hashMismatches.Add([int]$seedKey)
     }
+    if ($linux.CasesBySeed[$seedKey].expectedOutput -cne
+        $windows.CasesBySeed[$seedKey].expectedOutput) {
+        $outputMismatches.Add([int]$seedKey)
+    }
 }
 if ($hashMismatches.Count -gt 0) {
     throw "Generated source hashes differ for seeds: $($hashMismatches -join ', ')."
+}
+if ($outputMismatches.Count -gt 0) {
+    throw "Reference expected outputs differ for seeds: $($outputMismatches -join ', ')."
 }
 
 $distinctBodies = @(
@@ -141,6 +150,7 @@ $summary = [ordered]@{
     seedsCompared = $linuxSeeds.Count
     distinctProgramBodies = $distinctBodies
     matchingSourceHashes = $linuxSeeds.Count
+    matchingExpectedOutputs = $linuxSeeds.Count
     linuxTargets = $linux.Targets
     linuxExecutions = $linuxSeeds.Count * $linux.Targets.Count
     windowsTargets = $windows.Targets

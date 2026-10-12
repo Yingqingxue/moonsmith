@@ -11,6 +11,7 @@ function New-TestReport {
         [string[]]$Targets,
         [string]$Finding = 'consistent',
         [string]$FirstHash = ('a' * 64),
+        [string]$FirstExpectedOutput = "42`n",
         [string]$ToolchainVersion = 'moon 0.1.test (fixture)'
     )
 
@@ -19,12 +20,14 @@ function New-TestReport {
             seed = $SeedStart
             bodySha256 = $FirstHash
             finding = $Finding
+            expectedOutput = $FirstExpectedOutput
             referenceChecked = $true
         },
         [ordered]@{
             seed = $SeedStart + 1
             bodySha256 = ('b' * 64)
             finding = 'consistent'
+            expectedOutput = "43`n"
             referenceChecked = $true
         }
     )
@@ -78,6 +81,7 @@ try {
     $summary = $output | ConvertFrom-Json
     if ($summary.seedsCompared -ne 2 -or
         $summary.matchingSourceHashes -ne 2 -or
+        $summary.matchingExpectedOutputs -ne 2 -or
         $summary.distinctProgramBodies -ne 2 -or
         $summary.linuxExecutions -ne 6 -or
         $summary.windowsExecutions -ne 2 -or
@@ -99,6 +103,11 @@ try {
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
     Assert-ComparisonRejected -ExpectedMessage 'same single MoonBit toolchain version' -Label 'toolchain mismatch'
 
+    $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release') `
+        -FirstExpectedOutput "wrong`n"
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    Assert-ComparisonRejected -ExpectedMessage 'Reference expected outputs differ' -Label 'reference-output mismatch'
+
     $resolvedTemp = [IO.Path]::GetFullPath($testRoot)
     $resolvedTempRoot = [IO.Path]::GetFullPath($env:TEMP).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
     if (-not $resolvedTemp.StartsWith($resolvedTempRoot, [StringComparison]::OrdinalIgnoreCase)) {
@@ -111,6 +120,7 @@ try {
         rejectedHashMismatch = $true
         rejectedSeedMismatch = $true
         rejectedToolchainMismatch = $true
+        rejectedExpectedOutputMismatch = $true
     } | ConvertTo-Json
 }
 catch {
