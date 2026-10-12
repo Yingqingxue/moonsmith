@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-10-12
+Last updated: 2026-10-13
 
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
@@ -19,6 +19,11 @@ its input. The extension passed the Linux, Windows, and extended-seed jobs in
 The current-generator scan covered 360 distinct bodies and 820 executions
 (690 across JS/Wasm/Wasm-GC and 130 Windows native-release); see the
 [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
+An additional fresh Linux scan on seeds 13000–13229 passed all 230 reference
+checks and 690 JS/Wasm/Wasm-GC executions with no unexpected findings or size
+limits; it is kept as a separate report pending cross-run body-hash
+deduplication. See the same evidence document for run 38274803979 and per-depth
+counts.
 #1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.
 In the 2026-10-12 CI run, its native-debug signature reproduced on both
 Linux/GCC and Windows/MSVC, while native-release and Wasm-GC passed; an earlier

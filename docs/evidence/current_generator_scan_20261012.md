@@ -55,3 +55,20 @@ batch (depth 4: 100; depth 6: 100; depth 8: 30). It rejects values below
 13000 so a default dispatch cannot overlap the documented ranges above. Each
 batch still needs its own run/artifact link before its counts are added here;
 seed volume alone is not a measured defect-finding rate.
+
+Additional scan (2026-10-12 UTC): [manual CI run 38274803979](https://github.com/Yingqingxue/moonsmith/actions/runs/38274803979), source commit `4fdfd52`, used the default fresh range starting at 13000. The extended scan and Linux verification jobs passed. The artifact's three reports shared toolchain `moon 0.1.20261012 (748b63c 2026-10-12)` and the same harness digest at start and end (`a08ed04fe0597aa6e1e3b8f97fa6e39c27eb39eb68cf551beea6f6714db762e0`).
+
+| Seeds | Depth | Targets | Program bodies | Backend executions | Consistent | Unexpected | Generator limits | Max source lines |
+|---|---:|---|---:|---:|---:|---:|---:|---:|
+| 13000–13099 | 4 | JS, Wasm, Wasm-GC | 100 | 300 | 100 | 0 | 0 | 174 |
+| 13100–13199 | 6 | JS, Wasm, Wasm-GC | 100 | 300 | 100 | 0 | 0 | 648 |
+| 13200–13229 | 8 | JS, Wasm, Wasm-GC | 30 | 90 | 30 | 0 | 0 | 1,654 |
+| **Total** | — | **three backends** | **230** | **690** | **230** | **0** | **0** | **1,654** |
+
+Across the 230 reports there were 186 reference visits to the array-growth
+push and 186 visits to the post-growth indexed read; the `#valtype`/raise
+probe's success and error paths were each visited 88 times. These are
+reference-interpreter path observations, not backend runtime coverage. This
+sample is reported separately from the earlier fixed scan; no combined
+cross-run body-hash deduplication is claimed here. It found no new compiler
+defect.
