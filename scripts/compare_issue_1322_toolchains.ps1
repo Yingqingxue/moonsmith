@@ -15,8 +15,8 @@ $versions = @(
     @{ label = 'candidate'; value = $CandidateVersion }
 )
 foreach ($entry in $versions) {
-    if ($entry.value -notmatch '^\d+\.\d+\.\d+$') {
-        throw "Expected a dated MoonBit release like 0.1.20260920; got '$($entry.value)'"
+    if ($entry.value -notmatch '^\d+\.\d+\.\d+\+[0-9a-f]+$') {
+        throw "Expected a MoonC compiler version like 0.10.14+7d59c7ec9; got '$($entry.value)'"
     }
 }
 if ($BaselineVersion -eq $CandidateVersion) {
@@ -46,8 +46,9 @@ foreach ($entry in $versions) {
     Write-Output "Testing $($entry.label): $($entry.value) using $($moon.Source)"
     $toolchainDetails = moon version --all 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0) { throw 'moon version --all failed' }
-    if ($toolchainDetails -notmatch "(?m)^moon $([regex]::Escape($entry.value))(\s|$)") {
-        throw "Requested MoonBit $($entry.value), but installed toolchain reported: $toolchainDetails"
+    $expectedCompilerVersion = [regex]::Escape($entry.value)
+    if ($toolchainDetails -notmatch "(?m)^moonc v?$expectedCompilerVersion(\s|$)") {
+        throw "Requested MoonC $($entry.value), but installed toolchain reported: $toolchainDetails"
     }
     Write-Output $toolchainDetails
 

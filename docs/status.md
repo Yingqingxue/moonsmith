@@ -26,7 +26,7 @@ MoonBit `0.1.20260920` run had not reproduced it on Windows. The apparent change
 coincides with a MoonBit toolchain update, but causation is not established.
 See the [regression notes](regressions.md#case-3-native-debug-array-push-of-a-valtype-record-containing-an-enum).
 The manually triggered [same-runner toolchain comparison](../.github/workflows/issue-1322-toolchain-comparison.yml)
-now reruns the identical regression under two selected MoonBit versions on one
+now reruns the identical regression under two selected MoonC versions on one
 Linux runner and one Windows runner, preserving per-version reports. It has not
 yet been run; its outputs are needed before making a stronger version-specific
 claim.

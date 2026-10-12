@@ -109,7 +109,8 @@ construct may stop testing the original result-lowering path.
   [MoonBit native backend note](https://docs.moonbitlang.com/next/language/ffi.html).
 - For a same-runner version comparison, manually trigger
   [Issue 1322 Toolchain Comparison](../.github/workflows/issue-1322-toolchain-comparison.yml)
-  with the desired dated release identifiers. Each Linux or Windows job
+  with MoonC compiler versions such as `0.10.14+7d59c7ec9` and
+  `0.10.15+943464bfa` (not the `moon` CLI's date version). Each Linux or Windows job
   installs the baseline and candidate versions sequentially, runs this same
   regression script, and uploads the two raw JSON reports plus a compact
   comparison summary. This controls the runner instance and source revision

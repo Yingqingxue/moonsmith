@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       baseline_version:
-        description: MoonBit release to compare from
+        description: MoonC compiler version to compare from
         required: true
-        default: 0.1.20260920
+        default: 0.10.14+7d59c7ec9
         type: string
       candidate_version:
-        description: MoonBit release to compare against the baseline
+        description: MoonC compiler version to compare against the baseline
         required: true
-        default: 0.1.20261012
+        default: 0.10.15+943464bfa
         type: string
 
 permissions:
