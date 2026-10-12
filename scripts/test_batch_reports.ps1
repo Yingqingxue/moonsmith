@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $scriptPath = Join-Path $PSScriptRoot 'compare_batch_reports.ps1'
+$cliPath = Join-Path $PSScriptRoot 'moonsmith.ps1'
 . (Join-Path $PSScriptRoot 'failure_clusters.ps1')
 $tempDirectory = [IO.Path]::GetTempPath()
 $testRoot = Join-Path $tempDirectory ('moonsmith-batch-report-test-' + [guid]::NewGuid().ToString('N'))
@@ -13,23 +14,27 @@ function New-TestReport {
         [string[]]$Targets,
         [string]$Finding = 'consistent',
         [string]$FirstHash = ('a' * 64),
-        [string]$FirstExpectedOutput = "42`n",
-        [string]$ToolchainVersion = 'moon 0.1.test (fixture)'
+        [string]$FirstExpectedOutput = '<img src=x onerror=alert(1)>',
+        [string]$ToolchainVersion = 'moon <script>alert(1)</script>'
     )
 
     $cases = @(
         [ordered]@{
             seed = $SeedStart
+            caseId = "case-$SeedStart"
             bodySha256 = $FirstHash
             finding = $Finding
             expectedOutput = $FirstExpectedOutput
+            error = '<img src=x onerror=alert(1)>'
             referenceChecked = $true
         },
         [ordered]@{
             seed = $SeedStart + 1
+            caseId = "case-$($SeedStart + 1)"
             bodySha256 = ('b' * 64)
             finding = 'consistent'
             expectedOutput = "43`n"
+            error = ''
             referenceChecked = $true
         }
     )
@@ -48,6 +53,11 @@ function New-TestReport {
             'harness-error' = 0
         }
         unexpectedCount = 0
+        durationMs = 1234
+        uniqueProgramBodies = 2
+        referenceCheckedCount = 2
+        harnessChangedDuringRun = $false
+        failureClusters = @()
         cases = $cases
     }
 }
@@ -114,6 +124,23 @@ try {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
 
+    $batchReport = (& $cliPath batch-report `
+        -BatchPath (Join-Path $linuxDirectory 'batch_linux.json') -Force | ConvertFrom-Json)
+    $batchHtml = Get-Content -LiteralPath $batchReport.htmlReportPath -Raw
+    $batchHtmlRows = [regex]::Matches($batchHtml, '<tr>').Count
+    if ($batchReport.count -ne 2 -or
+        $batchHtmlRows -ne 7 -or
+        -not $batchHtml.StartsWith('<!doctype html>') -or
+        -not $batchHtml.Contains('Run summary') -or
+        -not $batchHtml.Contains('Failure clusters') -or
+        -not $batchHtml.Contains('Per-seed results') -or
+        -not $batchHtml.Contains('case-41000') -or
+        -not $batchHtml.Contains('&lt;script&gt;alert(1)&lt;/script&gt;') -or
+        -not $batchHtml.Contains('&lt;img src=x onerror=alert(1)&gt;') -or
+        $batchHtml -match '<script\b|<img\b') {
+        throw "batch-report did not render an offline, escaped batch summary (count=$($batchReport.count), rows=$batchHtmlRows, doctype=$($batchHtml.StartsWith('<!doctype html>')), script=$($batchHtml -match '<script\b|<img\b'))."
+    }
+
     $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release') -FirstHash ('d' * 64)
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
     Assert-ComparisonRejected -ExpectedMessage 'source hashes differ' -Label 'source-hash mismatch'
@@ -146,6 +173,8 @@ try {
         rejectedToolchainMismatch = $true
         rejectedExpectedOutputMismatch = $true
         failureClusters = $clusters.Count
+        batchHtmlCases = $batchReport.count
+        batchHtmlRows = $batchHtmlRows
     } | ConvertTo-Json
 }
 catch {

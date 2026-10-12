@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('doctor', 'fuzz', 'replay', 'reduce', 'report', 'help')]
+    [ValidateSet('doctor', 'fuzz', 'replay', 'reduce', 'report', 'batch-report', 'help')]
     [string]$Command = 'help',
 
     [int]$Seed = 42,
@@ -19,6 +19,7 @@ param(
     [int]$TimeoutSeconds = 10,
 
     [string]$CasePath = '',
+    [string]$BatchPath = '',
     [string]$ReductionPath = '',
     [switch]$Force,
 
@@ -42,6 +43,7 @@ MoonSmith commands:
   replay -CasePath PATH           Replay a saved finding directory or report.json.
   reduce -Seed N -Depth N         Reduce a reproducible generated finding.
   report -CasePath PATH           Render saved finding as Markdown and offline HTML.
+  batch-report -BatchPath PATH    Render batch JSON as an offline HTML summary.
 
 Common options: -Depth N -Targets js,wasm,wasm-gc,native,native-release -TimeoutSeconds N
 The reduce command also accepts -MaxAttempts and explicit fault-injection options.
@@ -152,6 +154,14 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
         }
         & (Join-Path $PSScriptRoot 'render_report.ps1') -CasePath $CasePath `
             -ReductionPath $ReductionPath -Force:$Force
+        exit 0
+    }
+    'batch-report' {
+        if (-not $BatchPath) {
+            throw 'batch-report requires -BatchPath pointing to a batch JSON file or directory.'
+        }
+        & (Join-Path $PSScriptRoot 'render_batch_report.ps1') -BatchPath $BatchPath `
+            -Force:$Force
         exit 0
     }
 }

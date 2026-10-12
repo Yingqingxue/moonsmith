@@ -134,6 +134,8 @@ The nightly Actions workflow scans fixed seeds 14990–15989 on Linux across
 JS/Wasm/Wasm-GC and retains its machine-readable report for 30 days. Its first
 manual validation run checked 1,000 distinct generated bodies against the
 reference evaluator and completed 3,000 backend executions without findings;
-this nightly corpus does not cover native backends.
+this nightly corpus does not cover native backends. The workflow now generates
+a self-contained HTML summary with each nightly run; for a local batch, use
+`pwsh -File scripts/moonsmith.ps1 batch-report -BatchPath <batch-json>`.
 
 Licensed under Apache-2.0.

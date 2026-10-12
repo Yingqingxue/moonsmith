@@ -46,12 +46,25 @@ jobs:
               $summary.harnessChangedDuringRun) {
             throw 'The nightly fixed-seed corpus did not complete with 1,000 unique, reference-checked cases.'
           }
+          $batchFile = Get-ChildItem -LiteralPath '.moonsmith/runs' -Filter 'batch_*.json' -File |
+            Sort-Object -Property LastWriteTimeUtc -Descending |
+            Select-Object -First 1
+          if ($null -eq $batchFile) { throw 'The batch runner did not preserve its JSON report.' }
+          $htmlReport = ./scripts/moonsmith.ps1 batch-report -BatchPath $batchFile.FullName -Force |
+            ConvertFrom-Json
+          if ($htmlReport.count -ne 1000 -or
+              -not (Test-Path -LiteralPath $htmlReport.htmlReportPath -PathType Leaf)) {
+            throw 'The nightly HTML report does not match the verified 1,000-case batch.'
+          }
+          $htmlReport | ConvertTo-Json -Compress | Write-Output
 
       - name: Preserve the nightly corpus report
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: moonsmith-nightly-generator-corpus-${{ github.run_id }}
-          path: .moonsmith/runs/batch_*.json
+          path: |
+            .moonsmith/runs/batch_*.json
+            .moonsmith/runs/batch_*.html
           if-no-files-found: warn
           retention-days: 30
