@@ -97,8 +97,13 @@ foreach ($trigger in @('#valtype', 'Array[MoonSmithEntry]', 'match values[0].kin
     }
 }
 
+$combinedTargets = @('js', 'wasm', 'wasm-gc')
+if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+    $combinedTargets += 'native'
+    $combinedTargets += 'native-release'
+}
 $combinedRaw = & $reduceScript -Seed 44607 -Depth 4 `
-    -Targets @('js', 'wasm', 'wasm-gc') `
+    -Targets $combinedTargets `
     -InjectOutputMismatchTarget 'wasm-gc' `
     -InjectOnlyWhenSourceContains 'let _ms_valtype_input = _ms_valtype_array_run(' `
     -MaxAttempts 20
@@ -110,6 +115,10 @@ if ($combinedResult.finding -ne 'output-mismatch' -or
     $combinedResult.injection.sourceTrigger -ne 'let _ms_valtype_input = _ms_valtype_array_run(' -or
     $combinedExitCode -ne 1) {
     throw 'The combined valtype probe reduction did not preserve its injected mismatch.'
+}
+if ($combinedTargets -contains 'native-release' -and
+    $combinedResult.targets -notcontains 'native-release') {
+    throw 'The combined valtype reducer did not include native-release in its replay matrix.'
 }
 $combinedMinimalPath = Join-Path $combinedResult.outputDirectory 'minimal.mbt'
 $combinedMinimalSource = Get-Content -LiteralPath $combinedMinimalPath -Raw -Encoding utf8
@@ -139,6 +148,7 @@ foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valty
     combinedOriginalComplexity = $combinedResult.originalComplexity
     combinedFinalComplexity = $combinedResult.finalComplexity
     combinedAcceptedSteps = $combinedResult.acceptedSteps
+    combinedTargets = $combinedResult.targets
     combinedMinimalPath = $combinedMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0

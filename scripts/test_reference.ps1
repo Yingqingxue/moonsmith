@@ -21,7 +21,13 @@ if ($array.finding -ne 'consistent' -or
     throw 'Valtype enum array output did not agree with the reference evaluator.'
 }
 
-$combinedRaw = & $verifyScript -Seed 44607 -Depth 4 -NoPersist
+$combinedTargets = @('js', 'wasm', 'wasm-gc')
+if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+    $combinedTargets += 'native'
+    $combinedTargets += 'native-release'
+}
+$combinedRaw = & $verifyScript -Seed 44607 -Depth 4 `
+    -Targets $combinedTargets -NoPersist
 $combined = $combinedRaw | ConvertFrom-Json
 if ($combined.finding -ne 'consistent' -or
     $combined.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
