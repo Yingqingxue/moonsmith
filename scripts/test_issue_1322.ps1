@@ -233,7 +233,7 @@ if ($null -ne $generatedNativeDebug) {
 if ($generatedExitCode -notin @(0, 1) -or
     ($generated.finding -eq 'consistent' -and $generatedExitCode -ne 0) -or
     ($generated.finding -ne 'consistent' -and
-        ($generated.finding -ne 'compile-failed' -or
+        ($generated.finding -ne 'compile-failure' -or
             $generatedNativeDebugClassification -ne 'upstream-issue-signature-reproduced-in-generated-program' -or
             $generatedExitCode -ne 1))) {
     throw "Generated #1322 probe produced an unexpected verifier classification. Finding=$($generated.finding); exit=$generatedExitCode; nativeDebug=$generatedNativeDebugClassification"
