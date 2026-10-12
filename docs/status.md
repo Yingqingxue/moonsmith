@@ -16,8 +16,9 @@ MoonBit reference evaluator models both inserted values and traces the two
 pushes and indexed reads; AST shrinking keeps the probe scaffold while reducing
 its input. The extension passed the Linux, Windows, and extended-seed jobs in
 [GitHub Actions run 38246227150](https://github.com/Yingqingxue/moonsmith/actions/runs/38246227150).
-The current-generator scan covered 230 distinct bodies and 690 JS/Wasm/Wasm-GC
-executions; see the [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
+The current-generator scan covered 360 distinct bodies and 820 executions
+(690 across JS/Wasm/Wasm-GC and 130 Windows native-release); see the
+[fixed-seed evidence](evidence/current_generator_scan_20261012.md).
 #1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.
 
 The 3,750-program scan totals below were collected before this generator
