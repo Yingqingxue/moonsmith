@@ -691,3 +691,22 @@ external scope review. One minimal coverage-tool ICE regression from
 `moonbitlang/moonbit-docs#1274` are now included; both pass under the current
 toolchain. See `docs/regressions.md`. The Wasm issue remains open upstream, and
 neither case was discovered by MoonSmith or estimates detection recall.
+
+## Composed valtype probes
+
+The generator now deliberately includes a deterministic mix of
+`ValtypeRaiseProbe(ValtypeEnumArrayProbe(...))` alongside standalone raise
+probes. Seed 44607 is the fixed end-to-end case. Its generated source compiles
+and agrees with the reference evaluator on JS, Wasm, and Wasm-GC; the reference
+trace visits both probe kinds. The reducer's injected-mismatch test accepts
+three shrink steps (complexity 17,132 → 3,001) while retaining the array and
+raise scaffolds.
+
+A 30-seed depth-4 scan over seeds 44607–44636 completed 30 reference checks and
+90 backend executions, all consistent, with 30 unique program bodies. Fourteen
+sources contained a direct raise-over-enum-array composition; nine evaluated
+reference traces visited both probe kinds. These are source-presence and
+reference-interpreter observations, not backend coverage. Runtime was 186,503
+ms on this workstation, not a controlled benchmark. No compiler defect was
+found. See [composition scan evidence](evidence/valtype_composition_scan_20261012.md);
+the raw JSON remains local and ignored.
