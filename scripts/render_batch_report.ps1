@@ -93,6 +93,40 @@ foreach ($property in $summary.counts.PSObject.Properties | Sort-Object -Propert
 }
 $html.Add('</tbody></table></section>')
 
+$coverageProperties = @($summary.PSObject.Properties |
+    Where-Object { $_.Name -match '^(casesWith|casesVisitingBoth)' } |
+    Sort-Object -Property Name)
+$referencePathProperty = $summary.PSObject.Properties['referencePathCaseCounts']
+if ($coverageProperties.Count -gt 0 -or
+    ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value)) {
+    $html.Add('<section><h2>Generator and reference coverage</h2>')
+}
+if ($coverageProperties.Count -gt 0) {
+    $html.Add('<table><caption>Generated feature coverage</caption><thead><tr><th scope="col">Feature</th><th scope="col">Cases</th><th scope="col">Share of batch</th></tr></thead><tbody>')
+    foreach ($property in $coverageProperties) {
+        $caseCount = [long]$property.Value
+        $share = if ([long]$summary.count -gt 0) {
+            '{0:P1}' -f ($caseCount / [double]$summary.count)
+        } else { 'n/a' }
+        $html.Add("<tr><td><code>$(ConvertTo-HtmlText $property.Name)</code></td><td>$(ConvertTo-HtmlText $caseCount)</td><td>$(ConvertTo-HtmlText $share)</td></tr>")
+    }
+    $html.Add('</tbody></table>')
+}
+if ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value) {
+    $html.Add('<table><caption>Reference interpreter path counts (not backend runtime instrumentation)</caption><thead><tr><th scope="col">Path</th><th scope="col">Visits</th></tr></thead><tbody>')
+    foreach ($property in $referencePathProperty.Value.PSObject.Properties | Sort-Object -Property Name) {
+        $html.Add("<tr><td><code>$(ConvertTo-HtmlText $property.Name)</code></td><td>$(ConvertTo-HtmlText $property.Value)</td></tr>")
+    }
+    $html.Add('</tbody></table>')
+}
+if ($coverageProperties.Count -gt 0 -or
+    ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value)) {
+    if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value) {
+        $html.Add('<p>Reference-path counts were not recorded in this batch.</p>')
+    }
+    $html.Add('</section>')
+}
+
 $clustersProperty = $summary.PSObject.Properties['failureClusters']
 $clusters = if ($null -ne $clustersProperty -and $null -ne $clustersProperty.Value) {
     @($clustersProperty.Value)

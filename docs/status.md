@@ -24,7 +24,7 @@ consistent; no compile/runtime failures, timeouts, mismatches, generator limits,
 or harness errors were reported. This fixed nightly corpus covers JS/Wasm/Wasm-GC
 only; it is not native coverage or a proof of language-wide correctness.
 The batch CLI also renders this machine report as a standalone HTML summary with
-finding counts, signature clusters, and per-seed rows. The HTML is included in
+generator/reference coverage, finding counts, signature clusters, and per-seed rows. The HTML is included in
 future nightly artifacts; local rendering was verified against the saved
 1,000-case report, and synthetic tests verify encoding of hostile report text.
 The first scheduled run exercising the new artifact-upload path is pending.

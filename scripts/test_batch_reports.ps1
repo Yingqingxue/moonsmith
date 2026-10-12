@@ -57,6 +57,13 @@ function New-TestReport {
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
         harnessChangedDuringRun = $false
+        casesWithValtypeRaiseProbe = 1
+        casesWithDirectValtypeRaiseArrayComposition = 1
+        casesVisitingBothValtypeProbeKinds = 1
+        referencePathCaseCounts = [ordered]@{
+            'valtype-raise-probe' = 1
+            'valtype-raise-success-path' = 1
+        }
         failureClusters = @()
         cases = $cases
     }
@@ -129,9 +136,12 @@ try {
     $batchHtml = Get-Content -LiteralPath $batchReport.htmlReportPath -Raw
     $batchHtmlRows = [regex]::Matches($batchHtml, '<tr>').Count
     if ($batchReport.count -ne 2 -or
-        $batchHtmlRows -ne 7 -or
+        $batchHtmlRows -ne 14 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
+        -not $batchHtml.Contains('Generator and reference coverage') -or
+        -not $batchHtml.Contains('casesWithValtypeRaiseProbe') -or
+        -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
         -not $batchHtml.Contains('case-41000') -or
