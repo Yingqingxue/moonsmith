@@ -134,14 +134,15 @@ With a compatible C compiler, run
   fixed on nightly. The checked-in fixture follows that narrowed case: it uses
   `Int` as the identity result and omits the `#external`/FFI wrapper, which the
   follow-up identifies as unnecessary for reproducing the linker failure.
-- Local fixture:
-  `regressions/issue_1133_js_link_core_trait_identity/{lib,main}`.
+- Local fixture: the standalone module at
+  `regressions/issue_1133_js_link_core_trait_identity/` with `lib` and `main`
+  packages.
 - Current validation: MoonBit `0.1.20260920`, `moonc
   v0.10.14+7d59c7ec9`; JS-targeted `moon check` and `moon run` both pass.
-- Target scope: both fixture packages declare `supported_targets = "js"`.
-  The historical `%identity` pattern is JS-linker-specific and is not a valid
-  cross-backend semantic test; excluding these packages from other targets
-  keeps the unrelated backend suites from treating it as a portable program.
+- Target scope: the fixture is an independent MoonBit module with
+  `supported_targets = "js"`. The historical `%identity` pattern is
+  JS-linker-specific and is not a valid cross-backend semantic test; the module
+  boundary keeps it out of the primary project's other backend test discovery.
 - Scope: this is a standalone compiler-linker regression fixture, not syntax
   currently emitted by MoonSmith's generator. It does not exercise MoonSmith's
   reference evaluator, differential verifier, or reducer, and it is not a
@@ -153,8 +154,8 @@ With a compatible C compiler, run
 Reproduce from the repository root:
 
 ```powershell
-moon check --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
-moon run --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+moon -C regressions/issue_1133_js_link_core_trait_identity check --target js --deny-warn main
+moon -C regressions/issue_1133_js_link_core_trait_identity run --target js --deny-warn main
 ```
 
 ## Candidate not yet included

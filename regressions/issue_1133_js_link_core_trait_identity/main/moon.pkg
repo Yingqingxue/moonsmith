@@ -1,7 +1,7 @@
 supported_targets = "js"
 
 import {
-  "Yingqingxue/moonsmith/regressions/issue_1133_js_link_core_trait_identity/lib",
+  "Yingqingxue/moonsmith-issue-1133/lib",
 }
 
 pkgtype(kind: "executable")

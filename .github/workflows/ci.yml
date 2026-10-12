@@ -47,8 +47,8 @@ jobs:
 
       - name: Check historical MoonBit JS link-core regression
         run: |
-          moon check --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
-          moon run --target js --deny-warn regressions/issue_1133_js_link_core_trait_identity/main
+          moon -C regressions/issue_1133_js_link_core_trait_identity check --target js --deny-warn main
+          moon -C regressions/issue_1133_js_link_core_trait_identity run --target js --deny-warn main
 
       - name: Check reference and reducer integration
         shell: pwsh
