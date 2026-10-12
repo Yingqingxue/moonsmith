@@ -24,13 +24,25 @@ consistent; no compile/runtime failures, timeouts, mismatches, generator limits,
 or harness errors were reported. This fixed nightly corpus covers JS/Wasm/Wasm-GC
 only; it is not native coverage or a proof of language-wide correctness.
 The batch CLI also renders this machine report as a standalone HTML summary with
-generator/reference coverage, finding counts, signature clusters, and per-seed rows. The HTML is included in
-future nightly artifacts; local rendering was verified against the saved
-1,000-case report, and synthetic tests verify encoding of hostile report text.
-The first scheduled run exercising the new artifact-upload path is pending.
-The nightly workflow also enforces nonzero source and reference-trace coverage
-for the valtype raise probe, its array composition, and both raise outcomes;
-the gate is covered by batch integration tests.
+separate generated-source and reference-trace coverage, finding counts,
+signature clusters, and per-seed rows. Local rendering was checked against the
+saved 1,000-case report, and synthetic tests cover hostile text encoding, legacy
+reports without clusters, and protection against overwriting the JSON source.
+The nightly workflow enforces nonzero source and reference-trace coverage for
+the valtype raise probe, its array composition, and both raise outcomes; batch
+integration tests verify the gate accepts a complete report and rejects a
+missing composition path.
+
+End-to-end manual run [38294697813](https://github.com/Yingqingxue/moonsmith/actions/runs/38294697813)
+passed in 9m22s on MoonBit `0.1.20261012 (748b63c)`. It verified 1,000 unique
+bodies, 1,000 reference checks, and 3,000 JS/Wasm/Wasm-GC executions with no
+unexpected findings. Coverage included 402 cases with the raise probe, 234
+with direct array composition, 198 reference traces visiting both probe kinds,
+164 raise-success paths, and 142 raise-error paths. The uploaded artifact
+`moonsmith-nightly-generator-corpus-38294697813` was downloaded and verified to
+contain both the 1,000-case JSON and HTML files; the HTML includes both distinct
+coverage tables and no executable script or image tags. This was a manual
+end-to-end validation; the next scheduled cron run remains pending.
 
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
