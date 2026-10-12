@@ -39,7 +39,7 @@ function New-TestReport {
         }
     )
     [ordered]@{
-        schemaVersion = 7
+        schemaVersion = 8
         seedStart = $SeedStart
         count = 2
         depth = 4
@@ -59,6 +59,8 @@ function New-TestReport {
         harnessChangedDuringRun = $false
         casesWithValtypeRaiseProbe = 1
         casesWithDirectValtypeRaiseArrayComposition = 1
+        casesWithChoiceReturningFunction = 1
+        choiceReturningFunctionCount = 1
         casesVisitingBothValtypeProbeKinds = 1
         referencePathCaseCounts = [ordered]@{
             'valtype-raise-probe' = 1
@@ -140,13 +142,14 @@ try {
     if ($batchReport.count -ne 2 -or
         $batchReport.htmlReportPath -ne $customBatchHtmlPath -or
         -not (Test-Path -LiteralPath $customBatchHtmlPath -PathType Leaf) -or
-        $batchHtmlRows -ne 15 -or
+        $batchHtmlRows -ne 16 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
         -not $batchHtml.Contains('Generator and reference coverage') -or
         -not $batchHtml.Contains('Generated source coverage') -or
         -not $batchHtml.Contains('Reference trace coverage') -or
         -not $batchHtml.Contains('casesWithValtypeRaiseProbe') -or
+        -not $batchHtml.Contains('casesWithChoiceReturningFunction') -or
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
@@ -166,6 +169,8 @@ try {
         casesWithValtypeRaiseProbe = 1
         casesWithDirectValtypeRaiseArrayComposition = 1
         casesVisitingBothValtypeProbeKinds = 1
+        casesWithChoiceReturningFunction = 1
+        choiceReturningFunctionCount = 1
         referencePathCaseCounts = [pscustomobject]@{
             'valtype-raise-success-path' = 1
             'valtype-raise-error-path' = 1
@@ -175,6 +180,7 @@ try {
         -Summary $nightlySummary -ExpectedCount 2)
     if (-not $coverageValidation.valid -or
         $coverageValidation.bothProbeTraceCases -ne 1 -or
+        $coverageValidation.choiceReturningFunctionCases -ne 1 -or
         $coverageValidation.raiseErrorPathCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
     }
@@ -192,6 +198,40 @@ try {
     }
     if (-not $nightlyCoverageRejected) {
         throw 'nightly coverage gate accepted a report with no composed-probe reference traces.'
+    }
+
+    $nightlySummary.casesVisitingBothValtypeProbeKinds = 1
+    $nightlySummary.casesWithChoiceReturningFunction = 0
+    $choiceFunctionCoverageRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'casesWithChoiceReturningFunction') {
+            throw "nightly Choice-function gate rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $choiceFunctionCoverageRejected = $true
+    }
+    if (-not $choiceFunctionCoverageRejected) {
+        throw 'nightly coverage gate accepted a report with no Choice-returning functions.'
+    }
+
+    $nightlySummary.casesWithChoiceReturningFunction = 1
+    $nightlySummary.choiceReturningFunctionCount = 0
+    $choiceFunctionCountRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'did not count any Choice-returning local functions') {
+            throw "nightly Choice-function count gate rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $choiceFunctionCountRejected = $true
+    }
+    if (-not $choiceFunctionCountRejected) {
+        throw 'nightly coverage gate accepted a report with no counted Choice-returning functions.'
     }
 
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'

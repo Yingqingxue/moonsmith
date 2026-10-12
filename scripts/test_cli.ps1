@@ -126,7 +126,7 @@ $expectedBothProbeTraceCount = @($batch.cases | Where-Object {
 }).Count
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 7 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 8 -or $batch.casesWithChoiceMatch -lt 1 -or
     $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
     $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
@@ -137,6 +137,15 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.referencePathCaseCounts.'valtype-raise-success-path' -lt 1 -or
     $batch.referencePathCaseCounts.'valtype-raise-error-path' -lt 1) {
     throw 'fuzz did not return a clean two-seed batch.'
+}
+
+$choiceFunctionBatch = (& $cli fuzz -SeedStart 14990 -Count 1 -Depth 4 | ConvertFrom-Json)
+if ($LASTEXITCODE -ne 0 -or
+    $choiceFunctionBatch.schemaVersion -ne 8 -or
+    $choiceFunctionBatch.casesWithChoiceReturningFunction -ne 1 -or
+    $choiceFunctionBatch.choiceReturningFunctionCount -lt 1 -or
+    $choiceFunctionBatch.cases[0].sourceConstructCounts.functionChoice -lt 1) {
+    throw 'fuzz did not report the generated Choice-returning local function.'
 }
 
 $generatorLimitRaw = & $cli fuzz -SeedStart 8302 -Count 1 -Depth 11

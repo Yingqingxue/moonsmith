@@ -115,6 +115,10 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 function = [regex]::Matches($body, '\blet transform = fn\(').Count
                 functionInt = [regex]::Matches($body, '\blet transform = fn\(p\d+ : Int\)').Count
                 functionBool = [regex]::Matches($body, '\blet transform = fn\(p\d+ : Bool\)').Count
+                functionChoice = [regex]::Matches(
+                    $body,
+                    '\blet transform = fn\(q\d+ : (?:Int|Bool)\) \{\s*Choice::(?:Number|Flag)\(q\d+\)\s*\}'
+                ).Count
                 struct = [regex]::Matches($body, '\blet pair = Pair::\{').Count
                 structNumber = [regex]::Matches($body, '\bpair\.number\b').Count
                 structFlag = [regex]::Matches($body, '\bpair\.flag\b').Count
@@ -203,6 +207,17 @@ $casesWithArrayIndex1 = @($cases | Where-Object { $_.sourceConstructCounts -and 
 $casesWithFunction = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.function -gt 0 }).Count
 $casesWithIntFunction = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.functionInt -gt 0 }).Count
 $casesWithBoolFunction = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.functionBool -gt 0 }).Count
+$casesWithChoiceReturningFunction = @(
+    $cases | Where-Object {
+        $_.sourceConstructCounts -and $_.sourceConstructCounts.functionChoice -gt 0
+    }
+).Count
+$choiceReturningFunctionCount = 0
+foreach ($case in $cases) {
+    if ($case.sourceConstructCounts) {
+        $choiceReturningFunctionCount += [int]$case.sourceConstructCounts.functionChoice
+    }
+}
 $casesWithStruct = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.struct -gt 0 }).Count
 $casesWithNumberField = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.structNumber -gt 0 }).Count
 $casesWithFlagField = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.structFlag -gt 0 }).Count
@@ -226,7 +241,7 @@ $casesVisitingBothValtypeProbeKinds = @(
 ).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 7
+    schemaVersion           = 8
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
@@ -256,6 +271,8 @@ $summary = [pscustomobject]@{
     casesWithFunction       = $casesWithFunction
     casesWithIntFunction    = $casesWithIntFunction
     casesWithBoolFunction   = $casesWithBoolFunction
+    casesWithChoiceReturningFunction = $casesWithChoiceReturningFunction
+    choiceReturningFunctionCount = $choiceReturningFunctionCount
     casesWithStruct         = $casesWithStruct
     casesWithNumberField    = $casesWithNumberField
     casesWithFlagField      = $casesWithFlagField

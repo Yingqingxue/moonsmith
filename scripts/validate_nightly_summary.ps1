@@ -18,13 +18,20 @@ if ($Summary.count -ne $ExpectedCount -or
 $requiredCoverage = @(
     'casesWithValtypeRaiseProbe',
     'casesWithDirectValtypeRaiseArrayComposition',
-    'casesVisitingBothValtypeProbeKinds'
+    'casesVisitingBothValtypeProbeKinds',
+    'casesWithChoiceReturningFunction'
 )
 foreach ($name in $requiredCoverage) {
     $property = $Summary.PSObject.Properties[$name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
         throw "Nightly corpus did not exercise the required generator coverage metric '$name'."
     }
+}
+$choiceFunctionCount = $Summary.PSObject.Properties['choiceReturningFunctionCount']
+if ($null -eq $choiceFunctionCount -or
+    $null -eq $choiceFunctionCount.Value -or
+    [long]$choiceFunctionCount.Value -le 0) {
+    throw 'Nightly corpus did not count any Choice-returning local functions.'
 }
 
 $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
@@ -42,6 +49,8 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     valid = $true
     count = $Summary.count
     valtypeRaiseCases = $Summary.casesWithValtypeRaiseProbe
+    choiceReturningFunctionCases = $Summary.casesWithChoiceReturningFunction
+    choiceReturningFunctionCount = $choiceFunctionCount.Value
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

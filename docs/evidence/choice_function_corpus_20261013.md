@@ -43,3 +43,14 @@ the JSON report and standalone HTML report. The HTML is 231,300 bytes, has five
 tables and 1,081 rows, and contains no `<script>` or `<img>` tags. Both reports
 span seeds 14990–15989. This check is Linux-only and makes no native-backend
 claim.
+
+## Follow-up telemetry gate
+
+The batch-report schema is now version 8 and records
+`casesWithChoiceReturningFunction` and `choiceReturningFunctionCount` directly,
+in addition to per-case `sourceConstructCounts.functionChoice`. The nightly
+summary validator now requires both aggregate metrics to be nonzero, preventing
+a future 1,000-seed run from passing while silently missing this newly added
+generator branch. The report fixture explicitly checks that each missing/zero
+metric is rejected. The refreshed nightly run on schema 8 is pending CI after
+this telemetry change is pushed; the measurements above remain from schema 7.
