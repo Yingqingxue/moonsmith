@@ -51,9 +51,11 @@ The batch-report schema is now version 8 and records
 in addition to per-case `sourceConstructCounts.functionChoice`. The nightly
 summary validator now requires both aggregate metrics to be nonzero, preventing
 a future 1,000-seed run from passing while silently missing this newly added
-generator branch. The report fixture explicitly checks that each missing/zero
-metric is rejected. The first schema-8 run below confirms the gate against the
-full corpus; the preceding measurements above are from schema 7.
+generator branch. It also recomputes the number of affected cases and total
+functions from all per-case source metrics and rejects aggregate mismatches.
+The report fixture checks missing/zero coverage and both mismatch modes. The
+first schema-8 run below confirms the gate against the full corpus; the
+preceding measurements above are from schema 7.
 The HTML renderer and cross-platform report comparer continue to accept schema
 7 as well as schema 8, so previously saved batch reports remain usable.
 

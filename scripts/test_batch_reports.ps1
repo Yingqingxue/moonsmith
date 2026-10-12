@@ -193,6 +193,16 @@ try {
         casesVisitingBothValtypeProbeKinds = 1
         casesWithChoiceReturningFunction = 1
         choiceReturningFunctionCount = 1
+        cases = @(
+            [pscustomobject]@{
+                seed = 1
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1 }
+            }
+            [pscustomobject]@{
+                seed = 2
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0 }
+            }
+        )
         referencePathCaseCounts = [pscustomobject]@{
             'valtype-raise-success-path' = 1
             'valtype-raise-error-path' = 1
@@ -223,6 +233,37 @@ try {
     }
 
     $nightlySummary.casesVisitingBothValtypeProbeKinds = 1
+    $nightlySummary.cases[0].sourceConstructCounts.functionChoice = 0
+    $choiceFunctionCasesMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'case total does not match per-case') {
+            throw "nightly Choice-function case-total check rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $choiceFunctionCasesMismatchRejected = $true
+    }
+    if (-not $choiceFunctionCasesMismatchRejected) {
+        throw 'nightly coverage gate accepted inconsistent Choice-function case totals.'
+    }
+    $nightlySummary.cases[0].sourceConstructCounts.functionChoice = 2
+    $choiceFunctionCountMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'count does not match per-case') {
+            throw "nightly Choice-function total check rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $choiceFunctionCountMismatchRejected = $true
+    }
+    if (-not $choiceFunctionCountMismatchRejected) {
+        throw 'nightly coverage gate accepted an inconsistent Choice-returning function count.'
+    }
+    $nightlySummary.cases[0].sourceConstructCounts.functionChoice = 1
     $nightlySummary.casesWithChoiceReturningFunction = 0
     $choiceFunctionCoverageRejected = $false
     try {

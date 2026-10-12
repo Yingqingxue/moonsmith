@@ -33,6 +33,34 @@ if ($null -eq $choiceFunctionCount -or
     [long]$choiceFunctionCount.Value -le 0) {
     throw 'Nightly corpus did not count any Choice-returning local functions.'
 }
+if ($null -eq $Summary.cases -or $Summary.cases.Count -ne $ExpectedCount) {
+    throw "Nightly corpus must contain $ExpectedCount per-case records to verify Choice-function coverage totals."
+}
+$observedChoiceFunctionCases = 0
+$observedChoiceFunctionCount = 0
+foreach ($case in $Summary.cases) {
+    $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
+    $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['functionChoice']
+    } else {
+        $null
+    }
+    if ($null -eq $functionCount -or
+        $null -eq $functionCount.Value -or
+        [long]$functionCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.functionChoice value."
+    }
+    if ([long]$functionCount.Value -gt 0) {
+        $observedChoiceFunctionCases++
+        $observedChoiceFunctionCount += [long]$functionCount.Value
+    }
+}
+if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
+    throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
+}
+if ($observedChoiceFunctionCount -ne [long]$choiceFunctionCount.Value) {
+    throw 'Nightly Choice-returning function count does not match per-case source metrics.'
+}
 
 $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
 if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value) {
