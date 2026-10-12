@@ -34,7 +34,21 @@ if ($combined.finding -ne 'consistent' -or
     ($combined.referenceTrace.visited -notcontains 'valtype-raise-success-path' -and
         $combined.referenceTrace.visited -notcontains 'valtype-raise-error-path') -or
     @($combined.runs | Where-Object { $_.output -ne $combined.expectedOutput }).Count -ne 0) {
-    throw 'Combined enum array and valtype raise output did not agree across backends and reference.'
+    $diagnostics = [pscustomobject]@{
+        finding = $combined.finding
+        expectedOutput = $combined.expectedOutput
+        referenceTrace = $combined.referenceTrace
+        runs = @($combined.runs | ForEach-Object {
+            [pscustomobject]@{
+                target = $_.target
+                status = $_.status
+                exitCode = $_.exitCode
+                output = $_.output
+                error = $_.error
+            }
+        })
+    } | ConvertTo-Json -Depth 5
+    throw "Combined enum array and valtype raise output did not agree across backends and reference.`n$diagnostics"
 }
 
 $injectedRaw = & $verifyScript -Seed 42 -Depth 4 -NoPersist `
