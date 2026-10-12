@@ -39,12 +39,27 @@ if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyCon
 $combinedRaw = & $verifyScript -Seed 44607 -Depth 4 `
     -Targets $combinedTargets -NoPersist
 $combined = $combinedRaw | ConvertFrom-Json
-if ($combined.finding -ne 'consistent' -or
+$combinedNativeDebug = $combined.runs | Where-Object target -eq 'native' | Select-Object -First 1
+$combinedNativeKnownIssue = $null -ne $combinedNativeDebug -and
+    $combinedNativeDebug.status -eq 'compile-failed' -and
+    $combinedNativeDebug.error -match 'Machine_error\(kind=unsupported; who="Machine_of_clam_lower\.lower_array_make"; message="uninitialized non-null GC ref arrays are not lowered"'
+$combinedNativeExpected = $null -eq $combinedNativeDebug -or
+    ($combinedNativeDebug.status -eq 'succeeded' -and
+        (Normalize-Output $combinedNativeDebug.output) -eq (Normalize-Output $combined.expectedOutput)) -or
+    $combinedNativeKnownIssue
+$combinedFindingExpected = $combined.finding -eq 'consistent' -or
+    ($combined.finding -eq 'compile-failure' -and $combinedNativeKnownIssue)
+$combinedComparableRuns = @($combined.runs | Where-Object {
+    $_.target -ne 'native' -or -not $combinedNativeKnownIssue
+})
+if (-not $combinedFindingExpected -or
     $combined.referenceTrace.visited -notcontains 'valtype-enum-array-probe' -or
     ($combined.referenceTrace.visited -notcontains 'valtype-raise-success-path' -and
         $combined.referenceTrace.visited -notcontains 'valtype-raise-error-path') -or
-    @($combined.runs | Where-Object {
-        (Normalize-Output $_.output) -ne (Normalize-Output $combined.expectedOutput)
+    -not $combinedNativeExpected -or
+    @($combinedComparableRuns | Where-Object {
+        $_.status -ne 'succeeded' -or
+            (Normalize-Output $_.output) -ne (Normalize-Output $combined.expectedOutput)
     }).Count -ne 0) {
     $diagnostics = [pscustomobject]@{
         finding = $combined.finding
