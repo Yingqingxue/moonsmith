@@ -133,6 +133,28 @@ try {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
 
+    $linuxReport.schemaVersion = 7
+    $windowsReport.schemaVersion = 7
+    $linuxReport.Remove('casesWithChoiceReturningFunction')
+    $linuxReport.Remove('choiceReturningFunctionCount')
+    $windowsReport.Remove('casesWithChoiceReturningFunction')
+    $windowsReport.Remove('choiceReturningFunctionCount')
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    $legacyComparison = (& $scriptPath -LinuxReportDirectory $linuxDirectory `
+        -WindowsReportDirectory $windowsDirectory | ConvertFrom-Json)
+    if ($legacyComparison.seedsCompared -ne 2) {
+        throw 'schema-7 paired reports were not accepted by the cross-platform comparer.'
+    }
+    $linuxReport.schemaVersion = 8
+    $windowsReport.schemaVersion = 8
+    $linuxReport.casesWithChoiceReturningFunction = 1
+    $linuxReport.choiceReturningFunctionCount = 1
+    $windowsReport.casesWithChoiceReturningFunction = 1
+    $windowsReport.choiceReturningFunctionCount = 1
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+
     $customBatchHtmlPath = Join-Path $testRoot 'custom-batch-summary.html'
     $batchReport = (& $cliPath batch-report `
         -BatchPath (Join-Path $linuxDirectory 'batch_linux.json') `
@@ -238,8 +260,18 @@ try {
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
     $legacyReport = [ordered]@{}
     foreach ($property in $linuxReport.Keys) {
-        if ($property -ne 'failureClusters') {
+        if ($property -notin @(
+                'failureClusters',
+                'casesWithChoiceReturningFunction',
+                'choiceReturningFunctionCount'
+            )) {
             $legacyReport[$property] = $linuxReport[$property]
+        }
+    }
+    $legacyReport.schemaVersion = 7
+    foreach ($case in $legacyReport.cases) {
+        if ($null -ne $case.sourceConstructCounts) {
+            $case.sourceConstructCounts.Remove('functionChoice')
         }
     }
     $legacyReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $legacyReportPath -Encoding utf8
@@ -248,7 +280,7 @@ try {
     $legacyHtml = Get-Content -LiteralPath $legacyHtmlResult.htmlReportPath -Raw
     if ($legacyHtmlResult.count -ne 2 -or
         -not $legacyHtml.Contains('Failure-cluster data was not recorded in this batch schema.')) {
-        throw 'legacy batch report did not explain that failure-cluster data is unavailable.'
+        throw 'schema-7 batch report did not render and explain unavailable failure-cluster data.'
     }
 
     $sourceJsonBefore = Get-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Raw

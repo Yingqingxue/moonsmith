@@ -54,3 +54,5 @@ a future 1,000-seed run from passing while silently missing this newly added
 generator branch. The report fixture explicitly checks that each missing/zero
 metric is rejected. The refreshed nightly run on schema 8 is pending CI after
 this telemetry change is pushed; the measurements above remain from schema 7.
+The HTML renderer and cross-platform report comparer continue to accept schema
+7 as well as schema 8, so previously saved batch reports remain usable.

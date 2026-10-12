@@ -140,7 +140,8 @@ workstation has no compatible C compiler.
 Batch-report schema 8 now records Choice-returning-function cases and total
 functions explicitly; the nightly validator gates on both counts. Unit tests
 cover rejection of missing coverage, while a refreshed remote 1,000-seed run
-remains pending for this telemetry revision.
+remains pending for this telemetry revision. Report rendering and cross-platform
+comparison retain schema-7 read compatibility for existing saved reports.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
