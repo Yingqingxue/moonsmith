@@ -1,0 +1,57 @@
+name: MoonSmith Nightly Generator Corpus
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moonsmith-nightly-generator-corpus
+  cancel-in-progress: false
+
+jobs:
+  nightly-generator-corpus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+
+      - name: Show toolchain version
+        run: moon version --all
+
+      - name: Run the fixed 1,000-seed corpus
+        shell: pwsh
+        run: |
+          $summary = ./scripts/run_batch.ps1 -SeedStart 14990 -Count 1000 `
+            -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30 |
+            ConvertFrom-Json
+          if ($summary.count -ne 1000 -or
+              $summary.uniqueProgramBodies -ne 1000 -or
+              $summary.referenceCheckedCount -ne 1000 -or
+              $summary.unexpectedCount -ne 0 -or
+              $summary.harnessChangedDuringRun) {
+            throw 'The nightly fixed-seed corpus did not complete with 1,000 unique, reference-checked cases.'
+          }
+
+      - name: Preserve the nightly corpus report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: moonsmith-nightly-generator-corpus-${{ github.run_id }}
+          path: .moonsmith/runs/batch_*.json
+          if-no-files-found: warn
+          retention-days: 30
