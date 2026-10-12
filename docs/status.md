@@ -20,6 +20,11 @@ The current-generator scan covered 360 distinct bodies and 820 executions
 (690 across JS/Wasm/Wasm-GC and 130 Windows native-release); see the
 [fixed-seed evidence](evidence/current_generator_scan_20261012.md).
 #1322 remains an upstream-reported issue, not a MoonSmith-discovered defect.
+In the 2026-10-12 CI run, its native-debug signature reproduced on both
+Linux/GCC and Windows/MSVC, while native-release and Wasm-GC passed; an earlier
+MoonBit `0.1.20260920` run had not reproduced it on Windows. The apparent change
+coincides with a MoonBit toolchain update, but causation is not established.
+See the [regression notes](regressions.md#case-3-native-debug-array-push-of-a-valtype-record-containing-an-enum).
 
 The 3,750-program scan totals below were collected before this generator
 branch changed. They remain historical evidence for that version of the

@@ -82,7 +82,7 @@ construct may stop testing the original result-lowering path.
   Seed 4 at depth 3 exercises the generated path; its reference trace records
   initialization, both pushes, and both indexed reads. The generated probe is
   semantically modeled by its input integer and does not claim native behavior
-  is correct. The extension is pending remote CI validation.
+  is correct. The extension has passed current Linux and Windows CI.
 - Validation: `scripts/test_issue_1322.ps1` checks the Wasm-GC and native
   release control outputs, then classifies native debug as either the reported
   ICE signature or a successful result. The generic verifier now exposes
@@ -90,28 +90,30 @@ construct may stop testing the original result-lowering path.
   build mode in each run so debug/release configuration differences can be compared
   without changing the generated source. GitHub Actions run
   [37981943718](https://github.com/Yingqingxue/moonsmith/actions/runs/37981943718)
-  on Linux reproduced the exact ICE signature under gcc; native release and
-  Wasm-GC both produced `0` and `x`. In the same run, Windows/MSVC native debug
-  did not reproduce the ICE and produced the expected output; release and
-  Wasm-GC also passed there. The artifacts record runner/compiler-specific
-  classifications. This difference is observed, not yet explained. This
-  workstation has no compatible C compiler, so only Wasm-GC has been checked
-  locally.
+  on MoonBit `0.1.20260920` reproduced the exact ICE signature under Linux/GCC;
+  Windows/MSVC native debug did not reproduce it in that run. Native release
+  and Wasm-GC passed on both runners. A later successful
+  [run 38246227150](https://github.com/Yingqingxue/moonsmith/actions/runs/38246227150)
+  used MoonBit `0.1.20261012`: both Linux/GCC and Windows/MSVC reproduced the
+  exact native-debug signature for the upstream fixture and the generated
+  extension; native release and Wasm-GC passed on both. The reports record GCC
+  13.3.0 in both runs and MSVC 19.51.36260 in both Windows runs. Thus the
+  observed Windows result changed across MoonBit toolchain versions while the
+  reported C compiler versions stayed the same. This correlation does not prove
+  the MoonBit update caused the change: runner images and other dependencies
+  were not held constant in an A/B experiment. This workstation has no
+  compatible C compiler, so only Wasm-GC has been checked locally.
   MoonBit's native debug and release configurations may select different
   compiler backends; therefore `backend: native` identifies MoonBit's target,
   not a guarantee of identical internal lowering. See the
   [MoonBit native backend note](https://docs.moonbitlang.com/next/language/ffi.html).
-- GitHub Actions run
-  [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
+- The older run [37988791461](https://github.com/Yingqingxue/moonsmith/actions/runs/37988791461)
   passed both Linux and Windows jobs with the generic verifier included:
-  Linux classified native debug as `compile-failed` and native-release plus
-  Wasm-GC as `succeeded`; Windows classified native debug and native-release
-  as `succeeded`. The artifact records native-release as `expected-output` on
-  both runners, with GCC 13.3.0 on Linux and MSVC 19.51.36260 on Windows. In
-  this run, Linux passed 10 generated programs on all five configurations;
-  Windows passed 100 depth-6 generated programs in both native modes and 30
-  additional depth-8 native-debug programs. The upstream fixture's
-  runner/compiler discrepancy remains unexplained.
+  Linux classified native debug as `compile-failed`; Windows classified it as
+  `succeeded`. These results are now interpreted as observations under the
+  older MoonBit toolchain, not as a persistent Linux/Windows difference. The
+  newer run above supersedes the old platform conclusion, but does not identify
+  why behavior changed.
 - The script also sends the checked-in source and the upstream-reported
   expected output to `verify_seed.ps1`, exercising MoonSmith's existing
   differential classification and persisting its per-target status in the

@@ -37,4 +37,6 @@
 
 更新（2026-10-10）：回归语料现为 2 个历史上游案例加上近期上游 #1322；在 [CI run 37992067092](https://github.com/Yingqingxue/moonsmith/actions/runs/37992067092) 中，#1322 在 Linux/gcc native debug 复现、在 Windows/MSVC native debug 未复现；MoonSmith 的 native-release target 与 Wasm-GC 对照在两边均通过。该问题由上游先报告，runner/compiler 差异原因尚未分析，不能视为已修复或算作 MoonSmith 新发现。该 run 的 Windows artifact 还实际验证了 reducer 输出的保存范围。
 
+更正（2026-10-12）：上述 Windows 未复现是 MoonBit `0.1.20260920` 下的历史观察。[CI run 38246227150](https://github.com/Yingqingxue/moonsmith/actions/runs/38246227150) 使用 MoonBit `0.1.20261012` 后，Linux/GCC 与 Windows/MSVC 都在上游原始复现和生成扩展中复现同一 native-debug ICE；native-release 与 Wasm-GC 均通过。两次 Windows 报告的 MSVC 版本同为 `19.51.36260`，Linux GCC 报告同为 `13.3.0`，所以现有证据与 MoonBit 工具链版本变化相关，但 runner 镜像和其他依赖未作 A/B 控制，不能断言因果。#1322 仍是上游先报告的问题，不计作 MoonSmith 发现。
+
 资料依据：用户提供的 MoonCAS 初审截图及 `方向4-MoonCAS-完整资料.zip`；[赛事官网](https://moonbitlang.github.io/OSC2026/)；[MoonCAS GitHub](https://github.com/Yingqingxue/mooncas)。
