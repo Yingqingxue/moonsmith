@@ -86,7 +86,10 @@ elseif ($releaseBatchExitCode -ne 0 -or
 
 $boundaryTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne $nativeCompiler) {
-    $boundaryTargets += 'native'
+    # Native debug is expected to hit the tracked #1322 compiler ICE for some
+    # generated seeds. Keep boundary checks differential by using release here;
+    # the debug signature is exercised separately by test_issue_1322.ps1.
+    $boundaryTargets += 'native-release'
 }
 $boundaryResults = @()
 $verifyForCommand = $verify.Replace("'", "''")

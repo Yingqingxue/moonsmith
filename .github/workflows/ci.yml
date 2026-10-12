@@ -111,7 +111,6 @@ jobs:
           moon check --deny-warn
           moon test --target native --deny-warn
           pwsh -NoProfile -File scripts/test_issue_1322.ps1
-          ./scripts/verify_seed.ps1 -Seed 0 -Depth 4 -Targets @('native') -TimeoutSeconds 60 -NoPersist
 
       - name: Smoke-test Windows native generated programs
         shell: pwsh
