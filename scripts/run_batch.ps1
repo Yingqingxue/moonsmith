@@ -122,6 +122,10 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 forLoop = [regex]::Matches($body, '\bfor _ms_index = 0, _ms_acc =').Count
                 forNobreak = [regex]::Matches($body, '\bnobreak\s*\{').Count
                 valtypeRaiseProbe = [regex]::Matches($body, '_ms_valtype_run\(').Count
+                valtypeRaiseArrayComposition = [regex]::Matches(
+                    $body,
+                    'let _ms_valtype_input = _ms_valtype_array_run\('
+                ).Count
             }
         }
         $cases.Add([pscustomobject]@{
@@ -205,9 +209,21 @@ $casesWithFlagConstructor = @($cases | Where-Object { $_.sourceConstructCounts -
 $casesWithForLoop = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.forLoop -gt 0 }).Count
 $casesWithForIteration = @($cases | Where-Object { $_.referencePathKinds -contains 'for-iteration' }).Count
 $casesWithValtypeRaiseProbe = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.valtypeRaiseProbe -gt 0 }).Count
+$casesWithDirectValtypeRaiseArrayComposition = @(
+    $cases | Where-Object {
+        $_.sourceConstructCounts -and
+        $_.sourceConstructCounts.valtypeRaiseArrayComposition -gt 0
+    }
+).Count
+$casesVisitingBothValtypeProbeKinds = @(
+    $cases | Where-Object {
+        $_.referencePathKinds -contains 'valtype-raise-probe' -and
+        $_.referencePathKinds -contains 'valtype-enum-array-probe'
+    }
+).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 6
+    schemaVersion           = 7
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
@@ -245,6 +261,8 @@ $summary = [pscustomobject]@{
     casesWithForLoop        = $casesWithForLoop
     casesWithForIteration   = $casesWithForIteration
     casesWithValtypeRaiseProbe = $casesWithValtypeRaiseProbe
+    casesWithDirectValtypeRaiseArrayComposition = $casesWithDirectValtypeRaiseArrayComposition
+    casesVisitingBothValtypeProbeKinds = $casesVisitingBothValtypeProbeKinds
     referenceTraceSource    = 'MoonBit reference interpreter; not backend runtime instrumentation'
     referencePathCaseCounts = $referencePathCaseCounts
     counts                  = $counts

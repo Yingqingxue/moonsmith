@@ -113,11 +113,21 @@ foreach ($seed in @(-2147483648, -1, 2147483647)) {
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
 $expectedSourceLineMaximum = ($batch.cases |
     Measure-Object -Property sourceLineCount -Maximum).Maximum
+$expectedDirectCompositionCount = @($batch.cases | Where-Object {
+    $_.sourceConstructCounts -and
+    $_.sourceConstructCounts.valtypeRaiseArrayComposition -gt 0
+}).Count
+$expectedBothProbeTraceCount = @($batch.cases | Where-Object {
+    $_.referencePathKinds -contains 'valtype-raise-probe' -and
+    $_.referencePathKinds -contains 'valtype-enum-array-probe'
+}).Count
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 6 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 7 -or $batch.casesWithChoiceMatch -lt 1 -or
     $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
+    $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
+    $batch.casesVisitingBothValtypeProbeKinds -ne $expectedBothProbeTraceCount -or
     $batch.casesWithSourceLineCount -ne $batch.count -or
     $batch.sourceLineCountMaximum -ne $expectedSourceLineMaximum -or
     @($batch.cases | Where-Object { $null -eq $_.sourceLineCount }).Count -ne 0 -or

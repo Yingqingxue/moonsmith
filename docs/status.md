@@ -710,3 +710,14 @@ reference-interpreter observations, not backend coverage. Runtime was 186,503
 ms on this workstation, not a controlled benchmark. No compiler defect was
 found. See [composition scan evidence](evidence/valtype_composition_scan_20261012.md);
 the raw JSON remains local and ignored.
+
+The initial 30-seed composition cohort was selected around a known trigger seed.
+To measure a broader ordinary range, schema-v7 batch reporting now counts
+direct source compositions and cases whose reference traces visit both probe
+kinds. An unselected depth-4 cohort of seeds 0–49 then passed 50/50 reference
+checks and 150/150 backend executions, with 50 unique bodies and an unchanged
+harness digest. Thirteen sources contained a direct composition and ten
+reference traces visited both probes. This is observed frequency in this
+small cohort, not backend coverage or a frequency guarantee. Runtime was
+307,214 ms on this workstation; raw JSON is ignored locally. Details are in
+the [composition scan evidence](evidence/valtype_composition_scan_20261012.md).
