@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $scriptPath = Join-Path $PSScriptRoot 'compare_batch_reports.ps1'
-$testRoot = Join-Path $env:TEMP ('moonsmith-batch-report-test-' + [guid]::NewGuid().ToString('N'))
+$tempDirectory = [IO.Path]::GetTempPath()
+$testRoot = Join-Path $tempDirectory ('moonsmith-batch-report-test-' + [guid]::NewGuid().ToString('N'))
 $linuxDirectory = Join-Path $testRoot 'linux'
 $windowsDirectory = Join-Path $testRoot 'windows'
 New-Item -ItemType Directory -Path $linuxDirectory, $windowsDirectory -Force | Out-Null
@@ -109,7 +110,7 @@ try {
     Assert-ComparisonRejected -ExpectedMessage 'Reference expected outputs differ' -Label 'reference-output mismatch'
 
     $resolvedTemp = [IO.Path]::GetFullPath($testRoot)
-    $resolvedTempRoot = [IO.Path]::GetFullPath($env:TEMP).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    $resolvedTempRoot = [IO.Path]::GetFullPath($tempDirectory).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
     if (-not $resolvedTemp.StartsWith($resolvedTempRoot, [StringComparison]::OrdinalIgnoreCase)) {
         throw "Refusing to remove test output outside the temporary directory: $resolvedTemp"
     }
@@ -126,7 +127,7 @@ try {
 catch {
     if (Test-Path -LiteralPath $testRoot) {
         $resolvedTemp = [IO.Path]::GetFullPath($testRoot)
-        $resolvedTempRoot = [IO.Path]::GetFullPath($env:TEMP).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+        $resolvedTempRoot = [IO.Path]::GetFullPath($tempDirectory).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
         if ($resolvedTemp.StartsWith($resolvedTempRoot, [StringComparison]::OrdinalIgnoreCase)) {
             Remove-Item -LiteralPath $resolvedTemp -Recurse -Force
         }
