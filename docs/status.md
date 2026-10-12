@@ -139,9 +139,11 @@ generated compiler backends. Native remains a hosted-CI check because this
 workstation has no compatible C compiler.
 Batch-report schema 8 now records Choice-returning-function cases and total
 functions explicitly; the nightly validator gates on both counts. Unit tests
-cover rejection of missing coverage, while a refreshed remote 1,000-seed run
-remains pending for this telemetry revision. Report rendering and cross-platform
-comparison retain schema-7 read compatibility for existing saved reports.
+cover rejection of missing coverage. The refreshed remote 1,000-seed run passed:
+251 cases contained 305 Choice-returning functions, with no unexpected
+findings, generator limits, or harness errors. Report rendering and
+cross-platform comparison retain schema-7 read compatibility for existing
+saved reports. See [the schema-8 run evidence](evidence/choice_function_corpus_20261013.md).
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

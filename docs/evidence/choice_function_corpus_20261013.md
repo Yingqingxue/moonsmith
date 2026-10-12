@@ -52,7 +52,19 @@ in addition to per-case `sourceConstructCounts.functionChoice`. The nightly
 summary validator now requires both aggregate metrics to be nonzero, preventing
 a future 1,000-seed run from passing while silently missing this newly added
 generator branch. The report fixture explicitly checks that each missing/zero
-metric is rejected. The refreshed nightly run on schema 8 is pending CI after
-this telemetry change is pushed; the measurements above remain from schema 7.
+metric is rejected. The first schema-8 run below confirms the gate against the
+full corpus; the preceding measurements above are from schema 7.
 The HTML renderer and cross-platform report comparer continue to accept schema
 7 as well as schema 8, so previously saved batch reports remain usable.
+
+The refreshed schema-8 run completed successfully in
+[GitHub Actions run 38307212651](https://github.com/Yingqingxue/moonsmith/actions/runs/38307212651)
+on commit `f81c3c9067e7dbba21f457c50e4012c08d4ccd97`. It again checked 1,000
+unique bodies and 3,000 JS/Wasm/Wasm-GC executions with no unexpected findings,
+generator limits, or harness errors. The new direct metric recorded 251 cases
+containing Choice-returning local functions and 305 such functions in total.
+The corpus also recorded 234 direct raise/enum-array compositions, 198 cases
+whose reference trace visited both probe kinds, and 164/142 raise-success/error
+paths. These are source/reference observations, not backend runtime coverage.
+The uploaded schema-8 JSON and HTML span seeds 14990–15989; the HTML is 231,391
+bytes and contains no `<script>` or `<img>` tags.
