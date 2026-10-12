@@ -4,6 +4,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      extended_scan:
+        description: Run the bounded current-generator seed scan (depths 4, 6, and 8)
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -139,4 +145,41 @@ jobs:
             .moonsmith/reduction/
             .moonsmith/issue_1322.json
           if-no-files-found: ignore
+          retention-days: 30
+
+  extended-seed-scan:
+    if: github.event_name == 'workflow_dispatch' && inputs.extended_scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+
+      - name: Show toolchain version
+        run: moon version --all
+
+      - name: Scan current generator on fixed seed ranges
+        shell: pwsh
+        run: |
+          ./scripts/run_batch.ps1 -SeedStart 10000 -Count 100 -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+          ./scripts/run_batch.ps1 -SeedStart 11000 -Count 100 -Depth 6 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+          ./scripts/run_batch.ps1 -SeedStart 12000 -Count 30 -Depth 8 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+
+      - name: Preserve extended scan reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: moonsmith-current-generator-seed-scan
+          path: .moonsmith/runs/batch_*.json
+          if-no-files-found: error
           retention-days: 30
