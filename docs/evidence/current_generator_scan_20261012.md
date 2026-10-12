@@ -52,8 +52,9 @@ compiler defect is claimed from this scan.
 
 The manual `MoonSmith CI` workflow accepts `scan_start` for a new 230-seed
 Linux batch (depth 4: 100; depth 6: 100; depth 8: 30). After recording the
-13000–13229, 13300–13529, and 13530–13759 scans below, the next default start
-is 13760; the workflow rejects smaller values to avoid the documented samples.
+13000–13229, 13300–13529, 13530–13759, and 13760–13989 scans below, the next
+default start is 13990; the workflow rejects smaller values to avoid the
+documented samples.
 To compare Windows
 native-release against identical seeds in the same workflow, set both
 `extended_scan` and `extended_windows_crosscheck`. CI then compares the report
@@ -89,3 +90,5 @@ Second paired scan (2026-10-12 UTC): [manual CI run 38278202679](https://github.
 Third paired scan (2026-10-12 UTC): [manual CI run 38280242793](https://github.com/Yingqingxue/moonsmith/actions/runs/38280242793), source commit `448ead6`, used seeds 13530–13759. The Linux and Windows scan jobs and the automated comparison job all passed: 230 distinct source hashes matched across platforms and all 920 backend executions were consistent. The summary artifact records the compared range and toolchain. The overall workflow concluded failure only because the then-new test helper assumed `$env:TEMP`, which is unset on Ubuntu; see the follow-up fix below.
 
 After the third scan, the comparison script also began checking reference `expectedOutput` equality, in addition to seed sets, toolchain, source hashes, and findings. Its unit tests cover each mismatch type; the newer expected-output check was exercised locally against the downloaded run 38280242793 reports. The `$env:TEMP` assumption was replaced with `[IO.Path]::GetTempPath()` and the Linux `verify` job passed in follow-up run 38281145225. Native-debug remains excluded from these broad samples because of the upstream #1322 ICE.
+
+Fourth paired scan (2026-10-12 UTC): [manual CI run 38281878588](https://github.com/Yingqingxue/moonsmith/actions/runs/38281878588), source commit `71a3fcc`, covered seeds 13760–13989. All workflow jobs passed, including the automated report comparison. It verified 230/230 matching source hashes and reference outputs, 230 consistent cases on each platform, and 920 total backend executions. Across all four paired ranges, the Linux report hashes are distinct (920/920), so the current paired sample now contains 920 distinct generated bodies and 3,680 consistent backend executions. The comparison artifact is named `moonsmith-cross-platform-seed-comparison`; the Windows Actions log records `cl.exe` FileVersion `19.51.36260.0` and ProductVersion `14.51.36260.0`. No compiler defect was found in these samples.

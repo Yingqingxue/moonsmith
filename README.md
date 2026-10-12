@@ -117,9 +117,9 @@ the reproducible report IDs and limits. Those scans were recorded before the
 enum/array probe changed the integer branch of the generator; their totals are
 historical evidence, not measurements of the current generator distribution.
 The current generator was checked on an initial 360-program fixed-seed scan
-and three paired 230-seed samples: each paired source hash matched between
-Linux JS/Wasm/Wasm-GC and Windows native-release, for 2,760 consistent backend
-executions across 690 distinct generated bodies. See
+and four paired 230-seed samples: each paired source hash matched between
+Linux JS/Wasm/Wasm-GC and Windows native-release, for 3,680 consistent backend
+executions across 920 distinct generated bodies. See
 [current-generator scan evidence](docs/evidence/current_generator_scan_20261012.md).
 When both extended workflow inputs are enabled, CI also downloads and compares
 the Linux and Windows reports, failing on a seed-set, toolchain, source-hash,
