@@ -13,6 +13,17 @@ external assets. The CLI integration passed locally and on Linux/Windows in
 [CI run 38284749943](https://github.com/Yingqingxue/moonsmith/actions/runs/38284749943).
 This is a static case summary, not a step-by-step reduction-history viewer.
 
+## Nightly fixed-seed corpus
+
+The new scheduled workflow runs seeds 14990–15989 at depth 4 on Linux across
+JS, Wasm, and Wasm-GC, then retains the JSON report for 30 days. Manual
+validation run [38286339963](https://github.com/Yingqingxue/moonsmith/actions/runs/38286339963)
+passed in 9m23s using MoonBit `0.1.20261012 (748b63c)`: 1,000/1,000 distinct
+program bodies, 1,000 reference checks, and 3,000 backend executions, all
+consistent; no compile/runtime failures, timeouts, mismatches, generator limits,
+or harness errors were reported. This fixed nightly corpus covers JS/Wasm/Wasm-GC
+only; it is not native coverage or a proof of language-wide correctness.
+
 Current developer and project owner: `Yingqingxue`. Development is currently
 single-person; no second team member is recorded.
 

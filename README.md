@@ -126,4 +126,10 @@ When both extended workflow inputs are enabled, CI also downloads and compares
 the Linux and Windows reports, failing on a seed-set, toolchain, source-hash,
 reference-output, or finding mismatch.
 
+The nightly Actions workflow scans fixed seeds 14990–15989 on Linux across
+JS/Wasm/Wasm-GC and retains its machine-readable report for 30 days. Its first
+manual validation run checked 1,000 distinct generated bodies against the
+reference evaluator and completed 3,000 backend executions without findings;
+this nightly corpus does not cover native backends.
+
 Licensed under Apache-2.0.
