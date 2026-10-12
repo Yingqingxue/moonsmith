@@ -141,6 +141,41 @@ try {
         throw "batch-report did not render an offline, escaped batch summary (count=$($batchReport.count), rows=$batchHtmlRows, doctype=$($batchHtml.StartsWith('<!doctype html>')), script=$($batchHtml -match '<script\b|<img\b'))."
     }
 
+    $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
+    $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
+    $legacyReport = [ordered]@{}
+    foreach ($property in $linuxReport.Keys) {
+        if ($property -ne 'failureClusters') {
+            $legacyReport[$property] = $linuxReport[$property]
+        }
+    }
+    $legacyReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $legacyReportPath -Encoding utf8
+    $legacyHtmlResult = (& (Join-Path $PSScriptRoot 'render_batch_report.ps1') `
+        -BatchPath $legacyReportPath -OutputPath $legacyHtmlPath | ConvertFrom-Json)
+    $legacyHtml = Get-Content -LiteralPath $legacyHtmlResult.htmlReportPath -Raw
+    if ($legacyHtmlResult.count -ne 2 -or
+        -not $legacyHtml.Contains('Failure-cluster data was not recorded in this batch schema.')) {
+        throw 'legacy batch report did not explain that failure-cluster data is unavailable.'
+    }
+
+    $sourceJsonBefore = Get-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Raw
+    $sourceOverwriteRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'render_batch_report.ps1') `
+            -BatchPath (Join-Path $linuxDirectory 'batch_linux.json') `
+            -OutputPath (Join-Path $linuxDirectory 'batch_linux.json') -Force
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'Refusing to replace the source batch JSON') {
+            throw "batch-report source protection failed for the wrong reason: $($_.Exception.Message)"
+        }
+        $sourceOverwriteRejected = $true
+    }
+    if (-not $sourceOverwriteRejected -or
+        (Get-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Raw) -ne $sourceJsonBefore) {
+        throw 'batch-report modified its source JSON when output was directed to the same path.'
+    }
+
     $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release') -FirstHash ('d' * 64)
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
     Assert-ComparisonRejected -ExpectedMessage 'source hashes differ' -Label 'source-hash mismatch'
@@ -175,6 +210,8 @@ try {
         failureClusters = $clusters.Count
         batchHtmlCases = $batchReport.count
         batchHtmlRows = $batchHtmlRows
+        legacyHtmlHandled = $true
+        sourceJsonProtected = $true
     } | ConvertTo-Json
 }
 catch {
