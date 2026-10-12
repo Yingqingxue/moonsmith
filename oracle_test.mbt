@@ -40,6 +40,10 @@ test "normalization preserves observable spaces and trailing newlines" {
     ),
     "<case>: error",
   )
+  assert_eq(
+    @moonsmith.normalize_stderr("case.mbt: error", diagnostic_case="case.mbt"),
+    "<case>: error",
+  )
 }
 
 ///|

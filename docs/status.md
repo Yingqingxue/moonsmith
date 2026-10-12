@@ -113,6 +113,15 @@ array-growth extension and should not be read as the current validation state.
 The extension has since passed the remote checks and current-generator scan
 linked above; this machine still lacks a compatible C compiler.
 
+## Targeted test additions (2026-10-13)
+
+Added whitebox coverage for `ChoiceType` value typing and typed local-function
+printing, plus relative single-filename path normalization in diagnostics. The
+main package now passes 78/78 tests on each of JS, Wasm, and Wasm-GC locally.
+The latter is host-side MoonSmith test coverage; it does not represent runtime
+coverage inside the generated compiler backends. Native remains a hosted-CI
+check because this workstation has no compatible C compiler.
+
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
 historical, not measurements of the current generator revision. No newly

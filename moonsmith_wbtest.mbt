@@ -85,3 +85,19 @@ test "variable-use analysis traverses every expression family" {
     ),
   )
 }
+
+///|
+test "Choice expressions retain their type through local function printing" {
+  let expression = FunctionApply(
+    ChoiceType,
+    "selected",
+    ChoiceValue(IntType, IntLiteral(7)),
+    ChoiceValue(BoolType, BoolLiteral(true)),
+  )
+  assert_true(ChoiceValue(IntType, IntLiteral(7)).value_type() is ChoiceType)
+  assert_true(expression.value_type() is ChoiceType)
+  let source = expression.to_source()
+  assert_true(source.contains("selected : Choice"))
+  assert_true(source.contains("Choice::Number(7)"))
+  assert_true(source.contains("Choice::Flag(true)"))
+}
