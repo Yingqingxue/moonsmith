@@ -93,17 +93,31 @@ foreach ($property in $summary.counts.PSObject.Properties | Sort-Object -Propert
 }
 $html.Add('</tbody></table></section>')
 
-$coverageProperties = @($summary.PSObject.Properties |
-    Where-Object { $_.Name -match '^(casesWith|casesVisitingBoth)' } |
+$sourceCoverageProperties = @($summary.PSObject.Properties |
+    Where-Object { $_.Name -match '^casesWith' } |
+    Sort-Object -Property Name)
+$traceCoverageProperties = @($summary.PSObject.Properties |
+    Where-Object { $_.Name -match '^casesVisiting' } |
     Sort-Object -Property Name)
 $referencePathProperty = $summary.PSObject.Properties['referencePathCaseCounts']
-if ($coverageProperties.Count -gt 0 -or
+if ($sourceCoverageProperties.Count -gt 0 -or $traceCoverageProperties.Count -gt 0 -or
     ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value)) {
     $html.Add('<section><h2>Generator and reference coverage</h2>')
 }
-if ($coverageProperties.Count -gt 0) {
-    $html.Add('<table><caption>Generated feature coverage</caption><thead><tr><th scope="col">Feature</th><th scope="col">Cases</th><th scope="col">Share of batch</th></tr></thead><tbody>')
-    foreach ($property in $coverageProperties) {
+if ($sourceCoverageProperties.Count -gt 0) {
+    $html.Add('<table><caption>Generated source coverage</caption><thead><tr><th scope="col">Feature or property</th><th scope="col">Cases</th><th scope="col">Share of batch</th></tr></thead><tbody>')
+    foreach ($property in $sourceCoverageProperties) {
+        $caseCount = [long]$property.Value
+        $share = if ([long]$summary.count -gt 0) {
+            '{0:P1}' -f ($caseCount / [double]$summary.count)
+        } else { 'n/a' }
+        $html.Add("<tr><td><code>$(ConvertTo-HtmlText $property.Name)</code></td><td>$(ConvertTo-HtmlText $caseCount)</td><td>$(ConvertTo-HtmlText $share)</td></tr>")
+    }
+    $html.Add('</tbody></table>')
+}
+if ($traceCoverageProperties.Count -gt 0) {
+    $html.Add('<table><caption>Reference trace coverage</caption><thead><tr><th scope="col">Path group</th><th scope="col">Cases</th><th scope="col">Share of batch</th></tr></thead><tbody>')
+    foreach ($property in $traceCoverageProperties) {
         $caseCount = [long]$property.Value
         $share = if ([long]$summary.count -gt 0) {
             '{0:P1}' -f ($caseCount / [double]$summary.count)
@@ -119,7 +133,7 @@ if ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value
     }
     $html.Add('</tbody></table>')
 }
-if ($coverageProperties.Count -gt 0 -or
+if ($sourceCoverageProperties.Count -gt 0 -or $traceCoverageProperties.Count -gt 0 -or
     ($null -ne $referencePathProperty -and $null -ne $referencePathProperty.Value)) {
     if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value) {
         $html.Add('<p>Reference-path counts were not recorded in this batch.</p>')

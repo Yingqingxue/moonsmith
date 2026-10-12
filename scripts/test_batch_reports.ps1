@@ -136,10 +136,12 @@ try {
     $batchHtml = Get-Content -LiteralPath $batchReport.htmlReportPath -Raw
     $batchHtmlRows = [regex]::Matches($batchHtml, '<tr>').Count
     if ($batchReport.count -ne 2 -or
-        $batchHtmlRows -ne 14 -or
+        $batchHtmlRows -ne 15 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
         -not $batchHtml.Contains('Generator and reference coverage') -or
+        -not $batchHtml.Contains('Generated source coverage') -or
+        -not $batchHtml.Contains('Reference trace coverage') -or
         -not $batchHtml.Contains('casesWithValtypeRaiseProbe') -or
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
