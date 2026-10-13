@@ -64,6 +64,16 @@ The preserved JSON was downloaded and independently checked: the aggregate and
 per-case totals both remain 357, above the 200-case floor, with 1,000 unique
 bodies, 1,000 reference checks, and zero unexpected findings.
 
+Commit `f013ec3` additionally made the nightly gate require both reference
+outcomes and reconcile each aggregate to the per-case `referencePathKinds`.
+The strict run
+[38358007538](https://github.com/Yingqingxue/moonsmith/actions/runs/38358007538)
+passed; artifact inspection confirmed 141 cases with `or-rhs-executed` and 162
+with `or-rhs-skipped`, matching their aggregate values exactly. Its paired CI
+run
+[38358006292](https://github.com/Yingqingxue/moonsmith/actions/runs/38358006292)
+passed on Linux and Windows.
+
 ## Additional depth and platform sample
 
 The expanded current-generator workflow

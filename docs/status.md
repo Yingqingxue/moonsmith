@@ -206,9 +206,13 @@ An additional non-overlapping depth/platform sample passed in
 230 unique seeds at depths 4, 6, and 8 matched across Linux JS/Wasm/Wasm-GC and
 Windows native-release (920 consistent executions, matching source hashes and
 reference outputs). `||` appeared in 38/100 depth-4, 79/100 depth-6, and 30/30
-depth-8 sources. The nightly gate is being extended to reconcile both
-short-circuit outcomes from per-case reference traces, not only source counts;
-its local synthetic tests pass, and remote validation is pending.
+depth-8 sources. Commit `f013ec3` made the nightly gate require both
+short-circuit outcomes and reconcile their aggregate totals against each
+case's reference-path kinds. Nightly run
+[38358007538](https://github.com/Yingqingxue/moonsmith/actions/runs/38358007538)
+passed with 141 RHS-executed and 162 RHS-skipped cases; the downloaded report
+confirmed both totals match per-case records. Linux/Windows CI passed in
+[38358006292](https://github.com/Yingqingxue/moonsmith/actions/runs/38358006292).
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
