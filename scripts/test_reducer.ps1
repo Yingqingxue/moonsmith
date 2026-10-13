@@ -150,6 +150,26 @@ if (-not $orMinimalSource.Contains(' || ')) {
     throw 'The short-circuit disjunction reduction lost its trigger syntax.'
 }
 
+$whileRaw = & $reduceScript -Seed 1 -Depth 3 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains 'while _ms_index <' `
+    -MaxAttempts 12
+$whileExitCode = $LASTEXITCODE
+$whileResult = $whileRaw | ConvertFrom-Json
+if ($whileResult.finding -ne 'output-mismatch' -or
+    $whileResult.acceptedSteps -lt 1 -or
+    $whileResult.finalComplexity -ge $whileResult.originalComplexity -or
+    $whileResult.injection.sourceTrigger -ne 'while _ms_index <' -or
+    $whileExitCode -ne 1) {
+    throw 'The bounded while-loop reduction did not retain a smaller, reproducible injected mismatch.'
+}
+$whileMinimalPath = Join-Path $whileResult.outputDirectory 'minimal.mbt'
+if (-not (Test-Path -LiteralPath $whileMinimalPath -PathType Leaf) -or
+    -not (Get-Content -LiteralPath $whileMinimalPath -Raw -Encoding utf8).Contains('while _ms_index <')) {
+    throw 'The bounded while-loop reduction lost its trigger syntax.'
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -177,5 +197,9 @@ if (-not $orMinimalSource.Contains(' || ')) {
     disjunctionAcceptedSteps = $orResult.acceptedSteps
     disjunctionAttempts = $orResult.attempts
     disjunctionMinimalPath = $orMinimalPath
+    whileOriginalComplexity = $whileResult.originalComplexity
+    whileFinalComplexity = $whileResult.finalComplexity
+    whileAcceptedSteps = $whileResult.acceptedSteps
+    whileMinimalPath = $whileMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0
