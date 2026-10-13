@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-14
 
+## Grown-array index balance
+
+The fixed 1,000-seed corpus previously visited grown-array index 1 in only
+4 cases, despite 367 sources containing array growth. A separate seed stream
+now selects the grown index; the same corpus visits index 0 in 144 cases and
+index 1 in 133. The nightly gate checks a 2%-of-corpus floor for each path
+and reconciles aggregate counts with per-case reference traces. Linux nightly
+and Linux/Windows CI passed on commit `165695d`. See the
+[paired evidence](evidence/array_growth_balance_20261014.md). These are
+reference-interpreter observations, not backend internal coverage.
+
 ## Bounded primitive-array growth
 
 Alongside fixed two-element array literals, the generator now sometimes builds

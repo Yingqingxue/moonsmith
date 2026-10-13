@@ -103,6 +103,9 @@ empty-array growth by two pushes, two-field
 structs, and typed local function application with captured outer bindings.
 Array growth currently handles `Int` and `Bool` elements only; it does not
 generate arbitrary indices, removals, or aliasing.
+The fixed nightly corpus exercises both grown-array indices with a minimum
+per-index reference-path floor; see the
+[array-growth balance evidence](docs/evidence/array_growth_balance_20261014.md).
 Generated tagged-enum matches can also receive `Choice` values returned by a
 typed local function, exercising payload typing through generation, printing,
 reference evaluation, and reduction.
