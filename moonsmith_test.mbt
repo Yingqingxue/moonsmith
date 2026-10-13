@@ -219,6 +219,18 @@ test "conjunction source makes short-circuit evaluation observable" {
 }
 
 ///|
+test "generated corpus visits both conjunction short-circuit paths" {
+  let mut rhs_executed = false
+  let mut rhs_skipped = false
+  for seed = 14990; seed < 15990; seed = seed + 1 {
+    let (_, trace) = @moonsmith.generate_program(seed, 4).result.evaluate_with_trace()
+    rhs_executed = rhs_executed || trace.contains("and-rhs-executed")
+    rhs_skipped = rhs_skipped || trace.contains("and-rhs-skipped")
+  }
+  assert_true(rhs_executed && rhs_skipped)
+}
+
+///|
 test "generated boolean corpus exercises valtype raise probes" {
   let mut has_probe = false
   let mut has_scaffold = false

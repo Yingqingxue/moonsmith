@@ -120,9 +120,10 @@ of broad backend coverage or an identified compiler defect.
 
 The same captured-counter check was added to generated `&&` expressions: the
 RHS must execute once when the left side is true and zero times when false.
-Local tests passed 86/86 on each of JS, Wasm, and Wasm-GC. Seed 42 at depth 4
-contains a generated conjunction and passed reference comparison on all three
-targets with output `-23`. This targeted sample does not measure corpus
-frequency or native behavior. The schema-9 nightly gate continues to measure
-`||` only; no `&&` coverage claim is made. Remote CI validation for this
-addition is pending.
+Local tests passed 87/87 on each of JS, Wasm, and Wasm-GC, including a fixed
+1,000-seed assertion that both `and-rhs-executed` and `and-rhs-skipped` occur in
+reference traces. Seed 42 at depth 4 contains a generated conjunction and
+passed reference comparison on all three targets with output `-23`. This does
+not establish backend runtime path instrumentation or native behavior. The
+schema-9 nightly gate continues to measure `||` only; no `&&` corpus frequency
+claim is made. Remote CI validation for this addition is pending.
