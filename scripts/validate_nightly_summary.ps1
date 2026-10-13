@@ -43,6 +43,8 @@ if ($null -eq $Summary.cases -or $Summary.cases.Count -ne $ExpectedCount) {
 $observedChoiceFunctionCases = 0
 $observedChoiceFunctionCount = 0
 $observedOrCases = 0
+$observedOrRhsExecutedCases = 0
+$observedOrRhsSkippedCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -68,6 +70,14 @@ foreach ($case in $Summary.cases) {
         throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.or value."
     }
     if ([long]$orCount.Value -gt 0) { $observedOrCases++ }
+
+    $pathKinds = $case.PSObject.Properties['referencePathKinds']
+    if ($null -eq $pathKinds -or $null -eq $pathKinds.Value) {
+        throw "Nightly case '$($case.seed)' is missing referencePathKinds."
+    }
+    $casePathKinds = @($pathKinds.Value)
+    if ($casePathKinds -contains 'or-rhs-executed') { $observedOrRhsExecutedCases++ }
+    if ($casePathKinds -contains 'or-rhs-skipped') { $observedOrRhsSkippedCases++ }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
@@ -87,6 +97,18 @@ $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
 if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value) {
     throw 'Nightly corpus did not record reference interpreter path counts.'
 }
+foreach ($pathCheck in @(
+        @{ name = 'or-rhs-executed'; observed = $observedOrRhsExecutedCases },
+        @{ name = 'or-rhs-skipped'; observed = $observedOrRhsSkippedCases }
+    )) {
+    $property = $referencePathProperty.Value.PSObject.Properties[$pathCheck.name]
+    if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
+        throw "Nightly reference traces did not exercise the required '$($pathCheck.name)' path."
+    }
+    if ([long]$property.Value -ne [long]$pathCheck.observed) {
+        throw "Nightly reference trace '$($pathCheck.name)' case total does not match per-case records."
+    }
+}
 foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     $property = $referencePathProperty.Value.PSObject.Properties[$name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
@@ -102,6 +124,8 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     choiceReturningFunctionCount = $choiceFunctionCount.Value
     disjunctionCases = $Summary.casesWithOr
     minimumDisjunctionCases = $minimumOrCases
+    disjunctionRhsExecutedCases = $observedOrRhsExecutedCases
+    disjunctionRhsSkippedCases = $observedOrRhsSkippedCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

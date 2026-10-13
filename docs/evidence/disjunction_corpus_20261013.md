@@ -53,6 +53,32 @@ composition, and combined-trace counts remained 402, 234, and 204 respectively.
 
 This is a distribution change, not evidence that `Or` is universally more
 valuable than `And`. The test suite now checks a minimum of 200 `Or`-containing
-sources in this fixed 1,000-seed window, and the nightly summary validator is
-being strengthened to enforce the same 20% floor rather than mere nonzero
-coverage.
+sources in this fixed 1,000-seed window. Commit `f7de731` strengthened the
+nightly summary validator to require at least 20% of the configured corpus
+instead of mere nonzero coverage. The stricter validator passed on the same
+1,000-seed report in
+[run 38355758690](https://github.com/Yingqingxue/moonsmith/actions/runs/38355758690),
+and Linux/Windows CI passed in
+[run 38355748814](https://github.com/Yingqingxue/moonsmith/actions/runs/38355748814).
+The preserved JSON was downloaded and independently checked: the aggregate and
+per-case totals both remain 357, above the 200-case floor, with 1,000 unique
+bodies, 1,000 reference checks, and zero unexpected findings.
+
+## Additional depth and platform sample
+
+The expanded current-generator workflow
+[38356796437](https://github.com/Yingqingxue/moonsmith/actions/runs/38356796437)
+passed on commit `f7de731e0f7a2b03000b187893e46043115e2d24` using the same
+MoonBit toolchain. It scanned the non-overlapping seeds 15990–16219:
+
+- Depth 4: 100 programs; `||` appeared in 38 sources (55 nodes).
+- Depth 6: 100 programs; `||` appeared in 79 sources (219 nodes).
+- Depth 8: 30 programs; `||` appeared in all 30 sources (328 nodes).
+
+All 230 distinct bodies passed reference checking and JS/Wasm/Wasm-GC, totaling
+690 consistent Linux executions. The matching Windows native-release scan
+added 230 consistent executions. The comparison artifact confirms matching
+source hashes and expected outputs for all 230 seeds (920 total executions),
+with no unexpected findings or harness changes. Native debug is intentionally
+not included because the known upstream #1322 signature is handled by its
+dedicated regression rather than treated as an ordinary differential mismatch.

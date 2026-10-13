@@ -229,15 +229,19 @@ try {
             [pscustomobject]@{
                 seed = 1
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; or = 1 }
+                referencePathKinds = @('or-rhs-executed')
             }
             [pscustomobject]@{
                 seed = 2
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
+                referencePathKinds = @('or-rhs-skipped')
             }
         )
         referencePathCaseCounts = [pscustomobject]@{
             'valtype-raise-success-path' = 1
             'valtype-raise-error-path' = 1
+            'or-rhs-executed' = 1
+            'or-rhs-skipped' = 1
         }
     }
     $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
@@ -388,6 +392,7 @@ try {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
             sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
+            referencePathKinds = @()
         }
     }
     $lowOrCoverageRejected = $false
@@ -404,6 +409,40 @@ try {
     if (-not $lowOrCoverageRejected) {
         throw 'nightly coverage gate accepted disjunction in less than 20% of the corpus.'
     }
+
+    $nightlySummary.referencePathCaseCounts.'or-rhs-skipped' = 0
+    $orShortCircuitPathRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "did not exercise the required 'or-rhs-skipped' path") {
+            throw "nightly disjunction path gate rejected missing short-circuit coverage for the wrong reason: $($_.Exception.Message)"
+        }
+        $orShortCircuitPathRejected = $true
+    }
+    if (-not $orShortCircuitPathRejected) {
+        throw 'nightly coverage gate accepted a corpus with no short-circuit-skipped OR path.'
+    }
+    $nightlySummary.referencePathCaseCounts.'or-rhs-skipped' = 1
+
+    $nightlySummary.referencePathCaseCounts.'or-rhs-executed' = 2
+    $orTraceCountMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "reference trace 'or-rhs-executed' case total does not match per-case records") {
+            throw "nightly OR trace reconciliation rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $orTraceCountMismatchRejected = $true
+    }
+    if (-not $orTraceCountMismatchRejected) {
+        throw 'nightly coverage gate accepted an inconsistent per-case OR trace total.'
+    }
+    $nightlySummary.referencePathCaseCounts.'or-rhs-executed' = 1
 
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'

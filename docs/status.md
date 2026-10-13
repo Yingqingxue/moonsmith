@@ -166,10 +166,11 @@ a narrow language-coverage improvement, not evidence of a MoonBit compiler
 defect or broad backend branch coverage.
 
 Batch-report schema 9 adds a per-case `or` source count and aggregate
-`casesWithOr`; the nightly gate requires a nonzero count and reconciles it
-against each case to prevent misleading summaries. Renderers and cross-platform
+`casesWithOr`; the nightly gate requires at least 20% of the corpus to contain
+`||` and reconciles this count against each case. Renderers and cross-platform
 comparison preserve schema-7/8 compatibility. Local integration fixtures cover
-both legacy formats and aggregate/per-case mismatches. The refreshed schema-9
+both legacy formats, low-coverage rejection, and aggregate/per-case mismatches.
+The refreshed schema-9
 nightly passed in
 [run 38352609842](https://github.com/Yingqingxue/moonsmith/actions/runs/38352609842)
 on `c27ca2f`. It checked 1,000 unique bodies, 1,000 reference results, and
@@ -191,9 +192,23 @@ changing expression branch selection. The same seed window then produced 357
 sources with `||` and 470 `Or` nodes; reference traces exercised both RHS
 execution and short-circuit skipping. All 1,000 reference checks and 3,000
 backend executions remained consistent, while the existing valtype probe,
-composition, and combined-trace counts remained 402, 234, and 204. A new
-20%-of-corpus minimum is being added to both the fixed-window generator test
-and nightly validator; see the paired evidence for exact counts and limits.
+composition, and combined-trace counts remained 402, 234, and 204. Commit
+`f7de731` adds a 20%-of-corpus floor to the fixed-window generator test and
+nightly validator. The stricter nightly passed with all 357 observed cases
+above its 200-case minimum in
+[run 38355758690](https://github.com/Yingqingxue/moonsmith/actions/runs/38355758690);
+Linux and Windows CI passed in
+[run 38355748814](https://github.com/Yingqingxue/moonsmith/actions/runs/38355748814).
+See the paired evidence for exact counts and limits.
+
+An additional non-overlapping depth/platform sample passed in
+[run 38356796437](https://github.com/Yingqingxue/moonsmith/actions/runs/38356796437):
+230 unique seeds at depths 4, 6, and 8 matched across Linux JS/Wasm/Wasm-GC and
+Windows native-release (920 consistent executions, matching source hashes and
+reference outputs). `||` appeared in 38/100 depth-4, 79/100 depth-6, and 30/30
+depth-8 sources. The nightly gate is being extended to reconcile both
+short-circuit outcomes from per-case reference traces, not only source counts;
+its local synthetic tests pass, and remote validation is pending.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
