@@ -39,6 +39,23 @@ test "reference trace distinguishes executed and skipped short-circuit rhs" {
 }
 
 ///|
+test "reference evaluator preserves short-circuit disjunction" {
+  let skipped = @moonsmith.Or(
+    BoolLiteral(true),
+    Variable(BoolType, "must_not_be_evaluated"),
+  )
+  let (skipped_value, skipped_trace) = skipped.evaluate_with_trace()
+  assert_eq(skipped_value.to_output(), "true")
+  assert_true(skipped_trace.contains("or-rhs-skipped"))
+  assert_true(!skipped_trace.contains("variable"))
+
+  let executed = @moonsmith.Or(BoolLiteral(false), BoolLiteral(true))
+  let (executed_value, executed_trace) = executed.evaluate_with_trace()
+  assert_eq(executed_value.to_output(), "true")
+  assert_true(executed_trace.contains("or-rhs-executed"))
+}
+
+///|
 test "record selection evaluates fields and traces the selected field" {
   let integer_record = @moonsmith.StructSelect(
     IntType,

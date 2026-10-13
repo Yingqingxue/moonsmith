@@ -41,6 +41,7 @@ pub(all) enum Expr {
   Add(Expr, Expr)
   Subtract(Expr, Expr)
   And(Expr, Expr)
+  Or(Expr, Expr)
   LessThan(Expr, Expr)
   EqualInt(Expr, Expr)
   Not(Expr)

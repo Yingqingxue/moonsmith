@@ -87,6 +87,18 @@ test "subtraction and logical and have type-preserving reductions" {
 }
 
 ///|
+test "logical or reduction preserves type and lowers complexity" {
+  let expression = @moonsmith.Or(BoolLiteral(false), BoolLiteral(true))
+  let candidates = expression.shrink_candidates()
+  assert_eq(candidates[0].to_source(), "false")
+  assert_eq(candidates[1].to_source(), "true")
+  for candidate in candidates {
+    assert_true(candidate.value_type() is BoolType)
+    assert_true(candidate.complexity() < expression.complexity())
+  }
+}
+
+///|
 test "array selection can shrink to a same-typed element" {
   let expression = @moonsmith.ArraySelect(
     IntType,

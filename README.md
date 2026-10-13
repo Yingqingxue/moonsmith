@@ -90,9 +90,9 @@ Run the corresponding integration check with
 ## Current scope
 
 The generator supports a small total expression language: integers, booleans,
-addition, subtraction, comparisons, short-circuit conjunction, negation,
-conditional expressions, boolean and tagged-enum pattern matching, scoped
-`let` bindings, two-element arrays with safe constant indexing, two-field
+addition, subtraction, comparisons, short-circuit conjunction and disjunction,
+negation, conditional expressions, boolean and tagged-enum pattern matching,
+scoped `let` bindings, two-element arrays with safe constant indexing, two-field
 structs, and typed local function application with captured outer bindings.
 Generated tagged-enum matches can also receive `Choice` values returned by a
 typed local function, exercising payload typing through generation, printing,

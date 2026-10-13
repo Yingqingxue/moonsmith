@@ -16,6 +16,7 @@ pub(all) enum Expr {
   Add(Expr, Expr)
   Subtract(Expr, Expr)
   And(Expr, Expr)
+  Or(Expr, Expr)
   LessThan(Expr, Expr)
   EqualInt(Expr, Expr)
   Not(Expr)
@@ -281,11 +282,15 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
         }
       BoolType =>
         match choice {
-          0 =>
-            And(
-              generate_expr(child_seed(seed, 25), BoolType, depth - 1),
-              generate_expr(child_seed(seed, 26), BoolType, depth - 1),
-            )
+          0 => {
+            let left = generate_expr(child_seed(seed, 25), BoolType, depth - 1)
+            let right = generate_expr(child_seed(seed, 26), BoolType, depth - 1)
+            if advance_seed(child_seed(seed, 62)) % 2 == 0 {
+              And(left, right)
+            } else {
+              Or(left, right)
+            }
+          }
           1 =>
             LessThan(
               generate_expr(child_seed(seed, 6), IntType, depth - 1),
@@ -396,8 +401,12 @@ pub fn generate_program(seed : Int, depth : Int) -> Program {
 pub fn Expr::value_type(self : Expr) -> ValueType {
   match self {
     IntLiteral(_) | Add(_, _) | Subtract(_, _) => IntType
-    BoolLiteral(_) | And(_, _) | LessThan(_, _) | EqualInt(_, _) | Not(_) =>
-      BoolType
+    BoolLiteral(_)
+    | And(_, _)
+    | Or(_, _)
+    | LessThan(_, _)
+    | EqualInt(_, _)
+    | Not(_) => BoolType
     If(result_type, _, _, _) | MatchBool(result_type, _, _, _) => result_type
     Variable(value_type, _) => value_type
     Let(_, _, _, body) => body.value_type()
@@ -424,6 +433,7 @@ fn Expr::contains_struct(self : Expr) -> Bool {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) => left.contains_struct() || right.contains_struct()
     Not(value) => value.contains_struct()
@@ -451,6 +461,7 @@ fn Expr::contains_choice(self : Expr) -> Bool {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) => left.contains_choice() || right.contains_choice()
     Not(value) => value.contains_choice()
@@ -483,6 +494,7 @@ pub fn Expr::to_source(self : Expr) -> String {
       "(" + left.to_source() + " - " + right.to_source() + ")"
     And(left, right) =>
       "(" + left.to_source() + " && " + right.to_source() + ")"
+    Or(left, right) => "(" + left.to_source() + " || " + right.to_source() + ")"
     LessThan(left, right) =>
       "(" + left.to_source() + " < " + right.to_source() + ")"
     EqualInt(left, right) =>
@@ -654,6 +666,7 @@ fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) =>
       left.contains_valtype_raise_probe() ||
@@ -695,6 +708,7 @@ fn Expr::contains_valtype_enum_array_probe(self : Expr) -> Bool {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) =>
       left.contains_valtype_enum_array_probe() ||

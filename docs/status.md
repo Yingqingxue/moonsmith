@@ -150,6 +150,17 @@ After adding per-case/aggregate reconciliation, the validator and full nightly
 corpus passed again on the latest code in run
 [38347193204](https://github.com/Yingqingxue/moonsmith/actions/runs/38347193204).
 
+## Short-circuit disjunction extension (2026-10-13)
+
+The typed expression IR and generator now include boolean `||` alongside
+`&&`. The reference evaluator traces whether the right-hand side executes or
+is skipped, and the AST reducer can simplify either operand while preserving
+the boolean result type. Tests cover both short-circuit paths and reduction
+invariants. Generated seed 353 at depth 4 executes disjunction in its
+reference trace and agrees across JS, Wasm, and Wasm-GC. This is a narrow
+language-coverage improvement, not evidence of a MoonBit compiler defect or
+broad backend branch coverage.
+
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
 historical, not measurements of the current generator revision. No newly

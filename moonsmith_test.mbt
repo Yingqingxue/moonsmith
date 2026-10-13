@@ -184,6 +184,17 @@ test "generated corpus contains bounded integer loops" {
 }
 
 ///|
+test "generated boolean corpus includes short-circuit disjunction" {
+  let mut found = false
+  for seed = 0; seed < 200; seed = seed + 1 {
+    if @moonsmith.generate_program(seed, 4).to_source().contains(" || ") {
+      found = true
+    }
+  }
+  assert_true(found)
+}
+
+///|
 test "generated boolean corpus exercises valtype raise probes" {
   let mut has_probe = false
   let mut has_scaffold = false

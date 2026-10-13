@@ -204,6 +204,16 @@ fn Expr::evaluate_in_env(
         BoolValue(false)
       }
     }
+    Or(left, right) => {
+      trace.push("or")
+      if left.evaluate_in_env(bindings, trace).as_bool() {
+        trace.push("or-rhs-skipped")
+        BoolValue(true)
+      } else {
+        trace.push("or-rhs-executed")
+        BoolValue(right.evaluate_in_env(bindings, trace).as_bool())
+      }
+    }
     LessThan(left, right) => {
       trace.push("less-than")
       BoolValue(

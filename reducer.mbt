@@ -36,6 +36,7 @@ pub fn Expr::complexity(self : Expr) -> Int {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) => 1000 + left.complexity() + right.complexity()
     Not(value) => 1000 + value.complexity()
@@ -58,6 +59,7 @@ fn Expr::uses_variable(self : Expr, name : String) -> Bool {
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
+    | Or(left, right)
     | LessThan(left, right)
     | EqualInt(left, right) =>
       left.uses_variable(name) || right.uses_variable(name)
@@ -361,6 +363,17 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
       }
       for smaller in right.shrink_candidates() {
         push_if_smaller(candidates, original_complexity, And(left, smaller))
+      }
+    }
+    Or(left, right) => {
+      push_if_smaller(candidates, original_complexity, left)
+      push_if_smaller(candidates, original_complexity, right)
+      push_if_smaller(candidates, original_complexity, BoolLiteral(true))
+      for smaller in left.shrink_candidates() {
+        push_if_smaller(candidates, original_complexity, Or(smaller, right))
+      }
+      for smaller in right.shrink_candidates() {
+        push_if_smaller(candidates, original_complexity, Or(left, smaller))
       }
     }
     LessThan(left, right) => {
