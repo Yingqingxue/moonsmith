@@ -140,11 +140,12 @@ Batch schema 9 retains Choice-returning-function coverage and reports
 short-circuit-disjunction coverage per case. The nightly validator requires
 `||` in at least 20% of the fixed corpus, requires both RHS-executed and
 short-circuited reference paths, and reconciles all three totals against the
-per-case records. Generated `||` expressions wrap the RHS in a closure that
-increments a captured mutable counter; the generated program checks for zero
-calls when the LHS is true and one otherwise, panicking if a backend violates
+per-case records. Generated `&&` and `||` expressions wrap the RHS in a closure
+that increments a captured mutable counter; the generated program checks the
+operator-specific expected call count, panicking if a backend violates
 short-circuit evaluation. This makes incorrect eager execution observable,
-rather than relying only on the final boolean value. Renderers and
+rather than relying only on the final boolean value. The nightly coverage gate
+currently tracks `||` specifically. Renderers and
 cross-platform comparison still read schema 7 and 8 reports.
 The refreshed schema-8 nightly run passed all 1,000 cases, recording 251 cases
 and 305 generated Choice-returning functions (see the linked evidence).

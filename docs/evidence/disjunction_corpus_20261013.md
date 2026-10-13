@@ -115,3 +115,14 @@ generator-limit finding occurred. A separate paired depth/platform scan
 passed its Linux/Windows native-release comparison. These results validate the
 new generated probe against the sampled toolchain/targets; they are not a claim
 of broad backend coverage or an identified compiler defect.
+
+## Conjunction counterpart
+
+The same captured-counter check was added to generated `&&` expressions: the
+RHS must execute once when the left side is true and zero times when false.
+Local tests passed 86/86 on each of JS, Wasm, and Wasm-GC. Seed 42 at depth 4
+contains a generated conjunction and passed reference comparison on all three
+targets with output `-23`. This targeted sample does not measure corpus
+frequency or native behavior. The schema-9 nightly gate continues to measure
+`||` only; no `&&` coverage claim is made. Remote CI validation for this
+addition is pending.
