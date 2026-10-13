@@ -31,7 +31,14 @@ test "array growth samples both selected indices" {
   let mut second_index = 0
   for seed = 1; seed <= 1000; seed = seed + 1 {
     match
-      generate_array_select(IntType, IntLiteral(1), IntLiteral(2), false, seed) {
+      generate_array_select(
+        IntType,
+        IntLiteral(1),
+        IntLiteral(2),
+        false,
+        seed,
+        1,
+      ) {
       ArrayGrowSelect(_, _, _, false) => first_index = first_index + 1
       ArrayGrowSelect(_, _, _, true) => second_index = second_index + 1
       _ => ()

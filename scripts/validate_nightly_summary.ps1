@@ -27,6 +27,7 @@ $requiredCoverage = @(
     'casesWithAnd',
     'casesWithWhileLoop',
     'casesWithWhileIteration'
+    'casesWithArrayAliasUpdate'
 )
 foreach ($name in $requiredCoverage) {
     $property = $Summary.PSObject.Properties[$name]
@@ -56,6 +57,9 @@ $observedWhileIterationCases = 0
 $observedArrayGrowFirstIndexCases = 0
 $observedArrayGrowSecondIndexCases = 0
 $observedArrayGrowSourceCases = 0
+$observedArrayAliasUpdateSourceCases = 0
+$observedArrayAliasUpdateFirstIndexCases = 0
+$observedArrayAliasUpdateSecondIndexCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -111,6 +115,16 @@ foreach ($case in $Summary.cases) {
         throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.arrayGrow value."
     }
     if ([long]$arrayGrowCount.Value -gt 0) { $observedArrayGrowSourceCases++ }
+    $arrayAliasUpdateCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['arrayAliasUpdate']
+    } else {
+        $null
+    }
+    if ($null -eq $arrayAliasUpdateCount -or $null -eq $arrayAliasUpdateCount.Value -or
+        [long]$arrayAliasUpdateCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.arrayAliasUpdate value."
+    }
+    if ([long]$arrayAliasUpdateCount.Value -gt 0) { $observedArrayAliasUpdateSourceCases++ }
 
     $pathKinds = $case.PSObject.Properties['referencePathKinds']
     if ($null -eq $pathKinds -or $null -eq $pathKinds.Value) {
@@ -124,10 +138,17 @@ foreach ($case in $Summary.cases) {
     if ($casePathKinds -contains 'while-iteration') { $observedWhileIterationCases++ }
     if ($casePathKinds -contains 'array-grow-index-0') { $observedArrayGrowFirstIndexCases++ }
     if ($casePathKinds -contains 'array-grow-index-1') { $observedArrayGrowSecondIndexCases++ }
+    if ($casePathKinds -contains 'array-alias-update-index-0') { $observedArrayAliasUpdateFirstIndexCases++ }
+    if ($casePathKinds -contains 'array-alias-update-index-1') { $observedArrayAliasUpdateSecondIndexCases++ }
     if (($casePathKinds -contains 'array-grow-index-0' -or
             $casePathKinds -contains 'array-grow-index-1') -and
         [long]$arrayGrowCount.Value -eq 0) {
         throw "Nightly case '$($case.seed)' executed a grown-array index without generated array growth."
+    }
+    if (($casePathKinds -contains 'array-alias-update-index-0' -or
+            $casePathKinds -contains 'array-alias-update-index-1') -and
+        [long]$arrayAliasUpdateCount.Value -eq 0) {
+        throw "Nightly case '$($case.seed)' executed an alias update without generated array aliasing."
     }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
@@ -151,6 +172,9 @@ if ($observedWhileIterationCases -ne [long]$Summary.casesWithWhileIteration) {
 if ($observedArrayGrowSourceCases -ne [long]$Summary.casesWithArrayGrow) {
     throw 'Nightly array-growth case total does not match per-case source metrics.'
 }
+if ($observedArrayAliasUpdateSourceCases -ne [long]$Summary.casesWithArrayAliasUpdate) {
+    throw 'Nightly array-alias-update case total does not match per-case source metrics.'
+}
 $minimumOrCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
 if ($observedOrCases -lt $minimumOrCases) {
     throw "Nightly disjunction coverage is below the minimum of $minimumOrCases cases (20% of the corpus)."
@@ -171,7 +195,9 @@ foreach ($pathCheck in @(
         @{ name = 'and-rhs-skipped'; observed = $observedAndRhsSkippedCases },
         @{ name = 'while-iteration'; observed = $observedWhileIterationCases },
         @{ name = 'array-grow-index-0'; observed = $observedArrayGrowFirstIndexCases },
-        @{ name = 'array-grow-index-1'; observed = $observedArrayGrowSecondIndexCases }
+        @{ name = 'array-grow-index-1'; observed = $observedArrayGrowSecondIndexCases },
+        @{ name = 'array-alias-update-index-0'; observed = $observedArrayAliasUpdateFirstIndexCases },
+        @{ name = 'array-alias-update-index-1'; observed = $observedArrayAliasUpdateSecondIndexCases }
     )) {
     $property = $referencePathProperty.Value.PSObject.Properties[$pathCheck.name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
@@ -185,6 +211,11 @@ $minimumArrayGrowIndexCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.
 if ($observedArrayGrowFirstIndexCases -lt $minimumArrayGrowIndexCases -or
     $observedArrayGrowSecondIndexCases -lt $minimumArrayGrowIndexCases) {
     throw "Nightly grown-array index coverage is below $minimumArrayGrowIndexCases cases per index (2% of the corpus)."
+}
+$minimumArrayAliasUpdateIndexCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.02))
+if ($observedArrayAliasUpdateFirstIndexCases -lt $minimumArrayAliasUpdateIndexCases -or
+    $observedArrayAliasUpdateSecondIndexCases -lt $minimumArrayAliasUpdateIndexCases) {
+    throw "Nightly array-alias-update index coverage is below $minimumArrayAliasUpdateIndexCases cases per index (2% of the corpus)."
 }
 foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     $property = $referencePathProperty.Value.PSObject.Properties[$name]
@@ -213,6 +244,10 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     arrayGrowSecondIndexCases = $observedArrayGrowSecondIndexCases
     minimumArrayGrowIndexCases = $minimumArrayGrowIndexCases
     arrayGrowSourceCases = $observedArrayGrowSourceCases
+    arrayAliasUpdateSourceCases = $observedArrayAliasUpdateSourceCases
+    arrayAliasUpdateFirstIndexCases = $observedArrayAliasUpdateFirstIndexCases
+    arrayAliasUpdateSecondIndexCases = $observedArrayAliasUpdateSecondIndexCases
+    minimumArrayAliasUpdateIndexCases = $minimumArrayAliasUpdateIndexCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

@@ -2,6 +2,21 @@
 
 Last updated: 2026-10-14
 
+## Bounded array alias updates
+
+The typed generator can now create a two-element `Int` or `Bool` array,
+write a generated replacement through a second binding to that array, and
+read the result through the original binding. Generated source asserts both
+the updated value and the untouched other element, making an aliasing error
+observable even if the final result alone would not expose it. The reference
+evaluator records which index was updated, and the reducer can simplify all
+three child expressions while preserving the update scaffold. Batch JSON
+reports source cases and reference paths separately. Local JS/Wasm/Wasm-GC
+tests and a 20-seed differential sample passed; remote fixed-corpus and native
+validation remain required before claiming cross-platform evidence. This is
+not arbitrary aliasing, variable-length mutation, or proof of backend
+correctness.
+
 ## Grown-array index balance
 
 The fixed 1,000-seed corpus previously visited grown-array index 1 in only

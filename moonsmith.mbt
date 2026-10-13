@@ -25,6 +25,7 @@ pub(all) enum Expr {
   Let(ValueType, String, Expr, Expr)
   ArraySelect(ValueType, Expr, Expr, Bool)
   ArrayGrowSelect(ValueType, Expr, Expr, Bool)
+  ArrayAliasUpdateSelect(ValueType, Expr, Expr, Expr, Bool)
   StructSelect(ValueType, Expr, Expr)
   ChoiceValue(ValueType, Expr)
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
@@ -141,12 +142,22 @@ fn generate_array_select(
   second : Expr,
   select_second : Bool,
   seed : Int,
+  depth : Int,
 ) -> Expr {
-  if advance_seed(child_seed(seed, 64)) % 4 == 0 {
+  let array_mode = advance_seed(child_seed(seed, 64)) % 4
+  if array_mode == 0 {
     // A separate modulus avoids locking the growth branch to the same index
     // through parity correlations in the deterministic seed stream.
     let growth_select_second = advance_seed(child_seed(seed, 65)) % 5 < 2
     ArrayGrowSelect(result_type, first, second, growth_select_second)
+  } else if array_mode == 1 {
+    ArrayAliasUpdateSelect(
+      result_type,
+      first,
+      second,
+      generate_expr(child_seed(seed, 66), result_type, depth - 1),
+      select_second,
+    )
   } else {
     ArraySelect(result_type, first, second, select_second)
   }
@@ -268,6 +279,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               generate_expr(child_seed(seed, 28), IntType, depth - 1),
               advance_seed(child_seed(seed, 31)) % 2 == 0,
               seed,
+              depth,
             )
           7 =>
             StructSelect(
@@ -364,6 +376,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               generate_expr(child_seed(seed, 30), BoolType, depth - 1),
               advance_seed(child_seed(seed, 32)) % 2 == 0,
               seed,
+              depth,
             )
           7 =>
             StructSelect(
@@ -452,6 +465,7 @@ pub fn Expr::value_type(self : Expr) -> ValueType {
     Let(_, _, _, body) => body.value_type()
     ArraySelect(result_type, _, _, _) | ArrayGrowSelect(result_type, _, _, _) =>
       result_type
+    ArrayAliasUpdateSelect(result_type, _, _, _, _) => result_type
     StructSelect(result_type, _, _) => result_type
     ChoiceValue(_, _) => ChoiceType
     MatchChoice(result_type, _, _, _, _, _) => result_type
@@ -485,6 +499,10 @@ fn Expr::contains_struct(self : Expr) -> Bool {
     Let(_, _, value, body) => value.contains_struct() || body.contains_struct()
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_struct() || second.contains_struct()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      first.contains_struct() ||
+      second.contains_struct() ||
+      replacement.contains_struct()
     FunctionApply(_, _, argument, body) =>
       argument.contains_struct() || body.contains_struct()
     ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
@@ -513,6 +531,10 @@ fn Expr::contains_choice(self : Expr) -> Bool {
     Let(_, _, value, body) => value.contains_choice() || body.contains_choice()
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_choice() || second.contains_choice()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      first.contains_choice() ||
+      second.contains_choice() ||
+      replacement.contains_choice()
     StructSelect(_, number, flag) =>
       number.contains_choice() || flag.contains_choice()
     FunctionApply(_, _, argument, body) =>
@@ -597,6 +619,27 @@ pub fn Expr::to_source(self : Expr) -> String {
       ")\n    grown_items[" +
       (if select_second { "1" } else { "0" }) +
       "]\n  })"
+    }
+    ArrayAliasUpdateSelect(_, first, second, replacement, select_second) => {
+      let selected_index = if select_second { "1" } else { "0" }
+      let other_index = if select_second { "0" } else { "1" }
+      "({\n    let items = [" +
+      first.to_source() +
+      ", " +
+      second.to_source() +
+      "]\n    let _ms_alias = items\n    let other_before = items[" +
+      other_index +
+      "]\n    let replacement = " +
+      replacement.to_source() +
+      "\n    _ms_alias[" +
+      selected_index +
+      "] = replacement\n    if items[" +
+      selected_index +
+      "] == replacement && items[" +
+      other_index +
+      "] == other_before {\n      items[" +
+      selected_index +
+      "]\n    } else {\n      panic()\n    }\n  })"
     }
     StructSelect(result_type, number, flag) => {
       let field = match result_type {
@@ -756,6 +799,10 @@ fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_valtype_raise_probe() ||
       second.contains_valtype_raise_probe()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      first.contains_valtype_raise_probe() ||
+      second.contains_valtype_raise_probe() ||
+      replacement.contains_valtype_raise_probe()
     StructSelect(_, number, flag) =>
       number.contains_valtype_raise_probe() ||
       flag.contains_valtype_raise_probe()
@@ -798,6 +845,10 @@ fn Expr::contains_valtype_enum_array_probe(self : Expr) -> Bool {
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_valtype_enum_array_probe() ||
       second.contains_valtype_enum_array_probe()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      first.contains_valtype_enum_array_probe() ||
+      second.contains_valtype_enum_array_probe() ||
+      replacement.contains_valtype_enum_array_probe()
     StructSelect(_, number, flag) =>
       number.contains_valtype_enum_array_probe() ||
       flag.contains_valtype_enum_array_probe()

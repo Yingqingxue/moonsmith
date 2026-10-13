@@ -19,6 +19,8 @@ pub fn Expr::complexity(self : Expr) -> Int {
     Let(_, _, value, body) => 1000 + value.complexity() + body.complexity()
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       1000 + first.complexity() + second.complexity()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      1000 + first.complexity() + second.complexity() + replacement.complexity()
     StructSelect(_, number, flag) =>
       1000 + number.complexity() + flag.complexity()
     ChoiceValue(_, payload) => 1000 + payload.complexity()
@@ -73,6 +75,10 @@ fn Expr::uses_variable(self : Expr, name : String) -> Bool {
       (bound_name != name && body.uses_variable(name))
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.uses_variable(name) || second.uses_variable(name)
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      first.uses_variable(name) ||
+      second.uses_variable(name) ||
+      replacement.uses_variable(name)
     StructSelect(_, number, flag) =>
       number.uses_variable(name) || flag.uses_variable(name)
     ChoiceValue(_, payload) => payload.uses_variable(name)
@@ -164,6 +170,42 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
           candidates,
           original_complexity,
           ArrayGrowSelect(result_type, first, smaller, select_second),
+        )
+      }
+    }
+    ArrayAliasUpdateSelect(
+      result_type,
+      first,
+      second,
+      replacement,
+      select_second
+    ) => {
+      push_if_smaller(candidates, original_complexity, replacement)
+      for smaller in first.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ArrayAliasUpdateSelect(
+            result_type, smaller, second, replacement, select_second,
+          ),
+        )
+      }
+      for smaller in second.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ArrayAliasUpdateSelect(
+            result_type, first, smaller, replacement, select_second,
+          ),
+        )
+      }
+      for smaller in replacement.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ArrayAliasUpdateSelect(
+            result_type, first, second, smaller, select_second,
+          ),
         )
       }
     }

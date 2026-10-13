@@ -101,8 +101,13 @@ negation, conditional expressions, boolean and tagged-enum pattern matching,
 scoped `let` bindings, two-element arrays with safe constant indexing, bounded
 empty-array growth by two pushes, two-field
 structs, and typed local function application with captured outer bindings.
-Array growth currently handles `Int` and `Bool` elements only; it does not
-generate arbitrary indices, removals, or aliasing.
+Array growth currently handles `Int` and `Bool` elements only; that slice does
+not generate arbitrary indices, removals, or aliasing.
+For two-element `Int` and `Bool` arrays, the generator also tests a separate
+alias-update slice: it writes through one array alias, reads through the
+original binding, and checks that the other element was not changed. The
+reference evaluator and AST reducer support this slice; it does not model
+general mutable-array programs.
 The fixed nightly corpus exercises both grown-array indices with a minimum
 per-index reference-path floor; see the
 [array-growth balance evidence](docs/evidence/array_growth_balance_20261014.md).

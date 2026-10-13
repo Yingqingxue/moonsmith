@@ -249,16 +249,17 @@ try {
         casesWithWhileLoop = 1
         casesWithWhileIteration = 1
         casesWithArrayGrow = 2
+        casesWithArrayAliasUpdate = 2
         cases = @(
             [pscustomobject]@{
                 seed = 1
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1; arrayGrow = 1 }
-                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration', 'array-grow-index-0')
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1; arrayGrow = 1; arrayAliasUpdate = 1 }
+                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration', 'array-grow-index-0', 'array-alias-update-index-0')
             }
             [pscustomobject]@{
                 seed = 2
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 1 }
-                referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped', 'array-grow-index-1')
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 1; arrayAliasUpdate = 1 }
+                referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped', 'array-grow-index-1', 'array-alias-update-index-1')
             }
         )
         referencePathCaseCounts = [pscustomobject]@{
@@ -271,6 +272,8 @@ try {
             'while-iteration' = 1
             'array-grow-index-0' = 1
             'array-grow-index-1' = 1
+            'array-alias-update-index-0' = 1
+            'array-alias-update-index-1' = 1
         }
     }
     $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
@@ -283,8 +286,21 @@ try {
         $coverageValidation.whileIterationCases -ne 1 -or
         $coverageValidation.arrayGrowFirstIndexCases -ne 1 -or
         $coverageValidation.arrayGrowSecondIndexCases -ne 1 -or
-        $coverageValidation.arrayGrowSourceCases -ne 2) {
+        $coverageValidation.arrayGrowSourceCases -ne 2 -or
+        $coverageValidation.arrayAliasUpdateSourceCases -ne 2 -or
+        $coverageValidation.arrayAliasUpdateFirstIndexCases -ne 1 -or
+        $coverageValidation.arrayAliasUpdateSecondIndexCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
+    }
+    $badArrayAliasSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $badArrayAliasSource.casesWithArrayAliasUpdate = 1
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $badArrayAliasSource -ExpectedCount 2
+        throw 'nightly gate accepted an inconsistent array-alias-update source count.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'array-alias-update case total does not match') { throw }
     }
     $badArrayGrowSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
     $badArrayGrowSource.casesWithArrayGrow = 1
@@ -482,7 +498,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0; arrayAliasUpdate = 0 }
             referencePathKinds = @()
         }
     }
@@ -511,7 +527,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowAndCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0; arrayAliasUpdate = 0 }
             referencePathKinds = @()
         }
     }

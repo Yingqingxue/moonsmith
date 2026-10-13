@@ -195,6 +195,31 @@ foreach ($trigger in @('let grown_items : Array[Bool] = []', 'grown_items.push('
     }
 }
 
+$aliasRaw = & $reduceScript -Seed 1 -Depth 3 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains 'let _ms_alias = items' `
+    -MaxAttempts 12
+$aliasExitCode = $LASTEXITCODE
+$aliasResult = $aliasRaw | ConvertFrom-Json
+if ($aliasResult.finding -ne 'output-mismatch' -or
+    $aliasResult.acceptedSteps -lt 1 -or
+    $aliasResult.finalComplexity -ge $aliasResult.originalComplexity -or
+    $aliasResult.injection.sourceTrigger -ne 'let _ms_alias = items' -or
+    $aliasExitCode -ne 1) {
+    throw 'The array-alias-update reduction did not retain a smaller, reproducible injected mismatch.'
+}
+$aliasMinimalPath = Join-Path $aliasResult.outputDirectory 'minimal.mbt'
+if (-not (Test-Path -LiteralPath $aliasMinimalPath -PathType Leaf)) {
+    throw 'The array-alias-update reduction did not save minimal source.'
+}
+$aliasMinimalSource = Get-Content -LiteralPath $aliasMinimalPath -Raw -Encoding utf8
+foreach ($trigger in @('let _ms_alias = items', '_ms_alias[1] = replacement', 'items[1] == replacement')) {
+    if (-not $aliasMinimalSource.Contains($trigger)) {
+        throw "The array-alias-update reduction lost trigger fragment: $trigger"
+    }
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -230,5 +255,9 @@ foreach ($trigger in @('let grown_items : Array[Bool] = []', 'grown_items.push('
     growthFinalComplexity = $growthResult.finalComplexity
     growthAcceptedSteps = $growthResult.acceptedSteps
     growthMinimalPath = $growthMinimalPath
+    aliasOriginalComplexity = $aliasResult.originalComplexity
+    aliasFinalComplexity = $aliasResult.finalComplexity
+    aliasAcceptedSteps = $aliasResult.acceptedSteps
+    aliasMinimalPath = $aliasMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0

@@ -249,6 +249,23 @@ test "generated corpus executes both grown-array indices" {
 }
 
 ///|
+test "generated corpus executes both array alias update indices" {
+  let mut first_index_cases = 0
+  let mut second_index_cases = 0
+  for seed = 14990; seed < 15990; seed = seed + 1 {
+    let (_, trace) = @moonsmith.generate_program(seed, 4).result.evaluate_with_trace()
+    if trace.contains("array-alias-update-index-0") {
+      first_index_cases = first_index_cases + 1
+    }
+    if trace.contains("array-alias-update-index-1") {
+      second_index_cases = second_index_cases + 1
+    }
+  }
+  assert_true(first_index_cases >= 20)
+  assert_true(second_index_cases >= 20)
+}
+
+///|
 test "generated boolean corpus exercises valtype raise probes" {
   let mut has_probe = false
   let mut has_scaffold = false

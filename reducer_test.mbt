@@ -139,6 +139,25 @@ test "array growth reduction preserves element type and push scaffold" {
 }
 
 ///|
+test "array alias update reduction retains typed observable mutation" {
+  let expression = @moonsmith.ArrayAliasUpdateSelect(
+    IntType,
+    IntLiteral(7),
+    IntLiteral(9),
+    IntLiteral(11),
+    true,
+  )
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 1)
+  assert_eq(candidates[0].to_source(), "11")
+  for candidate in candidates {
+    assert_true(candidate.value_type() is IntType)
+    assert_true(candidate.complexity() < expression.complexity())
+  }
+  assert_true(candidates[1].to_source().contains("_ms_alias[1] = replacement"))
+}
+
+///|
 test "record selection shrinks to selected field and smaller fields" {
   let expression = @moonsmith.StructSelect(
     IntType,

@@ -50,6 +50,7 @@ pub(all) enum Expr {
   Let(ValueType, String, Expr, Expr)
   ArraySelect(ValueType, Expr, Expr, Bool)
   ArrayGrowSelect(ValueType, Expr, Expr, Bool)
+  ArrayAliasUpdateSelect(ValueType, Expr, Expr, Expr, Bool)
   StructSelect(ValueType, Expr, Expr)
   ChoiceValue(ValueType, Expr)
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)

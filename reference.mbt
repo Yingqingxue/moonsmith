@@ -111,6 +111,20 @@ fn Expr::evaluate_in_env(
         values[0]
       }
     }
+    ArrayAliasUpdateSelect(_, first, second, replacement, select_second) => {
+      trace.push("array-alias-update")
+      let _ = first.evaluate_in_env(bindings, trace)
+      let _ = second.evaluate_in_env(bindings, trace)
+      let updated = replacement.evaluate_in_env(bindings, trace)
+      trace.push(
+        if select_second {
+          "array-alias-update-index-1"
+        } else {
+          "array-alias-update-index-0"
+        },
+      )
+      updated
+    }
     StructSelect(result_type, number, flag) => {
       trace.push("struct-value")
       let number_value = number.evaluate_in_env(bindings, trace)

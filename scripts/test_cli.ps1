@@ -144,6 +144,9 @@ $expectedConjunctionCount = @($batch.cases | Where-Object {
 $expectedArrayGrowthCount = @($batch.cases | Where-Object {
     $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayGrow -gt 0
 }).Count
+$expectedArrayAliasUpdateCount = @($batch.cases | Where-Object {
+    $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayAliasUpdate -gt 0
+}).Count
 $expectedForIterationCount = @($batch.cases | Where-Object {
     $_.referencePathKinds -contains 'for-iteration'
 }).Count
@@ -160,6 +163,7 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.casesWithForIteration -ne $expectedForIterationCount -or
     $batch.casesWithWhileLoop -lt 1 -or $batch.casesWithWhileIteration -lt 1 -or
     $batch.casesWithArrayGrow -ne $expectedArrayGrowthCount -or
+    $batch.casesWithArrayAliasUpdate -ne $expectedArrayAliasUpdateCount -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
     $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
     $batch.casesVisitingBothValtypeProbeKinds -ne $expectedBothProbeTraceCount -or
@@ -204,7 +208,7 @@ if ($generatorLimitExitCode -ne 1 -or
     throw 'oversized generated source was not classified as generator-limit.'
 }
 
-$nearLimitRaw = & $verify -Seed 8166 -Depth 10 -Targets @('wasm') -NoPersist
+$nearLimitRaw = & $verify -Seed 8164 -Depth 10 -Targets @('wasm') -NoPersist
 $nearLimit = $nearLimitRaw | ConvertFrom-Json
 $nearLimitSource = Get-Content -LiteralPath $nearLimit.casePath -Raw -Encoding utf8
 $nearLimitLineCount = [regex]::Matches($nearLimitSource, "`n").Count

@@ -225,6 +225,35 @@ test "growing arrays preserve insertion order and typed selections" {
 }
 
 ///|
+test "array alias update observes replacement through the original array" {
+  let first = @moonsmith.ArrayAliasUpdateSelect(
+    IntType,
+    IntLiteral(7),
+    IntLiteral(9),
+    IntLiteral(11),
+    false,
+  )
+  let second = @moonsmith.ArrayAliasUpdateSelect(
+    BoolType,
+    BoolLiteral(false),
+    BoolLiteral(true),
+    BoolLiteral(false),
+    true,
+  )
+  let (first_value, first_trace) = first.evaluate_with_trace()
+  let (second_value, second_trace) = second.evaluate_with_trace()
+  assert_eq(first_value.to_output(), "11")
+  assert_eq(second_value.to_output(), "false")
+  assert_true(first_trace.contains("array-alias-update-index-0"))
+  assert_true(second_trace.contains("array-alias-update-index-1"))
+  let source = first.to_source()
+  assert_true(source.contains("let _ms_alias = items"))
+  assert_true(source.contains("_ms_alias[0] = replacement"))
+  assert_true(source.contains("items[0] == replacement"))
+  assert_true(source.contains("items[1] == other_before"))
+}
+
+///|
 test "function application binds parameters and captures outer values" {
   let expression = @moonsmith.Let(
     IntType,
