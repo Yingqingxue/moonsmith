@@ -379,6 +379,32 @@ try {
     }
     $nightlySummary.cases[0].sourceConstructCounts.or = 1
 
+    $lowOrCoverageSummary = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $lowOrCoverageSummary.count = 10
+    $lowOrCoverageSummary.uniqueProgramBodies = 10
+    $lowOrCoverageSummary.referenceCheckedCount = 10
+    $lowOrCoverageSummary.cases = @($lowOrCoverageSummary.cases)
+    for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
+        $lowOrCoverageSummary.cases += [pscustomobject]@{
+            seed = $caseIndex
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
+        }
+    }
+    $lowOrCoverageRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $lowOrCoverageSummary -ExpectedCount 10
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'below the minimum of 2 cases') {
+            throw "nightly disjunction minimum coverage rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $lowOrCoverageRejected = $true
+    }
+    if (-not $lowOrCoverageRejected) {
+        throw 'nightly coverage gate accepted disjunction in less than 20% of the corpus.'
+    }
+
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
     $legacyReport = [ordered]@{}

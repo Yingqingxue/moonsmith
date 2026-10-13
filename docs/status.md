@@ -184,6 +184,17 @@ This is fixed-corpus evidence, not backend branch instrumentation or a claim
 that MoonSmith discovered an upstream compiler defect. See the detailed
 [disjunction corpus evidence](evidence/disjunction_corpus_20261013.md).
 
+The first nightly's 15/1,000 disjunction-bearing sources exposed that a
+nonzero-only coverage gate was permissive. Commit `2a96c43` changed only the
+existing `And`/`Or` selection probability (1:2, favoring `Or`), without
+changing expression branch selection. The same seed window then produced 357
+sources with `||` and 470 `Or` nodes; reference traces exercised both RHS
+execution and short-circuit skipping. All 1,000 reference checks and 3,000
+backend executions remained consistent, while the existing valtype probe,
+composition, and combined-trace counts remained 402, 234, and 204. A new
+20%-of-corpus minimum is being added to both the fixed-window generator test
+and nightly validator; see the paired evidence for exact counts and limits.
+
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
 historical, not measurements of the current generator revision. No newly

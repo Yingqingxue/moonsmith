@@ -32,3 +32,27 @@ This is fixed-corpus evidence for the current generator revision, not a proof
 of language-wide correctness or a defect-finding-rate estimate. In particular,
 the fact that the corpus found no mismatch does not establish that all
 generated `||` cases behave identically on all MoonBit backends.
+
+## Sampling adjustment
+
+The initial schema-9 corpus above showed that a nonzero-only gate was too weak:
+only 15 of 1,000 sources contained `||`. Commit `2a96c432d52e74daea829245e2ece4f548bc20b0`
+kept the existing branch selection and changed only the `And`/`Or` choice from
+an even split to a 1:2 split favoring `Or`. Its CI passed on Linux and Windows
+native in
+[run 38354537501](https://github.com/Yingqingxue/moonsmith/actions/runs/38354537501),
+and the same-toolchain nightly passed in
+[run 38354538754](https://github.com/Yingqingxue/moonsmith/actions/runs/38354538754).
+On the same seeds and depth, this produced 357 source cases with `||` and 470
+`Or` nodes, versus 15 source cases and 15 nodes before the change. Reference
+traces visited an `Or` in 280 cases, with right-hand-side execution in 141 and
+short-circuit skipping in 162 (the latter path counts may overlap). All 1,000
+bodies remained unique and reference-checked; all 3,000 JS/Wasm/Wasm-GC results
+were consistent with no unexpected findings. The existing valtype source,
+composition, and combined-trace counts remained 402, 234, and 204 respectively.
+
+This is a distribution change, not evidence that `Or` is universally more
+valuable than `And`. The test suite now checks a minimum of 200 `Or`-containing
+sources in this fixed 1,000-seed window, and the nightly summary validator is
+being strengthened to enforce the same 20% floor rather than mere nonzero
+coverage.

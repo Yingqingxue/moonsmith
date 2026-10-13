@@ -191,7 +191,7 @@ test "generated corpus samples disjunction consistently" {
       cases_with_or = cases_with_or + 1
     }
   }
-  assert_true(cases_with_or >= 20)
+  assert_true(cases_with_or >= 200)
 }
 
 ///|

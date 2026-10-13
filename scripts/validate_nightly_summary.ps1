@@ -78,6 +78,10 @@ if ($observedChoiceFunctionCount -ne [long]$choiceFunctionCount.Value) {
 if ($observedOrCases -ne [long]$Summary.casesWithOr) {
     throw 'Nightly disjunction case total does not match per-case source metrics.'
 }
+$minimumOrCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
+if ($observedOrCases -lt $minimumOrCases) {
+    throw "Nightly disjunction coverage is below the minimum of $minimumOrCases cases (20% of the corpus)."
+}
 
 $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
 if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value) {
@@ -97,6 +101,7 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     choiceReturningFunctionCases = $Summary.casesWithChoiceReturningFunction
     choiceReturningFunctionCount = $choiceFunctionCount.Value
     disjunctionCases = $Summary.casesWithOr
+    minimumDisjunctionCases = $minimumOrCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'
