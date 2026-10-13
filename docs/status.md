@@ -138,7 +138,8 @@ new corpus is Linux-only, and reference traces are not runtime coverage inside
 generated compiler backends. Native remains a hosted-CI check because this
 workstation has no compatible C compiler.
 Batch-report schema 8 now records Choice-returning-function cases and total
-functions explicitly; the nightly validator gates on both counts. Unit tests
+functions explicitly; the nightly validator requires schema 8 and gates on
+both counts. Unit tests
 cover rejection of missing coverage and mismatch between aggregate and per-case
 counts. The refreshed remote 1,000-seed run passed:
 251 cases contained 305 Choice-returning functions, with no unexpected

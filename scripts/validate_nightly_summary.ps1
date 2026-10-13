@@ -7,6 +7,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($Summary.schemaVersion -ne 8) {
+    throw "Nightly corpus validator requires batch schema 8; received '$($Summary.schemaVersion)'."
+}
 if ($Summary.count -ne $ExpectedCount -or
     $Summary.uniqueProgramBodies -ne $ExpectedCount -or
     $Summary.referenceCheckedCount -ne $ExpectedCount -or

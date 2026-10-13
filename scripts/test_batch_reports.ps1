@@ -183,6 +183,7 @@ try {
     }
 
     $nightlySummary = [pscustomobject]@{
+        schemaVersion = 8
         count = 2
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
@@ -216,6 +217,22 @@ try {
         $coverageValidation.raiseErrorPathCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
     }
+    $nightlySummary.schemaVersion = 7
+    $legacyNightlySummaryRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'requires batch schema 8') {
+            throw "nightly schema gate rejected the legacy fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $legacyNightlySummaryRejected = $true
+    }
+    if (-not $legacyNightlySummaryRejected) {
+        throw 'nightly validator accepted a schema-7 batch summary.'
+    }
+    $nightlySummary.schemaVersion = 8
     $nightlySummary.casesVisitingBothValtypeProbeKinds = 0
     $nightlyCoverageRejected = $false
     try {
