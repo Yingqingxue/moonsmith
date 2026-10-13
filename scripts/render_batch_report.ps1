@@ -94,10 +94,10 @@ foreach ($property in $summary.counts.PSObject.Properties | Sort-Object -Propert
 $html.Add('</tbody></table></section>')
 
 $sourceCoverageProperties = @($summary.PSObject.Properties |
-    Where-Object { $_.Name -match '^casesWith' } |
+    Where-Object { $_.Name -match '^casesWith' -and $_.Name -notmatch '^casesWith(?:For|While)Iteration$' } |
     Sort-Object -Property Name)
 $traceCoverageProperties = @($summary.PSObject.Properties |
-    Where-Object { $_.Name -match '^casesVisiting' } |
+    Where-Object { $_.Name -match '^casesVisiting|^casesWith(?:For|While)Iteration$' } |
     Sort-Object -Property Name)
 $referencePathProperty = $summary.PSObject.Properties['referencePathCaseCounts']
 if ($sourceCoverageProperties.Count -gt 0 -or $traceCoverageProperties.Count -gt 0 -or

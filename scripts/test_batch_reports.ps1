@@ -65,6 +65,10 @@ function New-TestReport {
         choiceReturningFunctionCount = 1
         casesWithAnd = 1
         casesWithOr = 1
+        casesWithForLoop = 1
+        casesWithForIteration = 1
+        casesWithWhileLoop = 1
+        casesWithWhileIteration = 1
         casesVisitingBothValtypeProbeKinds = 1
         referencePathCaseCounts = [ordered]@{
             'valtype-raise-probe' = 1
@@ -205,7 +209,7 @@ try {
     if ($batchReport.count -ne 2 -or
         $batchReport.htmlReportPath -ne $customBatchHtmlPath -or
         -not (Test-Path -LiteralPath $customBatchHtmlPath -PathType Leaf) -or
-        $batchHtmlRows -ne 20 -or
+        $batchHtmlRows -ne 24 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
         -not $batchHtml.Contains('Generator and reference coverage') -or
@@ -215,6 +219,9 @@ try {
         -not $batchHtml.Contains('casesWithChoiceReturningFunction') -or
         -not $batchHtml.Contains('casesWithOr') -or
         -not $batchHtml.Contains('casesWithAnd') -or
+        -not $batchHtml.Contains('casesWithWhileLoop') -or
+        -not $batchHtml.Contains('casesWithWhileIteration') -or
+        $batchHtml.IndexOf('casesWithWhileIteration') -lt $batchHtml.IndexOf('Reference trace coverage') -or
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
