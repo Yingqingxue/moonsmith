@@ -285,7 +285,8 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
           0 => {
             let left = generate_expr(child_seed(seed, 25), BoolType, depth - 1)
             let right = generate_expr(child_seed(seed, 26), BoolType, depth - 1)
-            if advance_seed(child_seed(seed, 62)) % 2 == 0 {
+            // Bias toward Or so a fixed-size corpus can inspect both short-circuit operators.
+            if advance_seed(child_seed(seed, 62)) % 3 == 0 {
               And(left, right)
             } else {
               Or(left, right)

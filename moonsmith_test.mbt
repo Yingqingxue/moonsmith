@@ -184,14 +184,14 @@ test "generated corpus contains bounded integer loops" {
 }
 
 ///|
-test "generated boolean corpus includes short-circuit disjunction" {
-  let mut found = false
-  for seed = 0; seed < 200; seed = seed + 1 {
+test "generated corpus samples disjunction consistently" {
+  let mut cases_with_or = 0
+  for seed = 14990; seed < 15990; seed = seed + 1 {
     if @moonsmith.generate_program(seed, 4).to_source().contains(" || ") {
-      found = true
+      cases_with_or = cases_with_or + 1
     }
   }
-  assert_true(found)
+  assert_true(cases_with_or >= 20)
 }
 
 ///|
