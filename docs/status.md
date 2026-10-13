@@ -169,8 +169,20 @@ Batch-report schema 9 adds a per-case `or` source count and aggregate
 `casesWithOr`; the nightly gate requires a nonzero count and reconciles it
 against each case to prevent misleading summaries. Renderers and cross-platform
 comparison preserve schema-7/8 compatibility. Local integration fixtures cover
-both legacy formats and an aggregate/per-case mismatch; a full refreshed
-schema-9 nightly is pending remote verification.
+both legacy formats and aggregate/per-case mismatches. The refreshed schema-9
+nightly passed in
+[run 38352609842](https://github.com/Yingqingxue/moonsmith/actions/runs/38352609842)
+on `c27ca2f`. It checked 1,000 unique bodies, 1,000 reference results, and
+3,000 JS/Wasm/Wasm-GC executions with no unexpected findings. The report
+recorded 15 cases containing `||`, reconciled to the per-case total, and
+reference traces exercised both right-hand-side execution (5 cases) and
+short-circuit skipping (3 cases). The artifact JSON was downloaded and checked;
+the standalone HTML includes the new metric. Ordinary CI, including Windows
+native integration, passed in
+[run 38352593110](https://github.com/Yingqingxue/moonsmith/actions/runs/38352593110).
+This is fixed-corpus evidence, not backend branch instrumentation or a claim
+that MoonSmith discovered an upstream compiler defect. See the detailed
+[disjunction corpus evidence](evidence/disjunction_corpus_20261013.md).
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
