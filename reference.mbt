@@ -160,6 +160,21 @@ fn Expr::evaluate_in_env(
       trace.push("for-normal-exit")
       IntValue(accumulator)
     }
+    WhileLoop(iterations, initial, body) => {
+      trace.push("while-loop")
+      let mut accumulator = initial.evaluate_in_env(bindings, trace).as_int()
+      let mut index = 0
+      while index < iterations {
+        trace.push("while-iteration")
+        let scoped = bindings.copy()
+        scoped.push(("_ms_index", IntValue(index)))
+        scoped.push(("_ms_acc", IntValue(accumulator)))
+        accumulator = body.evaluate_in_env(scoped, trace).as_int()
+        index = index + 1
+      }
+      trace.push("while-normal-exit")
+      IntValue(accumulator)
+    }
     ValtypeRaiseProbe(value) => {
       let input = value.evaluate_in_env(bindings, trace).as_int()
       trace.push("valtype-raise-probe")

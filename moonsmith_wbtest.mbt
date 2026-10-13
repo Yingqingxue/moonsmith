@@ -84,6 +84,11 @@ test "variable-use analysis traverses every expression family" {
       "_ms_index",
     ),
   )
+  assert_false(
+    WhileLoop(1, IntLiteral(0), Variable(IntType, "_ms_acc")).uses_variable(
+      "_ms_acc",
+    ),
+  )
 }
 
 ///|

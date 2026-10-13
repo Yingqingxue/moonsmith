@@ -219,6 +219,26 @@ test "for-loop reduction preserves bound variables and result type" {
 }
 
 ///|
+test "while-loop reduction preserves bound variables and result type" {
+  let expression = @moonsmith.WhileLoop(
+    3,
+    IntLiteral(9),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_eq(candidates[0].to_source(), "9")
+  assert_true(candidates.length() > 1)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+    match candidate.value_type() {
+      IntType => ()
+      BoolType | ChoiceType => abort("while-loop reducer changed result type")
+    }
+  }
+  assert_true(candidates[1].to_source().contains("while _ms_index < 0"))
+}
+
+///|
 test "valtype raise probe reduction preserves the trigger scaffold" {
   let expression = @moonsmith.ValtypeRaiseProbe(IntLiteral(-16))
   let candidates = expression.shrink_candidates()

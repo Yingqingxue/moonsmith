@@ -29,6 +29,7 @@ pub(all) enum Expr {
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
   FunctionApply(ValueType, String, Expr, Expr)
   ForLoop(Int, Expr, Expr)
+  WhileLoop(Int, Expr, Expr)
   ValtypeRaiseProbe(Expr)
   ValtypeEnumArrayProbe(Expr)
 }
@@ -113,6 +114,21 @@ fn generate_for_loop(seed : Int, depth : Int) -> Expr {
     generate_expr(child_seed(seed, 52), IntType, depth - 1),
     Add(accumulator, delta),
   )
+}
+
+///|
+/// Keep the existing for-loop corpus mostly stable while sampling mutable
+/// while-loop state with the same bounded body and iteration count.
+fn generate_bounded_loop(seed : Int, depth : Int) -> Expr {
+  match generate_for_loop(seed, depth) {
+    ForLoop(iterations, initial, body) =>
+      if advance_seed(child_seed(seed, 63)) % 4 == 0 {
+        WhileLoop(iterations, initial, body)
+      } else {
+        ForLoop(iterations, initial, body)
+      }
+    _ => abort("bounded-loop generator returned a non-loop expression")
+  }
 }
 
 ///|
@@ -262,7 +278,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
               ),
             )
           }
-          9 => generate_for_loop(seed, depth)
+          9 => generate_bounded_loop(seed, depth)
           10 => {
             let name = "p" + depth.to_string()
             FunctionApply(
@@ -357,7 +373,7 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
           }
           9 =>
             LessThan(
-              generate_for_loop(seed, depth),
+              generate_bounded_loop(seed, depth),
               generate_expr(child_seed(seed, 55), IntType, depth - 1),
             )
           10 => {
@@ -416,7 +432,7 @@ pub fn Expr::value_type(self : Expr) -> ValueType {
     ChoiceValue(_, _) => ChoiceType
     MatchChoice(result_type, _, _, _, _, _) => result_type
     FunctionApply(result_type, _, _, _) => result_type
-    ForLoop(_, _, _) | ValtypeEnumArrayProbe(_) => IntType
+    ForLoop(_, _, _) | WhileLoop(_, _, _) | ValtypeEnumArrayProbe(_) => IntType
     ValtypeRaiseProbe(_) => BoolType
   }
 }
@@ -447,7 +463,7 @@ fn Expr::contains_struct(self : Expr) -> Bool {
       first.contains_struct() || second.contains_struct()
     FunctionApply(_, _, argument, body) =>
       argument.contains_struct() || body.contains_struct()
-    ForLoop(_, initial, body) =>
+    ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
       initial.contains_struct() || body.contains_struct()
     ValtypeRaiseProbe(value) | ValtypeEnumArrayProbe(value) =>
       value.contains_struct()
@@ -477,7 +493,7 @@ fn Expr::contains_choice(self : Expr) -> Bool {
       number.contains_choice() || flag.contains_choice()
     FunctionApply(_, _, argument, body) =>
       argument.contains_choice() || body.contains_choice()
-    ForLoop(_, initial, body) =>
+    ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
       initial.contains_choice() || body.contains_choice()
     ValtypeRaiseProbe(value) | ValtypeEnumArrayProbe(value) =>
       value.contains_choice()
@@ -600,6 +616,14 @@ pub fn Expr::to_source(self : Expr) -> String {
       "; _ms_index = _ms_index + 1, _ms_acc = " +
       body.to_source() +
       " {\n    } nobreak {\n      _ms_acc\n    }\n  })"
+    WhileLoop(iterations, initial, body) =>
+      "({\n    let mut _ms_index = 0\n    let mut _ms_acc = " +
+      initial.to_source() +
+      "\n    while _ms_index < " +
+      iterations.to_string() +
+      " {\n      let _ms_next = " +
+      body.to_source() +
+      "\n      _ms_acc = _ms_next\n      _ms_index = _ms_index + 1\n    }\n    _ms_acc\n  })"
     ValtypeRaiseProbe(value) =>
       "({\n    let _ms_valtype_input = " +
       value.to_source() +
@@ -703,7 +727,7 @@ fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
     FunctionApply(_, _, argument, body) =>
       argument.contains_valtype_raise_probe() ||
       body.contains_valtype_raise_probe()
-    ForLoop(_, initial, body) =>
+    ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
       initial.contains_valtype_raise_probe() ||
       body.contains_valtype_raise_probe()
     ValtypeEnumArrayProbe(value) => value.contains_valtype_raise_probe()
@@ -745,7 +769,7 @@ fn Expr::contains_valtype_enum_array_probe(self : Expr) -> Bool {
     FunctionApply(_, _, argument, body) =>
       argument.contains_valtype_enum_array_probe() ||
       body.contains_valtype_enum_array_probe()
-    ForLoop(_, initial, body) =>
+    ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
       initial.contains_valtype_enum_array_probe() ||
       body.contains_valtype_enum_array_probe()
     ValtypeRaiseProbe(value) => value.contains_valtype_enum_array_probe()

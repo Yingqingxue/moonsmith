@@ -909,6 +909,15 @@ accumulator updates, zero-iteration exit, and records `for-loop`,
 loop, reduce its bound to zero, and simplify its initializer or body while
 preserving result type and loop-variable scope.
 
+The generator also samples a bounded `while` variant over the same index and
+accumulator update expression. Its printer uses mutable locals, the reference
+interpreter records `while-loop`, `while-iteration`, and `while-normal-exit`,
+and the reducer preserves the loop's bound-variable scope. Each generated
+`while` has a fixed 0–5 iteration bound, so this is not general loop or
+termination-condition fuzzing. Batch summaries separately count generated
+`while` syntax and executed reference-interpreter paths. Older corpus counts
+below predate this addition and should not be attributed to the new generator.
+
 All 61 main-package tests pass on each of `js`, `wasm`, and `wasm-gc`; both
 historical regression packages pass, and static, reference, reducer, and CLI
 integration checks pass. After adding the targeted `ValtypeRaiseProbe`, a fixed

@@ -128,6 +128,7 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 choiceFlag = [regex]::Matches($body, 'Choice::Flag\(').Count
                 forLoop = [regex]::Matches($body, '\bfor _ms_index = 0, _ms_acc =').Count
                 forNobreak = [regex]::Matches($body, '\bnobreak\s*\{').Count
+                whileLoop = [regex]::Matches($body, '\bwhile _ms_index <').Count
                 valtypeRaiseProbe = [regex]::Matches($body, '_ms_valtype_run\(').Count
                 valtypeRaiseArrayComposition = [regex]::Matches(
                     $body,
@@ -228,6 +229,8 @@ $casesWithNumberConstructor = @($cases | Where-Object { $_.sourceConstructCounts
 $casesWithFlagConstructor = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.choiceFlag -gt 0 }).Count
 $casesWithForLoop = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.forLoop -gt 0 }).Count
 $casesWithForIteration = @($cases | Where-Object { $_.referencePathKinds -contains 'for-iteration' }).Count
+$casesWithWhileLoop = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.whileLoop -gt 0 }).Count
+$casesWithWhileIteration = @($cases | Where-Object { $_.referencePathKinds -contains 'while-iteration' }).Count
 $casesWithValtypeRaiseProbe = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.valtypeRaiseProbe -gt 0 }).Count
 $casesWithDirectValtypeRaiseArrayComposition = @(
     $cases | Where-Object {
@@ -284,6 +287,8 @@ $summary = [pscustomobject]@{
     casesWithFlagConstructor = $casesWithFlagConstructor
     casesWithForLoop        = $casesWithForLoop
     casesWithForIteration   = $casesWithForIteration
+    casesWithWhileLoop      = $casesWithWhileLoop
+    casesWithWhileIteration = $casesWithWhileIteration
     casesWithValtypeRaiseProbe = $casesWithValtypeRaiseProbe
     casesWithDirectValtypeRaiseArrayComposition = $casesWithDirectValtypeRaiseArrayComposition
     casesVisitingBothValtypeProbeKinds = $casesVisitingBothValtypeProbeKinds

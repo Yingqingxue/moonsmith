@@ -54,6 +54,7 @@ pub(all) enum Expr {
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
   FunctionApply(ValueType, String, Expr, Expr)
   ForLoop(Int, Expr, Expr)
+  WhileLoop(Int, Expr, Expr)
   ValtypeRaiseProbe(Expr)
   ValtypeEnumArrayProbe(Expr)
 }

@@ -266,6 +266,34 @@ test "bounded for loop with zero iterations returns its initial accumulator" {
 }
 
 ///|
+test "bounded while loop updates index and accumulator" {
+  let expression = @moonsmith.WhileLoop(
+    3,
+    IntLiteral(10),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let (value, trace) = expression.evaluate_with_trace()
+  assert_eq(value.to_output(), "13")
+  assert_true(trace.contains("while-loop"))
+  assert_true(trace.contains("while-iteration"))
+  assert_true(trace.contains("while-normal-exit"))
+  assert_true(expression.to_source().contains("while _ms_index < 3"))
+  assert_true(expression.to_source().contains("_ms_acc = _ms_next"))
+}
+
+///|
+test "bounded while loop with zero iterations returns its initial accumulator" {
+  let expression = @moonsmith.WhileLoop(
+    0,
+    IntLiteral(-4),
+    Add(Variable(IntType, "_ms_acc"), Variable(IntType, "_ms_index")),
+  )
+  let (value, trace) = expression.evaluate_with_trace()
+  assert_eq(value.to_output(), "-4")
+  assert_true(!trace.contains("while-iteration"))
+}
+
+///|
 test "valtype raise probe models both success and error paths" {
   let success = @moonsmith.ValtypeRaiseProbe(IntLiteral(8))
   let (success_value, success_trace) = success.evaluate_with_trace()

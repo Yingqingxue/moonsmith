@@ -114,6 +114,15 @@ foreach ($seed in @(-2147483648, -1, 2147483647)) {
 }
 
 $batch = (& $cli fuzz -SeedStart 0 -Count 2 -Depth 4 | ConvertFrom-Json)
+$whileRaw = & pwsh -NoProfile -File $verify -Seed 1 -Depth 3 -NoPersist
+$whileExitCode = $LASTEXITCODE
+$whileProbe = $whileRaw | ConvertFrom-Json
+if ($whileExitCode -ne 0 -or $whileProbe.finding -ne 'consistent' -or
+    $whileProbe.referenceTrace.visited -notcontains 'while-loop' -or
+    $whileProbe.referenceTrace.visited -notcontains 'while-iteration' -or
+    @($whileProbe.runs | Where-Object status -ne 'succeeded').Count -ne 0) {
+    throw 'bounded while-loop probe did not agree across the default backends.'
+}
 $expectedSourceLineMaximum = ($batch.cases |
     Measure-Object -Property sourceLineCount -Maximum).Maximum
 $expectedDirectCompositionCount = @($batch.cases | Where-Object {
@@ -130,6 +139,9 @@ $expectedDisjunctionCount = @($batch.cases | Where-Object {
 $expectedConjunctionCount = @($batch.cases | Where-Object {
     $_.sourceConstructCounts -and $_.sourceConstructCounts.and -gt 0
 }).Count
+$expectedForIterationCount = @($batch.cases | Where-Object {
+    $_.referencePathKinds -contains 'for-iteration'
+}).Count
 $expectedAndRhsExecutedCases = @($batch.cases | Where-Object {
     $_.referencePathKinds -contains 'and-rhs-executed'
 }).Count
@@ -139,7 +151,9 @@ $expectedAndRhsSkippedCases = @($batch.cases | Where-Object {
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
     $batch.schemaVersion -lt 10 -or $batch.casesWithChoiceMatch -lt 1 -or
-    $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
+    $batch.casesWithForLoop -lt 1 -or
+    $batch.casesWithForIteration -ne $expectedForIterationCount -or
+    $batch.casesWithWhileLoop -lt 1 -or $batch.casesWithWhileIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
     $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
     $batch.casesVisitingBothValtypeProbeKinds -ne $expectedBothProbeTraceCount -or

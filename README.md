@@ -103,9 +103,11 @@ structs, and typed local function application with captured outer bindings.
 Generated tagged-enum matches can also receive `Choice` values returned by a
 typed local function, exercising payload typing through generation, printing,
 reference evaluation, and reduction.
-It also generates bounded `for` loops with an index and accumulator updated
-together, and models loop-carried values in the reference evaluator and AST
-reducer. One narrow probe emits a `#valtype` struct with a `Double` first field
+It also generates bounded `for` and `while` loops with an index and accumulator
+updated together, and models loop-carried values in the reference evaluator
+and AST reducer. The `while` form uses mutable locals and a fixed 0–5 iteration
+bound; it does not exercise arbitrary loop conditions or early exits. One narrow
+probe emits a `#valtype` struct with a `Double` first field
 through a `raise`/`try?` path. A second probe creates an empty array, pushes a
 `#valtype` struct with an enum field, reads the first element's enum, appends a
 second element, then reads its integer field to exercise array growth. Its
