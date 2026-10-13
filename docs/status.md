@@ -10,7 +10,10 @@ index 0 or 1. The reference evaluator models insertion order and records
 growth, pushes, and the selected index; the AST reducer can simplify either
 element or replace the whole construct with a same-typed value. Batch reports
 count this source construct separately as `casesWithArrayGrow`. This is a
-bounded slice, not arbitrary array mutation or index fuzzing.
+bounded slice, not arbitrary array mutation or index fuzzing. A local
+three-backend injected-mismatch check reduced one generated growth case from
+complexity 12,114 to 1,002 while retaining the two pushes and indexed read;
+the injected mismatch is not a MoonBit compiler defect.
 
 ## Bounded `while` validation
 

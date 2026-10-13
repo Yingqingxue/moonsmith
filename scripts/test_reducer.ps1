@@ -170,6 +170,31 @@ if (-not (Test-Path -LiteralPath $whileMinimalPath -PathType Leaf) -or
     throw 'The bounded while-loop reduction lost its trigger syntax.'
 }
 
+$growthRaw = & $reduceScript -Seed 1 -Depth 3 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains 'grown_items.push' `
+    -MaxAttempts 12
+$growthExitCode = $LASTEXITCODE
+$growthResult = $growthRaw | ConvertFrom-Json
+if ($growthResult.finding -ne 'output-mismatch' -or
+    $growthResult.acceptedSteps -lt 1 -or
+    $growthResult.finalComplexity -ge $growthResult.originalComplexity -or
+    $growthResult.injection.sourceTrigger -ne 'grown_items.push' -or
+    $growthExitCode -ne 1) {
+    throw 'The primitive-array-growth reduction did not retain a smaller, reproducible injected mismatch.'
+}
+$growthMinimalPath = Join-Path $growthResult.outputDirectory 'minimal.mbt'
+if (-not (Test-Path -LiteralPath $growthMinimalPath -PathType Leaf)) {
+    throw 'The primitive-array-growth reduction did not save minimal source.'
+}
+$growthMinimalSource = Get-Content -LiteralPath $growthMinimalPath -Raw -Encoding utf8
+foreach ($trigger in @('let grown_items : Array[Bool] = []', 'grown_items.push(', 'grown_items[0]')) {
+    if (-not $growthMinimalSource.Contains($trigger)) {
+        throw "The primitive-array-growth reduction lost trigger fragment: $trigger"
+    }
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -201,5 +226,9 @@ if (-not (Test-Path -LiteralPath $whileMinimalPath -PathType Leaf) -or
     whileFinalComplexity = $whileResult.finalComplexity
     whileAcceptedSteps = $whileResult.acceptedSteps
     whileMinimalPath = $whileMinimalPath
+    growthOriginalComplexity = $growthResult.originalComplexity
+    growthFinalComplexity = $growthResult.finalComplexity
+    growthAcceptedSteps = $growthResult.acceptedSteps
+    growthMinimalPath = $growthMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0
