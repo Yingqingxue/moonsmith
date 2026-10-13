@@ -7,9 +7,10 @@ Last updated: 2026-10-13
 Generated `&&` expressions now use the same captured-counter guard as `||`:
 the RHS must be called once when the LHS is true and skipped when false. A
 targeted source test checks the emitted guard, and a fixed 1,000-seed
-reference-trace test asserts that both conjunction RHS paths occur. Seed 42 at
-depth 4 exercised a generated conjunction across JS, Wasm, and Wasm-GC; all
-three outputs matched the reference evaluator locally. The existing nightly
+reference-trace test asserts that both conjunction RHS paths occur. Seeds 1
+and 5 exercise the RHS-executed and RHS-skipped paths respectively; both
+matched reference output on JS, Wasm, and Wasm-GC. Seed 42 at depth 4 also
+passed the three-backend comparison. The existing nightly
 corpus gate and reported aggregates remain disjunction-specific; this addition
 does not claim measured `&&` corpus frequency or native coverage. Remote CI is
 pending for this change.
