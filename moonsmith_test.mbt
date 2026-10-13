@@ -195,6 +195,18 @@ test "generated corpus samples disjunction consistently" {
 }
 
 ///|
+test "disjunction source makes short-circuit evaluation observable" {
+  let source = @moonsmith.Or(
+    @moonsmith.BoolLiteral(true),
+    @moonsmith.BoolLiteral(false),
+  ).to_source()
+  assert_true(source.contains("let mut _ms_or_rhs_calls = 0"))
+  assert_true(source.contains("_ms_or_rhs = fn()"))
+  assert_true(source.contains("_ms_or_left || _ms_or_rhs()"))
+  assert_true(source.contains("panic()"))
+}
+
+///|
 test "generated boolean corpus exercises valtype raise probes" {
   let mut has_probe = false
   let mut has_scaffold = false

@@ -495,7 +495,12 @@ pub fn Expr::to_source(self : Expr) -> String {
       "(" + left.to_source() + " - " + right.to_source() + ")"
     And(left, right) =>
       "(" + left.to_source() + " && " + right.to_source() + ")"
-    Or(left, right) => "(" + left.to_source() + " || " + right.to_source() + ")"
+    Or(left, right) =>
+      "({\n    let mut _ms_or_rhs_calls = 0\n    let _ms_or_rhs = fn() {\n      _ms_or_rhs_calls = _ms_or_rhs_calls + 1\n      " +
+      right.to_source() +
+      "\n    }\n    let _ms_or_left = " +
+      left.to_source() +
+      "\n    let _ms_or_result = _ms_or_left || _ms_or_rhs()\n    if _ms_or_rhs_calls == (if _ms_or_left { 0 } else { 1 }) {\n      _ms_or_result\n    } else {\n      panic()\n    }\n  })"
     LessThan(left, right) =>
       "(" + left.to_source() + " < " + right.to_source() + ")"
     EqualInt(left, right) =>
