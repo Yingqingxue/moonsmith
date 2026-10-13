@@ -25,7 +25,23 @@ seeds 14990–15989，depth 4）已有这些可复核观测：
 - 同一固定集的 JS/Wasm/Wasm-GC 执行均与参考结果一致，历史报告详情见
   [disjunction corpus evidence](disjunction_corpus_20261013.md)。
 
-这是改门禁前的基线，不可当作 schema 10 已运行的证据。合并后还需重跑
-nightly workflow，确认严格校验通过并更新此文档中的新 run 链接与 artifact
-数据。即使门禁通过，trace 数仍只代表参考解释器访问路径，不等同于后端
-运行时插桩。
+## Schema-10 revalidation
+
+新门禁在同一固定种子窗口通过
+[nightly run 38384529922](https://github.com/Yingqingxue/moonsmith/actions/runs/38384529922)
+（commit `805b87c`）。下载 artifact 后独立复核得到：
+
+- Schema 10；1,000 个唯一程序、1,000 个参考校验、3,000 次 JS/Wasm/Wasm-GC
+  执行，零意外结果。
+- `&&` 出现在 558 份源码；aggregate 与逐例 trace 对齐：RHS 执行 170 例、
+  短路跳过 178 例。
+- `||` 出现在 357 份源码；aggregate 与逐例 trace 对齐：RHS 执行 141 例、
+  短路跳过 162 例。
+- 最大生成源码 242 行。231,604 字节的独立 HTML 报告包含 `casesWithAnd`，
+  不含 `<script>` 或 `<img>` 标签。
+
+配套
+[跨平台 CI run 38384509956](https://github.com/Yingqingxue/moonsmith/actions/runs/38384509956)
+中的 Linux 与 Windows native job 均成功。这些是固定有限语料结果，不是
+全语言正确性证明、后端内部 branch coverage 或缺陷发现率估计；没有发现
+新的 MoonBit 编译器缺陷。

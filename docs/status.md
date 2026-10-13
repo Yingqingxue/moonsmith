@@ -10,23 +10,26 @@ targeted source test checks the emitted guard, and a fixed 1,000-seed
 reference-trace test asserts that both conjunction RHS paths occur. Seeds 1
 and 5 exercise the RHS-executed and RHS-skipped paths respectively; both
 matched reference output on JS, Wasm, and Wasm-GC. Seed 42 at depth 4 also
-passed the three-backend comparison. The existing nightly
-corpus gate and reported aggregates remain disjunction-specific; this addition
-does not claim measured `&&` corpus frequency or native coverage. Remote CI is
-pending for this change.
+passed the three-backend comparison. The schema-10 nightly gate described
+below now measures both operators; reference traces are not native or backend
+internal branch coverage.
 
 ## Nightly conjunction coverage gate
 
-The previous schema-9 nightly artifact recorded `&&` in 558/1,000 sources,
-with reference RHS-executed and RHS-skipped traces in 170 and 178 cases. Schema
-10 now plans to require at least 20% source coverage for both `&&` and `||`,
-both reference paths for each operator, and exact aggregate/per-case
-reconciliation. Legacy schemas 7–9 remain accepted by report rendering and
-cross-platform comparison; the nightly validator requires schema 10. Local
-batch-report integration and CLI tests pass, and the prior schema-9 corpus
-passes the new validator when replayed as a schema-10-shaped summary. A fresh
-nightly run and remote CI are still required before calling the gate verified.
-See the
+Schema 10 requires at least 20% source coverage for both `&&` and `||`, both
+reference paths for each operator, and exact aggregate/per-case reconciliation.
+Legacy schemas 7–9 remain accepted by report rendering and cross-platform
+comparison; the nightly validator requires schema 10. Local batch-report and
+CLI integration tests pass. Cross-platform CI
+[38384509956](https://github.com/Yingqingxue/moonsmith/actions/runs/38384509956)
+and the fresh fixed-seed nightly
+[38384529922](https://github.com/Yingqingxue/moonsmith/actions/runs/38384529922)
+both passed on commit `805b87c`. The nightly checked 1,000 unique cases and
+3,000 JS/Wasm/Wasm-GC executions with zero unexpected findings. It recorded
+558 cases containing `&&` (170 RHS-executed, 178 RHS-skipped) and 357 containing
+`||` (141 executed, 162 skipped); all totals matched per-case source and trace
+records. The HTML artifact includes the AND metric and contains no `<script>`
+or `<img>` tags. See the
 [short-circuit coverage evidence](evidence/short_circuit_coverage_20261013.md).
 
 ## Offline HTML case reports

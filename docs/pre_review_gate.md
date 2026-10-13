@@ -22,7 +22,7 @@
 
 ### 当前状态补充（2026-10-13）
 
-上表是 10 月 10 日的项目快照，不包含之后的生成器和覆盖门禁改动。当前主线增加了 typed `Choice` 返回函数与 `&&`/`||` 可观测短路探针；批量报告 schema 10 将要求 1,000-seed 固定语料中至少 20% 的程序包含每个运算符，并从逐例 trace 重算两种运算符的 RHS 执行/跳过计数。该门禁的 1,000-seed 复验与 CI 结果待更新。历史 schema 9 语料观察到 558/1,000 个程序含 `&&`，trace 中 RHS 执行 170 例、跳过 178 例；新 schema 10 门禁需要在同种子复跑中确认。相关实现和证据见 [状态记录](status.md) 与 [短路语料证据](evidence/short_circuit_coverage_20261013.md)。
+上表是 10 月 10 日的项目快照，不包含之后的生成器和覆盖门禁改动。当前主线增加了 typed `Choice` 返回函数与 `&&`/`||` 可观测短路探针；schema-10 nightly 门禁要求 1,000-seed 固定语料中至少 20% 的程序包含每个运算符，并从逐例 trace 重算两种运算符 RHS 执行/跳过计数。该门禁已在 [nightly run 38384529922](https://github.com/Yingqingxue/moonsmith/actions/runs/38384529922) 通过，跨平台 CI [38384509956](https://github.com/Yingqingxue/moonsmith/actions/runs/38384509956) 的 Linux 与 Windows native job 也通过。artifact 核验得到 `&&` 为 558/1,000，RHS 执行 170 例、跳过 178 例；`||` 为 357/1,000，分别 141 例和 162 例，aggregate 与逐例记录一致。相关实现和证据见 [状态记录](status.md) 与 [短路语料证据](evidence/short_circuit_coverage_20261013.md)。
 
 可核查的当前样本包括：固定 1,000-seed、depth-4 corpus 对 JS/Wasm/Wasm-GC 共 3,000 次执行全部一致；357/1,000 个程序含 OR，reference trace 分别覆盖 RHS 执行 141 例、短路跳过 162 例。另有不重叠的 230 个 seed、depth 4/6/8 样本，经 Linux 三后端与 Windows native-release 共 920 次执行，源码哈希和期望结果逐 seed 匹配。上述都是有限固定语料，不是 MoonBit 全语言正确性证明，也不是后端内部 branch coverage。
 

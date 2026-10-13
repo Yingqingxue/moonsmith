@@ -145,10 +145,10 @@ operator, and reconciles aggregate counts against per-case records. Generated
 mutable counter; the generated program checks the
 operator-specific expected call count, panicking if a backend violates
 short-circuit evaluation. This makes incorrect eager execution observable,
-rather than relying only on the final boolean value. The nightly coverage gate
-currently tracks `||` specifically. Renderers and
-cross-platform comparison still read schema 7 and 8 reports.
-The refreshed schema-8 nightly run passed all 1,000 cases, recording 251 cases
+rather than relying only on the final boolean value. The nightly gate tracks
+both operators, while report renderers and cross-platform comparison retain
+compatibility with schema 7–9 reports.
+The earlier schema-8 nightly run passed all 1,000 cases, recording 251 cases
 and 305 generated Choice-returning functions (see the linked evidence).
 When both extended workflow inputs are enabled, CI also downloads and compares
 the Linux and Windows reports, failing on a seed-set, toolchain, source-hash,
@@ -156,11 +156,13 @@ reference-output, or finding mismatch.
 
 The nightly Actions workflow scans fixed seeds 14990–15989 on Linux across
 JS/Wasm/Wasm-GC and retains its machine-readable report for 30 days. The latest
-strict-gate run checked 1,000 distinct bodies and 3,000 consistent backend
-executions; 357 sources contained `||`, with reference traces covering RHS
-execution in 141 cases and short-circuit skipping in 162. The captured-counter
-guard passed the JS, Wasm, Wasm-GC, and Windows native-release checks. A
-separate 230-seed depth-4/6/8 sample matched source hashes and outputs between
+schema-10 strict-gate run checked 1,000 distinct bodies and 3,000 consistent
+backend executions; 558 sources contained `&&` (RHS execution in 170 cases,
+short-circuit skipping in 178), and 357 contained `||` (141 executed, 162
+skipped). Aggregate totals matched per-case records, and the captured-counter
+guards passed the JS, Wasm, Wasm-GC, and Windows native-release checks. See the
+[short-circuit coverage evidence](docs/evidence/short_circuit_coverage_20261013.md).
+A separate 230-seed depth-4/6/8 sample matched source hashes and outputs between
 Linux JS/Wasm/Wasm-GC and Windows native-release (920 consistent executions).
 See the
 [disjunction evidence](docs/evidence/disjunction_corpus_20261013.md) and
