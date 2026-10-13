@@ -145,6 +145,9 @@ counts. The refreshed remote 1,000-seed run passed:
 findings, generator limits, or harness errors. Report rendering and
 cross-platform comparison retain schema-7 read compatibility for existing
 saved reports. See [the schema-8 run evidence](evidence/choice_function_corpus_20261013.md).
+After adding per-case/aggregate reconciliation, the validator and full nightly
+corpus passed again on the latest code in run
+[38347193204](https://github.com/Yingqingxue/moonsmith/actions/runs/38347193204).
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

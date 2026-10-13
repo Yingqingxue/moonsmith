@@ -70,3 +70,11 @@ whose reference trace visited both probe kinds, and 164/142 raise-success/error
 paths. These are source/reference observations, not backend runtime coverage.
 The uploaded schema-8 JSON and HTML span seeds 14990–15989; the HTML is 231,391
 bytes and contains no `<script>` or `<img>` tags.
+
+After strengthening the validator to reconcile the aggregate metrics with all
+1,000 per-case records, the same nightly passed again on commit `4dd7768` in
+[run 38347193204](https://github.com/Yingqingxue/moonsmith/actions/runs/38347193204).
+The preserved JSON was downloaded and independently revalidated with the new
+per-case reconciliation; the counts remained 251 cases and 305 functions,
+with 1,000/1,000 consistent results and zero generator limits or harness
+errors.
