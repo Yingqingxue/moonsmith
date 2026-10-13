@@ -143,7 +143,10 @@ fn generate_array_select(
   seed : Int,
 ) -> Expr {
   if advance_seed(child_seed(seed, 64)) % 4 == 0 {
-    ArrayGrowSelect(result_type, first, second, select_second)
+    // A separate modulus avoids locking the growth branch to the same index
+    // through parity correlations in the deterministic seed stream.
+    let growth_select_second = advance_seed(child_seed(seed, 65)) % 5 < 2
+    ArrayGrowSelect(result_type, first, second, growth_select_second)
   } else {
     ArraySelect(result_type, first, second, select_second)
   }

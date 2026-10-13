@@ -252,12 +252,12 @@ try {
             [pscustomobject]@{
                 seed = 1
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1 }
-                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration')
+                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration', 'array-grow-index-0')
             }
             [pscustomobject]@{
                 seed = 2
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
-                referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped')
+                referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped', 'array-grow-index-1')
             }
         )
         referencePathCaseCounts = [pscustomobject]@{
@@ -268,6 +268,8 @@ try {
             'and-rhs-executed' = 1
             'and-rhs-skipped' = 1
             'while-iteration' = 1
+            'array-grow-index-0' = 1
+            'array-grow-index-1' = 1
         }
     }
     $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
@@ -277,8 +279,20 @@ try {
         $coverageValidation.choiceReturningFunctionCases -ne 1 -or
         $coverageValidation.raiseErrorPathCases -ne 1 -or
         $coverageValidation.whileLoopCases -ne 1 -or
-        $coverageValidation.whileIterationCases -ne 1) {
+        $coverageValidation.whileIterationCases -ne 1 -or
+        $coverageValidation.arrayGrowFirstIndexCases -ne 1 -or
+        $coverageValidation.arrayGrowSecondIndexCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
+    }
+    $badArrayGrowIndex = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $badArrayGrowIndex.referencePathCaseCounts.'array-grow-index-1' = 0
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $badArrayGrowIndex -ExpectedCount 2
+        throw 'nightly gate accepted missing grown-array second-index coverage.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "did not exercise the required 'array-grow-index-1' path") { throw }
     }
     $badWhileSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
     $badWhileSource.cases[0].sourceConstructCounts.whileLoop = 0

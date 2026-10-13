@@ -53,6 +53,8 @@ $observedAndRhsExecutedCases = 0
 $observedAndRhsSkippedCases = 0
 $observedWhileLoopCases = 0
 $observedWhileIterationCases = 0
+$observedArrayGrowFirstIndexCases = 0
+$observedArrayGrowSecondIndexCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -109,6 +111,8 @@ foreach ($case in $Summary.cases) {
     if ($casePathKinds -contains 'and-rhs-executed') { $observedAndRhsExecutedCases++ }
     if ($casePathKinds -contains 'and-rhs-skipped') { $observedAndRhsSkippedCases++ }
     if ($casePathKinds -contains 'while-iteration') { $observedWhileIterationCases++ }
+    if ($casePathKinds -contains 'array-grow-index-0') { $observedArrayGrowFirstIndexCases++ }
+    if ($casePathKinds -contains 'array-grow-index-1') { $observedArrayGrowSecondIndexCases++ }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
@@ -146,7 +150,9 @@ foreach ($pathCheck in @(
         @{ name = 'or-rhs-skipped'; observed = $observedOrRhsSkippedCases },
         @{ name = 'and-rhs-executed'; observed = $observedAndRhsExecutedCases },
         @{ name = 'and-rhs-skipped'; observed = $observedAndRhsSkippedCases },
-        @{ name = 'while-iteration'; observed = $observedWhileIterationCases }
+        @{ name = 'while-iteration'; observed = $observedWhileIterationCases },
+        @{ name = 'array-grow-index-0'; observed = $observedArrayGrowFirstIndexCases },
+        @{ name = 'array-grow-index-1'; observed = $observedArrayGrowSecondIndexCases }
     )) {
     $property = $referencePathProperty.Value.PSObject.Properties[$pathCheck.name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
@@ -155,6 +161,11 @@ foreach ($pathCheck in @(
     if ([long]$property.Value -ne [long]$pathCheck.observed) {
         throw "Nightly reference trace '$($pathCheck.name)' case total does not match per-case records."
     }
+}
+$minimumArrayGrowIndexCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.02))
+if ($observedArrayGrowFirstIndexCases -lt $minimumArrayGrowIndexCases -or
+    $observedArrayGrowSecondIndexCases -lt $minimumArrayGrowIndexCases) {
+    throw "Nightly grown-array index coverage is below $minimumArrayGrowIndexCases cases per index (2% of the corpus)."
 }
 foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     $property = $referencePathProperty.Value.PSObject.Properties[$name]
@@ -179,6 +190,9 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     conjunctionRhsSkippedCases = $observedAndRhsSkippedCases
     whileLoopCases = $observedWhileLoopCases
     whileIterationCases = $observedWhileIterationCases
+    arrayGrowFirstIndexCases = $observedArrayGrowFirstIndexCases
+    arrayGrowSecondIndexCases = $observedArrayGrowSecondIndexCases
+    minimumArrayGrowIndexCases = $minimumArrayGrowIndexCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

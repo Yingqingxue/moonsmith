@@ -231,6 +231,24 @@ test "generated corpus visits both conjunction short-circuit paths" {
 }
 
 ///|
+test "generated corpus executes both grown-array indices" {
+  let mut first_index_cases = 0
+  let mut second_index_cases = 0
+  for seed = 14990; seed < 15990; seed = seed + 1 {
+    let (_, trace) = @moonsmith.generate_program(seed, 4).result.evaluate_with_trace()
+    if trace.contains("array-grow-index-0") {
+      first_index_cases = first_index_cases + 1
+    }
+    if trace.contains("array-grow-index-1") {
+      second_index_cases = second_index_cases + 1
+    }
+  }
+  // A nonzero check missed the near-total index-1 starvation in this corpus.
+  assert_true(first_index_cases >= 20)
+  assert_true(second_index_cases >= 20)
+}
+
+///|
 test "generated boolean corpus exercises valtype raise probes" {
   let mut has_probe = false
   let mut has_scaffold = false
