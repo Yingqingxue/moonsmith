@@ -92,3 +92,26 @@ source hashes and expected outputs for all 230 seeds (920 total executions),
 with no unexpected findings or harness changes. Native debug is intentionally
 not included because the known upstream #1322 signature is handled by its
 dedicated regression rather than treated as an ordinary differential mismatch.
+
+## Observable short-circuit check
+
+Commit `13b57e6` changed generated `Or` source so its RHS runs inside a closure
+that increments a captured mutable call counter. The source expects zero calls
+when the left side is true and one otherwise, and panics on a violation. This
+turns erroneous eager execution into a runtime-visible finding even if the
+boolean result itself is unchanged. A unit test checks the emitted guard, and
+three local seeds (14990, 14993, and 14995) passed on JS, Wasm, and Wasm-GC;
+14993's reference trace covers both OR RHS outcomes.
+
+Remote CI
+[38362600738](https://github.com/Yingqingxue/moonsmith/actions/runs/38362600738)
+passed on Linux and Windows. The updated nightly
+[38362624266](https://github.com/Yingqingxue/moonsmith/actions/runs/38362624266)
+again checked 1,000 unique bodies and 3,000 consistent executions: 357 cases
+contained 470 OR nodes; 141 cases executed the RHS and 162 skipped it. The
+counts matched per-case records, the maximum source had 201 lines, and no
+generator-limit finding occurred. A separate paired depth/platform scan
+[38362629021](https://github.com/Yingqingxue/moonsmith/actions/runs/38362629021)
+passed its Linux/Windows native-release comparison. These results validate the
+new generated probe against the sampled toolchain/targets; they are not a claim
+of broad backend coverage or an identified compiler defect.

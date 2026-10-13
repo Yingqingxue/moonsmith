@@ -214,6 +214,24 @@ passed with 141 RHS-executed and 162 RHS-skipped cases; the downloaded report
 confirmed both totals match per-case records. Linux/Windows CI passed in
 [38358006292](https://github.com/Yingqingxue/moonsmith/actions/runs/38358006292).
 
+To make a short-circuit regression observable even when the final Bool result
+is unchanged, the `Or` printer now evaluates its RHS through a closure that
+increments a captured mutable counter. Generated code expects 0 calls when the
+LHS is true and 1 when it is false, panicking if the compiler violates that
+contract. Local seeds 14990, 14993, and 14995 passed on JS/Wasm/Wasm-GC, with
+14993 exercising both RHS paths. Remote CI
+[38362600738](https://github.com/Yingqingxue/moonsmith/actions/runs/38362600738)
+passed Linux and Windows; nightly
+[38362624266](https://github.com/Yingqingxue/moonsmith/actions/runs/38362624266)
+passed 1,000 unique bodies and 3,000 executions with 357 OR-bearing sources,
+470 OR nodes, 141 executed-RHS cases, and 162 skipped-RHS cases. The longest
+source had 201 lines and no case hit the generator limit. A new depth/platform
+comparison
+[38362629021](https://github.com/Yingqingxue/moonsmith/actions/runs/38362629021)
+also passed on Linux and Windows native-release. This adds an observable
+short-circuit check; it does not establish that a MoonBit compiler defect was
+found.
+
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
 historical, not measurements of the current generator revision. No newly

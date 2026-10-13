@@ -140,8 +140,12 @@ Batch schema 9 retains Choice-returning-function coverage and reports
 short-circuit-disjunction coverage per case. The nightly validator requires
 `||` in at least 20% of the fixed corpus, requires both RHS-executed and
 short-circuited reference paths, and reconciles all three totals against the
-per-case records. Renderers and cross-platform comparison still read schema 7
-and 8 reports.
+per-case records. Generated `||` expressions wrap the RHS in a closure that
+increments a captured mutable counter; the generated program checks for zero
+calls when the LHS is true and one otherwise, panicking if a backend violates
+short-circuit evaluation. This makes incorrect eager execution observable,
+rather than relying only on the final boolean value. Renderers and
+cross-platform comparison still read schema 7 and 8 reports.
 The refreshed schema-8 nightly run passed all 1,000 cases, recording 251 cases
 and 305 generated Choice-returning functions (see the linked evidence).
 When both extended workflow inputs are enabled, CI also downloads and compares
@@ -152,9 +156,11 @@ The nightly Actions workflow scans fixed seeds 14990–15989 on Linux across
 JS/Wasm/Wasm-GC and retains its machine-readable report for 30 days. The latest
 strict-gate run checked 1,000 distinct bodies and 3,000 consistent backend
 executions; 357 sources contained `||`, with reference traces covering RHS
-execution in 141 cases and short-circuit skipping in 162. A separate 230-seed
-depth-4/6/8 sample matched source hashes and outputs between Linux JS/Wasm/Wasm-GC
-and Windows native-release (920 consistent executions). See the
+execution in 141 cases and short-circuit skipping in 162. The captured-counter
+guard passed the JS, Wasm, Wasm-GC, and Windows native-release checks. A
+separate 230-seed depth-4/6/8 sample matched source hashes and outputs between
+Linux JS/Wasm/Wasm-GC and Windows native-release (920 consistent executions).
+See the
 [disjunction evidence](docs/evidence/disjunction_corpus_20261013.md) and
 [Choice-function evidence](docs/evidence/choice_function_corpus_20261013.md).
 The scheduled nightly corpus is Linux-only and does not cover native backends.
