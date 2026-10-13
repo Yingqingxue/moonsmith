@@ -62,6 +62,32 @@ if ($ReductionPath) {
     $minimalSource = Get-Content -LiteralPath $minimalPath -Raw -Encoding utf8
 }
 
+$acceptedHistory = @()
+if ($null -ne $reduction -and $null -ne $reduction.history) {
+    $acceptedHistory = @($reduction.history)
+    if ($acceptedHistory.Count -ne [int]$reduction.acceptedSteps) {
+        throw 'Reduction history count differs from acceptedSteps.'
+    }
+    $previousAttempt = 0
+    $previousComplexity = [int]$reduction.originalComplexity
+    foreach ($step in $acceptedHistory) {
+        $attempt = [int]$step.attempt
+        $complexity = [int]$step.complexity
+        if ($attempt -le $previousAttempt -or $attempt -gt [int]$reduction.attempts -or
+            [int]$step.index -lt 0 -or $complexity -lt 1 -or
+            $complexity -ge $previousComplexity -or
+            $step.finding -ne $reduction.finding) {
+            throw 'Reduction history contains an invalid accepted step.'
+        }
+        $previousAttempt = $attempt
+        $previousComplexity = $complexity
+    }
+    if ($acceptedHistory.Count -gt 0 -and
+        $previousComplexity -ne [int]$reduction.finalComplexity) {
+        throw 'Reduction history does not end at the reported final complexity.'
+    }
+}
+
 $outputPath = Join-Path $caseDirectory 'report.md'
 if ((Test-Path -LiteralPath $outputPath) -and -not $Force) {
     throw "Report already exists: $outputPath. Pass -Force to replace it."
@@ -161,6 +187,19 @@ if ($null -ne $reduction) {
     Add-Line "- Accepted steps / attempts: $($reduction.acceptedSteps) / $($reduction.attempts)"
     Add-Line "- Attempt budget hit: $([bool]$reduction.attemptBudgetHit)"
     Add-Line
+    if ($acceptedHistory.Count -gt 0) {
+        Add-Line '### Accepted steps'
+        Add-Line
+        Add-Line 'Only accepted simplifications are listed; rejected attempts are omitted.'
+        Add-Line
+        Add-Line '| Step | Attempt | Candidate index | Complexity |'
+        Add-Line '|---:|---:|---:|---:|'
+        for ($stepIndex = 0; $stepIndex -lt $acceptedHistory.Count; $stepIndex++) {
+            $step = $acceptedHistory[$stepIndex]
+            Add-Line "| $($stepIndex + 1) | $([int]$step.attempt) | $([int]$step.index) | $([int]$step.complexity) |"
+        }
+        Add-Line
+    }
     Add-Line '### Reduced source'
     Add-Line
     Add-Fence $minimalSource 'moonbit'
@@ -224,7 +263,16 @@ foreach ($run in $finding.runs) {
 $html.Add('</section>')
 $html.Add("<section><h2>Original source</h2><pre><code>$(ConvertTo-HtmlText $source)</code></pre></section>")
 if ($null -ne $reduction) {
-    $html.Add("<section><h2>AST reduction</h2><p>Complexity: $(ConvertTo-HtmlText $reduction.originalComplexity) → $(ConvertTo-HtmlText $reduction.finalComplexity)</p><p>Source bytes: $(ConvertTo-HtmlText $reduction.originalBytes) → $(ConvertTo-HtmlText $reduction.finalBytes)</p><p>Accepted steps / attempts: $(ConvertTo-HtmlText $reduction.acceptedSteps) / $(ConvertTo-HtmlText $reduction.attempts)</p><p>Attempt budget hit: $(ConvertTo-HtmlText ([bool]$reduction.attemptBudgetHit))</p><h3>Reduced source</h3><pre><code>$(ConvertTo-HtmlText $minimalSource)</code></pre></section>")
+    $html.Add("<section><h2>AST reduction</h2><p>Complexity: $(ConvertTo-HtmlText $reduction.originalComplexity) → $(ConvertTo-HtmlText $reduction.finalComplexity)</p><p>Source bytes: $(ConvertTo-HtmlText $reduction.originalBytes) → $(ConvertTo-HtmlText $reduction.finalBytes)</p><p>Accepted steps / attempts: $(ConvertTo-HtmlText $reduction.acceptedSteps) / $(ConvertTo-HtmlText $reduction.attempts)</p><p>Attempt budget hit: $(ConvertTo-HtmlText ([bool]$reduction.attemptBudgetHit))</p>")
+    if ($acceptedHistory.Count -gt 0) {
+        $html.Add('<h3>Accepted steps</h3><p class="muted">Only accepted simplifications are listed; rejected attempts are omitted.</p><table><thead><tr><th>Step</th><th>Attempt</th><th>Candidate index</th><th>Complexity</th></tr></thead><tbody>')
+        for ($stepIndex = 0; $stepIndex -lt $acceptedHistory.Count; $stepIndex++) {
+            $step = $acceptedHistory[$stepIndex]
+            $html.Add("<tr><td>$(ConvertTo-HtmlText ($stepIndex + 1))</td><td>$(ConvertTo-HtmlText ([int]$step.attempt))</td><td>$(ConvertTo-HtmlText ([int]$step.index))</td><td>$(ConvertTo-HtmlText ([int]$step.complexity))</td></tr>")
+        }
+        $html.Add('</tbody></table>')
+    }
+    $html.Add("<h3>Reduced source</h3><pre><code>$(ConvertTo-HtmlText $minimalSource)</code></pre></section>")
 }
 $html.Add('<section><h2>Reproduce</h2><p>From the MoonSmith project root, with the saved case directory present:</p>')
 $html.Add("<pre><code>pwsh -File scripts/moonsmith.ps1 replay -CasePath '$(ConvertTo-HtmlText $caseArgument)'</code></pre>")

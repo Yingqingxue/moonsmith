@@ -80,7 +80,7 @@ directory. A saved injected output mismatch can be replayed with
 To create a Markdown and standalone offline HTML case report, run
 `pwsh -File scripts/moonsmith.ps1 report -CasePath <finding-directory>`.
 Pass `-ReductionPath <reduction-directory>` to include verified reduction
-metrics and minimal source. Both reports include escaped source/output,
+metrics, accepted-step history, and minimal source. Both reports include escaped source/output,
 backend results, evidence classification, and a replay command. Existing
 `report.md` or `report.html` files are kept unless `-Force` is supplied.
 

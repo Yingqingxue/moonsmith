@@ -252,8 +252,11 @@ if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
     $demo.finalComplexity -ge $demo.originalComplexity -or
     -not $demoMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
     -not $demoMarkdown.Contains('## AST reduction') -or
+    -not $demoMarkdown.Contains('### Accepted steps') -or
     -not $demoHtml.Contains('HARNESS-INJECTED DEMONSTRATION') -or
-    -not $demoHtml.Contains('<h2>AST reduction</h2>')) {
+    -not $demoHtml.Contains('<h2>AST reduction</h2>') -or
+    -not $demoHtml.Contains('<h3>Accepted steps</h3>') -or
+    -not $demoHtml.Contains('rejected attempts are omitted')) {
     throw 'demo did not complete detection, reduction, replay, and reporting.'
 }
 

@@ -45,7 +45,10 @@ optionally minimized source, aggregate reduction metrics, and a replay command.
 Saved source and process output are HTML-encoded; the page has no JavaScript or
 external assets. The CLI integration passed locally and on Linux/Windows in
 [CI run 38284749943](https://github.com/Yingqingxue/moonsmith/actions/runs/38284749943).
-This is a static case summary, not a step-by-step reduction-history viewer.
+When reduction data is present, the report now includes a table of accepted
+candidate indices, attempt numbers, and decreasing complexity. Rejected
+attempts and per-step source text are not shown; this remains a static report,
+not an interactive reduction-history viewer.
 
 ## Nightly fixed-seed corpus
 
