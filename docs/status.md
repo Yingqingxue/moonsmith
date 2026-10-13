@@ -157,9 +157,13 @@ The typed expression IR and generator now include boolean `||` alongside
 is skipped, and the AST reducer can simplify either operand while preserving
 the boolean result type. Tests cover both short-circuit paths and reduction
 invariants. Generated seed 353 at depth 4 executes disjunction in its
-reference trace and agrees across JS, Wasm, and Wasm-GC. This is a narrow
-language-coverage improvement, not evidence of a MoonBit compiler defect or
-broad backend branch coverage.
+reference trace and agrees across JS, Wasm, and Wasm-GC. An injected
+wasm-gc-only output mismatch on that seed was reduced in the integration test:
+2 accepted shrink steps in a 10-attempt budget lowered the complexity from
+25,131 to 23,119 while retaining `||`. The attempt budget was reached, so this
+proves the path works but not that the reducer converged to a minimum. This is
+a narrow language-coverage improvement, not evidence of a MoonBit compiler
+defect or broad backend branch coverage.
 
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain

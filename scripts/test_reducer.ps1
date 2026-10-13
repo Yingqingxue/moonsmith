@@ -130,6 +130,26 @@ foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valty
     }
 }
 
+$orRaw = & $reduceScript -Seed 353 -Depth 4 `
+    -Targets @('js', 'wasm', 'wasm-gc') `
+    -InjectOutputMismatchTarget 'wasm-gc' `
+    -InjectOnlyWhenSourceContains ' || ' `
+    -MaxAttempts 10
+$orExitCode = $LASTEXITCODE
+$orResult = $orRaw | ConvertFrom-Json
+if ($orResult.finding -ne 'output-mismatch' -or
+    $orResult.acceptedSteps -lt 1 -or
+    $orResult.finalComplexity -ge $orResult.originalComplexity -or
+    $orResult.injection.sourceTrigger -ne ' || ' -or
+    $orExitCode -ne 1) {
+    throw 'The generated short-circuit disjunction did not retain a reducible injected mismatch.'
+}
+$orMinimalPath = Join-Path $orResult.outputDirectory 'minimal.mbt'
+$orMinimalSource = Get-Content -LiteralPath $orMinimalPath -Raw -Encoding utf8
+if (-not $orMinimalSource.Contains(' || ')) {
+    throw 'The short-circuit disjunction reduction lost its trigger syntax.'
+}
+
 [pscustomobject]@{
     passed             = $true
     originalComplexity = $result.originalComplexity
@@ -152,5 +172,10 @@ foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valty
     combinedAcceptedSteps = $combinedResult.acceptedSteps
     combinedTargets = $combinedResult.targets
     combinedMinimalPath = $combinedMinimalPath
+    disjunctionOriginalComplexity = $orResult.originalComplexity
+    disjunctionFinalComplexity = $orResult.finalComplexity
+    disjunctionAcceptedSteps = $orResult.acceptedSteps
+    disjunctionAttempts = $orResult.attempts
+    disjunctionMinimalPath = $orMinimalPath
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0
