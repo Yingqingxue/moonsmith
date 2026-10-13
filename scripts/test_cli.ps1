@@ -124,13 +124,17 @@ $expectedBothProbeTraceCount = @($batch.cases | Where-Object {
     $_.referencePathKinds -contains 'valtype-raise-probe' -and
     $_.referencePathKinds -contains 'valtype-enum-array-probe'
 }).Count
+$expectedDisjunctionCount = @($batch.cases | Where-Object {
+    $_.sourceConstructCounts -and $_.sourceConstructCounts.or -gt 0
+}).Count
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 8 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 9 -or $batch.casesWithChoiceMatch -lt 1 -or
     $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
     $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
     $batch.casesVisitingBothValtypeProbeKinds -ne $expectedBothProbeTraceCount -or
+    $batch.casesWithOr -ne $expectedDisjunctionCount -or
     $batch.casesWithSourceLineCount -ne $batch.count -or
     $batch.sourceLineCountMaximum -ne $expectedSourceLineMaximum -or
     @($batch.cases | Where-Object { $null -eq $_.sourceLineCount }).Count -ne 0 -or
@@ -141,11 +145,19 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
 
 $choiceFunctionBatch = (& $cli fuzz -SeedStart 14990 -Count 1 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or
-    $choiceFunctionBatch.schemaVersion -ne 8 -or
+    $choiceFunctionBatch.schemaVersion -ne 9 -or
     $choiceFunctionBatch.casesWithChoiceReturningFunction -ne 1 -or
     $choiceFunctionBatch.choiceReturningFunctionCount -lt 1 -or
     $choiceFunctionBatch.cases[0].sourceConstructCounts.functionChoice -lt 1) {
     throw 'fuzz did not report the generated Choice-returning local function.'
+}
+
+$disjunctionBatch = (& $cli fuzz -SeedStart 353 -Count 1 -Depth 4 | ConvertFrom-Json)
+if ($LASTEXITCODE -ne 0 -or
+    $disjunctionBatch.schemaVersion -ne 9 -or
+    $disjunctionBatch.casesWithOr -ne 1 -or
+    $disjunctionBatch.cases[0].sourceConstructCounts.or -lt 1) {
+    throw 'fuzz did not report the generated short-circuit disjunction.'
 }
 
 $generatorLimitRaw = & $cli fuzz -SeedStart 8302 -Count 1 -Depth 11

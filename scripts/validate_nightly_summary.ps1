@@ -7,8 +7,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($Summary.schemaVersion -ne 8) {
-    throw "Nightly corpus validator requires batch schema 8; received '$($Summary.schemaVersion)'."
+if ($Summary.schemaVersion -ne 9) {
+    throw "Nightly corpus validator requires batch schema 9; received '$($Summary.schemaVersion)'."
 }
 if ($Summary.count -ne $ExpectedCount -or
     $Summary.uniqueProgramBodies -ne $ExpectedCount -or
@@ -23,6 +23,7 @@ $requiredCoverage = @(
     'casesWithDirectValtypeRaiseArrayComposition',
     'casesVisitingBothValtypeProbeKinds',
     'casesWithChoiceReturningFunction'
+    'casesWithOr'
 )
 foreach ($name in $requiredCoverage) {
     $property = $Summary.PSObject.Properties[$name]
@@ -41,6 +42,7 @@ if ($null -eq $Summary.cases -or $Summary.cases.Count -ne $ExpectedCount) {
 }
 $observedChoiceFunctionCases = 0
 $observedChoiceFunctionCount = 0
+$observedOrCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -57,12 +59,24 @@ foreach ($case in $Summary.cases) {
         $observedChoiceFunctionCases++
         $observedChoiceFunctionCount += [long]$functionCount.Value
     }
+    $orCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['or']
+    } else {
+        $null
+    }
+    if ($null -eq $orCount -or $null -eq $orCount.Value -or [long]$orCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.or value."
+    }
+    if ([long]$orCount.Value -gt 0) { $observedOrCases++ }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
 }
 if ($observedChoiceFunctionCount -ne [long]$choiceFunctionCount.Value) {
     throw 'Nightly Choice-returning function count does not match per-case source metrics.'
+}
+if ($observedOrCases -ne [long]$Summary.casesWithOr) {
+    throw 'Nightly disjunction case total does not match per-case source metrics.'
 }
 
 $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
@@ -82,6 +96,7 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     valtypeRaiseCases = $Summary.casesWithValtypeRaiseProbe
     choiceReturningFunctionCases = $Summary.casesWithChoiceReturningFunction
     choiceReturningFunctionCount = $choiceFunctionCount.Value
+    disjunctionCases = $Summary.casesWithOr
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

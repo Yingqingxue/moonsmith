@@ -27,6 +27,7 @@ function New-TestReport {
             expectedOutput = $FirstExpectedOutput
             error = '<img src=x onerror=alert(1)>'
             referenceChecked = $true
+            sourceConstructCounts = [ordered]@{ functionChoice = 1; or = 1 }
         },
         [ordered]@{
             seed = $SeedStart + 1
@@ -36,10 +37,11 @@ function New-TestReport {
             expectedOutput = "43`n"
             error = ''
             referenceChecked = $true
+            sourceConstructCounts = [ordered]@{ functionChoice = 0; or = 0 }
         }
     )
     [ordered]@{
-        schemaVersion = 8
+        schemaVersion = 9
         seedStart = $SeedStart
         count = 2
         depth = 4
@@ -61,6 +63,7 @@ function New-TestReport {
         casesWithDirectValtypeRaiseArrayComposition = 1
         casesWithChoiceReturningFunction = 1
         choiceReturningFunctionCount = 1
+        casesWithOr = 1
         casesVisitingBothValtypeProbeKinds = 1
         referencePathCaseCounts = [ordered]@{
             'valtype-raise-probe' = 1
@@ -137,8 +140,14 @@ try {
     $windowsReport.schemaVersion = 7
     $linuxReport.Remove('casesWithChoiceReturningFunction')
     $linuxReport.Remove('choiceReturningFunctionCount')
+    $linuxReport.Remove('casesWithOr')
     $windowsReport.Remove('casesWithChoiceReturningFunction')
     $windowsReport.Remove('choiceReturningFunctionCount')
+    $windowsReport.Remove('casesWithOr')
+    foreach ($case in @($linuxReport.cases) + @($windowsReport.cases)) {
+        $case.sourceConstructCounts.Remove('functionChoice')
+        $case.sourceConstructCounts.Remove('or')
+    }
     $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
     $legacyComparison = (& $scriptPath -LinuxReportDirectory $linuxDirectory `
@@ -152,6 +161,26 @@ try {
     $linuxReport.choiceReturningFunctionCount = 1
     $windowsReport.casesWithChoiceReturningFunction = 1
     $windowsReport.choiceReturningFunctionCount = 1
+    $linuxReport.cases[0].sourceConstructCounts.functionChoice = 1
+    $linuxReport.cases[1].sourceConstructCounts.functionChoice = 0
+    $windowsReport.cases[0].sourceConstructCounts.functionChoice = 1
+    $windowsReport.cases[1].sourceConstructCounts.functionChoice = 0
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+
+    $schemaEightComparison = (& $scriptPath -LinuxReportDirectory $linuxDirectory `
+        -WindowsReportDirectory $windowsDirectory | ConvertFrom-Json)
+    if ($schemaEightComparison.seedsCompared -ne 2) {
+        throw 'schema-8 paired reports were not accepted by the cross-platform comparer.'
+    }
+    $linuxReport.schemaVersion = 9
+    $windowsReport.schemaVersion = 9
+    $linuxReport.casesWithOr = 1
+    $windowsReport.casesWithOr = 1
+    $linuxReport.cases[0].sourceConstructCounts.or = 1
+    $windowsReport.cases[0].sourceConstructCounts.or = 1
+    $linuxReport.cases[1].sourceConstructCounts.or = 0
+    $windowsReport.cases[1].sourceConstructCounts.or = 0
     $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
 
@@ -164,7 +193,7 @@ try {
     if ($batchReport.count -ne 2 -or
         $batchReport.htmlReportPath -ne $customBatchHtmlPath -or
         -not (Test-Path -LiteralPath $customBatchHtmlPath -PathType Leaf) -or
-        $batchHtmlRows -ne 16 -or
+        $batchHtmlRows -ne 17 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
         -not $batchHtml.Contains('Generator and reference coverage') -or
@@ -172,6 +201,7 @@ try {
         -not $batchHtml.Contains('Reference trace coverage') -or
         -not $batchHtml.Contains('casesWithValtypeRaiseProbe') -or
         -not $batchHtml.Contains('casesWithChoiceReturningFunction') -or
+        -not $batchHtml.Contains('casesWithOr') -or
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
@@ -183,7 +213,7 @@ try {
     }
 
     $nightlySummary = [pscustomobject]@{
-        schemaVersion = 8
+        schemaVersion = 9
         count = 2
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
@@ -194,14 +224,15 @@ try {
         casesVisitingBothValtypeProbeKinds = 1
         casesWithChoiceReturningFunction = 1
         choiceReturningFunctionCount = 1
+        casesWithOr = 1
         cases = @(
             [pscustomobject]@{
                 seed = 1
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1 }
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; or = 1 }
             }
             [pscustomobject]@{
                 seed = 2
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0 }
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
             }
         )
         referencePathCaseCounts = [pscustomobject]@{
@@ -217,14 +248,14 @@ try {
         $coverageValidation.raiseErrorPathCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
     }
-    $nightlySummary.schemaVersion = 7
+    $nightlySummary.schemaVersion = 8
     $legacyNightlySummaryRejected = $false
     try {
         $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
             -Summary $nightlySummary -ExpectedCount 2
     }
     catch {
-        if ($_.Exception.Message -notmatch 'requires batch schema 8') {
+        if ($_.Exception.Message -notmatch 'requires batch schema 9') {
             throw "nightly schema gate rejected the legacy fixture for the wrong reason: $($_.Exception.Message)"
         }
         $legacyNightlySummaryRejected = $true
@@ -232,7 +263,7 @@ try {
     if (-not $legacyNightlySummaryRejected) {
         throw 'nightly validator accepted a schema-7 batch summary.'
     }
-    $nightlySummary.schemaVersion = 8
+    $nightlySummary.schemaVersion = 9
     $nightlySummary.casesVisitingBothValtypeProbeKinds = 0
     $nightlyCoverageRejected = $false
     try {
@@ -314,6 +345,40 @@ try {
         throw 'nightly coverage gate accepted a report with no counted Choice-returning functions.'
     }
 
+    $nightlySummary.choiceReturningFunctionCount = 1
+    $nightlySummary.cases[1].sourceConstructCounts.or = -1
+    $invalidOrCountRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'valid sourceConstructCounts.or') {
+            throw "nightly disjunction validation rejected a negative count for the wrong reason: $($_.Exception.Message)"
+        }
+        $invalidOrCountRejected = $true
+    }
+    if (-not $invalidOrCountRejected) {
+        throw 'nightly coverage gate accepted a negative per-case disjunction count.'
+    }
+    $nightlySummary.cases[1].sourceConstructCounts.or = 0
+    $nightlySummary.cases[0].sourceConstructCounts.or = 0
+    $orCoverageMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'disjunction case total does not match') {
+            throw "nightly disjunction reconciliation rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $orCoverageMismatchRejected = $true
+    }
+    if (-not $orCoverageMismatchRejected) {
+        throw 'nightly coverage gate accepted an inconsistent disjunction case total.'
+    }
+    $nightlySummary.cases[0].sourceConstructCounts.or = 1
+
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
     $legacyReport = [ordered]@{}
@@ -321,7 +386,8 @@ try {
         if ($property -notin @(
                 'failureClusters',
                 'casesWithChoiceReturningFunction',
-                'choiceReturningFunctionCount'
+                'choiceReturningFunctionCount',
+                'casesWithOr'
             )) {
             $legacyReport[$property] = $linuxReport[$property]
         }
@@ -330,6 +396,7 @@ try {
     foreach ($case in $legacyReport.cases) {
         if ($null -ne $case.sourceConstructCounts) {
             $case.sourceConstructCounts.Remove('functionChoice')
+            $case.sourceConstructCounts.Remove('or')
         }
     }
     $legacyReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $legacyReportPath -Encoding utf8

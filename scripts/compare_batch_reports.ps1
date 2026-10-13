@@ -40,7 +40,7 @@ function Read-BatchReportSet {
 
     foreach ($file in $files) {
         $report = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
-        if ($report.schemaVersion -notin @(7, 8)) {
+        if ($report.schemaVersion -notin @(7, 8, 9)) {
             throw "$Label report '$($file.Name)' has unsupported schemaVersion '$($report.schemaVersion)'."
         }
         if ($report.count -lt 1 -or $report.seedStart -lt 0) {

@@ -136,9 +136,9 @@ predate this change. A fresh same-toolchain, same-seed comparison now covers the
 Choice-returning extension: 1,000 bodies, with 251 changed source hashes and
 305 additional local-function nodes. See
 [the updated generator evidence](docs/evidence/choice_function_corpus_20261013.md).
-Batch schema 8 now reports Choice-returning-function coverage explicitly, and
-the nightly validator requires nonzero case and function counts so a corpus
-cannot pass while omitting this new generator branch.
+Batch schema 9 retains Choice-returning-function coverage and now reports
+short-circuit-disjunction coverage explicitly; the nightly validator reconciles
+both per-case metrics and requires the new operator to appear in the corpus.
 The refreshed schema-8 nightly run passed all 1,000 cases, recording 251 cases
 and 305 generated Choice-returning functions (see the linked evidence).
 When both extended workflow inputs are enabled, CI also downloads and compares

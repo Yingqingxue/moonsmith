@@ -109,6 +109,7 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 if    = [regex]::Matches($body, '\bif\s').Count
                 subtract = [regex]::Matches($body, '\s-\s').Count
                 and = [regex]::Matches($body, '\s&&\s').Count
+                or = [regex]::Matches($body, '\s\|\|\s').Count
                 array = [regex]::Matches($body, '\blet items = \[').Count
                 arrayIndex0 = [regex]::Matches($body, '\bitems\[0\]').Count
                 arrayIndex1 = [regex]::Matches($body, '\bitems\[1\]').Count
@@ -201,6 +202,7 @@ $casesWithMatch = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sou
 $casesWithIf = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.if -gt 0 }).Count
 $casesWithSubtract = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.subtract -gt 0 }).Count
 $casesWithAnd = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.and -gt 0 }).Count
+$casesWithOr = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.or -gt 0 }).Count
 $casesWithArray = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.array -gt 0 }).Count
 $casesWithArrayIndex0 = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayIndex0 -gt 0 }).Count
 $casesWithArrayIndex1 = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayIndex1 -gt 0 }).Count
@@ -241,7 +243,7 @@ $casesVisitingBothValtypeProbeKinds = @(
 ).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 8
+    schemaVersion           = 9
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
@@ -265,6 +267,7 @@ $summary = [pscustomobject]@{
     casesWithIf             = $casesWithIf
     casesWithSubtract       = $casesWithSubtract
     casesWithAnd            = $casesWithAnd
+    casesWithOr             = $casesWithOr
     casesWithArray          = $casesWithArray
     casesWithArrayIndex0    = $casesWithArrayIndex0
     casesWithArrayIndex1    = $casesWithArrayIndex1

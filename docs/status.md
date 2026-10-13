@@ -165,6 +165,13 @@ proves the path works but not that the reducer converged to a minimum. This is
 a narrow language-coverage improvement, not evidence of a MoonBit compiler
 defect or broad backend branch coverage.
 
+Batch-report schema 9 adds a per-case `or` source count and aggregate
+`casesWithOr`; the nightly gate requires a nonzero count and reconciles it
+against each case to prevent misleading summaries. Renderers and cross-platform
+comparison preserve schema-7/8 compatibility. Local integration fixtures cover
+both legacy formats and an aggregate/per-case mismatch; a full refreshed
+schema-9 nightly is pending remote verification.
+
 The composed `#valtype`/raise + enum-array probe and its end-to-end evidence
 are documented below; those scans predate the push-pattern change and remain
 historical, not measurements of the current generator revision. No newly
