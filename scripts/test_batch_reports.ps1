@@ -246,15 +246,17 @@ try {
         choiceReturningFunctionCount = 1
         casesWithAnd = 1
         casesWithOr = 1
+        casesWithWhileLoop = 1
+        casesWithWhileIteration = 1
         cases = @(
             [pscustomobject]@{
                 seed = 1
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1 }
-                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed')
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1 }
+                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration')
             }
             [pscustomobject]@{
                 seed = 2
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
                 referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped')
             }
         )
@@ -265,6 +267,7 @@ try {
             'or-rhs-skipped' = 1
             'and-rhs-executed' = 1
             'and-rhs-skipped' = 1
+            'while-iteration' = 1
         }
     }
     $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
@@ -272,8 +275,30 @@ try {
     if (-not $coverageValidation.valid -or
         $coverageValidation.bothProbeTraceCases -ne 1 -or
         $coverageValidation.choiceReturningFunctionCases -ne 1 -or
-        $coverageValidation.raiseErrorPathCases -ne 1) {
+        $coverageValidation.raiseErrorPathCases -ne 1 -or
+        $coverageValidation.whileLoopCases -ne 1 -or
+        $coverageValidation.whileIterationCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
+    }
+    $badWhileSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $badWhileSource.cases[0].sourceConstructCounts.whileLoop = 0
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $badWhileSource -ExpectedCount 2
+        throw 'nightly gate accepted inconsistent while-loop source coverage.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'while-loop case total does not match') { throw }
+    }
+    $badWhileTrace = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $badWhileTrace.casesWithWhileIteration = 0
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $badWhileTrace -ExpectedCount 2
+        throw 'nightly gate accepted missing while-iteration coverage.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "casesWithWhileIteration") { throw }
     }
     $nightlySummary.schemaVersion = 8
     $legacyNightlySummaryRejected = $false
@@ -431,7 +456,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
             referencePathKinds = @()
         }
     }
@@ -460,7 +485,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowAndCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
             referencePathKinds = @()
         }
     }

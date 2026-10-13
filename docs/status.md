@@ -2,6 +2,10 @@
 
 Last updated: 2026-10-13
 
+## Bounded `while` validation
+
+The new bounded `while` form is covered by a [1,000-seed fixed-corpus run](evidence/while_coverage_20261013.md), targeted three-backend differential checks, and a trigger-preserving reducer integration test. The nightly validator now requires nonzero generated `while` syntax and executed reference-iteration paths, with exact per-case reconciliation. These checks establish this bounded slice on the tested toolchain and backends, not arbitrary `while` semantics or compiler-wide correctness.
+
 ## Observable conjunction short-circuiting
 
 Generated `&&` expressions now use the same captured-counter guard as `||`:

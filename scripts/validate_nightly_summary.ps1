@@ -24,7 +24,9 @@ $requiredCoverage = @(
     'casesVisitingBothValtypeProbeKinds',
     'casesWithChoiceReturningFunction',
     'casesWithOr',
-    'casesWithAnd'
+    'casesWithAnd',
+    'casesWithWhileLoop',
+    'casesWithWhileIteration'
 )
 foreach ($name in $requiredCoverage) {
     $property = $Summary.PSObject.Properties[$name]
@@ -49,6 +51,8 @@ $observedOrRhsExecutedCases = 0
 $observedOrRhsSkippedCases = 0
 $observedAndRhsExecutedCases = 0
 $observedAndRhsSkippedCases = 0
+$observedWhileLoopCases = 0
+$observedWhileIterationCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -85,6 +89,16 @@ foreach ($case in $Summary.cases) {
     }
     if ([long]$andCount.Value -gt 0) { $observedAndCases++ }
 
+    $whileCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['whileLoop']
+    } else {
+        $null
+    }
+    if ($null -eq $whileCount -or $null -eq $whileCount.Value -or [long]$whileCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.whileLoop value."
+    }
+    if ([long]$whileCount.Value -gt 0) { $observedWhileLoopCases++ }
+
     $pathKinds = $case.PSObject.Properties['referencePathKinds']
     if ($null -eq $pathKinds -or $null -eq $pathKinds.Value) {
         throw "Nightly case '$($case.seed)' is missing referencePathKinds."
@@ -94,6 +108,7 @@ foreach ($case in $Summary.cases) {
     if ($casePathKinds -contains 'or-rhs-skipped') { $observedOrRhsSkippedCases++ }
     if ($casePathKinds -contains 'and-rhs-executed') { $observedAndRhsExecutedCases++ }
     if ($casePathKinds -contains 'and-rhs-skipped') { $observedAndRhsSkippedCases++ }
+    if ($casePathKinds -contains 'while-iteration') { $observedWhileIterationCases++ }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
@@ -106,6 +121,12 @@ if ($observedOrCases -ne [long]$Summary.casesWithOr) {
 }
 if ($observedAndCases -ne [long]$Summary.casesWithAnd) {
     throw 'Nightly conjunction case total does not match per-case source metrics.'
+}
+if ($observedWhileLoopCases -ne [long]$Summary.casesWithWhileLoop) {
+    throw 'Nightly while-loop case total does not match per-case source metrics.'
+}
+if ($observedWhileIterationCases -ne [long]$Summary.casesWithWhileIteration) {
+    throw 'Nightly while-iteration case total does not match per-case reference paths.'
 }
 $minimumOrCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
 if ($observedOrCases -lt $minimumOrCases) {
@@ -124,7 +145,8 @@ foreach ($pathCheck in @(
         @{ name = 'or-rhs-executed'; observed = $observedOrRhsExecutedCases },
         @{ name = 'or-rhs-skipped'; observed = $observedOrRhsSkippedCases },
         @{ name = 'and-rhs-executed'; observed = $observedAndRhsExecutedCases },
-        @{ name = 'and-rhs-skipped'; observed = $observedAndRhsSkippedCases }
+        @{ name = 'and-rhs-skipped'; observed = $observedAndRhsSkippedCases },
+        @{ name = 'while-iteration'; observed = $observedWhileIterationCases }
     )) {
     $property = $referencePathProperty.Value.PSObject.Properties[$pathCheck.name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
@@ -155,6 +177,8 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     minimumConjunctionCases = $minimumAndCases
     conjunctionRhsExecutedCases = $observedAndRhsExecutedCases
     conjunctionRhsSkippedCases = $observedAndRhsSkippedCases
+    whileLoopCases = $observedWhileLoopCases
+    whileIterationCases = $observedWhileIterationCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

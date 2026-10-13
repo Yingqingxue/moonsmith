@@ -1,0 +1,7 @@
+# Bounded `while` coverage evidence (2026-10-13)
+
+The manually dispatched [nightly corpus run 38394889136](https://github.com/Yingqingxue/moonsmith/actions/runs/38394889136) passed on commit `b567131` with MoonBit `0.1.20261012 (748b63c 2026-10-12)`. Its retained artifact contains the JSON batch and offline HTML report. This was a fixed-seed scan of seeds 14990–15989 at depth 4 on Linux, using JS, Wasm, and Wasm-GC; it was not a native-backend scan.
+
+The report records 1,000 distinct program bodies, 1,000 reference-interpreter checks, 3,000 backend executions, no unexpected findings, no generator limits, and no harness change. Generated source contained a bounded `while` in 643 cases and a bounded `for` in 429 cases; both forms may occur in one case. The reference interpreter entered a `while` body in 532 cases and a `for` body in 331 cases. These are per-case counts, not the number of loop iterations or backend-internal coverage.
+
+The downloaded report was independently checked against its per-case records: 643 cases had `sourceConstructCounts.whileLoop > 0`, and 532 cases had a `while-iteration` reference path. The nightly validator now requires nonzero `while` syntax and iteration coverage and reconciles both totals with per-case data. A separate injected-fault integration test confirms that AST reduction can simplify a generated `while` case while preserving its trigger syntax and mismatch. The injected mismatch is a harness demonstration, not a MoonBit compiler defect.
