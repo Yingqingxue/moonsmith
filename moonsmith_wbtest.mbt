@@ -49,6 +49,30 @@ test "array growth samples both selected indices" {
 }
 
 ///|
+test "array alias updates sample both selected indices" {
+  let mut first_index = 0
+  let mut second_index = 0
+  for seed = 1; seed <= 1000; seed = seed + 1 {
+    match
+      generate_array_select(
+        IntType,
+        IntLiteral(1),
+        IntLiteral(2),
+        false,
+        seed,
+        1,
+      ) {
+      ArrayAliasUpdateSelect(_, _, _, _, false) => first_index = first_index + 1
+      ArrayAliasUpdateSelect(_, _, _, _, true) =>
+        second_index = second_index + 1
+      _ => ()
+    }
+  }
+  assert_true(first_index >= 50)
+  assert_true(second_index >= 50)
+}
+
+///|
 test "leaf values stay in their intended small domain" {
   for seed = -1000; seed < 1000; seed = seed + 1 {
     match int_leaf(seed) {

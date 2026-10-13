@@ -151,12 +151,14 @@ fn generate_array_select(
     let growth_select_second = advance_seed(child_seed(seed, 65)) % 5 < 2
     ArrayGrowSelect(result_type, first, second, growth_select_second)
   } else if array_mode == 1 {
+    // Keep alias index selection independent of the array-mode branch.
+    let alias_select_second = advance_seed(child_seed(seed, 67)) % 5 < 2
     ArrayAliasUpdateSelect(
       result_type,
       first,
       second,
       generate_expr(child_seed(seed, 66), result_type, depth - 1),
-      select_second,
+      alias_select_second,
     )
   } else {
     ArraySelect(result_type, first, second, select_second)

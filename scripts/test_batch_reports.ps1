@@ -292,6 +292,30 @@ try {
         $coverageValidation.arrayAliasUpdateSecondIndexCases -ne 1) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
     }
+    $skewedAliasSummary = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $skewedAliasSummary.count = 4
+    $skewedAliasSummary.uniqueProgramBodies = 4
+    $skewedAliasSummary.referenceCheckedCount = 4
+    $skewedAliasSummary.casesWithArrayAliasUpdate = 4
+    $skewedAliasSummary.referencePathCaseCounts.'array-alias-update-index-0' = 3
+    foreach ($seed in @(3, 4)) {
+        $skewedAliasSummary.cases += [pscustomobject]@{
+            seed = $seed
+            sourceConstructCounts = [pscustomobject]@{
+                functionChoice = 0; and = 0; or = 0; whileLoop = 0
+                arrayGrow = 0; arrayAliasUpdate = 1
+            }
+            referencePathKinds = @('array-alias-update-index-0')
+        }
+    }
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $skewedAliasSummary -ExpectedCount 4
+        throw 'nightly gate accepted skewed array-alias-update index coverage.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'array-alias-update index balance') { throw }
+    }
     $badArrayAliasSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
     $badArrayAliasSource.casesWithArrayAliasUpdate = 1
     try {

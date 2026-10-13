@@ -214,10 +214,13 @@ if (-not (Test-Path -LiteralPath $aliasMinimalPath -PathType Leaf)) {
     throw 'The array-alias-update reduction did not save minimal source.'
 }
 $aliasMinimalSource = Get-Content -LiteralPath $aliasMinimalPath -Raw -Encoding utf8
-foreach ($trigger in @('let _ms_alias = items', '_ms_alias[1] = replacement', 'items[1] == replacement')) {
-    if (-not $aliasMinimalSource.Contains($trigger)) {
-        throw "The array-alias-update reduction lost trigger fragment: $trigger"
-    }
+if (-not $aliasMinimalSource.Contains('let _ms_alias = items')) {
+    throw 'The array-alias-update reduction lost the alias binding.'
+}
+$aliasAssignment = [regex]::Match($aliasMinimalSource, '_ms_alias\[([01])\] = replacement')
+if (-not $aliasAssignment.Success -or
+    -not $aliasMinimalSource.Contains("items[$($aliasAssignment.Groups[1].Value)] == replacement")) {
+    throw 'The array-alias-update reduction lost the observable write/read pair.'
 }
 
 [pscustomobject]@{

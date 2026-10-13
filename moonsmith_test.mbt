@@ -246,6 +246,8 @@ test "generated corpus executes both grown-array indices" {
   // A nonzero check missed the near-total index-1 starvation in this corpus.
   assert_true(first_index_cases >= 20)
   assert_true(second_index_cases >= 20)
+  assert_true(first_index_cases * 2 >= second_index_cases)
+  assert_true(second_index_cases * 2 >= first_index_cases)
 }
 
 ///|
@@ -263,6 +265,8 @@ test "generated corpus executes both array alias update indices" {
   }
   assert_true(first_index_cases >= 20)
   assert_true(second_index_cases >= 20)
+  assert_true(first_index_cases * 2 >= second_index_cases)
+  assert_true(second_index_cases * 2 >= first_index_cases)
 }
 
 ///|

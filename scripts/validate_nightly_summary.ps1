@@ -217,6 +217,10 @@ if ($observedArrayAliasUpdateFirstIndexCases -lt $minimumArrayAliasUpdateIndexCa
     $observedArrayAliasUpdateSecondIndexCases -lt $minimumArrayAliasUpdateIndexCases) {
     throw "Nightly array-alias-update index coverage is below $minimumArrayAliasUpdateIndexCases cases per index (2% of the corpus)."
 }
+if ($observedArrayAliasUpdateFirstIndexCases * 2 -lt $observedArrayAliasUpdateSecondIndexCases -or
+    $observedArrayAliasUpdateSecondIndexCases * 2 -lt $observedArrayAliasUpdateFirstIndexCases) {
+    throw 'Nightly array-alias-update index balance is worse than 1:2.'
+}
 foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     $property = $referencePathProperty.Value.PSObject.Properties[$name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
