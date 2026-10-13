@@ -25,6 +25,12 @@ pwsh -File scripts/moonsmith.ps1 doctor
 pwsh -File scripts/moonsmith.ps1 fuzz -SeedStart 0 -Count 100 -Depth 4
 ```
 
+For a one-command tour of detection, AST reduction, replay, and report
+generation, run `pwsh -File scripts/moonsmith.ps1 demo`. It injects a labelled
+output mismatch into one backend and prints paths to the saved Markdown and
+offline HTML reports. The result demonstrates MoonSmith's workflow; it is not
+a MoonBit compiler defect.
+
 To include the optional `native` target, pass
 `-Targets @('js','wasm','wasm-gc','native')`; native requires a compatible
 system C toolchain. If it is missing, the runner reports an environment

@@ -53,6 +53,12 @@ results:
 pwsh -File scripts/verify_seed.ps1 -Seed 42 -Depth 4
 ```
 
+For a complete, repeatable tour, run
+`pwsh -File scripts/moonsmith.ps1 demo`. It detects an explicitly injected
+output mismatch, reduces the generated program, replays the case, and writes
+Markdown and offline HTML reports. The injected result is labelled as a
+demonstration, not a MoonBit compiler defect.
+
 With a C toolchain, include both native configurations explicitly:
 
 ```powershell

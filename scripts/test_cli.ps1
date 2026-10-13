@@ -229,6 +229,20 @@ if (-not $reportHtml.StartsWith('<!doctype html>') -or
     throw 'report did not render a standalone, escaped HTML case page.'
 }
 
+$demo = (& $cli demo | ConvertFrom-Json)
+$demoMarkdown = Get-Content -LiteralPath $demo.reportPath -Raw
+$demoHtml = Get-Content -LiteralPath $demo.htmlReportPath -Raw
+if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
+    $demo.finding -ne 'output-mismatch' -or -not $demo.replayReproduced -or
+    $demo.acceptedSteps -lt 1 -or
+    $demo.finalComplexity -ge $demo.originalComplexity -or
+    -not $demoMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
+    -not $demoMarkdown.Contains('## AST reduction') -or
+    -not $demoHtml.Contains('HARNESS-INJECTED DEMONSTRATION') -or
+    -not $demoHtml.Contains('<h2>AST reduction</h2>')) {
+    throw 'demo did not complete detection, reduction, replay, and reporting.'
+}
+
 [pscustomobject]@{
     passed = $true
     doctorReady = $doctor.ready
@@ -245,4 +259,5 @@ if (-not $reportHtml.StartsWith('<!doctype html>') -or
     replayFinding = $replay.replayFinding
     seedRangeOverflowRejected = $seedRangeRejected
     reportPaths = @($rendered.reportPath, $rendered.htmlReportPath)
+    demoReportPath = $demo.htmlReportPath
 } | ConvertTo-Json -Depth 3

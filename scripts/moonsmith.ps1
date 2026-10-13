@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('doctor', 'fuzz', 'replay', 'reduce', 'report', 'batch-report', 'help')]
+    [ValidateSet('doctor', 'demo', 'fuzz', 'replay', 'reduce', 'report', 'batch-report', 'help')]
     [string]$Command = 'help',
 
     [int]$Seed = 42,
@@ -40,6 +40,7 @@ switch ($Command) {
         @'
 MoonSmith commands:
   doctor                         Check MoonBit and execute a small backend probe.
+  demo                           Run an explicitly injected end-to-end example.
   fuzz   -SeedStart N -Count N    Run a deterministic seed range.
   replay -CasePath PATH           Replay a saved finding directory or report.json.
   reduce -Seed N -Depth N         Reduce a reproducible generated finding.
@@ -78,6 +79,11 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
             finding = $probe.finding
         } | ConvertTo-Json -Depth 5
         if (-not $ready) { exit 1 }
+        exit 0
+    }
+    'demo' {
+        & (Join-Path $PSScriptRoot 'demo.ps1')
+        if ($LASTEXITCODE -ne 0) { exit 1 }
         exit 0
     }
     'fuzz' {
