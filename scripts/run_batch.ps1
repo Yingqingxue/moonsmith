@@ -111,6 +111,7 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
                 and = [regex]::Matches($body, '\s&&\s').Count
                 or = [regex]::Matches($body, '\s\|\|\s').Count
                 array = [regex]::Matches($body, '\blet items = \[').Count
+                arrayGrow = [regex]::Matches($body, '\blet grown_items : Array\[(?:Int|Bool)\] = \[\]').Count
                 arrayIndex0 = [regex]::Matches($body, '\bitems\[0\]').Count
                 arrayIndex1 = [regex]::Matches($body, '\bitems\[1\]').Count
                 function = [regex]::Matches($body, '\blet transform = fn\(').Count
@@ -205,6 +206,7 @@ $casesWithSubtract = @($cases | Where-Object { $_.sourceConstructCounts -and $_.
 $casesWithAnd = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.and -gt 0 }).Count
 $casesWithOr = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.or -gt 0 }).Count
 $casesWithArray = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.array -gt 0 }).Count
+$casesWithArrayGrow = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayGrow -gt 0 }).Count
 $casesWithArrayIndex0 = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayIndex0 -gt 0 }).Count
 $casesWithArrayIndex1 = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.arrayIndex1 -gt 0 }).Count
 $casesWithFunction = @($cases | Where-Object { $_.sourceConstructCounts -and $_.sourceConstructCounts.function -gt 0 }).Count
@@ -272,6 +274,7 @@ $summary = [pscustomobject]@{
     casesWithAnd            = $casesWithAnd
     casesWithOr             = $casesWithOr
     casesWithArray          = $casesWithArray
+    casesWithArrayGrow      = $casesWithArrayGrow
     casesWithArrayIndex0    = $casesWithArrayIndex0
     casesWithArrayIndex1    = $casesWithArrayIndex1
     casesWithFunction       = $casesWithFunction

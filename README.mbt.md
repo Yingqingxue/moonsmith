@@ -8,7 +8,7 @@ Current maintainer: [Yingqingxue](https://github.com/Yingqingxue).
 The current typed vertical slice provides:
 
 - a small typed expression IR for arithmetic, arrays, structs, enums, local
-  functions, and bounded `for` and `while` loops;
+  functions, bounded primitive-array growth, and bounded `for` and `while` loops;
 - a dedicated `#valtype`/`raise`/`try?` probe for one historical trigger shape;
 - matching source generation, reference evaluation, differential execution,
   and trigger-preserving AST shrinking for that probe;

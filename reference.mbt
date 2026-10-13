@@ -96,6 +96,21 @@ fn Expr::evaluate_in_env(
         first_value
       }
     }
+    ArrayGrowSelect(_, first, second, select_second) => {
+      trace.push("array-grow")
+      let values : Array[EvaluatedValue] = []
+      values.push(first.evaluate_in_env(bindings, trace))
+      trace.push("array-grow-push")
+      values.push(second.evaluate_in_env(bindings, trace))
+      trace.push("array-grow-push")
+      if select_second {
+        trace.push("array-grow-index-1")
+        values[1]
+      } else {
+        trace.push("array-grow-index-0")
+        values[0]
+      }
+    }
     StructSelect(result_type, number, flag) => {
       trace.push("struct-value")
       let number_value = number.evaluate_in_env(bindings, trace)

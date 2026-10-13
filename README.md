@@ -98,8 +98,11 @@ Run the corresponding integration check with
 The generator supports a small total expression language: integers, booleans,
 addition, subtraction, comparisons, short-circuit conjunction and disjunction,
 negation, conditional expressions, boolean and tagged-enum pattern matching,
-scoped `let` bindings, two-element arrays with safe constant indexing, two-field
+scoped `let` bindings, two-element arrays with safe constant indexing, bounded
+empty-array growth by two pushes, two-field
 structs, and typed local function application with captured outer bindings.
+Array growth currently handles `Int` and `Bool` elements only; it does not
+generate arbitrary indices, removals, or aliasing.
 Generated tagged-enum matches can also receive `Choice` values returned by a
 typed local function, exercising payload typing through generation, printing,
 reference evaluation, and reduction.

@@ -24,6 +24,7 @@ pub(all) enum Expr {
   MatchBool(ValueType, Expr, Expr, Expr)
   Let(ValueType, String, Expr, Expr)
   ArraySelect(ValueType, Expr, Expr, Bool)
+  ArrayGrowSelect(ValueType, Expr, Expr, Bool)
   StructSelect(ValueType, Expr, Expr)
   ChoiceValue(ValueType, Expr)
   MatchChoice(ValueType, Expr, String, Expr, String, Expr)
@@ -128,6 +129,23 @@ fn generate_bounded_loop(seed : Int, depth : Int) -> Expr {
         ForLoop(iterations, initial, body)
       }
     _ => abort("bounded-loop generator returned a non-loop expression")
+  }
+}
+
+///|
+/// Sample empty-array growth without changing the type or bounds of the
+/// existing two-element array selection expression.
+fn generate_array_select(
+  result_type : ValueType,
+  first : Expr,
+  second : Expr,
+  select_second : Bool,
+  seed : Int,
+) -> Expr {
+  if advance_seed(child_seed(seed, 64)) % 4 == 0 {
+    ArrayGrowSelect(result_type, first, second, select_second)
+  } else {
+    ArraySelect(result_type, first, second, select_second)
   }
 }
 
@@ -241,11 +259,12 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
             )
           }
           6 =>
-            ArraySelect(
+            generate_array_select(
               IntType,
               generate_expr(child_seed(seed, 27), IntType, depth - 1),
               generate_expr(child_seed(seed, 28), IntType, depth - 1),
               advance_seed(child_seed(seed, 31)) % 2 == 0,
+              seed,
             )
           7 =>
             StructSelect(
@@ -336,11 +355,12 @@ pub fn generate_expr(seed : Int, expected : ValueType, depth : Int) -> Expr {
             )
           }
           6 =>
-            ArraySelect(
+            generate_array_select(
               BoolType,
               generate_expr(child_seed(seed, 29), BoolType, depth - 1),
               generate_expr(child_seed(seed, 30), BoolType, depth - 1),
               advance_seed(child_seed(seed, 32)) % 2 == 0,
+              seed,
             )
           7 =>
             StructSelect(
@@ -427,7 +447,8 @@ pub fn Expr::value_type(self : Expr) -> ValueType {
     If(result_type, _, _, _) | MatchBool(result_type, _, _, _) => result_type
     Variable(value_type, _) => value_type
     Let(_, _, _, body) => body.value_type()
-    ArraySelect(result_type, _, _, _) => result_type
+    ArraySelect(result_type, _, _, _) | ArrayGrowSelect(result_type, _, _, _) =>
+      result_type
     StructSelect(result_type, _, _) => result_type
     ChoiceValue(_, _) => ChoiceType
     MatchChoice(result_type, _, _, _, _, _) => result_type
@@ -459,7 +480,7 @@ fn Expr::contains_struct(self : Expr) -> Bool {
       yes.contains_struct() ||
       no.contains_struct()
     Let(_, _, value, body) => value.contains_struct() || body.contains_struct()
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_struct() || second.contains_struct()
     FunctionApply(_, _, argument, body) =>
       argument.contains_struct() || body.contains_struct()
@@ -487,7 +508,7 @@ fn Expr::contains_choice(self : Expr) -> Bool {
       yes.contains_choice() ||
       no.contains_choice()
     Let(_, _, value, body) => value.contains_choice() || body.contains_choice()
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_choice() || second.contains_choice()
     StructSelect(_, number, flag) =>
       number.contains_choice() || flag.contains_choice()
@@ -558,6 +579,22 @@ pub fn Expr::to_source(self : Expr) -> String {
       "]\n    items[" +
       (if select_second { "1" } else { "0" }) +
       "]\n  })"
+    ArrayGrowSelect(result_type, first, second, select_second) => {
+      let element_type = match result_type {
+        IntType => "Int"
+        BoolType => "Bool"
+        ChoiceType => abort("Choice cannot be an array-growth result type")
+      }
+      "({\n    let grown_items : Array[" +
+      element_type +
+      "] = []\n    grown_items.push(" +
+      first.to_source() +
+      ")\n    grown_items.push(" +
+      second.to_source() +
+      ")\n    grown_items[" +
+      (if select_second { "1" } else { "0" }) +
+      "]\n  })"
+    }
     StructSelect(result_type, number, flag) => {
       let field = match result_type {
         IntType => "number"
@@ -713,7 +750,7 @@ fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
     Let(_, _, value, body) =>
       value.contains_valtype_raise_probe() ||
       body.contains_valtype_raise_probe()
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_valtype_raise_probe() ||
       second.contains_valtype_raise_probe()
     StructSelect(_, number, flag) =>
@@ -755,7 +792,7 @@ fn Expr::contains_valtype_enum_array_probe(self : Expr) -> Bool {
     Let(_, _, value, body) =>
       value.contains_valtype_enum_array_probe() ||
       body.contains_valtype_enum_array_probe()
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.contains_valtype_enum_array_probe() ||
       second.contains_valtype_enum_array_probe()
     StructSelect(_, number, flag) =>

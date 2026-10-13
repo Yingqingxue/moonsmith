@@ -17,7 +17,7 @@ pub fn Expr::complexity(self : Expr) -> Int {
     BoolLiteral(value) => if value { 2 } else { 1 }
     Variable(_, _) => 1
     Let(_, _, value, body) => 1000 + value.complexity() + body.complexity()
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       1000 + first.complexity() + second.complexity()
     StructSelect(_, number, flag) =>
       1000 + number.complexity() + flag.complexity()
@@ -71,7 +71,7 @@ fn Expr::uses_variable(self : Expr, name : String) -> Bool {
     Let(_, bound_name, value, body) =>
       value.uses_variable(name) ||
       (bound_name != name && body.uses_variable(name))
-    ArraySelect(_, first, second, _) =>
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       first.uses_variable(name) || second.uses_variable(name)
     StructSelect(_, number, flag) =>
       number.uses_variable(name) || flag.uses_variable(name)
@@ -146,6 +146,24 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
           candidates,
           original_complexity,
           ArraySelect(result_type, first, smaller, select_second),
+        )
+      }
+    }
+    ArrayGrowSelect(result_type, first, second, select_second) => {
+      push_if_smaller(candidates, original_complexity, first)
+      push_if_smaller(candidates, original_complexity, second)
+      for smaller in first.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ArrayGrowSelect(result_type, smaller, second, select_second),
+        )
+      }
+      for smaller in second.shrink_candidates() {
+        push_if_smaller(
+          candidates,
+          original_complexity,
+          ArrayGrowSelect(result_type, first, smaller, select_second),
         )
       }
     }

@@ -120,6 +120,25 @@ test "array selection can shrink to a same-typed element" {
 }
 
 ///|
+test "array growth reduction preserves element type and push scaffold" {
+  let expression = @moonsmith.ArrayGrowSelect(
+    BoolType,
+    BoolLiteral(false),
+    BoolLiteral(true),
+    true,
+  )
+  let candidates = expression.shrink_candidates()
+  assert_true(candidates.length() > 2)
+  assert_eq(candidates[0].to_source(), "false")
+  assert_eq(candidates[1].to_source(), "true")
+  for candidate in candidates {
+    assert_true(candidate.value_type() is BoolType)
+    assert_true(candidate.complexity() < expression.complexity())
+  }
+  assert_true(candidates[2].to_source().contains("grown_items.push"))
+}
+
+///|
 test "record selection shrinks to selected field and smaller fields" {
   let expression = @moonsmith.StructSelect(
     IntType,

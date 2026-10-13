@@ -193,6 +193,38 @@ test "fixed-size array selection evaluates both result types" {
 }
 
 ///|
+test "growing arrays preserve insertion order and typed selections" {
+  let first = @moonsmith.ArrayGrowSelect(
+    IntType,
+    IntLiteral(7),
+    IntLiteral(9),
+    false,
+  )
+  let second = @moonsmith.ArrayGrowSelect(
+    IntType,
+    IntLiteral(7),
+    IntLiteral(9),
+    true,
+  )
+  assert_eq(first.evaluate().to_output(), "7")
+  let (second_value, trace) = second.evaluate_with_trace()
+  assert_eq(second_value.to_output(), "9")
+  assert_true(trace.contains("array-grow"))
+  assert_true(trace.contains("array-grow-push"))
+  assert_true(trace.contains("array-grow-index-1"))
+  assert_true(second.to_source().contains("let grown_items : Array[Int] = []"))
+  assert_true(second.to_source().contains("grown_items.push(9)"))
+  let boolean = @moonsmith.ArrayGrowSelect(
+    BoolType,
+    BoolLiteral(false),
+    BoolLiteral(true),
+    true,
+  )
+  assert_eq(boolean.evaluate().to_output(), "true")
+  assert_true(boolean.to_source().contains("Array[Bool]"))
+}
+
+///|
 test "function application binds parameters and captures outer values" {
   let expression = @moonsmith.Let(
     IntType,

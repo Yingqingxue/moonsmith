@@ -1,6 +1,16 @@
 # Implementation status
 
-Last updated: 2026-10-13
+Last updated: 2026-10-14
+
+## Bounded primitive-array growth
+
+Alongside fixed two-element array literals, the generator now sometimes builds
+an empty `Array[Int]` or `Array[Bool]`, pushes two generated values, and reads
+index 0 or 1. The reference evaluator models insertion order and records
+growth, pushes, and the selected index; the AST reducer can simplify either
+element or replace the whole construct with a same-typed value. Batch reports
+count this source construct separately as `casesWithArrayGrow`. This is a
+bounded slice, not arbitrary array mutation or index fuzzing.
 
 ## Bounded `while` validation
 
