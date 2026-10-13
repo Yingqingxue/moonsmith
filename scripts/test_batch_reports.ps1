@@ -248,15 +248,16 @@ try {
         casesWithOr = 1
         casesWithWhileLoop = 1
         casesWithWhileIteration = 1
+        casesWithArrayGrow = 2
         cases = @(
             [pscustomobject]@{
                 seed = 1
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1 }
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1; arrayGrow = 1 }
                 referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration', 'array-grow-index-0')
             }
             [pscustomobject]@{
                 seed = 2
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 1 }
                 referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped', 'array-grow-index-1')
             }
         )
@@ -281,8 +282,19 @@ try {
         $coverageValidation.whileLoopCases -ne 1 -or
         $coverageValidation.whileIterationCases -ne 1 -or
         $coverageValidation.arrayGrowFirstIndexCases -ne 1 -or
-        $coverageValidation.arrayGrowSecondIndexCases -ne 1) {
+        $coverageValidation.arrayGrowSecondIndexCases -ne 1 -or
+        $coverageValidation.arrayGrowSourceCases -ne 2) {
         throw 'nightly summary validation accepted an incorrect coverage summary.'
+    }
+    $badArrayGrowSource = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $badArrayGrowSource.casesWithArrayGrow = 1
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $badArrayGrowSource -ExpectedCount 2
+        throw 'nightly gate accepted an inconsistent array-growth source count.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'array-growth case total does not match') { throw }
     }
     $badArrayGrowIndex = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
     $badArrayGrowIndex.referencePathCaseCounts.'array-grow-index-1' = 0
@@ -470,7 +482,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0 }
             referencePathKinds = @()
         }
     }
@@ -499,7 +511,7 @@ try {
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowAndCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0 }
             referencePathKinds = @()
         }
     }

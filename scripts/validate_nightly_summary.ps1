@@ -55,6 +55,7 @@ $observedWhileLoopCases = 0
 $observedWhileIterationCases = 0
 $observedArrayGrowFirstIndexCases = 0
 $observedArrayGrowSecondIndexCases = 0
+$observedArrayGrowSourceCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -101,6 +102,16 @@ foreach ($case in $Summary.cases) {
     }
     if ([long]$whileCount.Value -gt 0) { $observedWhileLoopCases++ }
 
+    $arrayGrowCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['arrayGrow']
+    } else {
+        $null
+    }
+    if ($null -eq $arrayGrowCount -or $null -eq $arrayGrowCount.Value -or [long]$arrayGrowCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.arrayGrow value."
+    }
+    if ([long]$arrayGrowCount.Value -gt 0) { $observedArrayGrowSourceCases++ }
+
     $pathKinds = $case.PSObject.Properties['referencePathKinds']
     if ($null -eq $pathKinds -or $null -eq $pathKinds.Value) {
         throw "Nightly case '$($case.seed)' is missing referencePathKinds."
@@ -113,6 +124,11 @@ foreach ($case in $Summary.cases) {
     if ($casePathKinds -contains 'while-iteration') { $observedWhileIterationCases++ }
     if ($casePathKinds -contains 'array-grow-index-0') { $observedArrayGrowFirstIndexCases++ }
     if ($casePathKinds -contains 'array-grow-index-1') { $observedArrayGrowSecondIndexCases++ }
+    if (($casePathKinds -contains 'array-grow-index-0' -or
+            $casePathKinds -contains 'array-grow-index-1') -and
+        [long]$arrayGrowCount.Value -eq 0) {
+        throw "Nightly case '$($case.seed)' executed a grown-array index without generated array growth."
+    }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
@@ -131,6 +147,9 @@ if ($observedWhileLoopCases -ne [long]$Summary.casesWithWhileLoop) {
 }
 if ($observedWhileIterationCases -ne [long]$Summary.casesWithWhileIteration) {
     throw 'Nightly while-iteration case total does not match per-case reference paths.'
+}
+if ($observedArrayGrowSourceCases -ne [long]$Summary.casesWithArrayGrow) {
+    throw 'Nightly array-growth case total does not match per-case source metrics.'
 }
 $minimumOrCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
 if ($observedOrCases -lt $minimumOrCases) {
@@ -193,6 +212,7 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     arrayGrowFirstIndexCases = $observedArrayGrowFirstIndexCases
     arrayGrowSecondIndexCases = $observedArrayGrowSecondIndexCases
     minimumArrayGrowIndexCases = $minimumArrayGrowIndexCases
+    arrayGrowSourceCases = $observedArrayGrowSourceCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'
