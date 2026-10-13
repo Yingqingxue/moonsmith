@@ -136,12 +136,13 @@ predate this change. A fresh same-toolchain, same-seed comparison now covers the
 Choice-returning extension: 1,000 bodies, with 251 changed source hashes and
 305 additional local-function nodes. See
 [the updated generator evidence](docs/evidence/choice_function_corpus_20261013.md).
-Batch schema 9 retains Choice-returning-function coverage and reports
-short-circuit-disjunction coverage per case. The nightly validator requires
-`||` in at least 20% of the fixed corpus, requires both RHS-executed and
-short-circuited reference paths, and reconciles all three totals against the
-per-case records. Generated `&&` and `||` expressions wrap the RHS in a closure
-that increments a captured mutable counter; the generated program checks the
+Batch schema 10 retains Choice-returning-function coverage and reports
+short-circuit conjunction and disjunction coverage per case. The nightly
+validator requires both `&&` and `||` in at least 20% of the fixed corpus,
+requires both RHS-executed and short-circuited reference paths for each
+operator, and reconciles aggregate counts against per-case records. Generated
+`&&` and `||` expressions wrap the RHS in a closure that increments a captured
+mutable counter; the generated program checks the
 operator-specific expected call count, panicking if a backend violates
 short-circuit evaluation. This makes incorrect eager execution observable,
 rather than relying only on the final boolean value. The nightly coverage gate

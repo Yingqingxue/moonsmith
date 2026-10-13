@@ -127,13 +127,25 @@ $expectedBothProbeTraceCount = @($batch.cases | Where-Object {
 $expectedDisjunctionCount = @($batch.cases | Where-Object {
     $_.sourceConstructCounts -and $_.sourceConstructCounts.or -gt 0
 }).Count
+$expectedConjunctionCount = @($batch.cases | Where-Object {
+    $_.sourceConstructCounts -and $_.sourceConstructCounts.and -gt 0
+}).Count
+$expectedAndRhsExecutedCases = @($batch.cases | Where-Object {
+    $_.referencePathKinds -contains 'and-rhs-executed'
+}).Count
+$expectedAndRhsSkippedCases = @($batch.cases | Where-Object {
+    $_.referencePathKinds -contains 'and-rhs-skipped'
+}).Count
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 9 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 10 -or $batch.casesWithChoiceMatch -lt 1 -or
     $batch.casesWithForLoop -lt 1 -or $batch.casesWithForIteration -lt 1 -or
     $batch.casesWithValtypeRaiseProbe -lt 1 -or
     $batch.casesWithDirectValtypeRaiseArrayComposition -ne $expectedDirectCompositionCount -or
     $batch.casesVisitingBothValtypeProbeKinds -ne $expectedBothProbeTraceCount -or
+    $batch.casesWithAnd -ne $expectedConjunctionCount -or
+    [int]$batch.referencePathCaseCounts.'and-rhs-executed' -ne $expectedAndRhsExecutedCases -or
+    [int]$batch.referencePathCaseCounts.'and-rhs-skipped' -ne $expectedAndRhsSkippedCases -or
     $batch.casesWithOr -ne $expectedDisjunctionCount -or
     $batch.casesWithSourceLineCount -ne $batch.count -or
     $batch.sourceLineCountMaximum -ne $expectedSourceLineMaximum -or
@@ -145,7 +157,7 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
 
 $choiceFunctionBatch = (& $cli fuzz -SeedStart 14990 -Count 1 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or
-    $choiceFunctionBatch.schemaVersion -ne 9 -or
+    $choiceFunctionBatch.schemaVersion -ne 10 -or
     $choiceFunctionBatch.casesWithChoiceReturningFunction -ne 1 -or
     $choiceFunctionBatch.choiceReturningFunctionCount -lt 1 -or
     $choiceFunctionBatch.cases[0].sourceConstructCounts.functionChoice -lt 1) {
@@ -154,7 +166,7 @@ if ($LASTEXITCODE -ne 0 -or
 
 $disjunctionBatch = (& $cli fuzz -SeedStart 353 -Count 1 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or
-    $disjunctionBatch.schemaVersion -ne 9 -or
+    $disjunctionBatch.schemaVersion -ne 10 -or
     $disjunctionBatch.casesWithOr -ne 1 -or
     $disjunctionBatch.cases[0].sourceConstructCounts.or -lt 1) {
     throw 'fuzz did not report the generated short-circuit disjunction.'

@@ -7,8 +7,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($Summary.schemaVersion -ne 9) {
-    throw "Nightly corpus validator requires batch schema 9; received '$($Summary.schemaVersion)'."
+if ($Summary.schemaVersion -ne 10) {
+    throw "Nightly corpus validator requires batch schema 10; received '$($Summary.schemaVersion)'."
 }
 if ($Summary.count -ne $ExpectedCount -or
     $Summary.uniqueProgramBodies -ne $ExpectedCount -or
@@ -22,8 +22,9 @@ $requiredCoverage = @(
     'casesWithValtypeRaiseProbe',
     'casesWithDirectValtypeRaiseArrayComposition',
     'casesVisitingBothValtypeProbeKinds',
-    'casesWithChoiceReturningFunction'
-    'casesWithOr'
+    'casesWithChoiceReturningFunction',
+    'casesWithOr',
+    'casesWithAnd'
 )
 foreach ($name in $requiredCoverage) {
     $property = $Summary.PSObject.Properties[$name]
@@ -43,8 +44,11 @@ if ($null -eq $Summary.cases -or $Summary.cases.Count -ne $ExpectedCount) {
 $observedChoiceFunctionCases = 0
 $observedChoiceFunctionCount = 0
 $observedOrCases = 0
+$observedAndCases = 0
 $observedOrRhsExecutedCases = 0
 $observedOrRhsSkippedCases = 0
+$observedAndRhsExecutedCases = 0
+$observedAndRhsSkippedCases = 0
 foreach ($case in $Summary.cases) {
     $constructCounts = $case.PSObject.Properties['sourceConstructCounts']
     $functionCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
@@ -71,6 +75,16 @@ foreach ($case in $Summary.cases) {
     }
     if ([long]$orCount.Value -gt 0) { $observedOrCases++ }
 
+    $andCount = if ($null -ne $constructCounts -and $null -ne $constructCounts.Value) {
+        $constructCounts.Value.PSObject.Properties['and']
+    } else {
+        $null
+    }
+    if ($null -eq $andCount -or $null -eq $andCount.Value -or [long]$andCount.Value -lt 0) {
+        throw "Nightly case '$($case.seed)' is missing a valid sourceConstructCounts.and value."
+    }
+    if ([long]$andCount.Value -gt 0) { $observedAndCases++ }
+
     $pathKinds = $case.PSObject.Properties['referencePathKinds']
     if ($null -eq $pathKinds -or $null -eq $pathKinds.Value) {
         throw "Nightly case '$($case.seed)' is missing referencePathKinds."
@@ -78,6 +92,8 @@ foreach ($case in $Summary.cases) {
     $casePathKinds = @($pathKinds.Value)
     if ($casePathKinds -contains 'or-rhs-executed') { $observedOrRhsExecutedCases++ }
     if ($casePathKinds -contains 'or-rhs-skipped') { $observedOrRhsSkippedCases++ }
+    if ($casePathKinds -contains 'and-rhs-executed') { $observedAndRhsExecutedCases++ }
+    if ($casePathKinds -contains 'and-rhs-skipped') { $observedAndRhsSkippedCases++ }
 }
 if ($observedChoiceFunctionCases -ne [long]$Summary.casesWithChoiceReturningFunction) {
     throw 'Nightly Choice-returning function case total does not match per-case source metrics.'
@@ -88,9 +104,16 @@ if ($observedChoiceFunctionCount -ne [long]$choiceFunctionCount.Value) {
 if ($observedOrCases -ne [long]$Summary.casesWithOr) {
     throw 'Nightly disjunction case total does not match per-case source metrics.'
 }
+if ($observedAndCases -ne [long]$Summary.casesWithAnd) {
+    throw 'Nightly conjunction case total does not match per-case source metrics.'
+}
 $minimumOrCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
 if ($observedOrCases -lt $minimumOrCases) {
     throw "Nightly disjunction coverage is below the minimum of $minimumOrCases cases (20% of the corpus)."
+}
+$minimumAndCases = [Math]::Max(1, [Math]::Ceiling($ExpectedCount * 0.20))
+if ($observedAndCases -lt $minimumAndCases) {
+    throw "Nightly conjunction coverage is below the minimum of $minimumAndCases cases (20% of the corpus)."
 }
 
 $referencePathProperty = $Summary.PSObject.Properties['referencePathCaseCounts']
@@ -99,7 +122,9 @@ if ($null -eq $referencePathProperty -or $null -eq $referencePathProperty.Value)
 }
 foreach ($pathCheck in @(
         @{ name = 'or-rhs-executed'; observed = $observedOrRhsExecutedCases },
-        @{ name = 'or-rhs-skipped'; observed = $observedOrRhsSkippedCases }
+        @{ name = 'or-rhs-skipped'; observed = $observedOrRhsSkippedCases },
+        @{ name = 'and-rhs-executed'; observed = $observedAndRhsExecutedCases },
+        @{ name = 'and-rhs-skipped'; observed = $observedAndRhsSkippedCases }
     )) {
     $property = $referencePathProperty.Value.PSObject.Properties[$pathCheck.name]
     if ($null -eq $property -or $null -eq $property.Value -or [long]$property.Value -le 0) {
@@ -126,6 +151,10 @@ foreach ($name in @('valtype-raise-success-path', 'valtype-raise-error-path')) {
     minimumDisjunctionCases = $minimumOrCases
     disjunctionRhsExecutedCases = $observedOrRhsExecutedCases
     disjunctionRhsSkippedCases = $observedOrRhsSkippedCases
+    conjunctionCases = $Summary.casesWithAnd
+    minimumConjunctionCases = $minimumAndCases
+    conjunctionRhsExecutedCases = $observedAndRhsExecutedCases
+    conjunctionRhsSkippedCases = $observedAndRhsSkippedCases
     directComposedCases = $Summary.casesWithDirectValtypeRaiseArrayComposition
     bothProbeTraceCases = $Summary.casesVisitingBothValtypeProbeKinds
     raiseSuccessPathCases = $Summary.referencePathCaseCounts.'valtype-raise-success-path'

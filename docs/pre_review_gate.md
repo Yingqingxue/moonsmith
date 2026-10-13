@@ -22,7 +22,7 @@
 
 ### 当前状态补充（2026-10-13）
 
-上表是 10 月 10 日的项目快照，不包含之后的生成器和覆盖门禁改动。当前主线增加了 typed `Choice` 返回函数与短路 `||`，批量报告 schema 9 会统计 OR 源码覆盖及两种短路路径，并要求 1,000-seed 固定语料中至少 20% 的程序含 OR，同时从逐例 trace 重算 RHS 执行/跳过计数。相关实现和证据见 [状态记录](status.md) 与 [OR 语料证据](evidence/disjunction_corpus_20261013.md)。
+上表是 10 月 10 日的项目快照，不包含之后的生成器和覆盖门禁改动。当前主线增加了 typed `Choice` 返回函数与 `&&`/`||` 可观测短路探针；批量报告 schema 10 将要求 1,000-seed 固定语料中至少 20% 的程序包含每个运算符，并从逐例 trace 重算两种运算符的 RHS 执行/跳过计数。该门禁的 1,000-seed 复验与 CI 结果待更新。历史 schema 9 语料观察到 558/1,000 个程序含 `&&`，trace 中 RHS 执行 170 例、跳过 178 例；新 schema 10 门禁需要在同种子复跑中确认。相关实现和证据见 [状态记录](status.md) 与 [短路语料证据](evidence/short_circuit_coverage_20261013.md)。
 
 可核查的当前样本包括：固定 1,000-seed、depth-4 corpus 对 JS/Wasm/Wasm-GC 共 3,000 次执行全部一致；357/1,000 个程序含 OR，reference trace 分别覆盖 RHS 执行 141 例、短路跳过 162 例。另有不重叠的 230 个 seed、depth 4/6/8 样本，经 Linux 三后端与 Windows native-release 共 920 次执行，源码哈希和期望结果逐 seed 匹配。上述都是有限固定语料，不是 MoonBit 全语言正确性证明，也不是后端内部 branch coverage。
 

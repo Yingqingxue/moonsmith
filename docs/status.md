@@ -15,6 +15,20 @@ corpus gate and reported aggregates remain disjunction-specific; this addition
 does not claim measured `&&` corpus frequency or native coverage. Remote CI is
 pending for this change.
 
+## Nightly conjunction coverage gate
+
+The previous schema-9 nightly artifact recorded `&&` in 558/1,000 sources,
+with reference RHS-executed and RHS-skipped traces in 170 and 178 cases. Schema
+10 now plans to require at least 20% source coverage for both `&&` and `||`,
+both reference paths for each operator, and exact aggregate/per-case
+reconciliation. Legacy schemas 7–9 remain accepted by report rendering and
+cross-platform comparison; the nightly validator requires schema 10. Local
+batch-report integration and CLI tests pass, and the prior schema-9 corpus
+passes the new validator when replayed as a schema-10-shaped summary. A fresh
+nightly run and remote CI are still required before calling the gate verified.
+See the
+[short-circuit coverage evidence](evidence/short_circuit_coverage_20261013.md).
+
 ## Offline HTML case reports
 
 The `report` command now writes a self-contained `report.html` alongside the

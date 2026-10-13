@@ -21,7 +21,7 @@ if (-not (Test-Path -LiteralPath $resolved -PathType Leaf)) {
 }
 
 $summary = Get-Content -LiteralPath $resolved -Raw | ConvertFrom-Json
-if ($summary.schemaVersion -notin @(7, 8, 9)) {
+if ($summary.schemaVersion -notin @(7, 8, 9, 10)) {
     throw "Unsupported batch report schemaVersion '$($summary.schemaVersion)'."
 }
 if ($summary.cases.Count -ne $summary.count) {

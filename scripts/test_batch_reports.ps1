@@ -27,7 +27,7 @@ function New-TestReport {
             expectedOutput = $FirstExpectedOutput
             error = '<img src=x onerror=alert(1)>'
             referenceChecked = $true
-            sourceConstructCounts = [ordered]@{ functionChoice = 1; or = 1 }
+            sourceConstructCounts = [ordered]@{ functionChoice = 1; and = 1; or = 1 }
         },
         [ordered]@{
             seed = $SeedStart + 1
@@ -37,11 +37,11 @@ function New-TestReport {
             expectedOutput = "43`n"
             error = ''
             referenceChecked = $true
-            sourceConstructCounts = [ordered]@{ functionChoice = 0; or = 0 }
+            sourceConstructCounts = [ordered]@{ functionChoice = 0; and = 0; or = 0 }
         }
     )
     [ordered]@{
-        schemaVersion = 9
+        schemaVersion = 10
         seedStart = $SeedStart
         count = 2
         depth = 4
@@ -63,11 +63,14 @@ function New-TestReport {
         casesWithDirectValtypeRaiseArrayComposition = 1
         casesWithChoiceReturningFunction = 1
         choiceReturningFunctionCount = 1
+        casesWithAnd = 1
         casesWithOr = 1
         casesVisitingBothValtypeProbeKinds = 1
         referencePathCaseCounts = [ordered]@{
             'valtype-raise-probe' = 1
             'valtype-raise-success-path' = 1
+            'and-rhs-executed' = 1
+            'and-rhs-skipped' = 1
         }
         failureClusters = @()
         cases = $cases
@@ -141,12 +144,15 @@ try {
     $linuxReport.Remove('casesWithChoiceReturningFunction')
     $linuxReport.Remove('choiceReturningFunctionCount')
     $linuxReport.Remove('casesWithOr')
+    $linuxReport.Remove('casesWithAnd')
     $windowsReport.Remove('casesWithChoiceReturningFunction')
     $windowsReport.Remove('choiceReturningFunctionCount')
     $windowsReport.Remove('casesWithOr')
+    $windowsReport.Remove('casesWithAnd')
     foreach ($case in @($linuxReport.cases) + @($windowsReport.cases)) {
         $case.sourceConstructCounts.Remove('functionChoice')
         $case.sourceConstructCounts.Remove('or')
+        $case.sourceConstructCounts.Remove('and')
     }
     $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
@@ -177,10 +183,16 @@ try {
     $windowsReport.schemaVersion = 9
     $linuxReport.casesWithOr = 1
     $windowsReport.casesWithOr = 1
+    $linuxReport.casesWithAnd = 1
+    $windowsReport.casesWithAnd = 1
     $linuxReport.cases[0].sourceConstructCounts.or = 1
     $windowsReport.cases[0].sourceConstructCounts.or = 1
     $linuxReport.cases[1].sourceConstructCounts.or = 0
     $windowsReport.cases[1].sourceConstructCounts.or = 0
+    $linuxReport.cases[0].sourceConstructCounts.and = 1
+    $windowsReport.cases[0].sourceConstructCounts.and = 1
+    $linuxReport.cases[1].sourceConstructCounts.and = 0
+    $windowsReport.cases[1].sourceConstructCounts.and = 0
     $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
 
@@ -193,7 +205,7 @@ try {
     if ($batchReport.count -ne 2 -or
         $batchReport.htmlReportPath -ne $customBatchHtmlPath -or
         -not (Test-Path -LiteralPath $customBatchHtmlPath -PathType Leaf) -or
-        $batchHtmlRows -ne 17 -or
+        $batchHtmlRows -ne 20 -or
         -not $batchHtml.StartsWith('<!doctype html>') -or
         -not $batchHtml.Contains('Run summary') -or
         -not $batchHtml.Contains('Generator and reference coverage') -or
@@ -202,6 +214,7 @@ try {
         -not $batchHtml.Contains('casesWithValtypeRaiseProbe') -or
         -not $batchHtml.Contains('casesWithChoiceReturningFunction') -or
         -not $batchHtml.Contains('casesWithOr') -or
+        -not $batchHtml.Contains('casesWithAnd') -or
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
@@ -213,7 +226,7 @@ try {
     }
 
     $nightlySummary = [pscustomobject]@{
-        schemaVersion = 9
+        schemaVersion = 10
         count = 2
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
@@ -224,17 +237,18 @@ try {
         casesVisitingBothValtypeProbeKinds = 1
         casesWithChoiceReturningFunction = 1
         choiceReturningFunctionCount = 1
+        casesWithAnd = 1
         casesWithOr = 1
         cases = @(
             [pscustomobject]@{
                 seed = 1
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; or = 1 }
-                referencePathKinds = @('or-rhs-executed')
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1 }
+                referencePathKinds = @('and-rhs-executed', 'or-rhs-executed')
             }
             [pscustomobject]@{
                 seed = 2
-                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
-                referencePathKinds = @('or-rhs-skipped')
+                sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
+                referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped')
             }
         )
         referencePathCaseCounts = [pscustomobject]@{
@@ -242,6 +256,8 @@ try {
             'valtype-raise-error-path' = 1
             'or-rhs-executed' = 1
             'or-rhs-skipped' = 1
+            'and-rhs-executed' = 1
+            'and-rhs-skipped' = 1
         }
     }
     $coverageValidation = (& (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
@@ -259,7 +275,7 @@ try {
             -Summary $nightlySummary -ExpectedCount 2
     }
     catch {
-        if ($_.Exception.Message -notmatch 'requires batch schema 9') {
+        if ($_.Exception.Message -notmatch 'requires batch schema 10') {
             throw "nightly schema gate rejected the legacy fixture for the wrong reason: $($_.Exception.Message)"
         }
         $legacyNightlySummaryRejected = $true
@@ -268,6 +284,21 @@ try {
         throw 'nightly validator accepted a schema-7 batch summary.'
     }
     $nightlySummary.schemaVersion = 9
+    $legacyNightlySummaryRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'requires batch schema 10') {
+            throw "nightly schema gate rejected the schema-9 fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $legacyNightlySummaryRejected = $true
+    }
+    if (-not $legacyNightlySummaryRejected) {
+        throw 'nightly validator accepted a schema-9 batch summary.'
+    }
+    $nightlySummary.schemaVersion = 10
     $nightlySummary.casesVisitingBothValtypeProbeKinds = 0
     $nightlyCoverageRejected = $false
     try {
@@ -388,10 +419,12 @@ try {
     $lowOrCoverageSummary.uniqueProgramBodies = 10
     $lowOrCoverageSummary.referenceCheckedCount = 10
     $lowOrCoverageSummary.cases = @($lowOrCoverageSummary.cases)
+    $lowOrCoverageSummary.cases[1].sourceConstructCounts.and = 1
+    $lowOrCoverageSummary.casesWithAnd = 2
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
-            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; or = 0 }
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
             referencePathKinds = @()
         }
     }
@@ -409,6 +442,52 @@ try {
     if (-not $lowOrCoverageRejected) {
         throw 'nightly coverage gate accepted disjunction in less than 20% of the corpus.'
     }
+
+    $lowAndCoverageSummary = $nightlySummary | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $lowAndCoverageSummary.count = 10
+    $lowAndCoverageSummary.uniqueProgramBodies = 10
+    $lowAndCoverageSummary.referenceCheckedCount = 10
+    $lowAndCoverageSummary.cases[1].sourceConstructCounts.or = 1
+    $lowAndCoverageSummary.casesWithOr = 2
+    $lowAndCoverageSummary.cases = @($lowAndCoverageSummary.cases)
+    for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
+        $lowAndCoverageSummary.cases += [pscustomobject]@{
+            seed = $caseIndex
+            sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0 }
+            referencePathKinds = @()
+        }
+    }
+    $lowAndCoverageRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $lowAndCoverageSummary -ExpectedCount 10
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'conjunction coverage is below the minimum of 2 cases') {
+            throw "nightly conjunction minimum coverage rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $lowAndCoverageRejected = $true
+    }
+    if (-not $lowAndCoverageRejected) {
+        throw 'nightly coverage gate accepted conjunction in less than 20% of the corpus.'
+    }
+
+    $nightlySummary.casesWithAnd = 0
+    $andCoverageRequiredRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "required generator coverage metric 'casesWithAnd'") {
+            throw "nightly conjunction coverage requirement rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $andCoverageRequiredRejected = $true
+    }
+    if (-not $andCoverageRequiredRejected) {
+        throw 'nightly coverage gate accepted a corpus with no conjunction sources.'
+    }
+    $nightlySummary.casesWithAnd = 1
 
     $nightlySummary.referencePathCaseCounts.'or-rhs-skipped' = 0
     $orShortCircuitPathRejected = $false
@@ -444,6 +523,74 @@ try {
     }
     $nightlySummary.referencePathCaseCounts.'or-rhs-executed' = 1
 
+    $nightlySummary.referencePathCaseCounts.'and-rhs-skipped' = 0
+    $andShortCircuitPathRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "did not exercise the required 'and-rhs-skipped' path") {
+            throw "nightly conjunction path gate rejected missing short-circuit coverage for the wrong reason: $($_.Exception.Message)"
+        }
+        $andShortCircuitPathRejected = $true
+    }
+    if (-not $andShortCircuitPathRejected) {
+        throw 'nightly coverage gate accepted a corpus with no short-circuit-skipped AND path.'
+    }
+    $nightlySummary.referencePathCaseCounts.'and-rhs-skipped' = 1
+
+    $nightlySummary.referencePathCaseCounts.'and-rhs-executed' = 2
+    $andTraceCountMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch "reference trace 'and-rhs-executed' case total does not match per-case records") {
+            throw "nightly AND trace reconciliation rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $andTraceCountMismatchRejected = $true
+    }
+    if (-not $andTraceCountMismatchRejected) {
+        throw 'nightly coverage gate accepted an inconsistent per-case AND trace total.'
+    }
+    $nightlySummary.referencePathCaseCounts.'and-rhs-executed' = 1
+
+    $nightlySummary.cases[1].sourceConstructCounts.and = -1
+    $invalidAndCountRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'valid sourceConstructCounts.and') {
+            throw "nightly conjunction validation rejected a negative count for the wrong reason: $($_.Exception.Message)"
+        }
+        $invalidAndCountRejected = $true
+    }
+    if (-not $invalidAndCountRejected) {
+        throw 'nightly coverage gate accepted a negative per-case conjunction count.'
+    }
+    $nightlySummary.cases[1].sourceConstructCounts.and = 0
+
+    $nightlySummary.casesWithAnd = 2
+    $andCoverageMismatchRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'conjunction case total does not match') {
+            throw "nightly conjunction reconciliation rejected the fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $andCoverageMismatchRejected = $true
+    }
+    if (-not $andCoverageMismatchRejected) {
+        throw 'nightly coverage gate accepted an inconsistent conjunction case total.'
+    }
+    $nightlySummary.casesWithAnd = 1
+
     $legacyReportPath = Join-Path $testRoot 'batch_legacy.json'
     $legacyHtmlPath = Join-Path $testRoot 'batch_legacy.html'
     $legacyReport = [ordered]@{}
@@ -452,7 +599,8 @@ try {
                 'failureClusters',
                 'casesWithChoiceReturningFunction',
                 'choiceReturningFunctionCount',
-                'casesWithOr'
+                'casesWithOr',
+                'casesWithAnd'
             )) {
             $legacyReport[$property] = $linuxReport[$property]
         }
@@ -462,6 +610,7 @@ try {
         if ($null -ne $case.sourceConstructCounts) {
             $case.sourceConstructCounts.Remove('functionChoice')
             $case.sourceConstructCounts.Remove('or')
+            $case.sourceConstructCounts.Remove('and')
         }
     }
     $legacyReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $legacyReportPath -Encoding utf8

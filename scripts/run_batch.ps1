@@ -243,7 +243,7 @@ $casesVisitingBothValtypeProbeKinds = @(
 ).Count
 
 $summary = [pscustomobject]@{
-    schemaVersion           = 9
+    schemaVersion           = 10
     runId                   = $runId
     seedStart               = $SeedStart
     count                   = $Count
