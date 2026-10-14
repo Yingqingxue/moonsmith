@@ -272,9 +272,11 @@ Candidate reviewed on 2026-10-14:
   upstream #2262. An initial generated-source run returned `true` with fast
   contraction as well; because all operands were literals, the test did not
   preserve a runtime multiply/add for GCC to contract. The probe now parses
-  runtime arguments, and the controlled rerun is pending. Keep this bounded
-  probe separate from the general corpus until it is validated remotely and
-  its coverage is represented in corpus reporting.
+  runtime arguments. The generated-source [rerun #38536474069](https://github.com/Yingqingxue/moonsmith/actions/runs/38536474069)
+  passed on the same runner/toolchain: JS/Wasm/Wasm-GC and native control
+  printed `true`, while native fast contraction printed `false`. Keep this
+  fixed, known-issue probe separate from the general corpus until its coverage
+  is represented in corpus reporting.
 
 ## What this corpus can and cannot show
 

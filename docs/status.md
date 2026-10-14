@@ -11,13 +11,16 @@ where they are separately rounded; the AST reducer treats the probe as a
 minimal leaf. Local checks pass: 103/103 MoonBit tests, and the emitted source
 returns `true` on JS, Wasm, and Wasm-GC. The GCC experiment script now compiles
 that generated source under fast-contraction and contraction-disabled package
-flags, instead of compiling only the hand-written fixture. Remote GCC
-validation of this generator-integrated form is pending. The first remote
-generated-source attempt returned `true` under both configurations because
-its operands were literals; the generated probe now parses runtime arguments
-so the optimizer cannot treat them as compile-time constants. This remains a
-single known-issue probe with fixed test values, not general `Double` expression
-generation or random FMA fuzzing.
+flags, instead of compiling only the hand-written fixture. On
+[GitHub Actions run #38536474069](https://github.com/Yingqingxue/moonsmith/actions/runs/38536474069),
+Ubuntu 24.04 with GCC 13.3.0 and MoonBit `moonc v0.10.15+943464bfa` produced
+`true` on JS/Wasm/Wasm-GC and the native no-contraction control, and `false`
+for native fast contraction. An initial generated-source attempt returned
+`true` in both native configurations because its operands were literals; the
+probe now parses runtime arguments to preserve the multiply/add for compiler
+optimization. The same workflow's Linux verification and Windows native jobs
+also passed. This remains a single known-issue probe with fixed test values,
+not general `Double` expression generation or random FMA fuzzing.
 
 ## Semantic-path-guided seed selection experiment
 
