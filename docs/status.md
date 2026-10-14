@@ -20,6 +20,14 @@ prescreening and possible source-size confounding. See the
 [bounded A/B evidence](evidence/semantic_selection_20261014.md); no compiler
 defect was discovered in these runs.
 
+The preregistered follow-up (100 candidates, 20 programs per arm, matched
+source-size quartile counts) completed on commit `c0b5497`. Both arms launched
+60 backend executions; the sequential arm covered 52 reference path kinds and
+the guided arm 53, with mean source lengths of 120.6 and 124.6 lines. Candidate
+prescreening added 88.8 seconds, so the extra path variety is not yet a strong
+practical tradeoff. See the
+[size-matched result](evidence/semantic_selection_size_match_20261014.md).
+
 ## Bounded array alias updates
 
 The typed generator can now create a two-element `Int` or `Bool` array,
