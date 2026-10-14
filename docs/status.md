@@ -19,7 +19,8 @@ tests and a 20-seed differential sample passed. A fixed 1,000-seed nightly
 and separate Windows native-release cohorts now also pass; the updated
 index-selection gate enforces both a 2% floor and a 1:2 balance bound. See
 [the measured evidence](evidence/array_alias_update_20261014.md) for exact
-runs, counts, and limitations; those measured runs predate the no-op guard.
+before/after runs, including a passing same-seed Linux/Windows comparison and
+the updated 1,000-seed nightly corpus.
 This is not arbitrary aliasing,
 variable-length mutation, or proof of backend correctness.
 

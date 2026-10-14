@@ -68,3 +68,59 @@ All path figures are reference-interpreter case counts, not compiler-backend
 coverage instrumentation. The finite samples do not prove general compiler
 correctness or bug-finding effectiveness. The historical upstream #1322
 issue was not discovered by MoonSmith.
+
+## Equal-candidate observability guard
+
+Commit `8b5796a` closes a blind spot in the earlier probe: if a generated
+replacement equaled the selected old element, omitting the alias write could
+still satisfy the check. The source and reference evaluator now substitute a
+different `Int` or `Bool` value in that case. A dedicated trace event records
+when the fallback is used. Hand-built unit cases cover zero/nonzero integers
+and booleans, while generated seed 23002 exercises a fallback through the
+compiled JS/Wasm/Wasm-GC pipeline.
+
+Locally, 99 MoonBit tests passed on each of those three targets; reference,
+reducer, CLI, and batch-report integration suites passed. A 20-seed depth-4
+sample (23000–23019) produced 20 distinct bodies, 20 reference checks, 60
+consistent backend executions, 11 sources with alias updates, two reference
+cases visiting the equal-candidate fallback, and zero unexpected findings.
+This local toolchain was `0.1.20260920`; it is not the same toolchain as the
+earlier Actions measurements.
+
+The stronger guard adds generated lines. In the local CLI size-limit test,
+seed 8164 at depth 10 now has 16,346 lines and correctly reaches the 16,300-line
+generator limit; seed 8165 remains below it at 15,958 lines and executes
+consistently on Wasm. These two seeds do not estimate a general size-limit
+rate. The previous 1,000- and 230-seed measurements above predate this guard.
+
+In the
+[paired rerun 38503810364](https://github.com/Yingqingxue/moonsmith/actions/runs/38503810364),
+the same 230 seeds produced 230 distinct bodies, 230 reference checks, and
+230 consistent cases on Linux JS/Wasm/Wasm-GC (690 configured executions).
+There were 191 alias-update source cases and 83 reference cases visiting the
+equal-candidate fallback; the three depth cohorts contributed 14, 41, and 28
+fallback cases. Exactly 191 of the 230 source hashes changed from the earlier
+`d3a3fa8` paired run, matching the number of sources containing an alias
+update. The harness digest was unchanged during all three reports, and no
+unexpected findings or generator limits were recorded. Windows native-release
+ran the same seeds on the same toolchain and recorded the same alias and
+fallback case counts. All five workflow jobs passed. The comparison artifact
+records 230/230 matching source hashes, 230/230 matching expected outputs,
+and 230/230 consistent cases on both platforms (920 configured backend
+executions in total). This is same-seed cross-platform evidence for the new
+guard, not a claim that outputs stayed identical across the old and new
+generator versions.
+
+The new [fixed-seed nightly run 38503792844](https://github.com/Yingqingxue/moonsmith/actions/runs/38503792844)
+also passed: 1,000 distinct bodies, 1,000 reference checks, 1,000 consistent
+cases across JS/Wasm/Wasm-GC (3,000 configured executions), 656 alias-update
+source cases, and 131 reference cases visiting the fallback. Index 0 was
+visited in 373 cases and index 1 in 250; the nightly balance gate passed.
+The harness digest stayed unchanged and no unexpected findings or generator
+limits were reported. The separate
+[CI run 38503757215](https://github.com/Yingqingxue/moonsmith/actions/runs/38503757215)
+passed Linux verification and Windows native checks. Its fixed Windows
+native-release cohorts had 100/100 consistent depth-6 cases (42 fallback
+paths) and 30/30 consistent depth-8 cases (28 fallback paths). These are
+additional samples, not proof of general correctness or a newly discovered
+compiler defect.
