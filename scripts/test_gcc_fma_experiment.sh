@@ -11,10 +11,16 @@ fi
 
 # Build the known cancellation-sensitive case through MoonSmith's typed AST.
 generated_source="$(moon run --target js cmd/main --fma-probe)"
-if [[ "$generated_source" != *"_ms_fma_product"* ]]; then
+if [[ "$generated_source" != *"_ms_fma_product"* || "$generated_source" != *"@string.parse_double"* ]]; then
   echo "MoonSmith did not emit the expected FMA probe source" >&2
   exit 1
 fi
+
+# Runtime inputs prevent the MoonBit frontend from folding the critical
+# multiply/add before GCC has a chance to apply its contraction policy.
+a='1.000000007450580596923828125'
+b='0.999999992549419403076171875'
+c='-1.0'
 
 temporary_root="$(mktemp -d)"
 trap 'rm -rf "$temporary_root"' EXIT
@@ -29,7 +35,7 @@ run_expect() {
   local expected="$1"
   shift
   local actual
-  actual="$("$@")"
+  actual="$("$@" "$a" "$b" "$c")"
   if [[ "$actual" != "$expected" ]]; then
     printf 'expected %s, got %s from:' "$expected" "$actual" >&2
     printf ' %q' "$@" >&2

@@ -78,6 +78,8 @@ test "FMA probe generator emits a typed, separate-rounding candidate" {
     source.contains("let _ms_fma_result = _ms_fma_product + _ms_fma_c"),
   )
   assert_true(source.contains("_ms_fma_result == 0.0"))
+  assert_true(source.contains("@string.parse_double(value)"))
+  assert_true(source.contains("_ms_fma_parse_argument(a)"))
 }
 
 ///|

@@ -269,7 +269,10 @@ Candidate reviewed on 2026-10-14:
   control printed `zero`, while native `-ffp-contract=fast` printed
   `nonzero`. This confirms the earlier fixture's controlled backend contrast
   on that runner only; it does not establish the full scope or cause of
-  upstream #2262. The generated-source rerun is pending; keep this bounded
+  upstream #2262. An initial generated-source run returned `true` with fast
+  contraction as well; because all operands were literals, the test did not
+  preserve a runtime multiply/add for GCC to contract. The probe now parses
+  runtime arguments, and the controlled rerun is pending. Keep this bounded
   probe separate from the general corpus until it is validated remotely and
   its coverage is represented in corpus reporting.
 

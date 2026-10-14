@@ -7,6 +7,7 @@ $fmaProbeSource = (& moon run --target js cmd/main --fma-probe | Out-String).Tri
 if ($LASTEXITCODE -ne 0 -or
     -not $fmaProbeSource.Contains('seed=2262') -or
     -not $fmaProbeSource.Contains('_ms_fma_product') -or
+    -not $fmaProbeSource.Contains('@string.parse_double(value)') -or
     -not $fmaProbeSource.Contains('_ms_fma_result == 0.0')) {
     throw 'The FMA probe CLI did not emit the reproducible typed source.'
 }

@@ -12,8 +12,11 @@ minimal leaf. Local checks pass: 103/103 MoonBit tests, and the emitted source
 returns `true` on JS, Wasm, and Wasm-GC. The GCC experiment script now compiles
 that generated source under fast-contraction and contraction-disabled package
 flags, instead of compiling only the hand-written fixture. Remote GCC
-validation of this generator-integrated form is pending. This remains a single
-known-issue probe with fixed constants, not general `Double` expression
+validation of this generator-integrated form is pending. The first remote
+generated-source attempt returned `true` under both configurations because
+its operands were literals; the generated probe now parses runtime arguments
+so the optimizer cannot treat them as compile-time constants. This remains a
+single known-issue probe with fixed test values, not general `Double` expression
 generation or random FMA fuzzing.
 
 ## Semantic-path-guided seed selection experiment
