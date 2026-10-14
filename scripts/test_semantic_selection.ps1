@@ -41,9 +41,21 @@ if ($syntheticMetrics.backendBuildAttempts -ne 2 -or
     throw 'A compile failure must not be counted as a backend execution.'
 }
 
+$sizeCandidates = @(
+    [pscustomobject]@{ seed = 20; paths = @('common'); sizeQuartile = '0' },
+    [pscustomobject]@{ seed = 21; paths = @('common', 'rare-a'); sizeQuartile = '1' },
+    [pscustomobject]@{ seed = 22; paths = @('common', 'rare-b'); sizeQuartile = '2' },
+    [pscustomobject]@{ seed = 23; paths = @('common', 'rare-c'); sizeQuartile = '3' }
+)
+$matched = @(Select-MoonSmithSemanticSeeds -Candidates $sizeCandidates -Budget 2 `
+    -SizeQuotas @{ '0' = 1; '1' = 1 })
+if ((@($matched | ForEach-Object seed) -join ',') -ne '21,20') {
+    throw 'Size-aware selection must honor baseline quartile quotas while maximizing rarity.'
+}
+
 $report = & (Join-Path $PSScriptRoot 'compare_semantic_selection.ps1') `
     -SeedStart 0 -CandidateCount 4 -ExecutionBudget 2 -Depth 2 `
-    -Targets @('js') -TimeoutSeconds 30 |
+    -Targets @('js') -TimeoutSeconds 30 -SizeMatched |
     ConvertFrom-Json
 if (-not $report.equalBackendExecutionBudget -or
     $report.baseline.metrics.backendExecutions -ne 2 -or
@@ -57,5 +69,8 @@ if ($report.guided.seeds.Count -ne 2 -or
 }
 if ($report.referenceTraceSource -notlike '*not backend runtime coverage*') {
     throw 'Reference paths must not be presented as backend instrumentation.'
+}
+if (-not $report.sourceSizeQuartilesMatched) {
+    throw 'Smoke comparison did not preserve source-size quartile counts.'
 }
 'Semantic selection unit and integration checks passed.'

@@ -70,12 +70,14 @@ backend budget over sequential seed scanning, run:
 ```powershell
 pwsh -File scripts/compare_semantic_selection.ps1 -SeedStart 24000 `
   -CandidateCount 40 -ExecutionBudget 10 -Depth 4 `
-  -Targets @('js','wasm','wasm-gc')
+  -Targets @('js','wasm','wasm-gc') -SizeMatched
 ```
 
 The script prescreens all candidates using the MoonBit reference evaluator,
-then greedily favors paths rare in that candidate pool and not yet represented
-among selected cases. Both arms execute the same number of selected programs
+measures each generated source, and greedily favors paths rare in that
+candidate pool and not yet represented among selected cases. `-SizeMatched`
+requires the guided arm to match the sequential arm's candidate-pool source-size
+quartile counts. Both arms execute the same number of selected programs
 against the same backend matrix; the JSON records actual runtime launches and
 marks the comparison invalid if either arm falls short. It also records
 prescreen and execution time, toolchain/revision, harness digest, case overlap,

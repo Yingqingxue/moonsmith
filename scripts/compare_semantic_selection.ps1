@@ -7,6 +7,7 @@ param(
     [string[]]$Targets = @('js', 'wasm', 'wasm-gc'),
     [Parameter()][ValidateRange(1, 300)][int]$TimeoutSeconds = 30,
     [Parameter()][switch]$GuidedFirst,
+    [Parameter()][switch]$SizeMatched,
     [Parameter()][string]$OutputPath = ''
 )
 
@@ -47,8 +48,8 @@ function Get-SelectionHarnessDigest {
 }
 $harnessDigestStart = Get-SelectionHarnessDigest
 
-function Invoke-ReferenceTrace {
-    param([int]$Seed)
+function Invoke-MoonCli {
+    param([int]$Seed, [string[]]$Arguments, [string]$Purpose)
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $startInfo.FileName = $moonExe
     $startInfo.WorkingDirectory = $projectRoot
@@ -56,29 +57,44 @@ function Invoke-ReferenceTrace {
     $startInfo.CreateNoWindow = $true
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
-    foreach ($argument in @('run', '--target', 'js', 'cmd/main',
-            [string]$Seed, [string]$Depth, '--trace')) {
+    foreach ($argument in $Arguments) {
         $startInfo.ArgumentList.Add($argument)
     }
     $process = [System.Diagnostics.Process]::new()
     $process.StartInfo = $startInfo
     try {
-        if (-not $process.Start()) { throw "Failed to start reference prescreen for seed $Seed." }
+        if (-not $process.Start()) { throw "Failed to start $Purpose for seed $Seed." }
         $stdoutTask = $process.StandardOutput.ReadToEndAsync()
         $stderrTask = $process.StandardError.ReadToEndAsync()
         if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
             $process.Kill($true)
             $process.WaitForExit()
-            throw "Reference prescreen timed out for seed $Seed after $TimeoutSeconds seconds."
+            throw "$Purpose timed out for seed $Seed after $TimeoutSeconds seconds."
         }
         $stdout = $stdoutTask.GetAwaiter().GetResult()
         $stderr = $stderrTask.GetAwaiter().GetResult()
         if ($process.ExitCode -ne 0) {
-            throw "Reference prescreen failed for seed ${Seed}: $stderr"
+            throw "$Purpose failed for seed ${Seed}: $stderr"
         }
-        return $stdout | ConvertFrom-Json
+        return $stdout
     }
     finally { $process.Dispose() }
+}
+
+function Invoke-ReferenceTrace {
+    param([int]$Seed)
+    $output = Invoke-MoonCli -Seed $Seed -Purpose 'Reference prescreen' -Arguments @(
+        'run', '--target', 'js', 'cmd/main', [string]$Seed, [string]$Depth, '--trace'
+    )
+    return $output | ConvertFrom-Json
+}
+
+function Get-GeneratedSourceLineCount {
+    param([int]$Seed)
+    $source = Invoke-MoonCli -Seed $Seed -Purpose 'Source-size prescreen' -Arguments @(
+        'run', '--target', 'js', 'cmd/main', [string]$Seed, [string]$Depth
+    )
+    return [regex]::Matches($source, "`n").Count
 }
 
 $prescreenTimer = [System.Diagnostics.Stopwatch]::StartNew()
@@ -86,15 +102,31 @@ $candidates = [System.Collections.Generic.List[object]]::new()
 for ($offset = 0; $offset -lt $CandidateCount; $offset++) {
     $seed = [int]([long]$SeedStart + $offset)
     $trace = Invoke-ReferenceTrace -Seed $seed
+    $sourceLineCount = Get-GeneratedSourceLineCount -Seed $seed
     $candidates.Add([pscustomobject]@{
         seed = $seed
         paths = @($trace.visited | Sort-Object -Unique)
+        sourceLineCount = $sourceLineCount
     })
 }
-$guided = @(Select-MoonSmithSemanticSeeds -Candidates $candidates.ToArray() -Budget $ExecutionBudget)
 $prescreenTimer.Stop()
 $baselineSeeds = @($candidates | Select-Object -First $ExecutionBudget | ForEach-Object { $_.seed })
+$null = Set-MoonSmithSourceSizeQuartiles -Candidates $candidates.ToArray()
+$baselineCandidates = @($candidates | Where-Object { $baselineSeeds -contains $_.seed })
+$sizeQuotas = if ($SizeMatched) {
+    Get-MoonSmithSizeQuotas -Candidates $baselineCandidates
+} else { $null }
+$guided = @(Select-MoonSmithSemanticSeeds -Candidates $candidates.ToArray() `
+    -Budget $ExecutionBudget -SizeQuotas $sizeQuotas)
 $guidedSeeds = @($guided | ForEach-Object { $_.seed })
+$baselineSizeCounts = Get-MoonSmithSeedSizeCounts -Seeds $baselineSeeds -Candidates $candidates.ToArray()
+$guidedSizeCounts = Get-MoonSmithSeedSizeCounts -Seeds $guidedSeeds -Candidates $candidates.ToArray()
+$sourceSizeQuartilesMatched = $true
+foreach ($quartile in @($baselineSizeCounts.Keys + $guidedSizeCounts.Keys | Sort-Object -Unique)) {
+    $baselineCount = if ($baselineSizeCounts.ContainsKey($quartile)) { $baselineSizeCounts[$quartile] } else { 0 }
+    $guidedCount = if ($guidedSizeCounts.ContainsKey($quartile)) { $guidedSizeCounts[$quartile] } else { 0 }
+    if ($baselineCount -ne $guidedCount) { $sourceSizeQuartilesMatched = $false }
+}
 
 function Invoke-SelectionArm {
     param([string]$Name, [int[]]$Seeds)
@@ -155,7 +187,11 @@ $unexpectedFindings = @($baseline.cases + $guidedArm.cases |
 $harnessDigestEnd = Get-SelectionHarnessDigest
 $report = [pscustomobject]@{
     schemaVersion = 1
-    method = 'greedy inverse-pool-frequency reference-path novelty with deterministic seed tie-break'
+    method = if ($SizeMatched) {
+        'greedy inverse-pool-frequency reference-path novelty, constrained to the sequential arm source-size quartile counts'
+    } else {
+        'greedy inverse-pool-frequency reference-path novelty with deterministic seed tie-break'
+    }
     referenceTraceSource = 'MoonBit reference interpreter; not backend runtime coverage'
     seedStart = $SeedStart
     candidateCount = $CandidateCount
@@ -177,6 +213,9 @@ $report = [pscustomobject]@{
     baseline = $baseline
     guided = $guidedArm
     overlapSeedCount = @($baselineSeeds | Where-Object { $guidedSeeds -contains $_ }).Count
+    baselineSourceSizeQuartileCounts = $baselineSizeCounts
+    guidedSourceSizeQuartileCounts = $guidedSizeCounts
+    sourceSizeQuartilesMatched = $sourceSizeQuartilesMatched
     executionOrder = if ($GuidedFirst) { @('guided', 'baseline') } else { @('baseline', 'guided') }
     caution = 'Compare path diversity only when equalBackendExecutionBudget is true; prescreen cost is additional, and one cohort cannot establish effectiveness. Native debug has known upstream #1322 ICE and should not be treated as a newly discovered finding.'
 }
