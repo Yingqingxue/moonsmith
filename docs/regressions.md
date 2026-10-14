@@ -242,6 +242,24 @@ Additional candidates reviewed on 2026-10-12:
   and would need a separate warning/fix-it test harness plus a current
   toolchain reproduction.
 
+Candidate reviewed on 2026-10-14:
+
+- [moonbitlang/moon#2262](https://github.com/moonbitlang/moon/issues/2262)
+  reports that GCC may contract floating-point operations into FMA in native
+  release builds, making results differ from other backends or C compilers.
+  The report gives an affected-CPU/toolchain condition and says recompiling
+  generated C with `-ffp-contract=off` removes the observed differences. This
+  is already a public upstream report, so reproducing it would be validation of
+  a known issue, not a MoonSmith discovery. It is also outside the current
+  generated grammar: MoonSmith has no general `Double` arithmetic or exact
+  bit-pattern oracle, and this workstation has no GCC/native C toolchain.
+  Do not add a purported regression based only on JS/Wasm/Windows-MSVC runs;
+  they cannot establish the GCC/FMA behavior. A future bounded float probe
+  would need an explicitly configured GCC/FMA runner, controls compiled with
+  contraction disabled, and a bitwise or cancellation-sensitive assertion.
+  This candidate is therefore tracked for a separately scoped experiment,
+  not included in the current differential corpus.
+
 ## What this corpus can and cannot show
 
 The included case tests whether a known historical compiler-tooling failure
