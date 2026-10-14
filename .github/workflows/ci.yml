@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: '13990'
+      gcc_fma_experiment:
+        description: Run the opt-in GCC/FMA reproduction and contraction-disabled control
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -163,6 +168,28 @@ jobs:
             .moonsmith/issue_1322.json
           if-no-files-found: ignore
           retention-days: 30
+
+  gcc-fma-experiment:
+    if: github.event_name == 'workflow_dispatch' && inputs.gcc_fma_experiment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Record toolchain and FMA capability
+        run: |
+          moon version --all
+          gcc --version
+          grep -m1 -Eo '(^| )fma( |$)' /proc/cpuinfo
+
+      - name: Compare GCC FMA contraction with the controls
+        run: ./scripts/test_gcc_fma_experiment.sh
 
   extended-seed-scan:
     if: github.event_name == 'workflow_dispatch' && inputs.extended_scan

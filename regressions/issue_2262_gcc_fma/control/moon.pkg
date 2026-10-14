@@ -1,0 +1,15 @@
+import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
+}
+
+pkgtype(kind: "executable")
+
+options(
+  link: {
+    "native": {
+      "cc": "gcc",
+      "cc-flags": "-fwrapv -fno-strict-aliasing -O2 -march=native -ffp-contract=off",
+    },
+  },
+)

@@ -254,11 +254,15 @@ Candidate reviewed on 2026-10-14:
   generated grammar: MoonSmith has no general `Double` arithmetic or exact
   bit-pattern oracle, and this workstation has no GCC/native C toolchain.
   Do not add a purported regression based only on JS/Wasm/Windows-MSVC runs;
-  they cannot establish the GCC/FMA behavior. A future bounded float probe
-  would need an explicitly configured GCC/FMA runner, controls compiled with
-  contraction disabled, and a bitwise or cancellation-sensitive assertion.
-  This candidate is therefore tracked for a separately scoped experiment,
-  not included in the current differential corpus.
+  they cannot establish the GCC/FMA behavior. An opt-in, manually dispatched
+  GitHub Actions experiment now compiles the same cancellation-sensitive
+  source with GCC `-march=native -ffp-contract=fast` and with contraction
+  disabled, then checks JS, Wasm, and Wasm-GC as separate-rounding controls.
+  Its fixtures are under `regressions/issue_2262_gcc_fma/`, and the runner is
+  `scripts/test_gcc_fma_experiment.sh`. This is a standalone known-issue
+  reproducer, not a generated MoonSmith case or a new discovery; the result is
+  pending remote execution. It is deliberately separate from the main corpus
+  until the controlled native result is confirmed.
 
 ## What this corpus can and cannot show
 
