@@ -2,6 +2,20 @@
 
 Last updated: 2026-10-14
 
+## Bounded generated GCC FMA probe
+
+The typed expression IR now includes a fixed finite-input `FmaContractionProbe`
+and `generate_fma_probe_program`, exposed by the generator CLI's `--fma-probe`
+mode. The reference evaluator runs the two `Double` operations on the JS target,
+where they are separately rounded; the AST reducer treats the probe as a
+minimal leaf. Local checks pass: 103/103 MoonBit tests, and the emitted source
+returns `true` on JS, Wasm, and Wasm-GC. The GCC experiment script now compiles
+that generated source under fast-contraction and contraction-disabled package
+flags, instead of compiling only the hand-written fixture. Remote GCC
+validation of this generator-integrated form is pending. This remains a single
+known-issue probe with fixed constants, not general `Double` expression
+generation or random FMA fuzzing.
+
 ## Semantic-path-guided seed selection experiment
 
 `scripts/compare_semantic_selection.ps1` now compares a deterministic,

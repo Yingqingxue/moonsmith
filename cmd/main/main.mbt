@@ -35,28 +35,32 @@ fn cli_args() -> ArrayView[String] {
 /// this bootstrap CLI and will become structured errors in the full command.
 fn main {
   let args = cli_args()
-  let seed = int_arg_or(args, 0, 42)
-  let depth = int_arg_or(args, 1, 4)
-  let program = @lib.generate_program(seed, depth)
-  if args.length() > 2 && args[2] == "--trace" {
-    let (value, trace) = program.result.evaluate_with_trace()
-    let json = StringBuilder()
-    json.write_string("{\"value\":\"")
-    json.write_string(value.to_output())
-    json.write_string("\",\"visited\":[")
-    for index = 0; index < trace.length(); index = index + 1 {
-      if index > 0 {
-        json.write_char(',')
-      }
-      json.write_char('"')
-      json.write_string(trace[index])
-      json.write_char('"')
-    }
-    json.write_string("]}")
-    println(json.to_string())
-  } else if args.length() > 2 && args[2] == "--expected" {
-    println(program.result.evaluate().to_output())
+  if args.length() > 0 && args[0] == "--fma-probe" {
+    println(@lib.generate_fma_probe_program(2262).to_source())
   } else {
-    println(program.to_source())
+    let seed = int_arg_or(args, 0, 42)
+    let depth = int_arg_or(args, 1, 4)
+    let program = @lib.generate_program(seed, depth)
+    if args.length() > 2 && args[2] == "--trace" {
+      let (value, trace) = program.result.evaluate_with_trace()
+      let json = StringBuilder()
+      json.write_string("{\"value\":\"")
+      json.write_string(value.to_output())
+      json.write_string("\",\"visited\":[")
+      for index = 0; index < trace.length(); index = index + 1 {
+        if index > 0 {
+          json.write_char(',')
+        }
+        json.write_char('"')
+        json.write_string(trace[index])
+        json.write_char('"')
+      }
+      json.write_string("]}")
+      println(json.to_string())
+    } else if args.length() > 2 && args[2] == "--expected" {
+      println(program.result.evaluate().to_output())
+    } else {
+      println(program.to_source())
+    }
   }
 }

@@ -34,6 +34,8 @@ pub(all) enum Expr {
   WhileLoop(Int, Expr, Expr)
   ValtypeRaiseProbe(Expr)
   ValtypeEnumArrayProbe(Expr)
+  /// A fixed finite-input probe for separately rounded Double multiply/add.
+  FmaContractionProbe
 }
 
 ///|
@@ -453,6 +455,14 @@ pub fn generate_program(seed : Int, depth : Int) -> Program {
 }
 
 ///|
+/// Generate the bounded known-issue FMA case without perturbing the general
+/// seed corpus. The reference evaluator uses JS binary64 rounding; the emitted
+/// source is replayed under independently configured native compiler flags.
+pub fn generate_fma_probe_program(seed : Int) -> Program {
+  { seed, result_type: BoolType, result: FmaContractionProbe, }
+}
+
+///|
 pub fn Expr::value_type(self : Expr) -> ValueType {
   match self {
     IntLiteral(_) | Add(_, _) | Subtract(_, _) => IntType
@@ -474,6 +484,7 @@ pub fn Expr::value_type(self : Expr) -> ValueType {
     FunctionApply(result_type, _, _, _) => result_type
     ForLoop(_, _, _) | WhileLoop(_, _, _) | ValtypeEnumArrayProbe(_) => IntType
     ValtypeRaiseProbe(_) => BoolType
+    FmaContractionProbe => BoolType
   }
 }
 
@@ -486,7 +497,8 @@ fn Expr::contains_struct(self : Expr) -> Bool {
       choice.contains_struct() ||
       number_body.contains_struct() ||
       flag_body.contains_struct()
-    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) => false
+    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) | FmaContractionProbe =>
+      false
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
@@ -518,7 +530,8 @@ fn Expr::contains_struct(self : Expr) -> Bool {
 fn Expr::contains_choice(self : Expr) -> Bool {
   match self {
     ChoiceValue(_, _) | MatchChoice(_, _, _, _, _, _) => true
-    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) => false
+    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) | FmaContractionProbe =>
+      false
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
@@ -735,6 +748,8 @@ pub fn Expr::to_source(self : Expr) -> String {
       "\n    _ms_valtype_actual == _ms_valtype_expected\n  })"
     ValtypeEnumArrayProbe(value) =>
       "_ms_valtype_array_run(" + value.to_source() + ")"
+    FmaContractionProbe =>
+      "({\n    let _ms_fma_a : Double = 1.000000007450580596923828125\n    let _ms_fma_b : Double = 0.999999992549419403076171875\n    let _ms_fma_c : Double = -1.0\n    let _ms_fma_product = _ms_fma_a * _ms_fma_b\n    let _ms_fma_result = _ms_fma_product + _ms_fma_c\n    _ms_fma_result == 0.0\n  })"
   }
 }
 
@@ -799,7 +814,8 @@ pub fn Program::to_source(self : Program) -> String {
 fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
   match self {
     ValtypeRaiseProbe(_) => true
-    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) => false
+    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) | FmaContractionProbe =>
+      false
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
@@ -845,7 +861,8 @@ fn Expr::contains_valtype_raise_probe(self : Expr) -> Bool {
 fn Expr::contains_valtype_enum_array_probe(self : Expr) -> Bool {
   match self {
     ValtypeEnumArrayProbe(_) => true
-    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) => false
+    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) | FmaContractionProbe =>
+      false
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)

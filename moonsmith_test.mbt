@@ -68,6 +68,19 @@ test "rendered program is deterministic and self contained" {
 }
 
 ///|
+test "FMA probe generator emits a typed, separate-rounding candidate" {
+  let program = @moonsmith.generate_fma_probe_program(2262)
+  assert_true(program.result.value_type() is @moonsmith.BoolType)
+  assert_true(program.result is @moonsmith.FmaContractionProbe)
+  let source = program.to_source()
+  assert_true(source.contains("let _ms_fma_product = _ms_fma_a * _ms_fma_b"))
+  assert_true(
+    source.contains("let _ms_fma_result = _ms_fma_product + _ms_fma_c"),
+  )
+  assert_true(source.contains("_ms_fma_result == 0.0"))
+}
+
+///|
 test "generated corpus exercises both safe array indices" {
   let mut first = false
   let mut second = false

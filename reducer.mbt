@@ -16,6 +16,7 @@ pub fn Expr::complexity(self : Expr) -> Int {
     IntLiteral(value) => 1 + int_magnitude(value)
     BoolLiteral(value) => if value { 2 } else { 1 }
     Variable(_, _) => 1
+    FmaContractionProbe => 1
     Let(_, _, value, body) => 1000 + value.complexity() + body.complexity()
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
       1000 + first.complexity() + second.complexity()
@@ -56,7 +57,7 @@ pub fn Expr::complexity(self : Expr) -> Int {
 /// still evaluated in the enclosing scope.
 fn Expr::uses_variable(self : Expr, name : String) -> Bool {
   match self {
-    IntLiteral(_) | BoolLiteral(_) => false
+    IntLiteral(_) | BoolLiteral(_) | FmaContractionProbe => false
     Variable(_, variable_name) => variable_name == name
     Add(left, right)
     | Subtract(left, right)
@@ -136,6 +137,7 @@ pub fn Expr::shrink_candidates(self : Expr) -> Array[Expr] {
       if value {
         push_if_smaller(candidates, original_complexity, BoolLiteral(false))
       }
+    FmaContractionProbe => ()
     Variable(_, _) => ()
     ArraySelect(result_type, first, second, select_second) => {
       push_if_smaller(candidates, original_complexity, first)

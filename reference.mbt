@@ -244,6 +244,17 @@ fn Expr::evaluate_in_env(
       trace.push("valtype-enum-array-index-after-growth")
       IntValue(input + 1)
     }
+    FmaContractionProbe => {
+      trace.push("fma-contraction-probe")
+      // The JS-target reference evaluator enforces separate binary64
+      // rounding between these operations, independent of the tested native
+      // compiler's contraction flags.
+      let a = 1.000000007450580596923828125
+      let b = 0.999999992549419403076171875
+      let c = -1.0
+      let product = a * b
+      BoolValue(product + c == 0.0)
+    }
     Add(left, right) => {
       trace.push("add")
       IntValue(

@@ -11,6 +11,15 @@ test "reference evaluator respects nested conditions and types" {
 }
 
 ///|
+test "FMA reference probe uses separately rounded binary64 operations" {
+  let program = @moonsmith.generate_fma_probe_program(2262)
+  let (value, trace) = program.result.evaluate_with_trace()
+  assert_eq(value.to_output(), "true")
+  assert_eq(program.expected_output(), "true\n")
+  assert_true(trace.contains("fma-contraction-probe"))
+}
+
+///|
 test "reference trace records only the dynamically selected branch" {
   let expression = @moonsmith.If(
     IntType,

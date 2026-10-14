@@ -22,6 +22,28 @@ test "integer literal shrinking moves toward zero without duplicates" {
 }
 
 ///|
+test "FMA probe is a minimal typed leaf and has no invalid shrink candidates" {
+  let expression = @moonsmith.FmaContractionProbe
+  assert_true(expression.value_type() is @moonsmith.BoolType)
+  assert_eq(expression.complexity(), 1)
+  assert_eq(expression.shrink_candidates().length(), 0)
+}
+
+///|
+test "structural shrinking can retain the FMA trigger as a minimal body" {
+  let trigger = @moonsmith.FmaContractionProbe
+  let expression = @moonsmith.And(trigger, @moonsmith.BoolLiteral(true))
+  let candidates = expression.shrink_candidates()
+  let mut retained_trigger = false
+  for candidate in candidates {
+    if candidate.to_source() == trigger.to_source() {
+      retained_trigger = true
+    }
+  }
+  assert_true(retained_trigger)
+}
+
+///|
 test "addition can be replaced by either same-typed operand" {
   let expression = @moonsmith.Add(IntLiteral(5), IntLiteral(8))
   let candidates = expression.shrink_candidates()

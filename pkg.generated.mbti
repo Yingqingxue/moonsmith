@@ -6,6 +6,8 @@ pub fn analyze_results(Array[RunResult], expected_output? : String) -> Different
 
 pub fn generate_expr(Int, ValueType, Int) -> Expr
 
+pub fn generate_fma_probe_program(Int) -> Program
+
 pub fn generate_program(Int, Int) -> Program
 
 pub fn json_escape(String) -> String
@@ -59,6 +61,7 @@ pub(all) enum Expr {
   WhileLoop(Int, Expr, Expr)
   ValtypeRaiseProbe(Expr)
   ValtypeEnumArrayProbe(Expr)
+  FmaContractionProbe
 }
 pub fn Expr::complexity(Self) -> Int
 pub fn Expr::evaluate(Self) -> EvaluatedValue
