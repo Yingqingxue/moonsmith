@@ -3,6 +3,14 @@ $cli = Join-Path $PSScriptRoot 'moonsmith.ps1'
 $verify = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $batchRunner = Join-Path $PSScriptRoot 'run_batch.ps1'
 
+$fmaProbeSource = (& moon run --target js cmd/main --fma-probe | Out-String).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    -not $fmaProbeSource.Contains('seed=2262') -or
+    -not $fmaProbeSource.Contains('_ms_fma_product') -or
+    -not $fmaProbeSource.Contains('_ms_fma_result == 0.0')) {
+    throw 'The FMA probe CLI did not emit the reproducible typed source.'
+}
+
 $seedRangeRejected = $false
 try {
     & $batchRunner -SeedStart ([int]::MaxValue) -Count 2 -Depth 0 `
