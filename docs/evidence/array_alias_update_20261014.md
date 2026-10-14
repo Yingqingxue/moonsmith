@@ -46,6 +46,19 @@ index 1 in 69), and 30/30 consistent cases for seeds 9200–9229 at depth 8
 different seed/depth cohorts from the Linux nightly; they are **not** a
 per-seed cross-platform hash comparison.
 
+A later [paired CI run 38488243292](https://github.com/Yingqingxue/moonsmith/actions/runs/38488243292)
+at source commit `d3a3fa8` used fresh seeds 23000–23229: 100 at depth 4,
+100 at depth 6, and 30 at depth 8. Linux ran JS/Wasm/Wasm-GC and Windows ran
+native-release on the *same* 230 seeds. All five workflow jobs passed. The
+comparison artifact records 230/230 matching source hashes, 230/230 matching
+reference outputs, and 230/230 cases consistent on both platforms (690 Linux
+and 230 Windows backend executions). All 230 generated bodies were distinct.
+Both platform reports recorded 191 sources containing alias updates and 173
+reference cases visiting an alias update; index 0 was visited in 149 cases
+and index 1 in 120. Each platform checked all 230 reference cases and reported
+zero unexpected findings. This establishes parity for this bounded sample,
+not for every possible generated program or compiler version.
+
 All path figures are reference-interpreter case counts, not compiler-backend
 coverage instrumentation. The finite samples do not prove general compiler
 correctness or bug-finding effectiveness. The historical upstream #1322
