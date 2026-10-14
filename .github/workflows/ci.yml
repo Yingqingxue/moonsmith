@@ -25,6 +25,11 @@ on:
         required: false
         type: boolean
         default: false
+      semantic_selection_replication:
+        description: Run the preregistered source-size-matched semantic-selection replication
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -287,6 +292,44 @@ jobs:
         with:
           name: moonsmith-windows-current-generator-crosscheck
           path: .moonsmith/runs/batch_*.json
+          if-no-files-found: error
+          retention-days: 30
+
+  semantic-selection-replication:
+    if: github.event_name == 'workflow_dispatch' && inputs.semantic_selection_replication
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+
+      - name: Record experiment toolchain
+        run: moon version --all
+
+      - name: Run the preregistered fixed cohort
+        shell: pwsh
+        run: |
+          ./scripts/compare_semantic_selection.ps1 `
+            -SeedStart 24220 -CandidateCount 100 -ExecutionBudget 20 -Depth 4 `
+            -Targets @('js','wasm','wasm-gc') -SizeMatched `
+            -OutputPath .moonsmith/runs/selection_24220_100_20_d4_size_matched.json
+
+      - name: Preserve semantic-selection report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: moonsmith-semantic-selection-replication
+          path: .moonsmith/runs/selection_24220_100_20_d4_size_matched.json
           if-no-files-found: error
           retention-days: 30
 
