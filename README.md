@@ -156,6 +156,14 @@ first append mirrors the relevant source shape from upstream issue
 MoonSmith did not discover. Both probes have reference evaluation and AST
 shrinking, but do not imply general floating-point, exception, enum, or array
 generation support.
+For the separately reported GCC FMA behavior in upstream issue
+[#2262](https://github.com/moonbitlang/moon/issues/2262), a fixed
+`FmaContractionProbe` can be emitted with
+`moon run --target js cmd/main --fma-probe`. It is evaluated on the JS
+reference path and retained as an indivisible AST leaf during reduction; the
+ordinary random seed corpus does not yet generate general `Double`
+expressions. The generated-source GCC experiment is documented in
+[`docs/regressions.md`](docs/regressions.md).
 The reducer works on generated ASTs and verifies candidates against the
 original backend relationship. Arbitrary MoonBit source reduction is not
 implemented yet.
