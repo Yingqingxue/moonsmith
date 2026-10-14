@@ -2,6 +2,24 @@
 
 Last updated: 2026-10-14
 
+## Semantic-path-guided seed selection experiment
+
+`scripts/compare_semantic_selection.ps1` now compares a deterministic,
+reference-path-guided selection against sequential seeds drawn from the same
+candidate range. It records the candidate prescreen wall time separately from
+the two backend arms, verifies that both arms actually launch the configured
+number of backend executions, and labels the reference trace correctly as an
+interpreter observation rather than backend instrumentation. Synthetic ranking
+tests and a four-candidate/two-execution JS integration smoke run are included
+in CI. This is a selection-policy experiment, not evidence yet that it finds
+more compiler defects; path diversity and elapsed-time tradeoffs must be
+measured over multiple cohorts. Three initial depth-4 cohorts of 40 candidates
+and ten programs per arm showed higher reference-path variety under guidance
+at the same 30 runtime launches per arm, but with 18–19 seconds of extra
+prescreening and possible source-size confounding. See the
+[bounded A/B evidence](evidence/semantic_selection_20261014.md); no compiler
+defect was discovered in these runs.
+
 ## Bounded array alias updates
 
 The typed generator can now create a two-element `Int` or `Bool` array,

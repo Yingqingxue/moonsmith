@@ -173,6 +173,7 @@ $runs = foreach ($target in $Targets) {
     $buildMode = if ($backendTarget -ne 'native') { 'default' } elseif ($target -eq 'native-release') { 'release' } else { 'debug' }
     $missingNativeCompiler = $backendTarget -eq 'native' -and
         $null -eq (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)
+    $executionAttempted = $false
 
     if ($missingNativeCompiler) {
         $status = 'unavailable'
@@ -205,6 +206,7 @@ $runs = foreach ($target in $Targets) {
         $durationMs = $build.durationMs
     }
     elseif (-not $missingNativeCompiler) {
+        $executionAttempted = $true
         $executionArguments = @('run', '--target', $backendTarget, $casePath)
         if ($target -eq 'native-release') { $executionArguments += '--release' }
         $executionArguments += '--deny-warn'
@@ -241,6 +243,7 @@ $runs = foreach ($target in $Targets) {
         output     = $output
         error      = $errorOutput
         durationMs = $durationMs
+        executionAttempted = $executionAttempted
     }
 }
 

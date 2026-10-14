@@ -64,6 +64,29 @@ misrepresented as a cluster.
 Batch seed ranges must also stay within MoonBit's signed 32-bit `Int` domain;
 the runner rejects an overflowing range before starting any compiler process.
 
+To test whether reference-semantic-path-guided selection improves a fixed
+backend budget over sequential seed scanning, run:
+
+```powershell
+pwsh -File scripts/compare_semantic_selection.ps1 -SeedStart 24000 `
+  -CandidateCount 40 -ExecutionBudget 10 -Depth 4 `
+  -Targets @('js','wasm','wasm-gc')
+```
+
+The script prescreens all candidates using the MoonBit reference evaluator,
+then greedily favors paths rare in that candidate pool and not yet represented
+among selected cases. Both arms execute the same number of selected programs
+against the same backend matrix; the JSON records actual runtime launches and
+marks the comparison invalid if either arm falls short. It also records
+prescreen and execution time, toolchain/revision, harness digest, case overlap,
+source size, program-body
+diversity, and findings; unexpected findings retain their normal saved case
+artifacts for triage. Reference paths are **not** backend runtime coverage.
+This is an experiment, not a demonstrated improvement or a new-bug claim;
+compare multiple nonoverlapping cohorts and alternate arm order with
+`-GuidedFirst` before drawing an effectiveness
+conclusion. Reports are saved under ignored `.moonsmith/runs/`.
+
 For a repeatable demonstration of fault detection and reduction (an explicitly
 injected fault, **not** a MoonBit compiler bug):
 

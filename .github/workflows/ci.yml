@@ -73,6 +73,7 @@ jobs:
           ./scripts/test_reducer.ps1
           ./scripts/test_cli.ps1
           ./scripts/test_batch_reports.ps1
+          ./scripts/test_semantic_selection.ps1
 
       - name: Smoke-test generated programs
         shell: pwsh
