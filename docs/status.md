@@ -12,10 +12,12 @@ observable even if the final result alone would not expose it. The reference
 evaluator records which index was updated, and the reducer can simplify all
 three child expressions while preserving the update scaffold. Batch JSON
 reports source cases and reference paths separately. Local JS/Wasm/Wasm-GC
-tests and a 20-seed differential sample passed; remote fixed-corpus and native
-validation remain required before claiming cross-platform evidence. This is
-not arbitrary aliasing, variable-length mutation, or proof of backend
-correctness.
+tests and a 20-seed differential sample passed. A fixed 1,000-seed nightly
+and separate Windows native-release cohorts now also pass; the updated
+index-selection gate enforces both a 2% floor and a 1:2 balance bound. See
+[the measured evidence](evidence/array_alias_update_20261014.md) for exact
+runs, counts, and limitations. This is not arbitrary aliasing,
+variable-length mutation, or proof of backend correctness.
 
 ## Grown-array index balance
 

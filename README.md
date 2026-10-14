@@ -107,7 +107,9 @@ For two-element `Int` and `Bool` arrays, the generator also tests a separate
 alias-update slice: it writes through one array alias, reads through the
 original binding, and checks that the other element was not changed. The
 reference evaluator and AST reducer support this slice; it does not model
-general mutable-array programs.
+general mutable-array programs. See the
+[array alias-update evidence](docs/evidence/array_alias_update_20261014.md)
+for fixed-corpus and Windows native-release results.
 The fixed nightly corpus exercises both grown-array indices with a minimum
 per-index reference-path floor; see the
 [array-growth balance evidence](docs/evidence/array_growth_balance_20261014.md).
