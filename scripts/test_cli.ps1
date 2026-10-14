@@ -208,7 +208,9 @@ if ($generatorLimitExitCode -ne 1 -or
     throw 'oversized generated source was not classified as generator-limit.'
 }
 
-$nearLimitRaw = & $verify -Seed 8164 -Depth 10 -Targets @('wasm') -NoPersist
+# Alias-update guards enlarged seed 8164 past the limit; keep a separate
+# generated case that remains below it so both sides of the bound are tested.
+$nearLimitRaw = & $verify -Seed 8165 -Depth 10 -Targets @('wasm') -NoPersist
 $nearLimit = $nearLimitRaw | ConvertFrom-Json
 $nearLimitSource = Get-Content -LiteralPath $nearLimit.casePath -Raw -Encoding utf8
 $nearLimitLineCount = [regex]::Matches($nearLimitSource, "`n").Count

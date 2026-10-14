@@ -9,14 +9,18 @@ write a generated replacement through a second binding to that array, and
 read the result through the original binding. Generated source asserts both
 the updated value and the untouched other element, making an aliasing error
 observable even if the final result alone would not expose it. The reference
-evaluator records which index was updated, and the reducer can simplify all
+evaluator records which index was updated and when a generated replacement
+would otherwise be a no-op. In that case, both source and reference evaluator
+substitute a different value, closing a false-negative path for ignored alias
+writes. The reducer can simplify all
 three child expressions while preserving the update scaffold. Batch JSON
 reports source cases and reference paths separately. Local JS/Wasm/Wasm-GC
 tests and a 20-seed differential sample passed. A fixed 1,000-seed nightly
 and separate Windows native-release cohorts now also pass; the updated
 index-selection gate enforces both a 2% floor and a 1:2 balance bound. See
 [the measured evidence](evidence/array_alias_update_20261014.md) for exact
-runs, counts, and limitations. This is not arbitrary aliasing,
+runs, counts, and limitations; those measured runs predate the no-op guard.
+This is not arbitrary aliasing,
 variable-length mutation, or proof of backend correctness.
 
 ## Grown-array index balance

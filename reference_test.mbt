@@ -246,11 +246,51 @@ test "array alias update observes replacement through the original array" {
   assert_eq(second_value.to_output(), "false")
   assert_true(first_trace.contains("array-alias-update-index-0"))
   assert_true(second_trace.contains("array-alias-update-index-1"))
+  assert_true(!first_trace.contains("array-alias-update-collision"))
+  assert_true(!second_trace.contains("array-alias-update-collision"))
   let source = first.to_source()
   assert_true(source.contains("let _ms_alias = items"))
   assert_true(source.contains("_ms_alias[0] = replacement"))
   assert_true(source.contains("items[0] == replacement"))
   assert_true(source.contains("items[1] == other_before"))
+}
+
+///|
+test "array alias update turns a no-op candidate into an observable write" {
+  let zero = @moonsmith.ArrayAliasUpdateSelect(
+    IntType,
+    IntLiteral(0),
+    IntLiteral(8),
+    IntLiteral(0),
+    false,
+  )
+  let nonzero = @moonsmith.ArrayAliasUpdateSelect(
+    IntType,
+    IntLiteral(8),
+    IntLiteral(-3),
+    IntLiteral(-3),
+    true,
+  )
+  let boolean = @moonsmith.ArrayAliasUpdateSelect(
+    BoolType,
+    BoolLiteral(false),
+    BoolLiteral(true),
+    BoolLiteral(true),
+    true,
+  )
+  let (zero_value, zero_trace) = zero.evaluate_with_trace()
+  let (nonzero_value, nonzero_trace) = nonzero.evaluate_with_trace()
+  let (boolean_value, boolean_trace) = boolean.evaluate_with_trace()
+  assert_eq(zero_value.to_output(), "1")
+  assert_eq(nonzero_value.to_output(), "0")
+  assert_eq(boolean_value.to_output(), "false")
+  assert_true(zero_trace.contains("array-alias-update-collision"))
+  assert_true(nonzero_trace.contains("array-alias-update-collision"))
+  assert_true(boolean_trace.contains("array-alias-update-collision"))
+  assert_true(zero.to_source().contains("if original == 0 { 1 } else { 0 }"))
+  assert_true(
+    boolean.to_source().contains("if candidate == original { !original }"),
+  )
 }
 
 ///|

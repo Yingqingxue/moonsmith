@@ -113,9 +113,29 @@ fn Expr::evaluate_in_env(
     }
     ArrayAliasUpdateSelect(_, first, second, replacement, select_second) => {
       trace.push("array-alias-update")
-      let _ = first.evaluate_in_env(bindings, trace)
-      let _ = second.evaluate_in_env(bindings, trace)
-      let updated = replacement.evaluate_in_env(bindings, trace)
+      let first_value = first.evaluate_in_env(bindings, trace)
+      let second_value = second.evaluate_in_env(bindings, trace)
+      let original = if select_second { second_value } else { first_value }
+      let candidate = replacement.evaluate_in_env(bindings, trace)
+      // A no-op write cannot reveal a broken alias. Keep the generated write
+      // observably distinct while still evaluating the candidate expression.
+      let updated = match (original, candidate) {
+        (IntValue(before), IntValue(value)) =>
+          if value == before {
+            trace.push("array-alias-update-collision")
+            IntValue(if before == 0 { 1 } else { 0 })
+          } else {
+            IntValue(value)
+          }
+        (BoolValue(before), BoolValue(value)) =>
+          if value == before {
+            trace.push("array-alias-update-collision")
+            BoolValue(!before)
+          } else {
+            BoolValue(value)
+          }
+        _ => abort("array alias update requires matching primitive values")
+      }
       trace.push(
         if select_second {
           "array-alias-update-index-1"

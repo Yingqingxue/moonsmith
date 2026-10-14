@@ -254,6 +254,7 @@ test "generated corpus executes both grown-array indices" {
 test "generated corpus executes both array alias update indices" {
   let mut first_index_cases = 0
   let mut second_index_cases = 0
+  let mut no_op_candidate_cases = 0
   for seed = 14990; seed < 15990; seed = seed + 1 {
     let (_, trace) = @moonsmith.generate_program(seed, 4).result.evaluate_with_trace()
     if trace.contains("array-alias-update-index-0") {
@@ -262,11 +263,17 @@ test "generated corpus executes both array alias update indices" {
     if trace.contains("array-alias-update-index-1") {
       second_index_cases = second_index_cases + 1
     }
+    if trace.contains("array-alias-update-collision") {
+      no_op_candidate_cases = no_op_candidate_cases + 1
+    }
   }
   assert_true(first_index_cases >= 20)
   assert_true(second_index_cases >= 20)
   assert_true(first_index_cases * 2 >= second_index_cases)
   assert_true(second_index_cases * 2 >= first_index_cases)
+  // Candidate/original equality must actually exercise the distinct-value
+  // fallback, not just appear in a hand-built expression test.
+  assert_true(no_op_candidate_cases >= 1)
 }
 
 ///|

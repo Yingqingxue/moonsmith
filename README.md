@@ -105,7 +105,9 @@ Array growth currently handles `Int` and `Bool` elements only; that slice does
 not generate arbitrary indices, removals, or aliasing.
 For two-element `Int` and `Bool` arrays, the generator also tests a separate
 alias-update slice: it writes through one array alias, reads through the
-original binding, and checks that the other element was not changed. The
+original binding, and checks that the other element was not changed. If the
+generated replacement equals the selected old value, the probe substitutes
+a different value so a missing write cannot masquerade as a correct result. The
 reference evaluator and AST reducer support this slice; it does not model
 general mutable-array programs. See the
 [array alias-update evidence](docs/evidence/array_alias_update_20261014.md)

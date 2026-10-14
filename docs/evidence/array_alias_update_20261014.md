@@ -9,6 +9,11 @@ reducer can shrink all three child expressions while retaining this scaffold.
 The slice is bounded: it does not generate arbitrary indices, removals,
 multi-array alias graphs, or general mutable-array programs.
 
+The measurements below apply to commits before the later no-op candidate
+guard. That guard substitutes a distinct value when the generated replacement
+equals the selected old value; its tests and remote corpus must be assessed
+separately rather than attributing these counts to it.
+
 Local MoonBit tests passed on JS, Wasm, and Wasm-GC (98 tests per target).
 The reference/reducer/CLI integration suites passed. In an explicitly
 injected wasm-gc output-mismatch demonstration, reduction kept the alias

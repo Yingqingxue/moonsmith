@@ -622,17 +622,35 @@ pub fn Expr::to_source(self : Expr) -> String {
       (if select_second { "1" } else { "0" }) +
       "]\n  })"
     }
-    ArrayAliasUpdateSelect(_, first, second, replacement, select_second) => {
+    ArrayAliasUpdateSelect(
+      result_type,
+      first,
+      second,
+      replacement,
+      select_second
+    ) => {
       let selected_index = if select_second { "1" } else { "0" }
       let other_index = if select_second { "0" } else { "1" }
+      // An equal candidate would make a missing alias write unobservable.
+      let distinct_fallback = match result_type {
+        IntType => "if original == 0 { 1 } else { 0 }"
+        BoolType => "!original"
+        ChoiceType =>
+          abort("Choice cannot be an array-alias-update result type")
+      }
       "({\n    let items = [" +
       first.to_source() +
       ", " +
       second.to_source() +
       "]\n    let _ms_alias = items\n    let other_before = items[" +
       other_index +
-      "]\n    let replacement = " +
+      "]\n    let original = items[" +
+      selected_index +
+      "]\n    let candidate = " +
       replacement.to_source() +
+      "\n    let replacement = if candidate == original { " +
+      distinct_fallback +
+      " } else { candidate }" +
       "\n    _ms_alias[" +
       selected_index +
       "] = replacement\n    if items[" +

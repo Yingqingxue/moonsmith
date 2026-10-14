@@ -31,6 +31,18 @@ if ($array.finding -ne 'consistent' -or
     throw 'Valtype enum array output did not agree with the reference evaluator.'
 }
 
+$aliasCollision = (& $verifyScript -Seed 23002 -Depth 4 -NoPersist |
+    ConvertFrom-Json)
+$aliasSource = Get-Content -LiteralPath $aliasCollision.casePath -Raw -Encoding utf8
+if ($aliasCollision.finding -ne 'consistent' -or
+    $aliasCollision.referenceTrace.visited -notcontains 'array-alias-update-collision' -or
+    $aliasSource -notmatch 'let replacement = if candidate == original' -or
+    @($aliasCollision.runs | Where-Object {
+        (Normalize-Output $_.output) -ne (Normalize-Output $aliasCollision.expectedOutput)
+    }).Count -ne 0) {
+    throw 'The generated no-op alias candidate did not become an observable, consistent update.'
+}
+
 $combinedTargets = @('js', 'wasm', 'wasm-gc')
 if ($null -ne (Get-Command cl, clang-cl, gcc, clang, cc -ErrorAction SilentlyContinue | Select-Object -First 1)) {
     $combinedTargets += 'native'
@@ -93,11 +105,12 @@ if (@($injected.runs | Select-Object -ExpandProperty output -Unique).Count -ne 1
 }
 
 [pscustomobject]@{
-    passed         = $true
-    normalFinding = $normal.finding
-    arrayFinding = $array.finding
-    combinedFinding = $combined.finding
-    injectedFinding = $injected.finding
-    expectedOutput = $normal.expectedOutput.Trim()
+    passed                = $true
+    normalFinding         = $normal.finding
+    arrayFinding          = $array.finding
+    aliasCollisionFinding = $aliasCollision.finding
+    combinedFinding       = $combined.finding
+    injectedFinding       = $injected.finding
+    expectedOutput        = $normal.expectedOutput.Trim()
 } | ConvertTo-Json -Depth 3
 $global:LASTEXITCODE = 0
