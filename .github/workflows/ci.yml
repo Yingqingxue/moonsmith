@@ -189,7 +189,7 @@ jobs:
           grep -m1 -Eo '(^| )fma( |$)' /proc/cpuinfo
 
       - name: Compare GCC FMA contraction with the controls
-        run: ./scripts/test_gcc_fma_experiment.sh
+        run: bash scripts/test_gcc_fma_experiment.sh
 
   extended-seed-scan:
     if: github.event_name == 'workflow_dispatch' && inputs.extended_scan
