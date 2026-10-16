@@ -98,15 +98,26 @@ recorded in [`valtype_reduction_smoke_20261016.md`](evidence/valtype_reduction_s
 exact historical trigger from the generated extension and records the
 injected-fault reduction without claiming compiler-bug discovery. This is a
 workflow example, not resolution of all overlap—especially with MoonGrammata.
-A pre-registered, source-size-matched hosted replication found 55 reference
-path kinds for semantic-guided selection versus 51 sequential at equal backend
-execution and quartile budgets, with no unexpected finding; its additional
-prescreen cost and limits are recorded in the
-[`hosted replication evidence`](evidence/semantic_selection_hosted_replication_20261016.md).
-This single cohort is descriptive, not evidence of higher compiler coverage or
-bug-finding effectiveness; keep semantic guidance optional pending further
-replications. Do not present either path traces or the previously reported
-upstream issue #1322 as a MoonSmith discovery or backend coverage.
+Three disjoint, source-size-matched candidate ranges provide descriptive
+results: 24120–24219 yielded 53 versus 52 path kinds (guided versus sequential)
+on MoonBit `0.1.20260920`; 24220–24319 yielded 55 versus 51 on
+`0.1.20261012`; and the new 24320–24419 range yielded 53 versus 53 on the same
+`0.1.20261012` toolchain. Each comparison used equal backend-execution and
+quartile budgets and had no unexpected findings. The first range is documented
+in the [size-matched result](evidence/semantic_selection_size_match_20261014.md),
+the second in the
+[original preregistered result](evidence/semantic_selection_replication_20261014.md),
+and the third in the
+[non-overlapping follow-up](evidence/semantic_selection_hosted_replication2_20261016.md).
+The clean-runner rerun of the second range reproduced its selected seeds and
+aggregate counts, but is not independent and used a different harness digest
+([rerun details](evidence/semantic_selection_hosted_replication_20261016.md)).
+Because the first range used another MoonBit version and the two same-version
+independent ranges show mixed results, there is no robust evidence that
+semantic guidance improves compiler coverage or bug-finding. Keep it optional
+and do not prioritize it as a claimed differentiator without stronger evidence.
+Do not present either path traces or the previously reported upstream issue
+#1322 as a MoonSmith discovery or backend coverage.
 
 ## Sources
 

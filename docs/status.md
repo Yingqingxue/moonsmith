@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-10-14
+Last updated: 2026-10-16
 
 ## Bounded generated GCC FMA probe
 
@@ -47,6 +47,19 @@ the guided arm 53, with mean source lengths of 120.6 and 124.6 lines. Candidate
 prescreening added 88.8 seconds, so the extra path variety is not yet a strong
 practical tradeoff. See the
 [size-matched result](evidence/semantic_selection_size_match_20261014.md).
+
+October 16 update: the hosted 24220–24319 run was repeated on a clean runner;
+it reproduced the same selected seeds and 51-versus-55 path counts, but used a
+different harness digest and is not an independent cohort. A new preregistered,
+non-overlapping range 24320–24419 then produced 53 path kinds in both arms at
+the same 60-execution and source-size-quartile budgets, with no unexpected
+findings. The repeat supports stability for one fixed range; the new cohort
+does not reproduce a guided-selection gain. Keep this policy experimental and
+optional. See the [rerun report](evidence/semantic_selection_hosted_replication_20261016.md)
+and [new cohort report](evidence/semantic_selection_hosted_replication2_20261016.md).
+The push run [38875953569](https://github.com/Yingqingxue/moonsmith/actions/runs/38875953569)
+and new-cohort run [38876082331](https://github.com/Yingqingxue/moonsmith/actions/runs/38876082331)
+both passed their Linux and Windows-native jobs.
 
 ## Bounded array alias updates
 
@@ -1101,8 +1114,11 @@ has no C compiler. The first pushed attempt pinned GitHub's 0.5.1 main-branch
 version before it was published. A later clean-runner attempt still failed on
 0.5.0 because the package registry index had not been refreshed. Mooncakes now
 lists 0.5.1; the dependency is pinned to that release, and each CI job now runs
-`moon update` before resolving dependencies. A fresh remote CI run is still
-required to confirm the fix. This is
+`moon update` before resolving dependencies. [CI run 38873391261](https://github.com/Yingqingxue/moonsmith/actions/runs/38873391261)
+then passed both standard Linux and Windows jobs, including dependency
+resolution and the full native/reducer smoke path; the targeted
+[semantic-selection run 38873580951](https://github.com/Yingqingxue/moonsmith/actions/runs/38873580951)
+also completed successfully. This is
 evidence of one integration, not proof that MoonSmith is distinct from the
 other named projects or that it has discovered an unreported MoonBit compiler
 bug. The remaining positioning risks and feature boundaries are recorded in

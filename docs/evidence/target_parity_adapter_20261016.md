@@ -61,4 +61,7 @@ has no C compiler, so native tests were not available here. Remote run
 showed that a clean runner must update the Mooncakes registry index before
 dependency resolution: the CLI reported the module missing immediately after
 toolchain installation. The workflow now runs `moon update` in each job that
-uses MoonBit; a fresh remote run is needed to verify this correction.
+uses MoonBit. Standard Linux/Windows CI [38873391261](https://github.com/Yingqingxue/moonsmith/actions/runs/38873391261)
+passed with the update step, and the targeted semantic-selection job
+[38873580951](https://github.com/Yingqingxue/moonsmith/actions/runs/38873580951)
+also completed successfully.
