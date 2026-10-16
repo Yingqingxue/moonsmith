@@ -3,6 +3,49 @@ $cli = Join-Path $PSScriptRoot 'moonsmith.ps1'
 $verify = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $batchRunner = Join-Path $PSScriptRoot 'run_batch.ps1'
 
+$duplicateTargetsRejected = $false
+try {
+    & $verify -Seed 0 -Depth 0 -Targets @('js', 'js') -NoPersist | Out-Null
+}
+catch {
+    if ($_.Exception.Message -notmatch 'Targets must not contain duplicates') {
+        throw
+    }
+    $duplicateTargetsRejected = $true
+}
+if (-not $duplicateTargetsRejected) {
+    throw 'verify_seed accepted a repeated backend and could produce a misleading parity report.'
+}
+
+$emptyTargetsRejected = $false
+try {
+    & $verify -Seed 0 -Depth 0 -Targets @() -NoPersist | Out-Null
+}
+catch {
+    if ($_.Exception.Message -notmatch 'Targets must contain at least one backend') {
+        throw
+    }
+    $emptyTargetsRejected = $true
+}
+if (-not $emptyTargetsRejected) {
+    throw 'verify_seed accepted an empty backend matrix.'
+}
+
+$duplicateBatchTargetsRejected = $false
+try {
+    & $cli fuzz -SeedStart 0 -Count 1 -Depth 0 `
+        -Targets @('js', 'js') | Out-Null
+}
+catch {
+    if ($_.Exception.Message -notmatch 'Targets must not contain duplicates') {
+        throw
+    }
+    $duplicateBatchTargetsRejected = $true
+}
+if (-not $duplicateBatchTargetsRejected) {
+    throw 'fuzz accepted duplicate targets instead of rejecting the invalid matrix before scanning.'
+}
+
 $fmaProbeSource = (& moon run --target js cmd/main --fma-probe | Out-String).Trim()
 if ($LASTEXITCODE -ne 0 -or
     -not $fmaProbeSource.Contains('seed=2262') -or

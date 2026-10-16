@@ -29,6 +29,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'validate_targets.ps1')
+Assert-UniqueTargets -Targets $Targets
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $verifyScript = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $workDirectory = Join-Path $projectRoot '.moonsmith\reduction'

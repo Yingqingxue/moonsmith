@@ -37,7 +37,10 @@ system C toolchain. If it is missing, the runner reports an environment
 failure rather than treating it as a compiler finding.
 `native` uses MoonBit's default debug mode; add `native-release` to `-Targets`
 to execute the same generated source with native release settings as a separate
-differential configuration.
+differential configuration. A target matrix must be nonempty and contain each
+backend at most once; the CLI rejects duplicate targets before starting a
+compiler so repeated observations cannot be mistaken for cross-backend
+evidence.
 
 The PowerShell entry point is a thin process/IO adapter. The generator,
 reference evaluator, differential oracle, and AST reducer are implemented in

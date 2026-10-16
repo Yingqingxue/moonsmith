@@ -20,6 +20,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'validate_targets.ps1')
+Assert-UniqueTargets -Targets $Targets
 . (Join-Path $PSScriptRoot 'failure_clusters.ps1')
 if (([long]$SeedStart + [long]$Count - 1) -gt [int]::MaxValue) {
     throw 'Seed range exceeds the 32-bit signed Int maximum; reduce -Count or lower -SeedStart.'
@@ -38,7 +40,7 @@ function Get-HarnessDigest {
         'cmd\main\main.mbt', 'cmd\main\moon.pkg',
         'cmd\oracle\main.mbt', 'cmd\oracle\moon.pkg',
         'scripts\verify_seed.ps1', 'scripts\run_batch.ps1',
-        'scripts\failure_clusters.ps1'
+        'scripts\failure_clusters.ps1', 'scripts\validate_targets.ps1'
     )
     $entries = foreach ($relativePath in $relativePaths) {
         $absolutePath = Join-Path $projectRoot $relativePath
