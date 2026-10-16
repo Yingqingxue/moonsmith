@@ -278,6 +278,30 @@ test "reference oracle accepts the expected output" {
 }
 
 ///|
+test "single-backend reference mismatch is preserved without a parity matrix" {
+  let report = @moonsmith.analyze_results(
+    [result("js", Succeeded, 0, "10\n", "")],
+    expected_output="9\n",
+  )
+  assert_true(report.kind is ReferenceMismatch)
+  assert_true(report.target_parity_cross_check() is None)
+}
+
+///|
+test "inconclusive duplicate-target parity falls back to output comparison" {
+  let report = @moonsmith.analyze_results([
+    result("js", Succeeded, 0, "9\n", ""),
+    result("js", Succeeded, 0, "10\n", ""),
+  ])
+  assert_true(report.kind is OutputMismatch)
+  match report.target_parity_cross_check() {
+    Some(parity) =>
+      assert_true(parity.status is @target_parity.Status::Inconclusive)
+    None => fail("successful result observations should be cross-checked")
+  }
+}
+
+///|
 test "output mismatch key tracks which backend matches reference" {
   let first = @moonsmith.analyze_results(
     [
