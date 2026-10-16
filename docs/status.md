@@ -1107,3 +1107,23 @@ bug. The remaining positioning risks and feature boundaries are recorded in
 [`ecosystem_comparison.md`](ecosystem_comparison.md). The exact two-command
 smoke evidence is in
 [`target_parity_adapter_20261016.md`](evidence/target_parity_adapter_20261016.md).
+
+## Batch-level Target Parity gate
+
+The single-seed result was visible after the first adapter, but the batch
+`fuzz` path was dropping that nested result. Batch schema 11 now carries each
+case's `targetParity` object, summarizes `pass` / `divergent` /
+`inconclusive` counts, and renders the status in the offline HTML. Nightly
+schema-11 validation requires all 1,000 cases to have a per-case Target Parity
+`pass`; the Linux/Windows comparison also rejects a non-passing result on either
+side and requires matching Target Parity statuses. Older report schemas remain
+accepted by the general renderer/comparator, but the stricter nightly gate only
+accepts schema 11. These checks validate the successful matrices captured by
+the harness, not compiler correctness or a historical bug-discovery claim.
+
+The two-seed CLI smoke report contained two per-case `pass` results. The schema,
+full CLI/batch, and batch-report PowerShell regression tests pass; the latter
+also verifies that a non-passing result is rejected. A fresh remote CI run for
+the published dependency and batch-schema changes is still required; the local
+Windows host has no C compiler, so native compilation remains a remote-CI check
+rather than a local claim.

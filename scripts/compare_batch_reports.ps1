@@ -40,7 +40,7 @@ function Read-BatchReportSet {
 
     foreach ($file in $files) {
         $report = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
-        if ($report.schemaVersion -notin @(7, 8, 9, 10)) {
+        if ($report.schemaVersion -notin @(7, 8, 9, 10, 11)) {
             throw "$Label report '$($file.Name)' has unsupported schemaVersion '$($report.schemaVersion)'."
         }
         if ($report.count -lt 1 -or $report.seedStart -lt 0) {
@@ -82,6 +82,10 @@ function Read-BatchReportSet {
             if (-not $case.referenceChecked -or $case.finding -ne 'consistent') {
                 throw "$Label seed $seed was not reference-checked as consistent."
             }
+            if ($report.schemaVersion -ge 11 -and
+                $case.targetParity.status -ne 'pass') {
+                throw "$Label seed $seed does not have a passing Target Parity result."
+            }
             if ([string]$case.bodySha256 -notmatch '^[0-9a-f]{64}$') {
                 throw "$Label seed $seed has an invalid bodySha256."
             }
@@ -91,6 +95,7 @@ function Read-BatchReportSet {
                 bodySha256 = [string]$case.bodySha256
                 finding = [string]$case.finding
                 expectedOutput = [string]$case.expectedOutput
+                targetParityStatus = [string]$case.targetParity.status
             }
         }
     }
@@ -129,6 +134,10 @@ foreach ($seedKey in $linuxSeeds) {
     if ($linux.CasesBySeed[$seedKey].expectedOutput -cne
         $windows.CasesBySeed[$seedKey].expectedOutput) {
         $outputMismatches.Add([int]$seedKey)
+    }
+    if ($linux.CasesBySeed[$seedKey].targetParityStatus -cne
+        $windows.CasesBySeed[$seedKey].targetParityStatus) {
+        throw "Target Parity statuses differ between platforms for seed $seedKey."
     }
 }
 if ($hashMismatches.Count -gt 0) {

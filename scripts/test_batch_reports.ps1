@@ -27,6 +27,7 @@ function New-TestReport {
             expectedOutput = $FirstExpectedOutput
             error = '<img src=x onerror=alert(1)>'
             referenceChecked = $true
+            targetParity = [ordered]@{ status = 'pass' }
             sourceConstructCounts = [ordered]@{ functionChoice = 1; and = 1; or = 1 }
         },
         [ordered]@{
@@ -37,11 +38,12 @@ function New-TestReport {
             expectedOutput = "43`n"
             error = ''
             referenceChecked = $true
+            targetParity = [ordered]@{ status = 'pass' }
             sourceConstructCounts = [ordered]@{ functionChoice = 0; and = 0; or = 0 }
         }
     )
     [ordered]@{
-        schemaVersion = 10
+        schemaVersion = 11
         seedStart = $SeedStart
         count = 2
         depth = 4
@@ -58,6 +60,9 @@ function New-TestReport {
         durationMs = 1234
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
+        targetParityPassCount = 2
+        targetParityDivergentCount = 0
+        targetParityInconclusiveCount = 0
         harnessChangedDuringRun = $false
         casesWithValtypeRaiseProbe = 1
         casesWithDirectValtypeRaiseArrayComposition = 1
@@ -143,6 +148,14 @@ try {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
 
+    $windowsReport.cases[1].targetParity.status = 'divergent'
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    Assert-ComparisonRejected -ExpectedMessage 'does not have a passing Target Parity result' `
+        -Label 'non-passing Target Parity'
+    $rejectedNonPassingTargetParity = $true
+    $windowsReport.cases[1].targetParity.status = 'pass'
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+
     $linuxReport.schemaVersion = 7
     $windowsReport.schemaVersion = 7
     $linuxReport.Remove('casesWithChoiceReturningFunction')
@@ -225,6 +238,7 @@ try {
         -not $batchHtml.Contains('valtype-raise-success-path') -or
         -not $batchHtml.Contains('Failure clusters') -or
         -not $batchHtml.Contains('Per-seed results') -or
+        -not $batchHtml.Contains('Target Parity') -or
         -not $batchHtml.Contains('case-41000') -or
         -not $batchHtml.Contains('&lt;script&gt;alert(1)&lt;/script&gt;') -or
         -not $batchHtml.Contains('&lt;img src=x onerror=alert(1)&gt;') -or
@@ -233,10 +247,11 @@ try {
     }
 
     $nightlySummary = [pscustomobject]@{
-        schemaVersion = 10
+        schemaVersion = 11
         count = 2
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
+        targetParityPassCount = 2
         unexpectedCount = 0
         harnessChangedDuringRun = $false
         casesWithValtypeRaiseProbe = 1
@@ -253,11 +268,13 @@ try {
         cases = @(
             [pscustomobject]@{
                 seed = 1
+                targetParity = [pscustomobject]@{ status = 'pass' }
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 1; and = 1; or = 1; whileLoop = 1; arrayGrow = 1; arrayAliasUpdate = 1 }
                 referencePathKinds = @('and-rhs-executed', 'or-rhs-executed', 'while-iteration', 'array-grow-index-0', 'array-alias-update-index-0')
             }
             [pscustomobject]@{
                 seed = 2
+                targetParity = [pscustomobject]@{ status = 'pass' }
                 sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 1; arrayAliasUpdate = 1 }
                 referencePathKinds = @('and-rhs-skipped', 'or-rhs-skipped', 'array-grow-index-1', 'array-alias-update-index-1')
             }
@@ -296,11 +313,13 @@ try {
     $skewedAliasSummary.count = 4
     $skewedAliasSummary.uniqueProgramBodies = 4
     $skewedAliasSummary.referenceCheckedCount = 4
+    $skewedAliasSummary.targetParityPassCount = 4
     $skewedAliasSummary.casesWithArrayAliasUpdate = 4
     $skewedAliasSummary.referencePathCaseCounts.'array-alias-update-index-0' = 3
     foreach ($seed in @(3, 4)) {
         $skewedAliasSummary.cases += [pscustomobject]@{
             seed = $seed
+            targetParity = [pscustomobject]@{ status = 'pass' }
             sourceConstructCounts = [pscustomobject]@{
                 functionChoice = 0; and = 0; or = 0; whileLoop = 0
                 arrayGrow = 0; arrayAliasUpdate = 1
@@ -373,7 +392,7 @@ try {
             -Summary $nightlySummary -ExpectedCount 2
     }
     catch {
-        if ($_.Exception.Message -notmatch 'requires batch schema 10') {
+        if ($_.Exception.Message -notmatch 'requires batch schema 11') {
             throw "nightly schema gate rejected the legacy fixture for the wrong reason: $($_.Exception.Message)"
         }
         $legacyNightlySummaryRejected = $true
@@ -388,7 +407,7 @@ try {
             -Summary $nightlySummary -ExpectedCount 2
     }
     catch {
-        if ($_.Exception.Message -notmatch 'requires batch schema 10') {
+        if ($_.Exception.Message -notmatch 'requires batch schema 11') {
             throw "nightly schema gate rejected the schema-9 fixture for the wrong reason: $($_.Exception.Message)"
         }
         $legacyNightlySummaryRejected = $true
@@ -397,6 +416,36 @@ try {
         throw 'nightly validator accepted a schema-9 batch summary.'
     }
     $nightlySummary.schemaVersion = 10
+    $legacyNightlySummaryRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'requires batch schema 11') {
+            throw "nightly schema gate rejected the schema-10 fixture for the wrong reason: $($_.Exception.Message)"
+        }
+        $legacyNightlySummaryRejected = $true
+    }
+    if (-not $legacyNightlySummaryRejected) {
+        throw 'nightly validator accepted a schema-10 batch summary.'
+    }
+    $nightlySummary.schemaVersion = 11
+    $nightlySummary.targetParityPassCount = 1
+    $targetParityRejected = $false
+    try {
+        $null = & (Join-Path $PSScriptRoot 'validate_nightly_summary.ps1') `
+            -Summary $nightlySummary -ExpectedCount 2
+        throw 'nightly gate accepted an incomplete Target Parity pass count.'
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'Nightly Target Parity must pass all 2 cases') { throw }
+        $targetParityRejected = $true
+    }
+    if (-not $targetParityRejected) {
+        throw 'nightly gate accepted a divergent or missing Target Parity result.'
+    }
+    $nightlySummary.targetParityPassCount = 2
     $nightlySummary.casesVisitingBothValtypeProbeKinds = 0
     $nightlyCoverageRejected = $false
     try {
@@ -516,12 +565,14 @@ try {
     $lowOrCoverageSummary.count = 10
     $lowOrCoverageSummary.uniqueProgramBodies = 10
     $lowOrCoverageSummary.referenceCheckedCount = 10
+    $lowOrCoverageSummary.targetParityPassCount = 10
     $lowOrCoverageSummary.cases = @($lowOrCoverageSummary.cases)
     $lowOrCoverageSummary.cases[1].sourceConstructCounts.and = 1
     $lowOrCoverageSummary.casesWithAnd = 2
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowOrCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
+            targetParity = [pscustomobject]@{ status = 'pass' }
             sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0; arrayAliasUpdate = 0 }
             referencePathKinds = @()
         }
@@ -545,12 +596,14 @@ try {
     $lowAndCoverageSummary.count = 10
     $lowAndCoverageSummary.uniqueProgramBodies = 10
     $lowAndCoverageSummary.referenceCheckedCount = 10
+    $lowAndCoverageSummary.targetParityPassCount = 10
     $lowAndCoverageSummary.cases[1].sourceConstructCounts.or = 1
     $lowAndCoverageSummary.casesWithOr = 2
     $lowAndCoverageSummary.cases = @($lowAndCoverageSummary.cases)
     for ($caseIndex = 2; $caseIndex -lt 10; $caseIndex++) {
         $lowAndCoverageSummary.cases += [pscustomobject]@{
             seed = $caseIndex
+            targetParity = [pscustomobject]@{ status = 'pass' }
             sourceConstructCounts = [pscustomobject]@{ functionChoice = 0; and = 0; or = 0; whileLoop = 0; arrayGrow = 0; arrayAliasUpdate = 0 }
             referencePathKinds = @()
         }
@@ -769,6 +822,7 @@ try {
         rejectedSeedMismatch = $true
         rejectedToolchainMismatch = $true
         rejectedExpectedOutputMismatch = $true
+        rejectedNonPassingTargetParity = $rejectedNonPassingTargetParity
         failureClusters = $clusters.Count
         batchHtmlCases = $batchReport.count
         batchHtmlRows = $batchHtmlRows

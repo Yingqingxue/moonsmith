@@ -168,7 +168,9 @@ $expectedAndRhsSkippedCases = @($batch.cases | Where-Object {
 }).Count
 if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
     $batch.unexpectedCount -ne 0 -or $batch.uniqueProgramBodies -ne 2 -or
-    $batch.schemaVersion -lt 10 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.schemaVersion -lt 11 -or $batch.casesWithChoiceMatch -lt 1 -or
+    $batch.targetParityPassCount -ne $batch.count -or
+    @($batch.cases | Where-Object { $_.targetParity.status -ne 'pass' }).Count -ne 0 -or
     $batch.casesWithForLoop -lt 1 -or
     $batch.casesWithForIteration -ne $expectedForIterationCount -or
     $batch.casesWithWhileLoop -lt 1 -or $batch.casesWithWhileIteration -lt 1 -or
@@ -191,7 +193,8 @@ if ($LASTEXITCODE -ne 0 -or $batch.count -ne 2 -or
 
 $choiceFunctionBatch = (& $cli fuzz -SeedStart 14990 -Count 1 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or
-    $choiceFunctionBatch.schemaVersion -ne 10 -or
+    $choiceFunctionBatch.schemaVersion -ne 11 -or
+    $choiceFunctionBatch.cases[0].targetParity.status -ne 'pass' -or
     $choiceFunctionBatch.casesWithChoiceReturningFunction -ne 1 -or
     $choiceFunctionBatch.choiceReturningFunctionCount -lt 1 -or
     $choiceFunctionBatch.cases[0].sourceConstructCounts.functionChoice -lt 1) {
@@ -200,7 +203,8 @@ if ($LASTEXITCODE -ne 0 -or
 
 $disjunctionBatch = (& $cli fuzz -SeedStart 353 -Count 1 -Depth 4 | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or
-    $disjunctionBatch.schemaVersion -ne 10 -or
+    $disjunctionBatch.schemaVersion -ne 11 -or
+    $disjunctionBatch.cases[0].targetParity.status -ne 'pass' -or
     $disjunctionBatch.casesWithOr -ne 1 -or
     $disjunctionBatch.cases[0].sourceConstructCounts.or -lt 1) {
     throw 'fuzz did not report the generated short-circuit disjunction.'

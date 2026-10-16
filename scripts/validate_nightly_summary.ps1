@@ -7,8 +7,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if ($Summary.schemaVersion -ne 10) {
-    throw "Nightly corpus validator requires batch schema 10; received '$($Summary.schemaVersion)'."
+if ($Summary.schemaVersion -ne 11) {
+    throw "Nightly corpus validator requires batch schema 11; received '$($Summary.schemaVersion)'."
 }
 if ($Summary.count -ne $ExpectedCount -or
     $Summary.uniqueProgramBodies -ne $ExpectedCount -or
@@ -16,6 +16,14 @@ if ($Summary.count -ne $ExpectedCount -or
     $Summary.unexpectedCount -ne 0 -or
     $Summary.harnessChangedDuringRun) {
     throw "Nightly batch must contain $ExpectedCount unique, reference-checked cases with no unexpected findings or harness change."
+}
+
+$targetParityCasePassCount = @($Summary.cases | Where-Object {
+    $_.targetParity.status -eq 'pass'
+}).Count
+if ($Summary.targetParityPassCount -ne $ExpectedCount -or
+    $targetParityCasePassCount -ne $ExpectedCount) {
+    throw "Nightly Target Parity must pass all $ExpectedCount cases; summary reports $($Summary.targetParityPassCount), per-case reports show $targetParityCasePassCount."
 }
 
 $requiredCoverage = @(

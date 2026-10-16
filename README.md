@@ -200,9 +200,11 @@ predate this change. A fresh same-toolchain, same-seed comparison now covers the
 Choice-returning extension: 1,000 bodies, with 251 changed source hashes and
 305 additional local-function nodes. See
 [the updated generator evidence](docs/evidence/choice_function_corpus_20261013.md).
-Batch schema 10 retains Choice-returning-function coverage and reports
-short-circuit conjunction and disjunction coverage per case. The nightly
-validator requires both `&&` and `||` in at least 20% of the fixed corpus,
+Batch schema 11 retains Choice-returning-function coverage and reports
+short-circuit conjunction and disjunction coverage per case. Each per-seed
+batch row also includes the Target Parity result; the nightly validator requires
+all cases in its successful JS/Wasm/Wasm-GC matrix to report Target Parity
+`pass`, alongside both `&&` and `||` in at least 20% of the fixed corpus,
 requires both RHS-executed and short-circuited reference paths for each
 operator, and reconciles aggregate counts against per-case records. Generated
 `&&` and `||` expressions wrap the RHS in a closure that increments a captured
@@ -211,7 +213,7 @@ operator-specific expected call count, panicking if a backend violates
 short-circuit evaluation. This makes incorrect eager execution observable,
 rather than relying only on the final boolean value. The nightly gate tracks
 both operators, while report renderers and cross-platform comparison retain
-compatibility with schema 7–9 reports.
+compatibility with schema 7–11 reports.
 The earlier schema-8 nightly run passed all 1,000 cases, recording 251 cases
 and 305 generated Choice-returning functions (see the linked evidence).
 When both extended workflow inputs are enabled, CI also downloads and compares
