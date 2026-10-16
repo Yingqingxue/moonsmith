@@ -46,8 +46,12 @@ typed AST reducer for generated cases, since it preserves syntax structure.
 
 `scripts/test_cli.ps1` tests the protocol with a deliberately injected
 output mismatch: it checks a preserved candidate (`0`), a candidate that loses
-the mismatch (`1`), and an unverifiable/hashless baseline (`125`). This is
-adapter-contract testing, not a compiler-bug discovery. MoonReduce's own CLI is
-documented for Linux; this repository has not yet run a full end-to-end
-reduction through an installed MoonReduce binary, so the example is an
-integration path rather than a validated performance result.
+the mismatch (`1`), and unverifiable baselines (`125`). This is
+adapter-contract testing, not a compiler-bug discovery. MoonReduce's CLI is
+documented for Linux. The manually triggered
+[`MoonReduce interoperability` workflow](../.github/workflows/moonreduce-interop.yml)
+builds a pinned upstream revision on Ubuntu and exercises this adapter through
+the actual CLI with an injected mismatch. Until that workflow succeeds, the
+integration remains unverified beyond the adapter-contract tests above. The
+injected case checks the interop path only; it is not a real compiler bug or a
+performance result.

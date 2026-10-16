@@ -1,0 +1,55 @@
+name: MoonReduce interoperability
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out MoonSmith
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit for MoonSmith
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Check out pinned MoonReduce source
+        uses: actions/checkout@v5
+        with:
+          repository: Hing7/moonreduce
+          ref: f256f264a2e8853c2e7ec67e3488e61aefaff17d
+          path: moonreduce-upstream
+
+      - name: Build MoonReduce with its reviewed Linux toolchain
+        working-directory: moonreduce-upstream
+        run: |
+          bash scripts/bootstrap-linux.sh
+          export MOON_HOME="$PWD/.tools/moon"
+          export PATH="$MOON_HOME/bin:$PATH"
+          moon update
+          moon build src/cmd/main --target native --release
+          mkdir -p dist
+          cp -- _build/native/release/build/cmd/main/main.exe dist/moonreduce
+          chmod +x dist/moonreduce
+          echo "MOONREDUCE_BINARY=$PWD/dist/moonreduce" >> "$GITHUB_ENV"
+
+      - name: Install current MoonSmith toolchain dependencies
+        run: moon update
+
+      - name: Exercise the real external-checker protocol
+        run: bash scripts/test_moonreduce_interop.sh
+
+      - name: Preserve interoperability artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: moonreduce-interop-report
+          path: .moonsmith/moonreduce-integration/
+          if-no-files-found: ignore
+          retention-days: 30
