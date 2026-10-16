@@ -58,7 +58,10 @@ Finding reports also surface the independent status and matrix diagnostics in
 both Markdown and offline HTML.
 `fuzz` returns a JSON batch report and exits nonzero on an unexpected
 finding. `replay -CasePath PATH` takes a saved finding directory or its
-`report.json` and succeeds only if the finding and reduction key match again.
+`report.json`, verifies `source.mbt` against the recorded SHA-256 when present,
+and succeeds only if the finding and reduction key match again. Legacy reports
+without a recorded source hash remain replayable but cannot receive this
+integrity check.
 Generated sources over 16,300 lines are reported as `generator-limit` and are
 not sent to the reference evaluator or compiler backends; `fuzz` still exits
 nonzero so the size bound stays visible in batch results.

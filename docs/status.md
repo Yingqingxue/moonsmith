@@ -2,6 +2,17 @@
 
 Last updated: 2026-10-16
 
+## Saved-source integrity during replay
+
+The CLI replay command now checks a saved `source.mbt` against the
+`sourceSha256` in `report.json` before running any backends. A mismatch is
+rejected before execution so edits to an artifact cannot be mistaken for a
+replay of the original finding. Reports predating source hashes remain
+replayable and explicitly report that the integrity check was unavailable.
+`scripts/test_cli.ps1` covers intact replay, tampered-source rejection, and
+hashless legacy replay. This verifies artifact identity; it does not establish
+that the original finding was a compiler defect.
+
 ## Bounded generated GCC FMA probe
 
 The typed expression IR now includes a fixed finite-input `FmaContractionProbe`

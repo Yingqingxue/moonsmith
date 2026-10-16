@@ -316,8 +316,63 @@ if ($LASTEXITCODE -ne 0 -or -not $emptyReferenceReplay.reproduced) {
 }
 
 $replay = (& $cli replay -CasePath $injected.savedTo | ConvertFrom-Json)
-if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced) {
+$persistedInjectedReport = Get-Content -LiteralPath (Join-Path $injected.savedTo 'report.json') -Raw |
+    ConvertFrom-Json
+if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced -or
+    -not $replay.sourceIntegrityChecked -or
+    $replay.sourceSha256 -ne $persistedInjectedReport.sourceSha256) {
     throw 'replay did not reproduce the saved injected finding.'
+}
+
+$tamperedFixtureRoot = Join-Path ([IO.Path]::GetTempPath()) `
+    ('moonsmith-cli-tampered-source-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $tamperedFixtureRoot -Force | Out-Null
+try {
+    Copy-Item -LiteralPath (Join-Path $injected.savedTo 'report.json') `
+        -Destination (Join-Path $tamperedFixtureRoot 'report.json')
+    Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
+        -Destination (Join-Path $tamperedFixtureRoot 'source.mbt')
+    [IO.File]::AppendAllText(
+        (Join-Path $tamperedFixtureRoot 'source.mbt'),
+        "`n// Tampered after the finding was saved.`n",
+        [Text.UTF8Encoding]::new($false)
+    )
+    $tamperingRejected = $false
+    try {
+        & $cli replay -CasePath $tamperedFixtureRoot | Out-Null
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'does not match the SHA-256 recorded in report.json') {
+            throw
+        }
+        $tamperingRejected = $true
+    }
+    if (-not $tamperingRejected) {
+        throw 'replay accepted source changed after its finding report was saved.'
+    }
+
+    Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
+        -Destination (Join-Path $tamperedFixtureRoot 'source.mbt') -Force
+    $legacyReplayReport = Get-Content -LiteralPath (Join-Path $tamperedFixtureRoot 'report.json') -Raw |
+        ConvertFrom-Json
+    $null = $legacyReplayReport.PSObject.Properties.Remove('sourceSha256')
+    $legacyReplayReport | ConvertTo-Json -Depth 10 | Set-Content `
+        -LiteralPath (Join-Path $tamperedFixtureRoot 'report.json') -Encoding utf8
+    $legacyReplay = (& $cli replay -CasePath $tamperedFixtureRoot | ConvertFrom-Json)
+    if ($LASTEXITCODE -ne 0 -or -not $legacyReplay.reproduced -or
+        $legacyReplay.sourceIntegrityChecked) {
+        throw 'replay did not preserve compatibility with a legacy finding report without a source hash.'
+    }
+}
+finally {
+    $resolvedTamperedFixture = [IO.Path]::GetFullPath($tamperedFixtureRoot)
+    $resolvedTempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedTamperedFixture.StartsWith($resolvedTempRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing to remove tampered-source fixture outside the temporary directory: $resolvedTamperedFixture"
+    }
+    if (Test-Path -LiteralPath $resolvedTamperedFixture) {
+        Remove-Item -LiteralPath $resolvedTamperedFixture -Recurse -Force
+    }
 }
 
 $reportFixtureRoot = Join-Path ([IO.Path]::GetTempPath()) `
