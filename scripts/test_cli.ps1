@@ -300,6 +300,21 @@ if ($LASTEXITCODE -ne 0 -or -not $unreferencedReplay.reproduced) {
     throw 'replay did not preserve the original no-reference classification.'
 }
 
+$emptyReferenceInjected = (& $verify -Seed 0 -Depth 3 `
+    -SourcePath $boundary.casePath -Targets @('js', 'wasm') `
+    -ExpectedOutput '' | ConvertFrom-Json)
+if ($emptyReferenceInjected.finding -ne 'reference-mismatch' -or
+    -not $emptyReferenceInjected.referenceChecked -or
+    $emptyReferenceInjected.expectedOutput -ne '' -or
+    -not $emptyReferenceInjected.savedTo) {
+    throw 'Failed to save a finding with an explicitly empty reference output.'
+}
+$emptyReferenceReplay = (& $cli replay -CasePath $emptyReferenceInjected.savedTo |
+    ConvertFrom-Json)
+if ($LASTEXITCODE -ne 0 -or -not $emptyReferenceReplay.reproduced) {
+    throw 'replay did not preserve the explicitly empty reference contract.'
+}
+
 $replay = (& $cli replay -CasePath $injected.savedTo | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced) {
     throw 'replay did not reproduce the saved injected finding.'
