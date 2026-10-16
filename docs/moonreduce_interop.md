@@ -40,9 +40,12 @@ moonreduce reduce \
 
 The command uses MoonReduce's line-deletion strategy, so many intermediate
 candidates will not parse as MoonBit; the checker treats a changed finding as
-`1`, and toolchain/environment failures as `125`. Increase its per-candidate
-timeout only when the local compile/run cost requires it. Prefer MoonSmith's
-typed AST reducer for generated cases, since it preserves syntax structure.
+`1`, and toolchain/environment failures as `125`. MoonReduce names candidates
+`unverified.txt`; the adapter makes a temporary `.mbt` copy for `moon run`
+(which dispatches on the source extension), then removes that copy without
+changing the candidate bytes. Increase its per-candidate timeout only when the
+local compile/run cost requires it. Prefer MoonSmith's typed AST reducer for
+generated cases, since it preserves syntax structure.
 
 `scripts/test_cli.ps1` tests the protocol with a deliberately injected
 output mismatch: it checks a preserved candidate (`0`), a candidate that loses
@@ -51,7 +54,12 @@ adapter-contract testing, not a compiler-bug discovery. MoonReduce's CLI is
 documented for Linux. The manually triggered
 [`MoonReduce interoperability` workflow](../.github/workflows/moonreduce-interop.yml)
 builds a pinned upstream revision on Ubuntu and exercises this adapter through
-the actual CLI with an injected mismatch. Until that workflow succeeds, the
-integration remains unverified beyond the adapter-contract tests above. The
-injected case checks the interop path only; it is not a real compiler bug or a
-performance result.
+the actual CLI with an injected mismatch. This end-to-end path passed on
+2026-10-17 using MoonReduce commit
+`f256f264a2e8853c2e7ec67e3488e61aefaff17d` at MoonSmith commit
+`927acd48387ede1d740f47f1ff7aeac364218812`
+([workflow run](https://github.com/Yingqingxue/moonsmith/actions/runs/38941306085)).
+The injected case validates protocol and artifact handling only; it is not a
+real compiler bug, evidence of reducer quality on real failures, or a
+performance result. Actual defect reduction remains unvalidated until a
+reproducible, non-injected compiler finding is available.
