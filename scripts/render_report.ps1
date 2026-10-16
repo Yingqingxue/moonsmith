@@ -155,6 +155,25 @@ foreach ($run in $finding.runs) {
     Add-Line "| $($run.target) | $backendMode | $($run.status) | $($run.exitCode) | $($run.durationMs) |"
 }
 Add-Line
+Add-Line '## Target Parity cross-check'
+Add-Line
+if ($null -eq $finding.PSObject.Properties['targetParity']) {
+    Add-Line 'Status: not recorded (this saved report contains no Target Parity result).'
+}
+elseif ($null -eq $finding.targetParity) {
+    Add-Line 'Status: not run (the backend matrix is incomplete or contains a failed run).'
+}
+else {
+    $parity = $finding.targetParity
+    $parityTargets = @($parity.compared_targets) -join ', '
+    Add-Line "- Status: ``$($parity.status)``"
+    Add-Line "- Scenario: ``$($parity.scenario)``"
+    Add-Line "- Reference target: ``$($parity.reference_target)``"
+    Add-Line "- Compared targets: $parityTargets"
+    Add-Line "- Differences: $(@($parity.differences).Count); diagnostics: $(@($parity.diagnostics).Count)"
+    Add-Line "- Missing / unexpected / duplicate targets: $(@($parity.missing_targets) -join ', ') / $(@($parity.unexpected_targets) -join ', ') / $(@($parity.duplicate_targets) -join ', ')"
+}
+Add-Line
 if ($finding.referenceChecked) {
     Add-Line '## Reference output'
     Add-Line
@@ -253,6 +272,29 @@ foreach ($run in $finding.runs) {
     $html.Add("<tr><td>$(ConvertTo-HtmlText $run.target)</td><td>$(ConvertTo-HtmlText $backendMode)</td><td>$(ConvertTo-HtmlText $run.status)</td><td>$(ConvertTo-HtmlText $run.exitCode)</td><td>$(ConvertTo-HtmlText $run.durationMs)</td></tr>")
 }
 $html.Add('</tbody></table></section>')
+$html.Add('<section><h2>Target Parity cross-check</h2>')
+if ($null -eq $finding.PSObject.Properties['targetParity']) {
+    $html.Add('<p>Status: not recorded (this saved report contains no Target Parity result).</p>')
+}
+elseif ($null -eq $finding.targetParity) {
+    $html.Add('<p>Status: not run (the backend matrix is incomplete or contains a failed run).</p>')
+}
+else {
+    $parity = $finding.targetParity
+    $parityTargets = @($parity.compared_targets) -join ', '
+    $missingTargets = @($parity.missing_targets) -join ', '
+    $unexpectedTargets = @($parity.unexpected_targets) -join ', '
+    $duplicateTargets = @($parity.duplicate_targets) -join ', '
+    $html.Add('<dl>')
+    $html.Add("<dt>Status</dt><dd class='status'>$(ConvertTo-HtmlText $parity.status)</dd>")
+    $html.Add("<dt>Scenario</dt><dd>$(ConvertTo-HtmlText $parity.scenario)</dd>")
+    $html.Add("<dt>Reference target</dt><dd>$(ConvertTo-HtmlText $parity.reference_target)</dd>")
+    $html.Add("<dt>Compared targets</dt><dd>$(ConvertTo-HtmlText $parityTargets)</dd>")
+    $html.Add("<dt>Differences / diagnostics</dt><dd>$(ConvertTo-HtmlText @($parity.differences).Count) / $(ConvertTo-HtmlText @($parity.diagnostics).Count)</dd>")
+    $html.Add("<dt>Missing / unexpected / duplicate targets</dt><dd>$(ConvertTo-HtmlText $missingTargets) / $(ConvertTo-HtmlText $unexpectedTargets) / $(ConvertTo-HtmlText $duplicateTargets)</dd>")
+    $html.Add('</dl>')
+}
+$html.Add('</section>')
 if ($finding.referenceChecked) {
     $html.Add("<section><h2>Reference output</h2><pre>$(ConvertTo-HtmlText $finding.expectedOutput)</pre></section>")
 }

@@ -12,7 +12,7 @@ $normal = $normalRaw | ConvertFrom-Json
 if ($normal.finding -ne 'consistent' -or -not $normal.referenceChecked) {
     throw 'Reference verification did not accept the unmodified seed 42 case.'
 }
-if ($normal.schemaVersion -ne 6 -or $normal.targetParity.status -ne 'pass') {
+if ($normal.schemaVersion -ne 7 -or $normal.targetParity.status -ne 'pass') {
     throw 'A successful generated run did not include a passing Target Parity cross-check.'
 }
 if (-not $normal.expectedOutput) {

@@ -1084,7 +1084,7 @@ the [composition scan evidence](evidence/valtype_composition_scan_20261012.md).
 On 2026-10-16, the per-seed oracle adapter began using the pinned
 `zhangbowen2006/moonbit-target-parity@0.5.0` library for complete successful
 backend matrices. Its independent status/result is included in `targetParity`
-in the `verify_seed.ps1` JSON output (schema 6). The adapter passes each target's
+in the `verify_seed.ps1` JSON output (schema 7). The adapter passes each target's
 exit code/stdout and, when present, the reference evaluator's expected output;
 it disables stderr comparison because MoonSmith's current success contract is
 about exit code and stdout, while warnings on stderr are not a failure. It skips
@@ -1111,8 +1111,12 @@ smoke evidence is in
 ## Batch-level Target Parity gate
 
 The single-seed result was visible after the first adapter, but the batch
-`fuzz` path was dropping that nested result. Batch schema 11 now carries each
-case's `targetParity` object, summarizes `pass` / `divergent` /
+`fuzz` path was dropping that nested result. Per-seed saved-report schema 7 now
+includes the adapter result, and standalone Markdown/HTML reports show its
+status and matrix summary. Older saved reports without that field are labelled
+`not recorded`, distinct from a current report's `not run` status; existing
+saved case artifacts are never overwritten on reuse. Batch schema 11 carries each case's `targetParity`
+object and summarizes `pass` / `divergent` /
 `inconclusive` counts, and renders the status in the offline HTML. Nightly
 schema-11 validation requires all 1,000 cases to have a per-case Target Parity
 `pass`; the Linux/Windows comparison also rejects a non-passing result on either

@@ -1,6 +1,6 @@
 # MoonSmith ecosystem comparison
 
-Research date: 2026-10-09. This is a source-based positioning note, not a
+Research date: 2026-10-16. This is a source-based positioning note, not a
 claim that MoonSmith is better, unique, or already effective at finding real
 compiler defects. The comparisons below use the projects' own repositories,
 documentation, and (for YARPGen) its research paper.
@@ -86,16 +86,22 @@ claim about judging outcomes or relative quality:
 | [MoonReduce](https://github.com/Hing7/moonreduce) | Generic source/text or JSON reduction around an external checker, with bounded replay/verification. | MoonReduce is the more general choice for arbitrary existing files. MoonSmith currently reduces only its own typed generated AST and replays the same differential finding. Do not claim arbitrary-source reduction. A bridge remains a possible future option, not current functionality. |
 | [MoonGrammata](https://github.com/erzhuzi259/MoonGrammata) | Structured grammar-based fuzzing, tree mutations, differential/metamorphic checking, and failure reduction. This is the closest overlap in breadth. | MoonSmith should not claim to be a novel general-purpose MoonBit fuzzer. Its narrower contribution is a reproducible compiler-backend regression workflow built around its own small typed grammar, independent reference evaluation, targeted historical regression seeds, and shrinking that preserves a backend finding. This distinction is a design position, not evidence of superior effectiveness or uniqueness. |
 
-The immediate engineering response is intentionally limited: reuse Target Parity
-instead of independently duplicating the successful-run observation comparison,
-and make the evidence visible in `verify_seed` JSON. It does not resolve all
-overlap—especially with MoonGrammata—or by itself establish that this project is
-an extension rather than a parallel tool. Before claiming that relationship in
-a submission, the project should add one end-to-end example that starts from a
-documented compiler regression, runs the local generated probe through the
-shared parity API, and demonstrates MoonSmith's AST shrinker preserving the
-same finding. The previously rejected upstream issue #1322 must remain clearly
-labelled as a reported upstream case, not a defect discovered by MoonSmith.
+The first engineering response is deliberately narrow: reuse Target Parity's
+successful-observation comparator instead of reimplementing it, and carry its
+result through per-seed JSON, batch JSON, and offline reports. The adapter is
+verified with matching and injected common-mode-wrong-output examples; the
+latter is a harness fault, not a compiler bug. This reduces duplicated
+comparison code, but does not resolve all overlap—especially with
+MoonGrammata—or establish that MoonSmith is more effective. The next distinctive
+deliverable is a reproducible, issue-linked probe-and-reduction dossier, now
+recorded in [`valtype_reduction_smoke_20261016.md`](evidence/valtype_reduction_smoke_20261016.md): it separates the
+exact historical trigger from the generated extension and records the
+injected-fault reduction without claiming compiler-bug discovery. This is a
+workflow example, not resolution of all overlap—especially with MoonGrammata.
+Keep a separate fixed-corpus experiment for whether reference-path-guided
+selection is worth its measured overhead. Do not present either path traces or
+the previously reported upstream issue #1322 as a MoonSmith discovery or
+backend coverage.
 
 ## Sources
 
@@ -105,3 +111,7 @@ labelled as a reported upstream case, not a defect discovered by MoonSmith.
 - C-Reduce project README: <https://github.com/csmith-project/creduce>
 - MoonBit QuickCheck repository: <https://github.com/moonbitlang/quickcheck>
 - MoonBit QuickCheck package docs: <https://mooncakes.io/docs/moonbitlang/quickcheck>
+- MoonBit CaseKit README: <https://github.com/kaigeliang/moonbit-casekit>
+- MoonBit Target Parity README: <https://github.com/zhangbowen2006/MoonBitTargetParity>
+- MoonReduce README: <https://github.com/Hing7/moonreduce>
+- MoonGrammata README: <https://github.com/erzhuzi259/MoonGrammata>

@@ -237,7 +237,9 @@ if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300 -or
 $injected = (& $verify -Seed 0 -Depth 3 `
     -InjectOutputMismatchTarget wasm-gc `
     -InjectOnlyWhenSourceContains '(if' | ConvertFrom-Json)
-if ($injected.finding -ne 'output-mismatch' -or -not $injected.savedTo) {
+if ($injected.finding -ne 'output-mismatch' -or -not $injected.savedTo -or
+    $injected.schemaVersion -ne 7 -or
+    $injected.targetParity.status -ne 'divergent') {
     throw 'Failed to prepare the explicitly injected replay fixture.'
 }
 
@@ -246,27 +248,82 @@ if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced) {
     throw 'replay did not reproduce the saved injected finding.'
 }
 
-$rendered = (& $cli report -CasePath $injected.savedTo -Force | ConvertFrom-Json)
-$reportMarkdown = Get-Content -LiteralPath $rendered.reportPath -Raw
-$reportHtml = Get-Content -LiteralPath $rendered.htmlReportPath -Raw
-if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
-    -not $rendered.htmlReportPath -or
-    -not $reportMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
-    -not $reportMarkdown.Contains('## Backend results') -or
-    -not $reportMarkdown.Contains('wasm-gc / default') -or
-    -not $reportMarkdown.Contains('## Reproduce')) {
-    throw 'report did not render a clearly labelled Markdown finding.'
+$reportFixtureRoot = Join-Path ([IO.Path]::GetTempPath()) `
+    ('moonsmith-cli-report-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $reportFixtureRoot -Force | Out-Null
+try {
+    Copy-Item -LiteralPath $injected.casePath -Destination (Join-Path $reportFixtureRoot 'source.mbt')
+    $injected | ConvertTo-Json -Depth 10 | Set-Content `
+        -LiteralPath (Join-Path $reportFixtureRoot 'report.json') -Encoding utf8
+    $rendered = (& $cli report -CasePath $reportFixtureRoot -Force | ConvertFrom-Json)
+    $reportMarkdown = Get-Content -LiteralPath $rendered.reportPath -Raw
+    $reportHtml = Get-Content -LiteralPath $rendered.htmlReportPath -Raw
+    if ($LASTEXITCODE -ne 0 -or -not $rendered.reportPath -or
+        -not $rendered.htmlReportPath -or
+        -not $reportMarkdown.Contains('HARNESS-INJECTED DEMONSTRATION') -or
+        -not $reportMarkdown.Contains('## Backend results') -or
+        -not $reportMarkdown.Contains('## Target Parity cross-check') -or
+        -not $reportMarkdown.Contains('- Status: `divergent`') -or
+        -not $reportMarkdown.Contains('wasm-gc / default') -or
+        -not $reportMarkdown.Contains('## Reproduce')) {
+        throw 'report did not render a clearly labelled Markdown finding.'
+    }
+    if (-not $reportHtml.StartsWith('<!doctype html>') -or
+        -not $reportHtml.Contains('HARNESS-INJECTED DEMONSTRATION') -or
+        -not $reportHtml.Contains('<table>') -or
+        -not $reportHtml.Contains('<h2>Target Parity cross-check</h2>') -or
+        -not $reportHtml.Contains('divergent') -or
+        -not $reportHtml.Contains('Source SHA-256') -or
+        -not $reportHtml.Contains('Original source') -or
+        -not $reportHtml.Contains('&lt;') -or
+        $reportHtml.Contains('if i < 0L') -or
+        -not $reportHtml.Contains('Replay compares the finding kind') -or
+        $reportHtml -match '<script\b|\son[a-z]+\s*=') {
+        throw 'report did not render a standalone, escaped HTML case page.'
+    }
+
+    $legacyReport = Get-Content -LiteralPath (Join-Path $reportFixtureRoot 'report.json') -Raw |
+        ConvertFrom-Json
+    $null = $legacyReport.PSObject.Properties.Remove('targetParity')
+    $legacyReport.schemaVersion = 6
+    $legacyReport | ConvertTo-Json -Depth 10 | Set-Content `
+        -LiteralPath (Join-Path $reportFixtureRoot 'report.json') -Encoding utf8
+    $legacyRendered = (& $cli report -CasePath $reportFixtureRoot -Force | ConvertFrom-Json)
+    $legacyMarkdown = Get-Content -LiteralPath $legacyRendered.reportPath -Raw
+    $legacyHtml = Get-Content -LiteralPath $legacyRendered.htmlReportPath -Raw
+    if ($LASTEXITCODE -ne 0 -or
+        -not $legacyMarkdown.Contains('Status: not recorded') -or
+        $legacyMarkdown.Contains('Status: not run') -or
+        -not $legacyHtml.Contains('Status: not recorded') -or
+        $legacyHtml.Contains('Status: not run')) {
+        throw 'legacy saved report did not distinguish absent parity evidence from a skipped comparison.'
+    }
+
+    $incompleteReport = $legacyReport | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    $incompleteReport.schemaVersion = 7
+    $incompleteReport | Add-Member -NotePropertyName targetParity -NotePropertyValue $null
+    $incompleteReport | ConvertTo-Json -Depth 10 | Set-Content `
+        -LiteralPath (Join-Path $reportFixtureRoot 'report.json') -Encoding utf8
+    $incompleteRendered = (& $cli report -CasePath $reportFixtureRoot -Force | ConvertFrom-Json)
+    $incompleteMarkdown = Get-Content -LiteralPath $incompleteRendered.reportPath -Raw
+    $incompleteHtml = Get-Content -LiteralPath $incompleteRendered.htmlReportPath -Raw
+    if ($LASTEXITCODE -ne 0 -or
+        -not $incompleteMarkdown.Contains('Status: not run') -or
+        $incompleteMarkdown.Contains('Status: not recorded') -or
+        -not $incompleteHtml.Contains('Status: not run') -or
+        $incompleteHtml.Contains('Status: not recorded')) {
+        throw 'current incomplete report did not identify Target Parity as not run.'
+    }
 }
-if (-not $reportHtml.StartsWith('<!doctype html>') -or
-    -not $reportHtml.Contains('HARNESS-INJECTED DEMONSTRATION') -or
-    -not $reportHtml.Contains('<table>') -or
-    -not $reportHtml.Contains('Source SHA-256') -or
-    -not $reportHtml.Contains('Original source') -or
-    -not $reportHtml.Contains('&lt;') -or
-    $reportHtml.Contains('if i < 0L') -or
-    -not $reportHtml.Contains('Replay compares the finding kind') -or
-    $reportHtml -match '<script\b|\son[a-z]+\s*=') {
-    throw 'report did not render a standalone, escaped HTML case page.'
+finally {
+    $resolvedFixture = [IO.Path]::GetFullPath($reportFixtureRoot)
+    $resolvedTempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedFixture.StartsWith($resolvedTempRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing to remove report fixture outside the temporary directory: $resolvedFixture"
+    }
+    if (Test-Path -LiteralPath $resolvedFixture) {
+        Remove-Item -LiteralPath $resolvedFixture -Recurse -Force
+    }
 }
 
 $demo = (& $cli demo | ConvertFrom-Json)
@@ -301,6 +358,11 @@ if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
     nearLimitLineCount = $nearLimitLineCount
     replayFinding = $replay.replayFinding
     seedRangeOverflowRejected = $seedRangeRejected
-    reportPaths = @($rendered.reportPath, $rendered.htmlReportPath)
+    reportMarkdownVerified = $reportMarkdown.Contains('## Target Parity cross-check')
+    reportHtmlVerified = $reportHtml.Contains('<h2>Target Parity cross-check</h2>')
+    legacyReportBoundaryVerified = $legacyMarkdown.Contains('Status: not recorded') -and
+        $legacyHtml.Contains('Status: not recorded')
+    incompleteReportBoundaryVerified = $incompleteMarkdown.Contains('Status: not run') -and
+        $incompleteHtml.Contains('Status: not run')
     demoReportPath = $demo.htmlReportPath
 } | ConvertTo-Json -Depth 3

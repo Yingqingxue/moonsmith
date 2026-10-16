@@ -53,7 +53,8 @@ wrong result; it is an injected test fault, not a real MoonBit compiler bug.
 
 `moon check --deny-warn` passed. The main package's 107 tests passed separately
 on JS, Wasm, and Wasm-GC. The reference, reducer, and CLI integration scripts
-passed. Batch schema 11 preserves each per-seed Target Parity report, and the
+passed. Per-seed report schema 7 now carries Target Parity details into Markdown
+and offline HTML. Batch schema 11 preserves each per-seed Target Parity report, and the
 fixed nightly gate requires a pass for every successful target matrix. The
 two-seed CLI smoke report recorded two per-case passes; the batch-report suite
 also checks that a non-passing parity case is rejected. The local Windows host

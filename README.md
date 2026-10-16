@@ -49,6 +49,8 @@ to exit status, stdout, and an optional expected-output contract; MoonSmith
 still owns compiler/runner failure classification, diagnostic normalization,
 stable reduction signatures, and failure-preserving reduction. Failed or
 incomplete backend matrices are not converted into successful observations.
+Finding reports also surface the independent status and matrix diagnostics in
+both Markdown and offline HTML.
 `fuzz` returns a JSON batch report and exits nonzero on an unexpected
 finding. `replay -CasePath PATH` takes a saved finding directory or its
 `report.json` and succeeds only if the finding and reduction key match again.
@@ -96,6 +98,11 @@ This is an experiment, not a demonstrated improvement or a new-bug claim;
 compare multiple nonoverlapping cohorts and alternate arm order with
 `-GuidedFirst` before drawing an effectiveness
 conclusion. Reports are saved under ignored `.moonsmith/runs/`.
+
+For the design boundary against MoonBit CaseKit, MoonBit Target Parity,
+MoonReduce, and MoonGrammata—including which behavior is reused and which
+claims remain unproven—see
+[`docs/ecosystem_comparison.md`](docs/ecosystem_comparison.md).
 
 For a repeatable demonstration of fault detection and reduction (an explicitly
 injected fault, **not** a MoonBit compiler bug):

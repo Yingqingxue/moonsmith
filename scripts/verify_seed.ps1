@@ -121,7 +121,7 @@ if (-not $SourcePath) {
     Set-Content -LiteralPath $casePath -Value $source -Encoding utf8 -NoNewline
     if ($sourceLineCount -gt $maxSourceLines) {
         $sizeLimitReport = [pscustomobject]@{
-            schemaVersion = 6
+            schemaVersion = 7
             caseId = $null
             seed = $Seed
             depth = $Depth
@@ -336,7 +336,7 @@ if ($NoPersist) {
 }
 
 $report = [pscustomobject]@{
-    schemaVersion = 6
+    schemaVersion = 7
     caseId        = $caseId
     seed          = $Seed
     depth         = $Depth
@@ -361,11 +361,13 @@ $report = [pscustomobject]@{
 }
 
 $reportJson = $report | ConvertTo-Json -Depth 5
-if ($null -ne $savedTo -and -not (Test-Path -LiteralPath $savedTo)) {
-    New-Item -ItemType Directory -Force -Path $savedTo | Out-Null
-    Copy-Item -LiteralPath $casePath -Destination (Join-Path $savedTo 'source.mbt')
-    Set-Content -LiteralPath (Join-Path $savedTo 'report.json') `
-        -Value $reportJson -Encoding utf8
+if ($null -ne $savedTo) {
+    if (-not (Test-Path -LiteralPath $savedTo)) {
+        New-Item -ItemType Directory -Force -Path $savedTo | Out-Null
+        Copy-Item -LiteralPath $casePath -Destination (Join-Path $savedTo 'source.mbt')
+        Set-Content -LiteralPath (Join-Path $savedTo 'report.json') `
+            -Value $reportJson -Encoding utf8
+    }
 }
 
 $reportJson
