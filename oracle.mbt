@@ -111,6 +111,85 @@ pub fn DifferentialReport::reduction_key(self : DifferentialReport) -> String {
 }
 
 ///|
+/// Preserve historical singleton/malformed-matrix behavior when Target
+/// Parity cannot compare a complete matrix.
+fn classify_successful_outputs(
+  results : Array[RunResult],
+  expected_output : String,
+) -> FindingKind {
+  let expected = normalize_stdout(results[0].stdout)
+  let mut mismatch = false
+  for index = 1; index < results.length(); index = index + 1 {
+    if normalize_stdout(results[index].stdout) != expected {
+      mismatch = true
+    }
+  }
+  if mismatch {
+    OutputMismatch
+  } else if expected_output != "" &&
+    expected != normalize_stdout(expected_output) {
+    ReferenceMismatch
+  } else {
+    Consistent
+  }
+}
+
+///|
+/// Adapt MoonSmith run evidence to the shared successful-observation
+/// comparator. Failure terminal states are intentionally outside this model.
+fn target_parity_report_for(
+  results : Array[RunResult],
+  expected_output : String,
+) -> @target_parity.ParityReport? {
+  if results.length() < 2 {
+    return None
+  }
+  let expected_targets : Array[String] = []
+  let observations : Array[@target_parity.Observation] = []
+  let expectations : Array[@target_parity.Observation] = []
+  for result in results {
+    let invalid_result = match result.status {
+      Succeeded => result.exit_code != 0
+      _ => true
+    }
+    if invalid_result {
+      return None
+    }
+    expected_targets.push(result.target)
+    observations.push({
+      target: result.target,
+      exit_code: result.exit_code,
+      stdout: result.stdout,
+      stderr: result.stderr,
+    })
+    if expected_output != "" {
+      expectations.push({
+        target: result.target,
+        exit_code: 0,
+        stdout: expected_output,
+        stderr: "",
+      })
+    }
+  }
+  let policy = {
+    ..@target_parity.ComparePolicy::strict(),
+    compare_stderr: false,
+  }
+  let scenario : @target_parity.ScenarioRun = {
+    schema_version: 1,
+    name: "moonsmith-successful-backend-matrix",
+    expected_targets,
+    observations,
+    policy,
+  }
+  if expectations.length() == 0 {
+    Some(@target_parity.compare_scenario(scenario))
+  } else {
+    Some(@target_parity.compare_contract_scenario({ scenario, expectations, }))
+  }
+}
+
+///|
 /// Normalize line-ending encoding only. Spaces and trailing newlines remain
 /// observable program output and must not disappear from differential checks.
 pub fn normalize_stdout(output : String) -> String {
@@ -279,52 +358,7 @@ pub fn DifferentialReport::summary_json(self : DifferentialReport) -> String {
 pub fn DifferentialReport::target_parity_cross_check(
   self : DifferentialReport,
 ) -> @target_parity.ParityReport? {
-  if self.results.length() < 2 {
-    return None
-  }
-  let expected_targets : Array[String] = []
-  let observations : Array[@target_parity.Observation] = []
-  let expectations : Array[@target_parity.Observation] = []
-  for result in self.results {
-    let invalid_result = match result.status {
-      Succeeded => result.exit_code != 0
-      _ => true
-    }
-    if invalid_result {
-      return None
-    }
-    expected_targets.push(result.target)
-    observations.push({
-      target: result.target,
-      exit_code: result.exit_code,
-      stdout: result.stdout,
-      stderr: result.stderr,
-    })
-    if self.expected_output != "" {
-      expectations.push({
-        target: result.target,
-        exit_code: 0,
-        stdout: self.expected_output,
-        stderr: "",
-      })
-    }
-  }
-  let policy = {
-    ..@target_parity.ComparePolicy::strict(),
-    compare_stderr: false,
-  }
-  let scenario : @target_parity.ScenarioRun = {
-    schema_version: 1,
-    name: "moonsmith-successful-backend-matrix",
-    expected_targets,
-    observations,
-    policy,
-  }
-  if expectations.length() == 0 {
-    Some(@target_parity.compare_scenario(scenario))
-  } else {
-    Some(@target_parity.compare_contract_scenario({ scenario, expectations, }))
-  }
+  target_parity_report_for(self.results, self.expected_output)
 }
 
 ///|
@@ -370,20 +404,27 @@ pub fn analyze_results(
   } else if unavailable > 0 {
     EnvironmentFailure
   } else if successes == results.length() {
-    let expected = normalize_stdout(results[0].stdout)
-    let mut mismatch = false
-    for index = 1; index < results.length(); index = index + 1 {
-      if normalize_stdout(results[index].stdout) != expected {
-        mismatch = true
-      }
-    }
-    if mismatch {
-      OutputMismatch
-    } else if expected_output != "" &&
-      expected != normalize_stdout(expected_output) {
-      ReferenceMismatch
-    } else {
-      Consistent
+    match target_parity_report_for(results, expected_output) {
+      Some(parity) =>
+        match parity.status {
+          @target_parity.Status::Pass => Consistent
+          @target_parity.Status::Divergent => {
+            let mut backend_diverged = false
+            for difference in parity.differences {
+              if difference.kind == "parity" {
+                backend_diverged = true
+              }
+            }
+            if backend_diverged {
+              OutputMismatch
+            } else {
+              ReferenceMismatch
+            }
+          }
+          @target_parity.Status::Inconclusive =>
+            classify_successful_outputs(results, expected_output)
+        }
+      None => classify_successful_outputs(results, expected_output)
     }
   } else {
     // Defensive fallback for future RunStatus variants.

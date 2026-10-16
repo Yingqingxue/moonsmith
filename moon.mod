@@ -26,5 +26,5 @@ preferred_target = "wasm"
 description = "Differential testing and automatic test-case reduction for MoonBit compiler backends"
 
 import {
-  "zhangbowen2006/moonbit-target-parity@0.5.1",
+  "zhangbowen2006/moonbit-target-parity@0.5.0",
 }

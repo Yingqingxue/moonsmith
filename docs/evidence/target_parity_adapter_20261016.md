@@ -3,7 +3,11 @@
 Date: 2026-10-16 (Asia/Shanghai)
 
 This note records a local end-to-end check of the MoonSmith per-seed oracle
-adapter to the pinned `zhangbowen2006/moonbit-target-parity@0.5.1` dependency.
+adapter to the pinned, currently published
+`zhangbowen2006/moonbit-target-parity@0.5.0` dependency. The upstream GitHub
+main branch declares 0.5.1, but that version is not available from the
+Mooncakes registry at validation time, so the project pins the latest
+registry-published release rather than relying on a local checkout/cache.
 The adapter only invokes Target Parity when it has at least two successful
 backend observations with exit code 0. It supplies the MoonSmith reference
 output as an expected-result contract when available. Compiler failure,

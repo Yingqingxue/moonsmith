@@ -1082,7 +1082,7 @@ the [composition scan evidence](evidence/valtype_composition_scan_20261012.md).
 ## Reusing MoonBit Target Parity after competition review feedback
 
 On 2026-10-16, the per-seed oracle adapter began using the pinned
-`zhangbowen2006/moonbit-target-parity@0.5.1` library for complete successful
+`zhangbowen2006/moonbit-target-parity@0.5.0` library for complete successful
 backend matrices. Its independent status/result is included in `targetParity`
 in the `verify_seed.ps1` JSON output (schema 6). The adapter passes each target's
 exit code/stdout and, when present, the reference evaluator's expected output;
@@ -1097,11 +1097,13 @@ each of JS, Wasm, and Wasm-GC passed. The reference, reducer, and CLI PowerShell
 integration scripts passed; the reference script verifies a normal report has
 Target Parity `pass`, and an injected common-mode wrong output is independently
 `divergent`. Native tests could not run on this Windows workstation because it
-has no C compiler; the previously existing remote Windows CI result predates
-this change, so the adapter still needs a fresh remote CI run. This is evidence
-of one integration, not proof that MoonSmith is distinct from the other named
-projects or that it has discovered an unreported MoonBit compiler bug. The
-remaining positioning risks and feature boundaries are recorded in
+has no C compiler. The first pushed attempt pinned GitHub's 0.5.1 main-branch
+version, which a clean runner could not resolve from Mooncakes; the dependency
+has since been re-pinned to the registry-published 0.5.0 and the local suites
+rerun. A clean remote CI run for that correction is still required. This is
+evidence of one integration, not proof that MoonSmith is distinct from the
+other named projects or that it has discovered an unreported MoonBit compiler
+bug. The remaining positioning risks and feature boundaries are recorded in
 [`ecosystem_comparison.md`](ecosystem_comparison.md). The exact two-command
 smoke evidence is in
 [`target_parity_adapter_20261016.md`](evidence/target_parity_adapter_20261016.md).
