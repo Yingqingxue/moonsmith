@@ -3,6 +3,41 @@ $cli = Join-Path $PSScriptRoot 'moonsmith.ps1'
 $verify = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $batchRunner = Join-Path $PSScriptRoot 'run_batch.ps1'
 
+# MoonReduce can verify a failure-preserving text reduction without changing
+# executable source lines. Keep that evidence distinction covered separately
+# from the external binary/integration workflow.
+$classifier = Join-Path $PSScriptRoot 'classify_moonreduce_change.ps1'
+$classifierTestRoot = Join-Path ([System.IO.Path]::GetTempPath()) `
+    ("moonsmith-change-class-{0}" -f [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $classifierTestRoot | Out-Null
+try {
+    $originalPath = Join-Path $classifierTestRoot 'original.txt'
+    $reducedPath = Join-Path $classifierTestRoot 'reduced.txt'
+    @('///|', 'fn main {', '  println(1)', '}', '') |
+        Set-Content -LiteralPath $originalPath -Encoding utf8NoBOM
+    @('fn main {', '  println(1)', '}') |
+        Set-Content -LiteralPath $reducedPath -Encoding utf8NoBOM
+    $changeClass = & $classifier -OriginalPath $originalPath -ReducedPath $reducedPath
+    if ($changeClass -ne 'layout-only') {
+        throw "Blank-line/block-separator-only change was misclassified: $changeClass"
+    }
+
+    'fn main {' | Set-Content -LiteralPath $reducedPath -Encoding utf8NoBOM
+    $changeClass = & $classifier -OriginalPath $originalPath -ReducedPath $reducedPath
+    if ($changeClass -ne 'content-lines-changed') {
+        throw "A changed source line was misclassified: $changeClass"
+    }
+
+    Copy-Item -LiteralPath $originalPath -Destination $reducedPath -Force
+    $changeClass = & $classifier -OriginalPath $originalPath -ReducedPath $reducedPath
+    if ($changeClass -ne 'unchanged') {
+        throw "An unchanged source file was misclassified: $changeClass"
+    }
+}
+finally {
+    Remove-Item -LiteralPath $classifierTestRoot -Recurse -Force
+}
+
 $duplicateTargetsRejected = $false
 try {
     & $verify -Seed 0 -Depth 0 -Targets @('js', 'js') -NoPersist | Out-Null

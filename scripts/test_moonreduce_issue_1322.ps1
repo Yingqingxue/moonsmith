@@ -109,8 +109,18 @@ if ($reductionReport.status -notin @('verified_reduction', 'verified_unchanged')
     throw "MoonReduce did not independently verify the known #1322 finding: $($reductionReport.status)."
 }
 
+$reductionChangeClass = & (Join-Path $PSScriptRoot 'classify_moonreduce_change.ps1') `
+    -OriginalPath (Join-Path $reductionDirectory 'original.txt') `
+    -ReducedPath (Join-Path $reductionDirectory 'reduced.txt')
+if ($reductionChangeClass -notin @(
+        'unchanged', 'layout-only', 'content-lines-changed'
+    )) {
+    throw "Could not classify MoonReduce's source-line changes: $reductionChangeClass"
+}
+
 Write-InteropSummary ([pscustomobject]@{
     status = [string]$reductionReport.status
+    changeClass = [string]$reductionChangeClass
     source = 'upstream issue #1322; not discovered by MoonSmith'
     originalBytes = [long]$reductionReport.original_bytes
     reducedBytes = [long]$reductionReport.reduced_bytes

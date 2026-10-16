@@ -82,4 +82,8 @@ checker can preserve and replay this reported failure; it does not show useful
 reduction of its program logic, global minimality, or general reducer
 effectiveness. The generated-AST reducer remains the primary reducer for
 MoonSmith-generated cases; arbitrary-source semantic reduction is still an
-unresolved capability boundary.
+unresolved capability boundary. The integration summary now labels the text
+change as `layout-only` when the nonblank, non-`///|` source lines are identical,
+so a byte-count reduction cannot be mistaken for changed program content. This
+is a conservative line-level classification, not a parser, semantic-equivalence
+proof, or substitute for failure replay.
