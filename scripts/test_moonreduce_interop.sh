@@ -55,3 +55,9 @@ if status not in {"verified_reduction", "verified_unchanged"}:
     raise SystemExit(f"MoonReduce did not produce a verified result: status={status!r}")
 print(json.dumps({"status": status, "report": sys.argv[1]}, sort_keys=True))
 PY
+
+# Exercise MoonReduce on the checked-in, externally reported #1322 reproducer.
+# The PowerShell helper keeps validation logic locally testable on Windows.
+pwsh -NoProfile -File "$repo_root/scripts/test_moonreduce_issue_1322.ps1" \
+  -MoonReduceBinary "$moonreduce_binary" \
+  -OutputDirectory "$out_dir/upstream-1322"
