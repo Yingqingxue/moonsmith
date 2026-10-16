@@ -125,6 +125,9 @@ pwsh -File scripts/moonsmith.ps1 reduce -Seed 20 -Depth 2 `
 Saved findings and batch summaries live under the ignored `.moonsmith`
 directory. A saved injected output mismatch can be replayed with
 `pwsh -File scripts/moonsmith.ps1 replay -CasePath <finding-directory>`.
+For an optional bridge to MoonReduce's text reducer, see
+[`docs/moonreduce_interop.md`](docs/moonreduce_interop.md); MoonSmith remains
+the checker, while MoonReduce performs candidate deletions.
 To create a Markdown and standalone offline HTML case report, run
 `pwsh -File scripts/moonsmith.ps1 report -CasePath <finding-directory>`.
 Pass `-ReductionPath <reduction-directory>` to include verified reduction

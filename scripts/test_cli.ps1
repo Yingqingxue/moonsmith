@@ -382,6 +382,53 @@ try {
         $legacyReplay.sourceIntegrityChecked) {
         throw 'replay did not preserve compatibility with a legacy finding report without a source hash.'
     }
+
+    $moonReduceChecker = Join-Path $PSScriptRoot 'moonreduce_checker.ps1'
+    $pwshPath = (Get-Command pwsh -ErrorAction Stop).Source
+    $preservedOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $injected.savedTo `
+        (Join-Path $injected.savedTo 'source.mbt')
+    $preservedExitCode = $LASTEXITCODE
+    $preservedCandidate = ($preservedOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($preservedExitCode -ne 0 -or -not $preservedCandidate.preserved -or
+        -not $preservedCandidate.reductionKeyMatches) {
+        throw 'MoonReduce checker did not accept a candidate preserving the saved finding.'
+    }
+
+    $changedCandidatePath = Join-Path $tamperedFixtureRoot 'changed.mbt'
+    [IO.File]::WriteAllText(
+        $changedCandidatePath,
+        'pub fn main { println("MoonReduce candidate") }' + [Environment]::NewLine,
+        [Text.UTF8Encoding]::new($false)
+    )
+    $changedOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $injected.savedTo `
+        $changedCandidatePath
+    $changedExitCode = $LASTEXITCODE
+    $changedCandidate = ($changedOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($changedExitCode -ne 1 -or $changedCandidate.preserved -or
+        $changedCandidate.reason -ne 'finding-changed') {
+        throw 'MoonReduce checker did not reject a candidate that lost the saved finding.'
+    }
+
+    $noReferenceOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $unreferencedInjected.savedTo `
+        (Join-Path $unreferencedInjected.savedTo 'source.mbt')
+    $noReferenceExitCode = $LASTEXITCODE
+    $noReferenceCandidate = ($noReferenceOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($noReferenceExitCode -ne 0 -or -not $noReferenceCandidate.preserved -or
+        -not $noReferenceCandidate.reductionKeyMatches) {
+        throw 'MoonReduce checker did not preserve a finding without a reference-output contract.'
+    }
+
+    $unknownOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $tamperedFixtureRoot `
+        $changedCandidatePath 2>$null
+    $unknownExitCode = $LASTEXITCODE
+    $unknownCandidate = ($unknownOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($unknownExitCode -ne 125 -or $unknownCandidate.reason -ne 'checker-error') {
+        throw 'MoonReduce checker did not report an unverifiable baseline as unknown.'
+    }
 }
 finally {
     $resolvedTamperedFixture = [IO.Path]::GetFullPath($tamperedFixtureRoot)
@@ -503,6 +550,10 @@ if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
     generatorLimitCount = $generatorLimit.counts.'generator-limit'
     nearLimitLineCount = $nearLimitLineCount
     replayFinding = $replay.replayFinding
+    moonReduceCheckerPreserved = $preservedCandidate.preserved
+    moonReduceCheckerRejectedChangedFinding = -not $changedCandidate.preserved
+    moonReduceCheckerNoReferencePreserved = $noReferenceCandidate.preserved
+    moonReduceCheckerUnknownExitCode = $unknownExitCode
     seedRangeOverflowRejected = $seedRangeRejected
     reportMarkdownVerified = $reportMarkdown.Contains('## Target Parity cross-check')
     reportHtmlVerified = $reportHtml.Contains('<h2>Target Parity cross-check</h2>')
