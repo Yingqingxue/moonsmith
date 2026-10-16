@@ -24,3 +24,7 @@ keywords = [ "testing", "fuzzing", "compiler", "differential-testing" ]
 preferred_target = "wasm"
 
 description = "Differential testing and automatic test-case reduction for MoonBit compiler backends"
+
+import {
+  "zhangbowen2006/moonbit-target-parity@0.5.1",
+}

@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Yingqingxue/moonsmith"
 
+import {
+  "zhangbowen2006/moonbit-target-parity",
+}
+
 // Values
 pub fn analyze_results(Array[RunResult], expected_output? : String) -> DifferentialReport
 
@@ -27,6 +31,7 @@ pub(all) struct DifferentialReport {
 }
 pub fn DifferentialReport::reduction_key(Self) -> String
 pub fn DifferentialReport::summary_json(Self) -> String
+pub fn DifferentialReport::target_parity_cross_check(Self) -> @moonbit-target-parity.ParityReport?
 
 pub(all) enum EvaluatedValue {
   IntValue(Int)

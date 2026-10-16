@@ -70,6 +70,33 @@ effectiveness; or uniqueness relative to all MoonBit tooling. The current
    research gap only. It does not replace an external review of MoonSmith's
    scope or prove competition readiness.
 
+## October competition overlap review (2026-10-16)
+
+The first-review feedback named four MoonBit projects and said MoonSmith's
+cross-backend comparison/reduction purpose overlapped with them, while the
+proposal did not state an extension relationship. That is a concrete scope
+problem; adding more generator syntax by itself would make the proposal broader,
+not clearer. The following is a source-based response to that feedback, not a
+claim about judging outcomes or relative quality:
+
+| Project | Publicly described overlap | MoonSmith's defensible relationship |
+|---|---|---|
+| [moonbit-casekit](https://github.com/kaigeliang/moonbit-casekit) | Stores stable case observations and compares backend results; documents JSON/Markdown reports. Its README says it does not generate inputs or shrink failures. | Treat it as the reusable capture/comparison layer for user-authored cases. MoonSmith should focus its own value on deterministic generation, the reference evaluator, and shrinking generated MoonBit ASTs. A direct adapter is not implemented yet. |
+| [MoonBit Target Parity](https://github.com/zhangbowen2006/MoonBitTargetParity) | Reusable library for comparing observed backend behavior and optional expected-result contracts. | MoonSmith now calls its public library API for complete successful backend matrices and embeds the independent parity result in the per-seed report. MoonSmith retains compile/runtime/timeout/environment classification and its failure-preserving reducer, which are outside this adapter's input model. |
+| [MoonReduce](https://github.com/Hing7/moonreduce) | Generic source/text or JSON reduction around an external checker, with bounded replay/verification. | MoonReduce is the more general choice for arbitrary existing files. MoonSmith currently reduces only its own typed generated AST and replays the same differential finding. Do not claim arbitrary-source reduction. A bridge remains a possible future option, not current functionality. |
+| [MoonGrammata](https://github.com/erzhuzi259/MoonGrammata) | Structured grammar-based fuzzing, tree mutations, differential/metamorphic checking, and failure reduction. This is the closest overlap in breadth. | MoonSmith should not claim to be a novel general-purpose MoonBit fuzzer. Its narrower contribution is a reproducible compiler-backend regression workflow built around its own small typed grammar, independent reference evaluation, targeted historical regression seeds, and shrinking that preserves a backend finding. This distinction is a design position, not evidence of superior effectiveness or uniqueness. |
+
+The immediate engineering response is intentionally limited: reuse Target Parity
+instead of independently duplicating the successful-run observation comparison,
+and make the evidence visible in `verify_seed` JSON. It does not resolve all
+overlap—especially with MoonGrammata—or by itself establish that this project is
+an extension rather than a parallel tool. Before claiming that relationship in
+a submission, the project should add one end-to-end example that starts from a
+documented compiler regression, runs the local generated probe through the
+shared parity API, and demonstrates MoonSmith's AST shrinker preserving the
+same finding. The previously rejected upstream issue #1322 must remain clearly
+labelled as a reported upstream case, not a defect discovered by MoonSmith.
+
 ## Sources
 
 - Csmith project README: <https://github.com/csmith-project/csmith>

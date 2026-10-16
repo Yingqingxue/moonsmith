@@ -110,6 +110,7 @@ foreach ($seed in @(-2147483648, -1, 2147483647)) {
     $boundary = $boundaryRaw | ConvertFrom-Json
     if ($boundaryExitCode -ne 0 -or $boundary.finding -ne 'consistent' -or
         -not $boundary.referenceChecked -or
+        $boundary.targetParity.status -ne 'pass' -or
         $boundary.runs.Count -ne $boundaryTargets.Count -or
         @($boundary.runs | Where-Object status -ne 'succeeded').Count -ne 0) {
         throw "extreme seed $seed did not pass the complete backend differential check."

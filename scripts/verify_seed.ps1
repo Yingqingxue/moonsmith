@@ -121,7 +121,7 @@ if (-not $SourcePath) {
     Set-Content -LiteralPath $casePath -Value $source -Encoding utf8 -NoNewline
     if ($sourceLineCount -gt $maxSourceLines) {
         $sizeLimitReport = [pscustomobject]@{
-            schemaVersion = 5
+            schemaVersion = 6
             caseId = $null
             seed = $Seed
             depth = $Depth
@@ -131,6 +131,7 @@ if (-not $SourcePath) {
             reductionKey = $null
             referenceChecked = $false
             expectedOutput = $null
+            targetParity = $null
             referenceTrace = $null
             injection = $null
             timeoutSeconds = $TimeoutSeconds
@@ -335,7 +336,7 @@ if ($NoPersist) {
 }
 
 $report = [pscustomobject]@{
-    schemaVersion = 5
+    schemaVersion = 6
     caseId        = $caseId
     seed          = $Seed
     depth         = $Depth
@@ -345,6 +346,7 @@ $report = [pscustomobject]@{
     reductionKey  = $oracle.reductionKey
     referenceChecked = $oracle.referenceChecked
     expectedOutput = $oracle.expectedOutput
+    targetParity = $oracle.targetParity
     referenceTrace = $referenceTrace
     injection     = $injection
     timeoutSeconds = $TimeoutSeconds

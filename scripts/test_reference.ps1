@@ -12,6 +12,9 @@ $normal = $normalRaw | ConvertFrom-Json
 if ($normal.finding -ne 'consistent' -or -not $normal.referenceChecked) {
     throw 'Reference verification did not accept the unmodified seed 42 case.'
 }
+if ($normal.schemaVersion -ne 6 -or $normal.targetParity.status -ne 'pass') {
+    throw 'A successful generated run did not include a passing Target Parity cross-check.'
+}
 if (-not $normal.expectedOutput) {
     throw 'The reference evaluator returned no expected output.'
 }
@@ -96,6 +99,9 @@ $injectedExitCode = $LASTEXITCODE
 $injected = $injectedRaw | ConvertFrom-Json
 if ($injected.finding -ne 'reference-mismatch') {
     throw "Expected reference-mismatch, got $($injected.finding)."
+}
+if ($injected.targetParity.status -ne 'divergent') {
+    throw 'Target Parity did not independently flag the common-mode wrong output.'
 }
 if ($injectedExitCode -ne 1) {
     throw "Expected injected reference mismatch to exit 1, got $injectedExitCode."

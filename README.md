@@ -41,7 +41,15 @@ differential configuration.
 
 The PowerShell entry point is a thin process/IO adapter. The generator,
 reference evaluator, differential oracle, and AST reducer are implemented in
-MoonBit. `fuzz` returns a JSON batch report and exits nonzero on an unexpected
+MoonBit. On a complete successful backend matrix, the oracle also emits an
+independent comparison result from
+[MoonBit Target Parity](https://github.com/zhangbowen2006/MoonBitTargetParity)
+in the per-seed JSON report. That library cross-check is deliberately limited
+to exit status, stdout, and an optional expected-output contract; MoonSmith
+still owns compiler/runner failure classification, diagnostic normalization,
+stable reduction signatures, and failure-preserving reduction. Failed or
+incomplete backend matrices are not converted into successful observations.
+`fuzz` returns a JSON batch report and exits nonzero on an unexpected
 finding. `replay -CasePath PATH` takes a saved finding directory or its
 `report.json` and succeeds only if the finding and reduction key match again.
 Generated sources over 16,300 lines are reported as `generator-limit` and are

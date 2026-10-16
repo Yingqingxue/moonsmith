@@ -252,6 +252,10 @@ pub fn json_escape(value : String) -> String {
 ///|
 /// Compact machine-readable output used by the bootstrap host adapter.
 pub fn DifferentialReport::summary_json(self : DifferentialReport) -> String {
+  let parity_json = match self.target_parity_cross_check() {
+    Some(report) => @target_parity.report_to_json(report)
+    None => "null"
+  }
   "{\"kind\":\"" +
   self.kind.label() +
   "\",\"signature\":\"" +
@@ -262,7 +266,65 @@ pub fn DifferentialReport::summary_json(self : DifferentialReport) -> String {
   (if self.expected_output == "" { "false" } else { "true" }) +
   ",\"expectedOutput\":\"" +
   json_escape(self.expected_output) +
-  "\"}"
+  "\",\"targetParity\":" +
+  parity_json +
+  "}"
+}
+
+///|
+/// Independently cross-check a complete successful target matrix with the
+/// MoonBit Target Parity library. MoonSmith remains responsible for compiler
+/// failures, timeouts, diagnostics, signatures, and reduction invariants.
+/// Incomplete or failed runs are not coerced into parity observations.
+pub fn DifferentialReport::target_parity_cross_check(
+  self : DifferentialReport,
+) -> @target_parity.ParityReport? {
+  if self.results.length() < 2 {
+    return None
+  }
+  let expected_targets : Array[String] = []
+  let observations : Array[@target_parity.Observation] = []
+  let expectations : Array[@target_parity.Observation] = []
+  for result in self.results {
+    let invalid_result = match result.status {
+      Succeeded => result.exit_code != 0
+      _ => true
+    }
+    if invalid_result {
+      return None
+    }
+    expected_targets.push(result.target)
+    observations.push({
+      target: result.target,
+      exit_code: result.exit_code,
+      stdout: result.stdout,
+      stderr: result.stderr,
+    })
+    if self.expected_output != "" {
+      expectations.push({
+        target: result.target,
+        exit_code: 0,
+        stdout: self.expected_output,
+        stderr: "",
+      })
+    }
+  }
+  let policy = {
+    ..@target_parity.ComparePolicy::strict(),
+    compare_stderr: false,
+  }
+  let scenario : @target_parity.ScenarioRun = {
+    schema_version: 1,
+    name: "moonsmith-successful-backend-matrix",
+    expected_targets,
+    observations,
+    policy,
+  }
+  if expectations.length() == 0 {
+    Some(@target_parity.compare_scenario(scenario))
+  } else {
+    Some(@target_parity.compare_contract_scenario({ scenario, expectations, }))
+  }
 }
 
 ///|

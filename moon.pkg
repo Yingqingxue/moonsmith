@@ -1,1 +1,3 @@
-
+import {
+  "zhangbowen2006/moonbit-target-parity" @target_parity,
+}

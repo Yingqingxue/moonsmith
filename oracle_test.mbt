@@ -138,7 +138,9 @@ test "summary JSON escapes user-controlled fields" {
   let summary = report.summary_json()
   assert_true(summary.has_prefix("{\"kind\":\"consistent\""))
   assert_true(summary.contains("\"referenceChecked\":true"))
-  assert_true(summary.contains("\"expectedOutput\":\"9\\n\"}"))
+  assert_true(
+    summary.contains("\"expectedOutput\":\"9\\n\",\"targetParity\":null}"),
+  )
 }
 
 ///|
@@ -313,4 +315,59 @@ test "reference mismatch reduction key tolerates value changes" {
   )
   assert_true(first.kind is ReferenceMismatch)
   assert_eq(first.reduction_key(), reduced.reduction_key())
+}
+
+///|
+test "Target Parity cross-check accepts successful matching backend results" {
+  let report = @moonsmith.analyze_results(
+    [
+      result("js", Succeeded, 0, "9\n", "warning"),
+      result("wasm", Succeeded, 0, "9\r\n", ""),
+    ],
+    expected_output="9\n",
+  )
+  match report.target_parity_cross_check() {
+    Some(parity) => assert_true(parity.status is @target_parity.Status::Pass)
+    None => fail("successful multi-target result should be cross-checked")
+  }
+  assert_true(report.summary_json().contains("\"targetParity\":{"))
+}
+
+///|
+test "Target Parity cross-check detects backend output disagreement" {
+  let report = @moonsmith.analyze_results([
+    result("js", Succeeded, 0, "9\n", ""),
+    result("wasm", Succeeded, 0, "10\n", ""),
+  ])
+  match report.target_parity_cross_check() {
+    Some(parity) =>
+      assert_true(parity.status is @target_parity.Status::Divergent)
+    None => fail("successful multi-target result should be cross-checked")
+  }
+}
+
+///|
+test "Target Parity cross-check detects common-mode reference mismatch" {
+  let report = @moonsmith.analyze_results(
+    [
+      result("js", Succeeded, 0, "10\n", ""),
+      result("wasm", Succeeded, 0, "10\n", ""),
+    ],
+    expected_output="9\n",
+  )
+  match report.target_parity_cross_check() {
+    Some(parity) =>
+      assert_true(parity.status is @target_parity.Status::Divergent)
+    None => fail("successful multi-target result should be cross-checked")
+  }
+}
+
+///|
+test "Target Parity cross-check skips incomplete compiler runs" {
+  let report = @moonsmith.analyze_results([
+    result("js", Succeeded, 0, "9\n", ""),
+    result("wasm", CompileFailed, 2, "", "compiler panic"),
+  ])
+  assert_true(report.target_parity_cross_check() is None)
+  assert_true(report.summary_json().contains("\"targetParity\":null"))
 }

@@ -1078,3 +1078,30 @@ reference traces visited both probes. This is observed frequency in this
 small cohort, not backend coverage or a frequency guarantee. Runtime was
 307,214 ms on this workstation; raw JSON is ignored locally. Details are in
 the [composition scan evidence](evidence/valtype_composition_scan_20261012.md).
+
+## Reusing MoonBit Target Parity after competition review feedback
+
+On 2026-10-16, the per-seed oracle adapter began using the pinned
+`zhangbowen2006/moonbit-target-parity@0.5.1` library for complete successful
+backend matrices. Its independent status/result is included in `targetParity`
+in the `verify_seed.ps1` JSON output (schema 6). The adapter passes each target's
+exit code/stdout and, when present, the reference evaluator's expected output;
+it disables stderr comparison because MoonSmith's current success contract is
+about exit code and stdout, while warnings on stderr are not a failure. It skips
+incomplete or failed runs rather than mapping compile errors or timeouts into
+ordinary observations. MoonSmith continues to own those terminal states,
+diagnostic normalization, reduction signatures, and AST shrinking.
+
+Validation on MoonBit `0.1.20260920`: `moon check --deny-warn` and 107 tests on
+each of JS, Wasm, and Wasm-GC passed. The reference, reducer, and CLI PowerShell
+integration scripts passed; the reference script verifies a normal report has
+Target Parity `pass`, and an injected common-mode wrong output is independently
+`divergent`. Native tests could not run on this Windows workstation because it
+has no C compiler; the previously existing remote Windows CI result predates
+this change, so the adapter still needs a fresh remote CI run. This is evidence
+of one integration, not proof that MoonSmith is distinct from the other named
+projects or that it has discovered an unreported MoonBit compiler bug. The
+remaining positioning risks and feature boundaries are recorded in
+[`ecosystem_comparison.md`](ecosystem_comparison.md). The exact two-command
+smoke evidence is in
+[`target_parity_adapter_20261016.md`](evidence/target_parity_adapter_20261016.md).

@@ -1,0 +1,53 @@
+# Target Parity adapter smoke evidence
+
+Date: 2026-10-16 (Asia/Shanghai)
+
+This note records a local end-to-end check of the MoonSmith per-seed oracle
+adapter to the pinned `zhangbowen2006/moonbit-target-parity@0.5.1` dependency.
+The adapter only invokes Target Parity when it has at least two successful
+backend observations with exit code 0. It supplies the MoonSmith reference
+output as an expected-result contract when available. Compiler failure,
+runtime failure, timeout, and unavailable-toolchain states remain classified by
+MoonSmith and are not converted into normal observations.
+
+## Matching generated case
+
+Command:
+
+```powershell
+pwsh -NoProfile -Command {
+  $raw = & ./scripts/verify_seed.ps1 -Seed 2147483647 -Depth 3 `
+    -Targets @('js','wasm','wasm-gc') -NoPersist
+  $report = $raw | ConvertFrom-Json
+  $report | Select-Object finding,referenceChecked,targetParity
+}
+```
+
+Observed MoonSmith finding: `consistent`; reference checked: `true`; Target
+Parity status: `pass`; compared targets: `js`, `wasm`, and `wasm-gc`; no missing
+targets or differences.
+
+## Deliberately injected common-mode wrong output
+
+Command:
+
+```powershell
+pwsh -NoProfile -Command {
+  $raw = & ./scripts/verify_seed.ps1 -Seed 42 -Depth 4 `
+    -InjectCommonWrongOutput '999' -NoPersist
+  $report = $raw | ConvertFrom-Json
+  $report | Select-Object finding,targetParity
+}
+```
+
+Observed MoonSmith finding: `reference-mismatch`; Target Parity status:
+`divergent`. All three backends reported `999\n`, while the reference
+expectation was `-23\n`. This demonstrates independent reporting of a common-mode
+wrong result; it is an injected test fault, not a real MoonBit compiler bug.
+
+## Validation boundary
+
+`moon check --deny-warn` passed. The main package's 107 tests passed separately
+on JS, Wasm, and Wasm-GC. The reference, reducer, and CLI integration scripts
+passed. The local Windows host has no C compiler, so native tests were not
+available here. A fresh remote CI run for this change is still required.
