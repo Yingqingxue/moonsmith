@@ -30,6 +30,14 @@ on:
         required: false
         type: boolean
         default: false
+      semantic_selection_seed_start:
+        description: First candidate seed for a preregistered semantic-selection cohort
+        required: false
+        type: choice
+        options:
+          - '24220'
+          - '24320'
+        default: '24220'
 
 permissions:
   contents: read
@@ -338,18 +346,21 @@ jobs:
 
       - name: Run the preregistered fixed cohort
         shell: pwsh
+        env:
+          SEMANTIC_SELECTION_SEED_START: ${{ inputs.semantic_selection_seed_start }}
         run: |
+          $seedStart = [int]$env:SEMANTIC_SELECTION_SEED_START
           ./scripts/compare_semantic_selection.ps1 `
-            -SeedStart 24220 -CandidateCount 100 -ExecutionBudget 20 -Depth 4 `
+            -SeedStart $seedStart -CandidateCount 100 -ExecutionBudget 20 -Depth 4 `
             -Targets @('js','wasm','wasm-gc') -SizeMatched `
-            -OutputPath .moonsmith/runs/selection_24220_100_20_d4_size_matched.json
+            -OutputPath ".moonsmith/runs/selection_${seedStart}_100_20_d4_size_matched.json"
 
       - name: Preserve semantic-selection report
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: moonsmith-semantic-selection-replication
-          path: .moonsmith/runs/selection_24220_100_20_d4_size_matched.json
+          path: .moonsmith/runs/selection_*_100_20_d4_size_matched.json
           if-no-files-found: error
           retention-days: 30
 

@@ -98,10 +98,15 @@ recorded in [`valtype_reduction_smoke_20261016.md`](evidence/valtype_reduction_s
 exact historical trigger from the generated extension and records the
 injected-fault reduction without claiming compiler-bug discovery. This is a
 workflow example, not resolution of all overlap—especially with MoonGrammata.
-Keep a separate fixed-corpus experiment for whether reference-path-guided
-selection is worth its measured overhead. Do not present either path traces or
-the previously reported upstream issue #1322 as a MoonSmith discovery or
-backend coverage.
+A pre-registered, source-size-matched hosted replication found 55 reference
+path kinds for semantic-guided selection versus 51 sequential at equal backend
+execution and quartile budgets, with no unexpected finding; its additional
+prescreen cost and limits are recorded in the
+[`hosted replication evidence`](evidence/semantic_selection_hosted_replication_20261016.md).
+This single cohort is descriptive, not evidence of higher compiler coverage or
+bug-finding effectiveness; keep semantic guidance optional pending further
+replications. Do not present either path traces or the previously reported
+upstream issue #1322 as a MoonSmith discovery or backend coverage.
 
 ## Sources
 
