@@ -69,10 +69,10 @@ if ($null -ne $reduction -and $null -ne $reduction.history) {
         throw 'Reduction history count differs from acceptedSteps.'
     }
     $previousAttempt = 0
-    $previousComplexity = [int]$reduction.originalComplexity
+    $previousComplexity = [long]$reduction.originalComplexity
     foreach ($step in $acceptedHistory) {
         $attempt = [int]$step.attempt
-        $complexity = [int]$step.complexity
+        $complexity = [long]$step.complexity
         if ($attempt -le $previousAttempt -or $attempt -gt [int]$reduction.attempts -or
             [int]$step.index -lt 0 -or $complexity -lt 1 -or
             $complexity -ge $previousComplexity -or
@@ -83,7 +83,7 @@ if ($null -ne $reduction -and $null -ne $reduction.history) {
         $previousComplexity = $complexity
     }
     if ($acceptedHistory.Count -gt 0 -and
-        $previousComplexity -ne [int]$reduction.finalComplexity) {
+        $previousComplexity -ne [long]$reduction.finalComplexity) {
         throw 'Reduction history does not end at the reported final complexity.'
     }
 }

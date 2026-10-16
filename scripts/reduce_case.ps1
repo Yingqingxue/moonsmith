@@ -93,7 +93,7 @@ $acceptedIndices = [System.Collections.Generic.List[int]]::new()
 $history = [System.Collections.Generic.List[object]]::new()
 $current = Get-Candidates -AcceptedIndices @()
 $originalSource = [string]$current.source
-$originalComplexity = [int]$current.complexity
+$originalComplexity = [long]$current.complexity
 $lastReport = $baseline
 $attempts = 0
 $exhausted = $false
@@ -105,7 +105,7 @@ while ($attempts -lt $MaxAttempts) {
             $exhausted = $true
             break
         }
-        if ([int]$candidate.complexity -ge [int]$current.complexity) {
+        if ([long]$candidate.complexity -ge [long]$current.complexity) {
             throw 'Candidate complexity did not decrease.'
         }
         $attempts++
@@ -119,12 +119,12 @@ while ($attempts -lt $MaxAttempts) {
             $history.Add([pscustomobject]@{
                 attempt    = $attempts
                 index      = [int]$candidate.index
-                complexity = [int]$candidate.complexity
+                complexity = [long]$candidate.complexity
                 finding    = [string]$report.finding
             })
             $lastReport = $report
             $current = Get-Candidates -AcceptedIndices $acceptedIndices.ToArray()
-            if ([int]$current.complexity -ne [int]$candidate.complexity) {
+            if ([long]$current.complexity -ne [long]$candidate.complexity) {
                 throw 'Reconstructed AST differs from the accepted candidate.'
             }
             if ([string]$current.source -ne [string]$candidate.source -or
@@ -178,7 +178,7 @@ $result = [pscustomobject]@{
     originalSignature   = $baseline.signature
     finalSignature      = $lastReport.signature
     originalComplexity  = $originalComplexity
-    finalComplexity     = [int]$current.complexity
+    finalComplexity     = [long]$current.complexity
     originalBytes       = [System.Text.Encoding]::UTF8.GetByteCount($originalSource)
     finalBytes          = [System.Text.Encoding]::UTF8.GetByteCount($finalSource)
     attempts            = $attempts

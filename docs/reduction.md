@@ -11,6 +11,12 @@ candidate only when its complexity strictly decreases and its finding plus
 reduction key match the baseline. The final source receives one more replay
 before the result is saved.
 
+Complexity is represented as a 64-bit score even though integer literals in
+the generated language are 32-bit. This avoids overflow when ranking the
+absolute value of `Int`'s minimum literal and when summing the costs of a
+compound expression; host-side report validation also reads the score as a
+64-bit integer.
+
 For an output mismatch, the reduction key records which backends have equal
 output. It permits literal output values to change while preserving the same
 backend partition. For compile, runtime, timeout, and mixed failures, the key

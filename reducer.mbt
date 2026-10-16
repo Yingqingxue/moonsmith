@@ -1,9 +1,10 @@
 ///|
-fn int_magnitude(value : Int) -> Int {
-  if value < 0 {
-    -value
+fn int_magnitude(value : Int) -> Int64 {
+  let wide_value = value.to_int64()
+  if wide_value < 0L {
+    -wide_value
   } else {
-    value
+    wide_value
   }
 }
 
@@ -11,41 +12,44 @@ fn int_magnitude(value : Int) -> Int {
 /// A deterministic ordering metric for reduction. Structural nodes dominate
 /// literal magnitude so deleting syntax is preferred over merely changing a
 /// number.
-pub fn Expr::complexity(self : Expr) -> Int {
+pub fn Expr::complexity(self : Expr) -> Int64 {
   match self {
-    IntLiteral(value) => 1 + int_magnitude(value)
-    BoolLiteral(value) => if value { 2 } else { 1 }
-    Variable(_, _) => 1
-    FmaContractionProbe => 1
-    Let(_, _, value, body) => 1000 + value.complexity() + body.complexity()
+    IntLiteral(value) => 1L + int_magnitude(value)
+    BoolLiteral(value) => if value { 2L } else { 1L }
+    Variable(_, _) => 1L
+    FmaContractionProbe => 1L
+    Let(_, _, value, body) => 1000L + value.complexity() + body.complexity()
     ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
-      1000 + first.complexity() + second.complexity()
+      1000L + first.complexity() + second.complexity()
     ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
-      1000 + first.complexity() + second.complexity() + replacement.complexity()
+      1000L +
+      first.complexity() +
+      second.complexity() +
+      replacement.complexity()
     StructSelect(_, number, flag) =>
-      1000 + number.complexity() + flag.complexity()
-    ChoiceValue(_, payload) => 1000 + payload.complexity()
+      1000L + number.complexity() + flag.complexity()
+    ChoiceValue(_, payload) => 1000L + payload.complexity()
     MatchChoice(_, choice, _, number_body, _, flag_body) =>
-      1000 +
+      1000L +
       choice.complexity() +
       number_body.complexity() +
       flag_body.complexity()
     FunctionApply(_, _, argument, body) =>
-      1000 + argument.complexity() + body.complexity()
+      1000L + argument.complexity() + body.complexity()
     ForLoop(iterations, initial, body) | WhileLoop(iterations, initial, body) =>
-      1000 + iterations + initial.complexity() + body.complexity()
+      1000L + iterations.to_int64() + initial.complexity() + body.complexity()
     ValtypeRaiseProbe(value) | ValtypeEnumArrayProbe(value) =>
-      1000 + value.complexity()
+      1000L + value.complexity()
     Add(left, right)
     | Subtract(left, right)
     | And(left, right)
     | Or(left, right)
     | LessThan(left, right)
-    | EqualInt(left, right) => 1000 + left.complexity() + right.complexity()
-    Not(value) => 1000 + value.complexity()
+    | EqualInt(left, right) => 1000L + left.complexity() + right.complexity()
+    Not(value) => 1000L + value.complexity()
     If(_, condition, then_expr, else_expr)
     | MatchBool(_, condition, then_expr, else_expr) =>
-      1000 +
+      1000L +
       condition.complexity() +
       then_expr.complexity() +
       else_expr.complexity()
@@ -112,7 +116,7 @@ fn push_unique(candidates : Array[Expr], candidate : Expr) -> Unit {
 ///|
 fn push_if_smaller(
   candidates : Array[Expr],
-  original_complexity : Int,
+  original_complexity : Int64,
   candidate : Expr,
 ) -> Unit {
   if candidate.complexity() < original_complexity {

@@ -22,6 +22,30 @@ test "integer literal shrinking moves toward zero without duplicates" {
 }
 
 ///|
+test "minimum integer literals retain a nonnegative shrink complexity" {
+  let minimum = -2147483647 - 1
+  let expression = @moonsmith.IntLiteral(minimum)
+  assert_eq(expression.complexity(), 2147483649L)
+  let candidates = expression.shrink_candidates()
+  assert_eq(candidates.length(), 2)
+  for candidate in candidates {
+    assert_true(candidate.complexity() < expression.complexity())
+  }
+  assert_eq(@moonsmith.Add(expression, expression).complexity(), 4294968298L)
+  let compound = @moonsmith.Add(expression, expression)
+  let compound_candidates = compound.shrink_candidates()
+  assert_true(compound_candidates.length() > 0)
+  let mut can_remove_compound = false
+  for candidate in compound_candidates {
+    assert_true(candidate.complexity() < compound.complexity())
+    if candidate.to_source() == expression.to_source() {
+      can_remove_compound = true
+    }
+  }
+  assert_true(can_remove_compound)
+}
+
+///|
 test "FMA probe is a minimal typed leaf and has no invalid shrink candidates" {
   let expression = @moonsmith.FmaContractionProbe
   assert_true(expression.value_type() is @moonsmith.BoolType)

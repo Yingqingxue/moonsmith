@@ -69,7 +69,7 @@ pub(all) enum Expr {
   ValtypeEnumArrayProbe(Expr)
   FmaContractionProbe
 }
-pub fn Expr::complexity(Self) -> Int
+pub fn Expr::complexity(Self) -> Int64
 pub fn Expr::evaluate(Self) -> EvaluatedValue
 pub fn Expr::evaluate_with_trace(Self) -> (EvaluatedValue, Array[String])
 pub fn Expr::shrink_candidates(Self) -> Array[Self]
