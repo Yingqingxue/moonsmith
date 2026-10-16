@@ -50,6 +50,9 @@ jobs:
       - name: Show toolchain version
         run: moon version --all
 
+      - name: Update Mooncakes registry index
+        run: moon update
+
       - name: Check and test all supported backends
         run: |
           moon check --deny-warn
@@ -136,6 +139,10 @@ jobs:
           $compiler.Source
           (Get-Item -LiteralPath $compiler.Source).VersionInfo | Format-List FileVersion,ProductVersion
 
+      - name: Update Mooncakes registry index
+        shell: pwsh
+        run: moon update
+
       - name: Check and test native backend
         shell: pwsh
         run: |
@@ -187,6 +194,9 @@ jobs:
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
+      - name: Update Mooncakes registry index
+        run: moon update
+
       - name: Record toolchain and FMA capability
         run: |
           moon version --all
@@ -208,6 +218,9 @@ jobs:
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Update Mooncakes registry index
+        run: moon update
 
       - name: Install PowerShell
         run: |
@@ -261,6 +274,10 @@ jobs:
           irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           Add-Content -LiteralPath $env:GITHUB_PATH -Value "$env:USERPROFILE\.moon\bin"
 
+      - name: Update Mooncakes registry index
+        shell: pwsh
+        run: moon update
+
       - name: Show toolchain and native compiler
         shell: pwsh
         run: |
@@ -307,6 +324,9 @@ jobs:
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Update Mooncakes registry index
+        run: moon update
 
       - name: Install PowerShell
         run: |

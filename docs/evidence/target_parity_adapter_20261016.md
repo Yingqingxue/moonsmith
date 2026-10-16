@@ -4,9 +4,7 @@ Date: 2026-10-16 (Asia/Shanghai)
 
 This note records a local end-to-end check of the MoonSmith per-seed oracle
 adapter to the pinned, currently published
-`zhangbowen2006/moonbit-target-parity@0.5.0` dependency. The upstream GitHub
-main branch declares 0.5.1, but that version is not available from the
-Mooncakes registry at validation time, so the project pins the latest
+`zhangbowen2006/moonbit-target-parity@0.5.1` dependency. The project pins the
 registry-published release rather than relying on a local checkout/cache.
 The adapter only invokes Target Parity when it has at least two successful
 backend observations with exit code 0. It supplies the MoonSmith reference
@@ -58,5 +56,9 @@ and offline HTML. Batch schema 11 preserves each per-seed Target Parity report, 
 fixed nightly gate requires a pass for every successful target matrix. The
 two-seed CLI smoke report recorded two per-case passes; the batch-report suite
 also checks that a non-passing parity case is rejected. The local Windows host
-has no C compiler, so native tests were not available here. A fresh remote CI
-run for the published dependency and batch-schema changes is still required.
+has no C compiler, so native tests were not available here. Remote run
+[38871586530](https://github.com/Yingqingxue/moonsmith/actions/runs/38871586530)
+showed that a clean runner must update the Mooncakes registry index before
+dependency resolution: the CLI reported the module missing immediately after
+toolchain installation. The workflow now runs `moon update` in each job that
+uses MoonBit; a fresh remote run is needed to verify this correction.

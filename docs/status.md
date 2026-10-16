@@ -1082,7 +1082,7 @@ the [composition scan evidence](evidence/valtype_composition_scan_20261012.md).
 ## Reusing MoonBit Target Parity after competition review feedback
 
 On 2026-10-16, the per-seed oracle adapter began using the pinned
-`zhangbowen2006/moonbit-target-parity@0.5.0` library for complete successful
+`zhangbowen2006/moonbit-target-parity@0.5.1` library for complete successful
 backend matrices. Its independent status/result is included in `targetParity`
 in the `verify_seed.ps1` JSON output (schema 7). The adapter passes each target's
 exit code/stdout and, when present, the reference evaluator's expected output;
@@ -1098,9 +1098,11 @@ integration scripts passed; the reference script verifies a normal report has
 Target Parity `pass`, and an injected common-mode wrong output is independently
 `divergent`. Native tests could not run on this Windows workstation because it
 has no C compiler. The first pushed attempt pinned GitHub's 0.5.1 main-branch
-version, which a clean runner could not resolve from Mooncakes; the dependency
-has since been re-pinned to the registry-published 0.5.0 and the local suites
-rerun. A clean remote CI run for that correction is still required. This is
+version before it was published. A later clean-runner attempt still failed on
+0.5.0 because the package registry index had not been refreshed. Mooncakes now
+lists 0.5.1; the dependency is pinned to that release, and each CI job now runs
+`moon update` before resolving dependencies. A fresh remote CI run is still
+required to confirm the fix. This is
 evidence of one integration, not proof that MoonSmith is distinct from the
 other named projects or that it has discovered an unreported MoonBit compiler
 bug. The remaining positioning risks and feature boundaries are recorded in
