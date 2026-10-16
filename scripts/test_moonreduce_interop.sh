@@ -8,11 +8,16 @@ command -v python3 >/dev/null
 [[ -x "$moonreduce_binary" ]] || { echo "MoonReduce executable not found: $moonreduce_binary" >&2; exit 1; }
 
 set +e
-baseline_json=$(pwsh -NoProfile -File "$repo_root/scripts/verify_seed.ps1" \
-  -Seed 0 -Depth 3 -Targets @('js', 'wasm') \
-  -InjectOutputMismatchTarget wasm)
+baseline_json=$(MOONSMITH_ROOT="$repo_root" pwsh -NoProfile -Command '
+  & "$env:MOONSMITH_ROOT/scripts/verify_seed.ps1" -Seed 0 -Depth 3 `
+    -Targets @("js", "wasm") -InjectOutputMismatchTarget wasm
+')
 baseline_exit=$?
 set -e
+[[ -n "$baseline_json" ]] || {
+  echo "MoonSmith did not emit the injected baseline report (exit code $baseline_exit)" >&2
+  exit 1
+}
 [[ $baseline_exit -eq 1 ]] || {
   echo "Expected the intentionally injected baseline to exit 1; got $baseline_exit" >&2
   exit 1
