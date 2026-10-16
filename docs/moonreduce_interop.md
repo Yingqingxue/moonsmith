@@ -9,7 +9,10 @@ text/JSON reducer; this adapter only decides whether a candidate still
 reproduces the exact MoonSmith finding.
 
 The checker takes a saved finding report as a fixed option and receives the
-candidate source as its final positional argument. Exit codes follow
+candidate source as its final positional argument. Only compile failure, runtime
+failure, timeout, output mismatch, reference mismatch, and mixed failure are
+reducible baselines; consistent runs, environment failures, and empty results
+are rejected as unknown rather than being mislabeled as failures. Exit codes follow
 MoonReduce's documented checker protocol: `0` means the same finding and
 `reductionKey` remain, `1` means the candidate no longer has that exact
 finding, and `125` means the result is unknown (for example, the baseline

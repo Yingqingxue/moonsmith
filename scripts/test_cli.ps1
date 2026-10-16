@@ -421,6 +421,30 @@ try {
         throw 'MoonReduce checker did not preserve a finding without a reference-output contract.'
     }
 
+    $nonActionableRoot = Join-Path $tamperedFixtureRoot 'non-actionable-baseline'
+    New-Item -ItemType Directory -Path $nonActionableRoot -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
+        -Destination (Join-Path $nonActionableRoot 'source.mbt')
+    $nonActionableReport = Get-Content -LiteralPath (Join-Path $injected.savedTo 'report.json') -Raw |
+        ConvertFrom-Json
+    $nonActionableBaselinesRejected = $true
+    foreach ($nonActionableFinding in @('environment-failure', 'no-results', 'consistent')) {
+        $nonActionableReport.finding = $nonActionableFinding
+        $nonActionableReport | ConvertTo-Json -Depth 10 | Set-Content `
+            -LiteralPath (Join-Path $nonActionableRoot 'report.json') -Encoding utf8
+        $nonActionableOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+            -BaselineReportPath $nonActionableRoot `
+            (Join-Path $nonActionableRoot 'source.mbt') 2>$null
+        $nonActionableExitCode = $LASTEXITCODE
+        $nonActionableCandidate = ($nonActionableOutput -join [Environment]::NewLine) | ConvertFrom-Json
+        if ($nonActionableExitCode -ne 125 -or
+            $nonActionableCandidate.reason -ne 'checker-error' -or
+            $nonActionableCandidate.error -notmatch 'actionable finding') {
+            $nonActionableBaselinesRejected = $false
+            throw "MoonReduce checker accepted '$nonActionableFinding' as a reducible baseline."
+        }
+    }
+
     $unknownOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
         -BaselineReportPath $tamperedFixtureRoot `
         $changedCandidatePath 2>$null
@@ -553,6 +577,7 @@ if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
     moonReduceCheckerPreserved = $preservedCandidate.preserved
     moonReduceCheckerRejectedChangedFinding = -not $changedCandidate.preserved
     moonReduceCheckerNoReferencePreserved = $noReferenceCandidate.preserved
+    moonReduceCheckerRejectsNonActionableBaselines = $nonActionableBaselinesRejected
     moonReduceCheckerUnknownExitCode = $unknownExitCode
     seedRangeOverflowRejected = $seedRangeRejected
     reportMarkdownVerified = $reportMarkdown.Contains('## Target Parity cross-check')

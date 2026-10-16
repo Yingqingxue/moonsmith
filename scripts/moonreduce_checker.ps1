@@ -41,9 +41,17 @@ try {
     }
 
     $baseline = Get-Content -LiteralPath $reportPath -Raw | ConvertFrom-Json
-    if ($baseline.finding -eq 'consistent' -or
+    $actionableFindings = @(
+        'compile-failure',
+        'runtime-failure',
+        'timeout',
+        'output-mismatch',
+        'reference-mismatch',
+        'mixed-failure'
+    )
+    if ($baseline.finding -notin $actionableFindings -or
         [string]::IsNullOrWhiteSpace([string]$baseline.reductionKey)) {
-        throw 'Baseline report must record a non-consistent finding and reductionKey.'
+        throw 'Baseline report must record an actionable finding and reductionKey; consistent, environment-failure, and no-results reports cannot be reduced.'
     }
 
     $hashProperty = $baseline.PSObject.Properties['sourceSha256']
