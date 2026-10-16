@@ -83,21 +83,22 @@ claim about judging outcomes or relative quality:
 |---|---|---|
 | [moonbit-casekit](https://github.com/kaigeliang/moonbit-casekit) | Runs user-authored observation packages across backends, stores stable case observations, and compares them with JSON/Markdown reports. Its README says it does not generate inputs or shrink failures. | CaseKit already owns an external runner and comparison workflow for authored cases, so process invocation is not unique to MoonSmith. MoonSmith's boundary is that it generates a restricted typed AST, computes an expected output with a separate evaluator, and shrinks that generated AST. No CaseKit adapter is implemented. |
 | [MoonBit Target Parity](https://github.com/zhangbowen2006/MoonBitTargetParity) | Reusable library for comparing observed backend behavior and optional expected-result contracts. | MoonSmith now uses its public API to classify complete successful backend matrices and includes the independent result in per-seed and batch reports. MoonSmith retains compile/runtime/timeout/environment classification and its failure-preserving reducer, which are outside this adapter's input model. |
-| [MoonReduce](https://github.com/Hing7/moonreduce) | Generic source/text or JSON reduction around an external checker, with bounded replay/verification. | An optional checker adapter lets MoonReduce evaluate candidates against a saved MoonSmith finding and its exact reduction key; MoonReduce performs the text reduction, MoonSmith performs backend verification. The adapter contract is covered by injected-finding regressions, and the real pinned MoonReduce Linux CLI path passed with an injected mismatch in [workflow run 38941306085](https://github.com/Yingqingxue/moonsmith/actions/runs/38941306085): `verified_unchanged`, zero deletions, one search candidate, and successful final replay. This validates integration/replay only—not successful reduction quality on a real compiler failure. MoonSmith's own reducer still handles only its generated AST. |
+| [MoonReduce](https://github.com/Hing7/moonreduce) | Generic source/text or JSON reduction around an external checker, with bounded replay/verification. | An optional checker adapter lets MoonReduce evaluate candidates against a saved MoonSmith finding and its exact reduction key; MoonReduce performs the text reduction, MoonSmith performs backend verification. The adapter contract is covered by injected-finding regressions. The pinned Linux CLI path first passed an injected mismatch smoke in [workflow run 38941306085](https://github.com/Yingqingxue/moonsmith/actions/runs/38941306085) (`verified_unchanged`, no deletions). In [run 38965965522](https://github.com/Yingqingxue/moonsmith/actions/runs/38965965522), the externally reported #1322 native-debug reproducer returned `verified_reduction` (275 to 263 bytes, 4 accepted candidates/100 checks, final replay passed), but inspection shows the byte reduction only removed two blank lines and two `///|` separators—all declarations and executable statements remained. This verifies preservation/replay on one upstream-reported case, not semantic minimization, MoonSmith discovery, or general reduction quality. MoonSmith's own reducer still handles only its generated AST. See the [reproducible evidence note](evidence/moonreduce_upstream_1322_20261016.md). |
 | [MoonGrammata](https://github.com/erzhuzi259/MoonGrammata) | Structured grammar-based fuzzing, tree mutations, differential/metamorphic checking, corpus feedback, and failure reduction. This is the closest overlap in breadth. Its README describes controlled in-process targets and explicitly excludes native process isolation and crash-signal capture. | MoonSmith instead drives compiler/backend executables as separate processes and distinguishes compile, runtime, timeout, and unavailable-toolchain outcomes; it also checks generated programs against its own reference evaluator. This is an operational boundary, not a claim of overall uniqueness or greater bug-finding effectiveness. MoonSmith still overlaps in generation, differential testing, and reduction, and has a much narrower grammar. |
 
 The first engineering response is deliberately narrow: reuse Target Parity's
 successful-observation comparator instead of reimplementing it, and carry its
 result through per-seed JSON, batch JSON, and offline reports. The adapter is
 verified with matching and injected common-mode-wrong-output examples; the
-latter is a harness fault, not a compiler bug. This reduces duplicated
-comparison code, but does not resolve all overlap—especially with
-MoonGrammata—or establish that MoonSmith is more effective. The next distinctive
-deliverable is a reproducible, issue-linked probe-and-reduction dossier, now
-recorded in [`valtype_reduction_smoke_20261016.md`](evidence/valtype_reduction_smoke_20261016.md): it separates the
-exact historical trigger from the generated extension and records the
-injected-fault reduction without claiming compiler-bug discovery. This is a
-workflow example, not resolution of all overlap—especially with MoonGrammata.
+latter is a harness fault, not a compiler bug. The optional MoonReduce adapter
+now has one end-to-end result on an externally reported issue, recorded in
+[`moonreduce_upstream_1322_20261016.md`](evidence/moonreduce_upstream_1322_20261016.md).
+These integrations reduce duplicated comparison/reduction glue and establish
+one reproducible case study, but do not resolve all overlap—especially with
+MoonGrammata—or establish that MoonSmith is more effective. The separate
+[`valtype_reduction_smoke_20261016.md`](evidence/valtype_reduction_smoke_20261016.md)
+documents the injected-fault AST-reduction test and its boundary. Neither case
+claims MoonSmith discovered the upstream compiler issue.
 Three disjoint, source-size-matched candidate ranges provide descriptive
 results: 24120–24219 yielded 53 versus 52 path kinds (guided versus sequential)
 on MoonBit `0.1.20260920`; 24220–24319 yielded 55 versus 51 on

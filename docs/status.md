@@ -1056,7 +1056,16 @@ sources and reference iteration traces in 59 cases. These are source and
 reference-interpreter counts, not backend runtime coverage. The scan took
 534,291 ms, not a controlled performance benchmark. Raw report:
 `.moonsmith/runs/batch_20261009_133613_232.json` (ignored and local only). No
-real MoonBit compiler defect was found.
+unreported MoonBit compiler defect was found by that scan. Separately, the
+optional MoonReduce adapter has now reduced the externally reported
+`moonbit-docs#1322` native-debug reproducer from 275 to 263 bytes in a hosted
+run, preserving the exact MoonSmith finding and passing independent final
+replay. Artifact inspection showed it removed only blank lines and `///|`
+separators, not executable statements, so it is a format-only shrink rather
+than semantic minimization. This validates one issue-linked preservation and
+replay workflow; it is not a MoonSmith discovery or a general reduction-quality
+claim. See the
+[MoonReduce #1322 evidence](evidence/moonreduce_upstream_1322_20261016.md).
 
 ## Ecosystem comparison baseline
 
@@ -1064,11 +1073,13 @@ A source-based comparison of Csmith, YARPGen, C-Reduce, and MoonBit QuickCheck
 is recorded in `docs/ecosystem_comparison.md`. It distinguishes the current
 MoonSmith implementation from unverified claims: the tool has a MoonBit-targeted
 typed generator, reference evaluator, three-backend comparison, and generated-AST
-reducer, but no proven real compiler bug, arbitrary-source reducer, or
-optimizer-directed generator. This is desk research, not an external review or
-a comparative effectiveness experiment. The next validation gap is a larger
-redistributable set of previously reported MoonBit compiler regressions and an
-external scope review. One minimal coverage-tool ICE regression from
+reducer, but has not independently discovered an unreported real compiler bug,
+does not yet include an arbitrary-source reducer, and has no optimizer-directed
+generator. One reduction of an externally reported compiler issue is documented
+as a case study, not discovery evidence. This is desk research, not an external
+review or a comparative effectiveness experiment. The next validation gap is a
+larger redistributable set of previously reported MoonBit compiler regressions
+and an external scope review. One minimal coverage-tool ICE regression from
 `moonbitlang/moonbit-docs#1071` and one reported Wasm backend regression from
 `moonbitlang/moonbit-docs#1274` are now included; both pass under the current
 toolchain. See `docs/regressions.md`. The Wasm issue remains open upstream, and
