@@ -124,12 +124,17 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
             }
         }
         $original = Get-Content -LiteralPath $reportPath -Raw | ConvertFrom-Json
-        $sourceIntegrityChecked = $null -ne $original.PSObject.Properties['sourceSha256'] -and
-            -not [string]::IsNullOrWhiteSpace([string]$original.sourceSha256)
+        $sourceHashProperty = $original.PSObject.Properties['sourceSha256']
+        $sourceIntegrityChecked = $null -ne $sourceHashProperty
         $sourceSha256 = (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash.ToLowerInvariant()
-        if ($sourceIntegrityChecked -and
-            $sourceSha256 -ne ([string]$original.sourceSha256).ToLowerInvariant()) {
-            throw "Saved source '$sourcePath' does not match the SHA-256 recorded in report.json. Restore the original source or save a new finding before replay."
+        if ($sourceIntegrityChecked) {
+            $recordedSourceSha256 = [string]$sourceHashProperty.Value
+            if ($recordedSourceSha256 -notmatch '^[0-9a-fA-F]{64}$') {
+                throw "Saved report '$reportPath' contains an invalid sourceSha256 value."
+            }
+            if ($sourceSha256 -ne $recordedSourceSha256.ToLowerInvariant()) {
+                throw "Saved source '$sourcePath' does not match the SHA-256 recorded in report.json. Restore the original source or save a new finding before replay."
+            }
         }
         if ($original.injection -and $original.injection.kind -eq 'common-wrong-output') {
             throw 'This older injected case does not record the replacement output, so it cannot be replayed faithfully.'

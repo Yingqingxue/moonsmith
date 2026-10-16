@@ -353,6 +353,25 @@ try {
 
     Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
         -Destination (Join-Path $tamperedFixtureRoot 'source.mbt') -Force
+    $invalidHashReport = Get-Content -LiteralPath (Join-Path $tamperedFixtureRoot 'report.json') -Raw |
+        ConvertFrom-Json
+    $invalidHashReport.sourceSha256 = ''
+    $invalidHashReport | ConvertTo-Json -Depth 10 | Set-Content `
+        -LiteralPath (Join-Path $tamperedFixtureRoot 'report.json') -Encoding utf8
+    $invalidHashRejected = $false
+    try {
+        & $cli replay -CasePath $tamperedFixtureRoot | Out-Null
+    }
+    catch {
+        if ($_.Exception.Message -notmatch 'contains an invalid sourceSha256 value') {
+            throw
+        }
+        $invalidHashRejected = $true
+    }
+    if (-not $invalidHashRejected) {
+        throw 'replay accepted an empty source hash as if it were a legacy report.'
+    }
+
     $legacyReplayReport = Get-Content -LiteralPath (Join-Path $tamperedFixtureRoot 'report.json') -Raw |
         ConvertFrom-Json
     $null = $legacyReplayReport.PSObject.Properties.Remove('sourceSha256')
