@@ -45,11 +45,12 @@ fn main {
       "expected <some|none> <expected-output> followed by backend result groups",
     )
   }
-  let expected_output = match args[0] {
-    "some" => args[1]
-    "none" => ""
+  let reference_checked = match args[0] {
+    "some" => true
+    "none" => false
     _ => abort("reference mode must be some or none")
   }
+  let expected_output = if reference_checked { args[1] } else { "" }
   let results : Array[@lib.RunResult] = []
   for index = 2; index < args.length(); index = index + 7 {
     results.push({
@@ -63,5 +64,7 @@ fn main {
       diagnostic_case: args[index + 6],
     })
   }
-  println(@lib.analyze_results(results, expected_output~).summary_json())
+  println(
+    @lib.analyze_results(results, expected_output~, reference_checked~).summary_json(),
+  )
 }

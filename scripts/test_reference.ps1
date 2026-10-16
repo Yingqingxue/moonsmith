@@ -24,6 +24,15 @@ if (@($normal.runs | Where-Object {
     throw 'A backend output differs from the reference value in the normal case.'
 }
 
+$emptyReference = (& $verifyScript -SourcePath $normal.casePath `
+    -ExpectedOutput '' -Targets @('js', 'wasm') -NoPersist | ConvertFrom-Json)
+if ($emptyReference.finding -ne 'reference-mismatch' -or
+    -not $emptyReference.referenceChecked -or
+    $emptyReference.expectedOutput -ne '' -or
+    $emptyReference.targetParity.status -ne 'divergent') {
+    throw 'An explicitly supplied empty expected output was treated as an absent reference contract.'
+}
+
 $arrayRaw = & $verifyScript -Seed 4 -Depth 3 -NoPersist
 $array = $arrayRaw | ConvertFrom-Json
 if ($array.finding -ne 'consistent' -or

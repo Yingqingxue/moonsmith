@@ -34,6 +34,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$referenceChecked = -not $SourcePath -or $PSBoundParameters.ContainsKey('ExpectedOutput')
 . (Join-Path $PSScriptRoot 'validate_targets.ps1')
 Assert-UniqueTargets -Targets $Targets
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -286,7 +287,7 @@ if ($InjectCommonWrongOutput) {
 }
 
 $oracleArgs = [System.Collections.Generic.List[string]]::new()
-$oracleArgs.Add($(if ($ExpectedOutput) { 'some' } else { 'none' }))
+$oracleArgs.Add($(if ($referenceChecked) { 'some' } else { 'none' }))
 $oracleArgs.Add([string]$ExpectedOutput)
 foreach ($run in $runs) {
     $oracleArgs.Add([string]$run.target)

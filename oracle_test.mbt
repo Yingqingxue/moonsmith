@@ -395,3 +395,27 @@ test "Target Parity cross-check skips incomplete compiler runs" {
   assert_true(report.target_parity_cross_check() is None)
   assert_true(report.summary_json().contains("\"targetParity\":null"))
 }
+
+///|
+test "empty reference output remains an explicit oracle contract" {
+  let runs = [
+    result("js", Succeeded, 0, "unexpected\n", ""),
+    result("wasm", Succeeded, 0, "unexpected\n", ""),
+  ]
+  let checked = @moonsmith.analyze_results(
+    runs,
+    expected_output="",
+    reference_checked=true,
+  )
+  let unchecked = @moonsmith.analyze_results(runs)
+  assert_true(checked.kind is ReferenceMismatch)
+  assert_true(checked.reference_checked)
+  assert_true(checked.summary_json().contains("\"referenceChecked\":true"))
+  assert_true(checked.summary_json().contains("\"expectedOutput\":\"\""))
+  assert_true(checked.signature != unchecked.signature)
+  match checked.target_parity_cross_check() {
+    Some(parity) =>
+      assert_true(parity.status is @target_parity.Status::Divergent)
+    None => fail("empty expected stdout should be sent as a parity contract")
+  }
+}

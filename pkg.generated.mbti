@@ -6,7 +6,7 @@ import {
 }
 
 // Values
-pub fn analyze_results(Array[RunResult], expected_output? : String) -> DifferentialReport
+pub fn analyze_results(Array[RunResult], expected_output? : String, reference_checked? : Bool) -> DifferentialReport
 
 pub fn generate_expr(Int, ValueType, Int) -> Expr
 
@@ -28,6 +28,7 @@ pub(all) struct DifferentialReport {
   signature : String
   results : Array[RunResult]
   expected_output : String
+  reference_checked : Bool
 }
 pub fn DifferentialReport::reduction_key(Self) -> String
 pub fn DifferentialReport::summary_json(Self) -> String

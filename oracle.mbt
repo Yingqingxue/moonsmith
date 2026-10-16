@@ -42,6 +42,7 @@ pub(all) struct DifferentialReport {
   signature : String
   results : Array[RunResult]
   expected_output : String
+  reference_checked : Bool
 }
 
 ///|
@@ -82,7 +83,7 @@ pub fn DifferentialReport::reduction_key(self : DifferentialReport) -> String {
       }
       buffer.write_char(':')
       buffer.write_string(group.to_string())
-      if self.expected_output != "" {
+      if self.reference_checked {
         buffer.write_string(":expected=")
         buffer.write_string(
           if output == normalize_stdout(self.expected_output) {
@@ -116,6 +117,7 @@ pub fn DifferentialReport::reduction_key(self : DifferentialReport) -> String {
 fn classify_successful_outputs(
   results : Array[RunResult],
   expected_output : String,
+  reference_checked : Bool,
 ) -> FindingKind {
   let expected = normalize_stdout(results[0].stdout)
   let mut mismatch = false
@@ -126,8 +128,7 @@ fn classify_successful_outputs(
   }
   if mismatch {
     OutputMismatch
-  } else if expected_output != "" &&
-    expected != normalize_stdout(expected_output) {
+  } else if reference_checked && expected != normalize_stdout(expected_output) {
     ReferenceMismatch
   } else {
     Consistent
@@ -140,6 +141,7 @@ fn classify_successful_outputs(
 fn target_parity_report_for(
   results : Array[RunResult],
   expected_output : String,
+  reference_checked : Bool,
 ) -> @target_parity.ParityReport? {
   if results.length() < 2 {
     return None
@@ -162,7 +164,7 @@ fn target_parity_report_for(
       stdout: result.stdout,
       stderr: result.stderr,
     })
-    if expected_output != "" {
+    if reference_checked {
       expectations.push({
         target: result.target,
         exit_code: 0,
@@ -304,6 +306,7 @@ fn build_signature(
   kind : FindingKind,
   results : Array[RunResult],
   expected_output : String,
+  reference_checked : Bool,
 ) -> String {
   let buffer = StringBuilder()
   buffer.write_string(kind.label())
@@ -311,7 +314,7 @@ fn build_signature(
     buffer.write_char('|')
     buffer.write_string(result.signature_fragment())
   }
-  if expected_output != "" {
+  if reference_checked {
     buffer.write_string("|reference=")
     buffer.write_string(signature_field(normalize_stdout(expected_output)))
   }
@@ -342,7 +345,7 @@ pub fn DifferentialReport::summary_json(self : DifferentialReport) -> String {
   "\",\"reductionKey\":\"" +
   json_escape(self.reduction_key()) +
   "\",\"referenceChecked\":" +
-  (if self.expected_output == "" { "false" } else { "true" }) +
+  self.reference_checked.to_string() +
   ",\"expectedOutput\":\"" +
   json_escape(self.expected_output) +
   "\",\"targetParity\":" +
@@ -358,7 +361,11 @@ pub fn DifferentialReport::summary_json(self : DifferentialReport) -> String {
 pub fn DifferentialReport::target_parity_cross_check(
   self : DifferentialReport,
 ) -> @target_parity.ParityReport? {
-  target_parity_report_for(self.results, self.expected_output)
+  target_parity_report_for(
+    self.results,
+    self.expected_output,
+    self.reference_checked,
+  )
 }
 
 ///|
@@ -367,10 +374,18 @@ pub fn DifferentialReport::target_parity_cross_check(
 pub fn analyze_results(
   results : Array[RunResult],
   expected_output? : String = "",
+  reference_checked? : Bool = false,
 ) -> DifferentialReport {
+  let reference_checked = reference_checked || expected_output != ""
   if results.length() == 0 {
     let kind = NoResults
-    return { kind, signature: kind.label(), results, expected_output, }
+    return {
+      kind,
+      signature: kind.label(),
+      results,
+      expected_output,
+      reference_checked,
+    }
   }
 
   let mut compile_failures = 0
@@ -404,7 +419,8 @@ pub fn analyze_results(
   } else if unavailable > 0 {
     EnvironmentFailure
   } else if successes == results.length() {
-    match target_parity_report_for(results, expected_output) {
+    match
+      target_parity_report_for(results, expected_output, reference_checked) {
       Some(parity) =>
         match parity.status {
           @target_parity.Status::Pass => Consistent
@@ -422,9 +438,12 @@ pub fn analyze_results(
             }
           }
           @target_parity.Status::Inconclusive =>
-            classify_successful_outputs(results, expected_output)
+            classify_successful_outputs(
+              results, expected_output, reference_checked,
+            )
         }
-      None => classify_successful_outputs(results, expected_output)
+      None =>
+        classify_successful_outputs(results, expected_output, reference_checked)
     }
   } else {
     // Defensive fallback for future RunStatus variants.
@@ -433,8 +452,11 @@ pub fn analyze_results(
 
   {
     kind,
-    signature: build_signature(kind, results, expected_output),
+    signature: build_signature(
+      kind, results, expected_output, reference_checked,
+    ),
     results,
     expected_output,
+    reference_checked,
   }
 }
