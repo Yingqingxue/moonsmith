@@ -59,7 +59,10 @@ the actual CLI with an injected mismatch. This end-to-end path passed on
 `f256f264a2e8853c2e7ec67e3488e61aefaff17d` at MoonSmith commit
 `927acd48387ede1d740f47f1ff7aeac364218812`
 ([workflow run](https://github.com/Yingqingxue/moonsmith/actions/runs/38941306085)).
-The injected case validates protocol and artifact handling only; it is not a
-real compiler bug, evidence of reducer quality on real failures, or a
-performance result. Actual defect reduction remains unvalidated until a
-reproducible, non-injected compiler finding is available.
+MoonReduce reported `verified_unchanged`: its deliberately small one-candidate
+search accepted no deletions (2,443 bytes before and after), and the independent
+final replay passed. This validates checker protocol, artifact handling, and
+replay—not successful reduction. The injected case is not a real compiler bug,
+evidence of reducer quality on real failures, or a performance result. Actual
+defect reduction remains unvalidated until a reproducible, non-injected
+compiler finding is available.
