@@ -133,8 +133,19 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
             Targets = @($original.runs | Select-Object -ExpandProperty target)
             TimeoutSeconds = [int]$original.timeoutSeconds
             SourcePath = $sourcePath
-            ExpectedOutput = [string]$original.expectedOutput
             NoPersist = $true
+        }
+        $hasReferenceCheckedField = $null -ne $original.PSObject.Properties['referenceChecked']
+        $shouldReplayReference = if ($hasReferenceCheckedField) {
+            [bool]$original.referenceChecked
+        } else {
+            # Older reports did not record the flag; retain their historical
+            # non-empty-output inference while preserving explicit empty values
+            # in current reports.
+            -not [string]::IsNullOrEmpty([string]$original.expectedOutput)
+        }
+        if ($shouldReplayReference) {
+            $replayOptions.ExpectedOutput = [string]$original.expectedOutput
         }
         if ($original.injection -and $original.injection.kind -eq 'output-mismatch') {
             $replayOptions.InjectOutputMismatchTarget = [string]$original.injection.target

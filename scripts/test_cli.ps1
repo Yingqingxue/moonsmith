@@ -286,6 +286,20 @@ if ($injected.finding -ne 'output-mismatch' -or -not $injected.savedTo -or
     throw 'Failed to prepare the explicitly injected replay fixture.'
 }
 
+$unreferencedInjected = (& $verify -Seed 0 -Depth 3 `
+    -SourcePath $boundary.casePath -Targets @('js', 'wasm') `
+    -InjectOutputMismatchTarget wasm | ConvertFrom-Json)
+if ($unreferencedInjected.finding -ne 'output-mismatch' -or
+    $unreferencedInjected.referenceChecked -or
+    -not $unreferencedInjected.savedTo) {
+    throw 'Failed to prepare an unreferenced output-mismatch replay fixture.'
+}
+$unreferencedReplay = (& $cli replay -CasePath $unreferencedInjected.savedTo |
+    ConvertFrom-Json)
+if ($LASTEXITCODE -ne 0 -or -not $unreferencedReplay.reproduced) {
+    throw 'replay did not preserve the original no-reference classification.'
+}
+
 $replay = (& $cli replay -CasePath $injected.savedTo | ConvertFrom-Json)
 if ($LASTEXITCODE -ne 0 -or -not $replay.reproduced) {
     throw 'replay did not reproduce the saved injected finding.'
