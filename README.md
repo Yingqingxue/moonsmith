@@ -1,10 +1,12 @@
 # MoonSmith
 
-MoonSmith is a MoonBit compiler backend differential tester. It generates a
-deterministic, typed MoonBit program, evaluates its expected output with a
-small reference interpreter, executes it on the `js`, `wasm`, and `wasm-gc`
-backends (plus optional `native` when a C toolchain is available), classifies
-differences, and reduces reproducible findings.
+MoonSmith is a process-level regression harness for MoonBit compiler backends.
+It generates a deterministic program from a restricted typed AST, evaluates
+the expected output with a separate reference interpreter, invokes real
+compiler/backend processes on `js`, `wasm`, and `wasm-gc` (plus optional
+`native` when a C toolchain is available), classifies build/runtime/timeout
+outcomes, and reduces reproducible findings in its generated AST. It is not a
+general-purpose MoonBit grammar fuzzer or an arbitrary-source reducer.
 
 Current maintainer: [Yingqingxue](https://github.com/Yingqingxue).
 
