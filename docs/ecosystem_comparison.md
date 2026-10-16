@@ -113,9 +113,11 @@ The clean-runner rerun of the second range reproduced its selected seeds and
 aggregate counts, but is not independent and used a different harness digest
 ([rerun details](evidence/semantic_selection_hosted_replication_20261016.md)).
 Because the first range used another MoonBit version and the two same-version
-independent ranges show mixed results, there is no robust evidence that
-semantic guidance improves compiler coverage or bug-finding. Keep it optional
-and do not prioritize it as a claimed differentiator without stronger evidence.
+independent ranges show mixed results, and both ran sequential selection before
+guided selection (leaving a possible warm-cache/order effect), there is no
+robust evidence that semantic guidance improves compiler coverage or
+bug-finding. Keep it optional and do not prioritize it as a claimed
+differentiator without stronger, counterbalanced evidence.
 Do not present either path traces or the previously reported upstream issue
 #1322 as a MoonSmith discovery or backend coverage.
 

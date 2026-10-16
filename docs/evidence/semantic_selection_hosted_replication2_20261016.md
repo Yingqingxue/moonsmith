@@ -28,8 +28,9 @@ prescreen.
 Together with the first hosted cohort, the results are mixed: that cohort
 showed 55 versus 51 path kinds; this one showed 53 versus 53. Both used the
 same MoonBit version, disjoint candidate ranges, equal backend budgets, and
-source-size-quartile matching, but two small cohorts do not estimate
-effectiveness reliably. The measured signal does not justify making semantic
-guidance a default or claiming better compiler coverage or bug-finding. Keep it
-optional and do not spend feature-development effort on it without a stronger
-pre-registered evaluation.
+source-size-quartile matching, but both ran the sequential control before the
+guided arm, leaving a possible warm-cache/order effect uncontrolled. Two small
+cohorts do not estimate effectiveness reliably. The measured signal does not
+justify making semantic guidance a default or claiming better compiler
+coverage or bug-finding. Keep it optional and do not spend feature-development
+effort on it without a stronger, counterbalanced pre-registered evaluation.

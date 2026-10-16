@@ -55,7 +55,8 @@ non-overlapping range 24320–24419 then produced 53 path kinds in both arms at
 the same 60-execution and source-size-quartile budgets, with no unexpected
 findings. The repeat supports stability for one fixed range; the new cohort
 does not reproduce a guided-selection gain. Keep this policy experimental and
-optional. See the [rerun report](evidence/semantic_selection_hosted_replication_20261016.md)
+optional: both same-version independent cohorts ran sequential first, so a
+warm-cache/order effect remains possible. See the [rerun report](evidence/semantic_selection_hosted_replication_20261016.md)
 and [new cohort report](evidence/semantic_selection_hosted_replication2_20261016.md).
 The push run [38875953569](https://github.com/Yingqingxue/moonsmith/actions/runs/38875953569)
 and new-cohort run [38876082331](https://github.com/Yingqingxue/moonsmith/actions/runs/38876082331)
