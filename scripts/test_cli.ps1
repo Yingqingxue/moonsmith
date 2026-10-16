@@ -395,6 +395,20 @@ try {
         throw 'MoonReduce checker did not accept a candidate preserving the saved finding.'
     }
 
+    $moonReduceTxtCandidatePath = Join-Path $tamperedFixtureRoot 'unverified.txt'
+    Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
+        -Destination $moonReduceTxtCandidatePath
+    $txtCandidateOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $injected.savedTo `
+        $moonReduceTxtCandidatePath
+    $txtCandidateExitCode = $LASTEXITCODE
+    $txtCandidate = ($txtCandidateOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($txtCandidateExitCode -ne 0 -or -not $txtCandidate.preserved -or
+        -not $txtCandidate.reductionKeyMatches -or
+        (Get-ChildItem -LiteralPath $tamperedFixtureRoot -Filter 'moonreduce-candidate-*.mbt').Count -ne 0) {
+        throw 'MoonReduce checker did not preserve an unchanged unverified.txt candidate or clean up its temporary .mbt source.'
+    }
+
     $changedCandidatePath = Join-Path $tamperedFixtureRoot 'changed.mbt'
     [IO.File]::WriteAllText(
         $changedCandidatePath,

@@ -68,6 +68,18 @@ try {
         throw "Candidate source is not a file: $candidatePath"
     }
 
+    # MoonReduce writes candidates as unverified.txt. `moon run` dispatches on
+    # the source extension, so verify a temporary .mbt copy while preserving
+    # the exact candidate bytes and leaving MoonReduce's input untouched.
+    $verificationSourcePath = $candidatePath
+    $temporarySourcePath = $null
+    if ([IO.Path]::GetExtension($candidatePath) -ne '.mbt') {
+        $temporarySourcePath = Join-Path (Split-Path -Parent $candidatePath) `
+            ("moonreduce-candidate-{0}.mbt" -f [guid]::NewGuid().ToString('N'))
+        Copy-Item -LiteralPath $candidatePath -Destination $temporarySourcePath
+        $verificationSourcePath = $temporarySourcePath
+    }
+
     $targets = @($baseline.runs | Select-Object -ExpandProperty target)
     if ($targets.Count -eq 0) {
         throw 'Baseline report has no backend targets.'
@@ -77,7 +89,7 @@ try {
         Depth = [int]$baseline.depth
         Targets = $targets
         TimeoutSeconds = [int]$baseline.timeoutSeconds
-        SourcePath = $candidatePath
+        SourcePath = $verificationSourcePath
         NoPersist = $true
     }
 
@@ -102,8 +114,15 @@ try {
         }
     }
 
-    $rawOutput = & $verifyScript @verifyArguments
-    $verifyExitCode = $LASTEXITCODE
+    try {
+        $rawOutput = & $verifyScript @verifyArguments
+        $verifyExitCode = $LASTEXITCODE
+    }
+    finally {
+        if ($temporarySourcePath -and (Test-Path -LiteralPath $temporarySourcePath)) {
+            Remove-Item -LiteralPath $temporarySourcePath -Force
+        }
+    }
     if ($null -eq $rawOutput) {
         throw "MoonSmith verification returned no report (exit code $verifyExitCode)."
     }
