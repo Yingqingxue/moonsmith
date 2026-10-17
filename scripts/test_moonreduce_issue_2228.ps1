@@ -118,6 +118,9 @@ $triggerPreserved = $true
 foreach ($line in $requiredTriggerLines) {
     if (-not $reduced.Contains($line)) { $triggerPreserved = $false }
 }
+if (-not $triggerPreserved) {
+    throw 'MoonReduce accepted a result that dropped part of the stack-overflow trigger or the pre-crash stdout write.'
+}
 $originalContentLineCount = @($original -split '\r?\n' | Where-Object { $_.Trim().Length -gt 0 -and $_.Trim() -ne '///|' }).Count
 $removedContentLines = $originalContentLineCount - $reducedTextLines.Count
 $changeClass = & (Join-Path $PSScriptRoot 'classify_moonreduce_change.ps1') `
