@@ -38,31 +38,46 @@ function Test-RecursionDepth {
     $exitCode = if ($report.finding -eq 'consistent') { 0 } else { 1 }
     $native = $report.runs | Where-Object target -eq 'native' | Select-Object -First 1
     $js = $report.runs | Where-Object target -eq 'js' | Select-Object -First 1
+    $nativeOutput = [string]$native.output
+    $nativeOutputLines = [regex]::Split($nativeOutput, '\r?\n')
+    $nativeNormalOutput = $nativeOutputLines -contains 'before-deep-recursion' -and
+        $nativeOutputLines -contains '0'
+    $nativeReportedCrash = $native.status -eq 'runtime-failed' -and
+        $native.exitCode -eq 139
+    $jsRangeError = $js.error -match 'RangeError|Maximum call stack size exceeded'
     $reproduced = $report.finding -eq 'runtime-failure' -and
         $exitCode -eq 1 -and
-        $native.status -eq 'runtime-failed' -and
-        $native.exitCode -eq 139 -and
-        [string]::IsNullOrEmpty([string]$native.output) -and
+        $nativeReportedCrash -and
+        [string]::IsNullOrEmpty($nativeOutput) -and
         $js.status -eq 'runtime-failed' -and
-        $js.error -match 'RangeError|Maximum call stack size exceeded'
-    $notReproduced = $report.finding -eq 'consistent' -and
-        $exitCode -eq 0 -and
-        $native.status -eq 'succeeded' -and
-        $js.status -eq 'succeeded'
+        $jsRangeError
+    # A lower bound may have a different but fully observed outcome: e.g. the
+    # native target returns the expected value while JS still reaches its
+    # RangeError, or native still crashes while JS returns normally. These are
+    # known absences of the exact paired signature, not unknown harness errors.
+    $knownNativeSuccess = $native.status -eq 'succeeded' -and $nativeNormalOutput
+    $knownJsSuccess = $js.status -eq 'succeeded'
+    $signatureAbsent = ($report.finding -eq 'consistent' -and $exitCode -eq 0 -and
+            $knownNativeSuccess -and $knownJsSuccess) -or
+        ($knownNativeSuccess -and $js.status -eq 'runtime-failed' -and $jsRangeError) -or
+        ($nativeReportedCrash -and -not [string]::IsNullOrEmpty($nativeOutput) -and
+            $js.status -eq 'runtime-failed' -and $jsRangeError) -or
+        ($nativeReportedCrash -and $knownJsSuccess)
     [pscustomobject]@{
         depth = $Depth
         reproduced = $reproduced
-        notReproduced = $notReproduced
+        signatureAbsent = $signatureAbsent
         finding = [string]$report.finding
         nativeStatus = [string]$native.status
         nativeExitCode = $native.exitCode
         nativeError = [string]$native.error
-        nativeStdoutLength = ([string]$native.output).Length
+        nativeStdoutLength = $nativeOutput.Length
+        nativeExpectedNormalOutput = $nativeNormalOutput
         javascriptStatus = [string]$js.status
         javascriptExitCode = $js.exitCode
         javascriptError = [string]$js.error
         javascriptStdoutLength = ([string]$js.output).Length
-        javascriptRangeError = [bool]($js.error -match 'RangeError|Maximum call stack size exceeded')
+        javascriptRangeError = [bool]$jsRangeError
         candidatePath = $candidatePath
     }
 }
@@ -74,10 +89,10 @@ $checks = [Collections.Generic.List[object]]::new()
 $high = 1000000
 $highResult = Test-RecursionDepth -Depth $high
 $checks.Add($highResult)
-if (-not $highResult.reproduced -and -not $highResult.notReproduced) {
+if (-not $highResult.reproduced -and -not $highResult.signatureAbsent) {
     throw 'The original #2228 probe returned an unknown outcome, not a valid reproduction or a clean non-reproduction.'
 }
-if ($highResult.notReproduced) {
+if ($highResult.signatureAbsent) {
     $summary = [pscustomobject]@{
         status = 'not-reproduced'
         source = 'upstream issue #2228; not discovered by MoonSmith'
@@ -86,7 +101,7 @@ if ($highResult.notReproduced) {
         reducedDepth = $null
         searchChecks = 1
         finalIndependentReplays = 0
-        reason = 'the baseline did not reproduce the native exit-139 and JavaScript RangeError signature; no shrink search was attempted'
+        reason = 'the baseline did not reproduce the paired native exit-139/empty-stdout and JavaScript RangeError signature; no shrink search was attempted'
         checks = $checks
     }
     $summary | ConvertTo-Json -Depth 8 | Set-Content `
@@ -100,7 +115,7 @@ $next = [int][Math]::Floor($high / 2)
 while ($next -ge 1 -and $checks.Count -lt $MaxSearchChecks) {
     $result = Test-RecursionDepth -Depth $next
     $checks.Add($result)
-    if (-not $result.reproduced -and -not $result.notReproduced) {
+    if (-not $result.reproduced -and -not $result.signatureAbsent) {
         $result | ConvertTo-Json -Depth 8 | Set-Content `
             -LiteralPath (Join-Path $OutputDirectory "unknown-depth-$next.json") -Encoding utf8NoBOM
         throw "Candidate at depth $next had an unknown result; it cannot be used as a lower bound. Details: $($result | ConvertTo-Json -Compress -Depth 8)"
@@ -119,7 +134,7 @@ if ($low -eq 0 -and $high -gt 1) {
     # the found endpoint as minimal.
     $one = Test-RecursionDepth -Depth 1
     $checks.Add($one)
-    if (-not $one.reproduced -and -not $one.notReproduced) {
+    if (-not $one.reproduced -and -not $one.signatureAbsent) {
         throw 'Candidate at recursion depth 1 had an unknown result; it cannot establish a lower bound.'
     }
     if ($one.reproduced) {
@@ -133,7 +148,7 @@ while ($high -gt $low + 1 -and $checks.Count -lt $MaxSearchChecks) {
     $middle = [int][Math]::Floor(($high + $low) / 2)
     $result = Test-RecursionDepth -Depth $middle
     $checks.Add($result)
-    if (-not $result.reproduced -and -not $result.notReproduced) {
+    if (-not $result.reproduced -and -not $result.signatureAbsent) {
         throw "Candidate at depth $middle had an unknown result; it cannot be used as a lower bound."
     }
     if ($result.reproduced) {

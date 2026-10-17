@@ -19,6 +19,8 @@ evidence-led and not a claim that all concerns are closed:
   and crash-signal capture. MoonSmith's #2228 regression exercises that narrow
   process-level boundary, but overlap in generation, differential testing, and
   reduction remains; no comparative effectiveness advantage is established.
+  The source revision and exact #2228 result are recorded in the
+  [process-boundary evidence](evidence/moongrammata_process_boundary_20261017.md).
 - MoonReduce's #2228 run preserved the external failure and the pre-crash print
   but removed zero non-layout source lines (385 to 379 bytes, layout-only).
   MoonSmith now has a separate bounded search over only the recursion-depth
