@@ -250,3 +250,19 @@ thirteen independent cohorts, seeds 16450–19439 are covered without gaps or
 overlap: 2,990 programs, 8,970 Linux backend executions, and 2,990 Windows
 native-release executions. No new compiler issue was found in these finite
 samples; this remains bounded negative evidence.
+
+## Focused depth-10 cross-platform cohort
+
+A separate five-seed cohort sampled deeper generated programs on Linux and
+Windows:
+
+- Workflow: [MoonSmith CI run 39059031700](https://github.com/Yingqingxue/moonsmith/actions/runs/39059031700)
+- Commit: `cda13fb0a2ca28c4c1aa7a85066b8ff442460f05`
+- Cohort: seeds 19445–19449, all at depth 10.
+
+The extended Linux scan, Windows cross-check, and report comparison jobs
+passed. The comparison artifact records five distinct bodies, matching source
+hashes and expected outputs, 15 Linux JS/Wasm/Wasm-GC executions, and five
+Windows native-release executions; all five cases were consistent across
+platforms, with zero unexpected findings. This small exploratory cohort
+broadens the sampled generation depth but is not a completeness claim.

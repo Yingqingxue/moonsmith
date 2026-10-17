@@ -41,6 +41,10 @@ The corrected, manual MoonReduce interoperability workflow also passed in
   outcomes. In total these cohorts compared 8,970 Linux and 2,990 Windows
   native-release executions on the same MoonBit toolchain. The newest cohort's
   full workflow passed in [run 39057929527](https://github.com/Yingqingxue/moonsmith/actions/runs/39057929527).
+  A separate five-seed [depth-10 cross-platform cohort](evidence/current_generator_scan_20261017.md)
+  also passed in [run 39059031700](https://github.com/Yingqingxue/moonsmith/actions/runs/39059031700):
+  15 Linux backend executions and five Windows native executions were consistent.
+  It broadens complexity sampling but is too small to support a completeness claim.
   #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
   finite clean scans do not establish that no new compiler bug exists.
 
