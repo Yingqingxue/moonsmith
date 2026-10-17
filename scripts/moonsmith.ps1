@@ -93,7 +93,7 @@ This is a PowerShell host adapter; the generator, oracle, and AST reducer are Mo
         $batch = $raw | ConvertFrom-Json
         $raw
         if ($batch.harnessChangedDuringRun) { exit 2 }
-        if ($batch.unexpectedCount -ne 0) { exit 1 }
+        if ($batch.unexpectedFindingCount -ne 0) { exit 1 }
         exit 0
     }
     'reduce' {

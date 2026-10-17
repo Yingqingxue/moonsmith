@@ -185,7 +185,11 @@ for ($offset = 0; $offset -lt $Count; $offset++) {
 $startedAt.Stop()
 $harnessDigestEnd = Get-HarnessDigest
 $harnessChangedDuringRun = $harnessDigestStart -ne $harnessDigestEnd
+# Preserve unexpectedCount as the number of non-consistent cases. Separately
+# identify real backend/reference findings so the generator-size guard can be
+# reported as an explicit pre-compilation exclusion.
 $unexpectedCount = $Count - $counts.consistent
+$unexpectedFindingCount = $Count - $counts.consistent - $counts['generator-limit']
 $referenceCheckedCount = @($cases | Where-Object referenceChecked).Count
 $targetParityPassCount = @($cases | Where-Object { $_.targetParity.status -eq 'pass' }).Count
 $targetParityDivergentCount = @($cases | Where-Object { $_.targetParity.status -eq 'divergent' }).Count
@@ -270,6 +274,7 @@ $summary = [pscustomobject]@{
     harnessDigestEnd         = $harnessDigestEnd
     harnessChangedDuringRun  = $harnessChangedDuringRun
     unexpectedCount         = $unexpectedCount
+    unexpectedFindingCount  = $unexpectedFindingCount
     referenceCheckedCount   = $referenceCheckedCount
     targetParityPassCount   = $targetParityPassCount
     targetParityDivergentCount = $targetParityDivergentCount
@@ -322,6 +327,6 @@ $summaryJson
 if ($harnessChangedDuringRun) {
     exit 2
 }
-if ($unexpectedCount -ne 0) {
+if ($unexpectedFindingCount -ne 0) {
     exit 1
 }

@@ -49,15 +49,23 @@ function ConvertTo-HtmlText([AllowNull()][object]$Value) {
     return [System.Net.WebUtility]::HtmlEncode([string]$Value)
 }
 
-$statusText = if ($summary.unexpectedCount -eq 0 -and -not $summary.harnessChangedDuringRun) {
-    'No unexpected findings in this bounded batch.'
-} else {
+$generatorLimitCount = [int]$summary.counts.'generator-limit'
+$unexpectedFindingCount = [int]$summary.unexpectedCount - $generatorLimitCount
+$statusText = if ($summary.harnessChangedDuringRun) {
+    'Review required: the harness changed during this batch.'
+} elseif ($unexpectedFindingCount -ne 0) {
     'Review required: this batch contains unexpected findings or a changed harness.'
-}
-$statusClass = if ($summary.unexpectedCount -eq 0 -and -not $summary.harnessChangedDuringRun) {
-    'ok'
+} elseif ($generatorLimitCount -gt 0) {
+    "$generatorLimitCount oversized generated source(s) were excluded by the safety limit; no unexpected findings among the remaining cases."
 } else {
+    'No unexpected findings in this bounded batch.'
+}
+$statusClass = if ($summary.harnessChangedDuringRun -or $unexpectedFindingCount -ne 0) {
     'problem'
+} elseif ($generatorLimitCount -gt 0) {
+    'warning'
+} else {
+    'ok'
 }
 $targets = @($summary.targets) -join ', '
 $rangeEnd = [long]$summary.seedStart + [long]$summary.count - 1
@@ -67,7 +75,7 @@ $html.Add('<html lang="en"><head><meta charset="utf-8">')
 $html.Add('<meta name="viewport" content="width=device-width, initial-scale=1">')
 $html.Add("<title>MoonSmith batch $(ConvertTo-HtmlText $summary.seedStart)–$(ConvertTo-HtmlText $rangeEnd)</title>")
 $html.Add('<style>')
-$html.Add(':root{color-scheme:light dark;font:16px/1.5 system-ui,sans-serif}body{max-width:1200px;margin:auto;padding:1.5rem;color:CanvasText;background:Canvas}header,section{margin:1rem 0;padding:1rem;border:1px solid color-mix(in srgb,CanvasText 22%,transparent);border-radius:.6rem}header{border-left:.35rem solid #39875b}.problem{border-left-color:#bc3434}.ok{border-left-color:#39875b}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.65rem}.card{padding:.75rem;border:1px solid color-mix(in srgb,CanvasText 20%,transparent);border-radius:.4rem}.label{display:block;font-size:.85rem;opacity:.75}.value{font-size:1.15rem;font-weight:650;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}caption{text-align:left;font-weight:650;padding:.5rem}th,td{text-align:left;vertical-align:top;padding:.45rem;border-bottom:1px solid color-mix(in srgb,CanvasText 18%,transparent)}th{white-space:nowrap}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}tbody tr:nth-child(even){background:color-mix(in srgb,CanvasText 4%,Canvas)}')
+$html.Add(':root{color-scheme:light dark;font:16px/1.5 system-ui,sans-serif}body{max-width:1200px;margin:auto;padding:1.5rem;color:CanvasText;background:Canvas}header,section{margin:1rem 0;padding:1rem;border:1px solid color-mix(in srgb,CanvasText 22%,transparent);border-radius:.6rem}header{border-left:.35rem solid #39875b}.problem{border-left-color:#bc3434}.warning{border-left-color:#9b6b00}.ok{border-left-color:#39875b}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.65rem}.card{padding:.75rem;border:1px solid color-mix(in srgb,CanvasText 20%,transparent);border-radius:.4rem}.label{display:block;font-size:.85rem;opacity:.75}.value{font-size:1.15rem;font-weight:650;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}caption{text-align:left;font-weight:650;padding:.5rem}th,td{text-align:left;vertical-align:top;padding:.45rem;border-bottom:1px solid color-mix(in srgb,CanvasText 18%,transparent)}th{white-space:nowrap}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}tbody tr:nth-child(even){background:color-mix(in srgb,CanvasText 4%,Canvas)}')
 $html.Add('</style></head><body>')
 $html.Add("<header class='$statusClass'><h1>MoonSmith batch report</h1><p>$(ConvertTo-HtmlText $statusText)</p></header>")
 $html.Add('<main><section><h2>Run summary</h2><div class="cards">')
@@ -80,7 +88,8 @@ $summaryCards = @(
     @{ label = 'Reference checked'; value = (ConvertTo-HtmlText $summary.referenceCheckedCount) },
     @{ label = 'Target Parity pass'; value = (ConvertTo-HtmlText $summary.targetParityPassCount) },
     @{ label = 'Target Parity divergent'; value = (ConvertTo-HtmlText $summary.targetParityDivergentCount) },
-    @{ label = 'Unexpected'; value = (ConvertTo-HtmlText $summary.unexpectedCount) },
+    @{ label = 'Unexpected findings'; value = (ConvertTo-HtmlText $unexpectedFindingCount) },
+    @{ label = 'Size-guard exclusions'; value = (ConvertTo-HtmlText $generatorLimitCount) },
     @{ label = 'Duration'; value = "$(ConvertTo-HtmlText $summary.durationMs) ms" },
     @{ label = 'MoonBit'; value = (ConvertTo-HtmlText $summary.toolchainVersion) }
 )

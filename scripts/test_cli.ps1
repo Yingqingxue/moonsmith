@@ -291,8 +291,10 @@ if ($LASTEXITCODE -ne 0 -or
 $generatorLimitRaw = & $cli fuzz -SeedStart 8302 -Count 1 -Depth 11
 $generatorLimitExitCode = $LASTEXITCODE
 $generatorLimit = $generatorLimitRaw | ConvertFrom-Json
-if ($generatorLimitExitCode -ne 1 -or
+if ($generatorLimitExitCode -ne 0 -or
     $generatorLimit.counts.'generator-limit' -ne 1 -or
+    $generatorLimit.unexpectedCount -ne 1 -or
+    $generatorLimit.unexpectedFindingCount -ne 0 -or
     $generatorLimit.cases[0].finding -ne 'generator-limit' -or
     $generatorLimit.cases[0].sourceLineCount -le 16300 -or
     $generatorLimit.cases[0].sourceLineLimit -ne 16300 -or

@@ -54,11 +54,19 @@ function Read-BatchReportSet {
         if ($report.harnessDigestStart -ne $report.harnessDigestEnd) {
             throw "$Label harness changed while report '$($file.Name)' was generated."
         }
-        if ($report.counts.consistent -ne $report.count -or
-            $report.unexpectedCount -ne 0 -or
-            $report.counts.'generator-limit' -ne 0 -or
+        $unexpectedFindingCount = $report.count - $report.counts.consistent -
+            $report.counts.'generator-limit'
+        if ($report.counts.consistent -gt $report.count -or
+            $report.counts.'generator-limit' -gt $report.count -
+                $report.counts.consistent -or
+            $report.unexpectedCount -ne ($report.count - $report.counts.consistent) -or
+            $unexpectedFindingCount -ne 0 -or
             $report.counts.'harness-error' -ne 0) {
-            throw "$Label report '$($file.Name)' contains inconsistent, unexpected, limited, or harness-error cases."
+            throw "$Label report '$($file.Name)' contains inconsistent, unexpected, or harness-error cases."
+        }
+        if ($null -ne $report.PSObject.Properties['unexpectedFindingCount'] -and
+            $report.unexpectedFindingCount -ne $unexpectedFindingCount) {
+            throw "$Label report '$($file.Name)' has an incorrect unexpectedFindingCount."
         }
         if ($report.cases.Count -ne $report.count) {
             throw "$Label report '$($file.Name)' has $($report.cases.Count) cases but declares $($report.count)."
@@ -68,6 +76,8 @@ function Read-BatchReportSet {
         }
         [void]$toolchains.Add([string]$report.toolchainVersion)
 
+        $caseConsistentCount = 0
+        $caseGeneratorLimitCount = 0
         for ($index = 0; $index -lt $report.cases.Count; $index++) {
             $case = $report.cases[$index]
             $seed = [int]$case.seed
@@ -79,12 +89,31 @@ function Read-BatchReportSet {
             if ($casesBySeed.ContainsKey($key)) {
                 throw "$Label reports contain duplicate seed $seed."
             }
-            if (-not $case.referenceChecked -or $case.finding -ne 'consistent') {
-                throw "$Label seed $seed was not reference-checked as consistent."
-            }
-            if ($report.schemaVersion -ge 11 -and $report.targets.Count -gt 1 -and
-                $case.targetParity.status -ne 'pass') {
-                throw "$Label seed $seed does not have a passing Target Parity result."
+            if ($case.finding -eq 'generator-limit') {
+                $caseGeneratorLimitCount++
+                $limitErrorPattern = '^Generated source exceeds the safe ' +
+                    [regex]::Escape([string]$case.sourceLineLimit) + '-line limit;'
+                if ($case.referenceChecked -or $null -ne $case.targetParity -or
+                    $null -eq $case.sourceLineCount -or
+                    $null -eq $case.sourceLineLimit -or
+                    $case.sourceLineLimit -le 0 -or
+                    $case.sourceLineCount -le $case.sourceLineLimit -or
+                    [string]$case.error -notmatch $limitErrorPattern) {
+                    throw "$Label seed $seed has an invalid generator-limit exclusion."
+                }
+            } elseif ($case.finding -ne 'consistent' -or -not $case.referenceChecked) {
+                throw "$Label seed $seed was neither reference-checked as consistent nor safely excluded by the generator-size limit."
+            } else {
+                $caseConsistentCount++
+                if ($null -ne $case.sourceLineCount -and
+                    $null -ne $case.sourceLineLimit -and
+                    $case.sourceLineCount -gt $case.sourceLineLimit) {
+                    throw "$Label seed $seed was marked consistent despite exceeding its generator-size limit."
+                }
+                if ($report.schemaVersion -ge 11 -and $report.targets.Count -gt 1 -and
+                    $case.targetParity.status -ne 'pass') {
+                    throw "$Label seed $seed does not have a passing Target Parity result."
+                }
             }
             if ([string]$case.bodySha256 -notmatch '^[0-9a-f]{64}$') {
                 throw "$Label seed $seed has an invalid bodySha256."
@@ -96,7 +125,13 @@ function Read-BatchReportSet {
                 finding = [string]$case.finding
                 expectedOutput = [string]$case.expectedOutput
                 targetParityStatus = [string]$case.targetParity.status
+                sourceLineCount = $case.sourceLineCount
+                sourceLineLimit = $case.sourceLineLimit
             }
+        }
+        if ($caseConsistentCount -ne $report.counts.consistent -or
+            $caseGeneratorLimitCount -ne $report.counts.'generator-limit') {
+            throw "$Label report '$($file.Name)' finding totals do not match its per-case records."
         }
     }
 
@@ -126,12 +161,25 @@ if (($linuxSeeds -join ',') -ne ($windowsSeeds -join ',')) {
 
 $hashMismatches = [System.Collections.Generic.List[int]]::new()
 $outputMismatches = [System.Collections.Generic.List[int]]::new()
+$findingMismatches = [System.Collections.Generic.List[int]]::new()
+$limitMismatches = [System.Collections.Generic.List[int]]::new()
 foreach ($seedKey in $linuxSeeds) {
+    if ($linux.CasesBySeed[$seedKey].finding -ne $windows.CasesBySeed[$seedKey].finding) {
+        $findingMismatches.Add([int]$seedKey)
+        continue
+    }
     if ($linux.CasesBySeed[$seedKey].bodySha256 -ne
         $windows.CasesBySeed[$seedKey].bodySha256) {
         $hashMismatches.Add([int]$seedKey)
     }
-    if ($linux.CasesBySeed[$seedKey].expectedOutput -cne
+    if ($linux.CasesBySeed[$seedKey].finding -eq 'generator-limit') {
+        if ($linux.CasesBySeed[$seedKey].sourceLineCount -ne
+                $windows.CasesBySeed[$seedKey].sourceLineCount -or
+            $linux.CasesBySeed[$seedKey].sourceLineLimit -ne
+                $windows.CasesBySeed[$seedKey].sourceLineLimit) {
+            $limitMismatches.Add([int]$seedKey)
+        }
+    } elseif ($linux.CasesBySeed[$seedKey].expectedOutput -cne
         $windows.CasesBySeed[$seedKey].expectedOutput) {
         $outputMismatches.Add([int]$seedKey)
     }
@@ -141,8 +189,14 @@ foreach ($seedKey in $linuxSeeds) {
         throw "Target Parity statuses differ between platforms for seed $seedKey."
     }
 }
+if ($findingMismatches.Count -gt 0) {
+    throw "Generation eligibility differs between platforms for seeds: $($findingMismatches -join ', ')."
+}
 if ($hashMismatches.Count -gt 0) {
     throw "Generated source hashes differ for seeds: $($hashMismatches -join ', ')."
+}
+if ($limitMismatches.Count -gt 0) {
+    throw "Generator size-limit results differ between platforms for seeds: $($limitMismatches -join ', ')."
 }
 if ($outputMismatches.Count -gt 0) {
     throw "Reference expected outputs differ for seeds: $($outputMismatches -join ', ')."
@@ -153,19 +207,26 @@ $distinctBodies = @(
         ForEach-Object { $_.bodySha256 } |
         Sort-Object -Unique
 ).Count
+$consistentSeeds = @($linuxSeeds | Where-Object {
+    $linux.CasesBySeed[$_].finding -eq 'consistent'
+})
+$generatorLimitedSeeds = $linuxSeeds.Count - $consistentSeeds.Count
 $summary = [ordered]@{
     schemaVersion = 1
     seedStart = [int]$linuxSeeds[0]
     seedEnd = [int]$linuxSeeds[-1]
     seedsCompared = $linuxSeeds.Count
+    executableSeedsCompared = $consistentSeeds.Count
+    generatorLimitedSeeds = $generatorLimitedSeeds
+    unexpectedFindings = 0
     distinctProgramBodies = $distinctBodies
     matchingSourceHashes = $linuxSeeds.Count
-    matchingExpectedOutputs = $linuxSeeds.Count
+    matchingExpectedOutputs = $consistentSeeds.Count
     linuxTargets = $linux.Targets
-    linuxExecutions = $linuxSeeds.Count * $linux.Targets.Count
+    linuxExecutions = $consistentSeeds.Count * $linux.Targets.Count
     windowsTargets = $windows.Targets
-    windowsExecutions = $windowsSeeds.Count * $windows.Targets.Count
-    consistentOnBothPlatforms = $linuxSeeds.Count
+    windowsExecutions = $consistentSeeds.Count * $windows.Targets.Count
+    consistentOnBothPlatforms = $consistentSeeds.Count
     toolchainVersion = $linux.Toolchains[0]
     linuxReportFiles = @($linux.Files | ForEach-Object { $_.Name })
     windowsReportFiles = @($windows.Files | ForEach-Object { $_.Name })

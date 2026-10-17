@@ -28,6 +28,8 @@ function New-TestReport {
             error = '<img src=x onerror=alert(1)>'
             referenceChecked = $true
             targetParity = [ordered]@{ status = 'pass' }
+            sourceLineCount = 20
+            sourceLineLimit = 16300
             sourceConstructCounts = [ordered]@{ functionChoice = 1; and = 1; or = 1 }
         },
         [ordered]@{
@@ -39,6 +41,8 @@ function New-TestReport {
             error = ''
             referenceChecked = $true
             targetParity = [ordered]@{ status = 'pass' }
+            sourceLineCount = 15
+            sourceLineLimit = 16300
             sourceConstructCounts = [ordered]@{ functionChoice = 0; and = 0; or = 0 }
         }
     )
@@ -57,6 +61,7 @@ function New-TestReport {
             'harness-error' = 0
         }
         unexpectedCount = 0
+        unexpectedFindingCount = 0
         durationMs = 1234
         uniqueProgramBodies = 2
         referenceCheckedCount = 2
@@ -150,6 +155,8 @@ try {
         -WindowsReportDirectory $windowsDirectory -OutputPath $outputPath
     $summary = $output | ConvertFrom-Json
     if ($summary.seedsCompared -ne 2 -or
+        $summary.executableSeedsCompared -ne 2 -or
+        $summary.generatorLimitedSeeds -ne 0 -or
         $summary.matchingSourceHashes -ne 2 -or
         $summary.matchingExpectedOutputs -ne 2 -or
         $summary.distinctProgramBodies -ne 2 -or
@@ -159,6 +166,69 @@ try {
         -not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
+
+    # The size guard is an expected pre-compilation exclusion, not a backend
+    # finding. Both hosts must report the same generated body and line bound;
+    # execution totals count only the eligible case.
+    foreach ($report in @($linuxReport, $windowsReport)) {
+        $report.cases[0].finding = 'generator-limit'
+        $report.cases[0].referenceChecked = $false
+        $report.cases[0].expectedOutput = $null
+        $report.cases[0].targetParity = $null
+        $report.cases[0].error = 'Generated source exceeds the safe 16300-line limit; MoonBit reports a text-segment limit at 16384 lines. Reduce -Depth.'
+        $report.cases[0].sourceLineCount = 16301
+        $report.cases[0].sourceLineLimit = 16300
+        $report.counts.consistent = 1
+        $report.counts.'generator-limit' = 1
+        $report.unexpectedCount = 1
+        $report.unexpectedFindingCount = 0
+    }
+    $limitedLinux = Join-Path $linuxDirectory 'batch_linux.json'
+    $limitedWindows = Join-Path $windowsDirectory 'batch_windows.json'
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $limitedLinux -Encoding utf8
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $limitedWindows -Encoding utf8
+    $limitedComparison = (& $scriptPath -LinuxReportDirectory $linuxDirectory `
+        -WindowsReportDirectory $windowsDirectory | ConvertFrom-Json)
+    if ($limitedComparison.seedsCompared -ne 2 -or
+        $limitedComparison.executableSeedsCompared -ne 1 -or
+        $limitedComparison.generatorLimitedSeeds -ne 1 -or
+        $limitedComparison.linuxExecutions -ne 3 -or
+        $limitedComparison.windowsExecutions -ne 1 -or
+        $limitedComparison.consistentOnBothPlatforms -ne 1) {
+        throw 'matching generator-limit exclusions were not separated from executed cases.'
+    }
+    $limitedBatchPath = Join-Path $testRoot 'limited-batch.json'
+    $limitedHtmlPath = Join-Path $testRoot 'limited-batch.html'
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $limitedBatchPath -Encoding utf8
+    $limitedRender = (& (Join-Path $PSScriptRoot 'render_batch_report.ps1') `
+        -BatchPath $limitedBatchPath -OutputPath $limitedHtmlPath | ConvertFrom-Json)
+    $limitedHtml = Get-Content -LiteralPath $limitedRender.htmlReportPath -Raw
+    if (-not $limitedHtml.Contains("class='warning'") -or
+        -not $limitedHtml.Contains('1 oversized generated source(s) were excluded by the safety limit') -or
+        $limitedHtml.Contains('No unexpected findings in this bounded batch.')) {
+        throw 'batch HTML did not clearly label the generator safety-limit exclusion.'
+    }
+    $windowsReport.cases[0].sourceLineCount = 16302
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $limitedWindows -Encoding utf8
+    Assert-ComparisonRejected -ExpectedMessage 'Generator size-limit results differ' `
+        -Label 'generator-limit mismatch'
+    $windowsReport.cases[0].sourceLineCount = 16301
+    $windowsReport.cases[0].finding = 'consistent'
+    $windowsReport.cases[0].referenceChecked = $true
+    $windowsReport.cases[0].sourceLineCount = 20
+    $windowsReport.cases[0].expectedOutput = '<img src=x onerror=alert(1)>'
+    $windowsReport.cases[0].targetParity = [ordered]@{ status = 'pass' }
+    $windowsReport.counts.consistent = 2
+    $windowsReport.counts.'generator-limit' = 0
+    $windowsReport.unexpectedCount = 0
+    $windowsReport.unexpectedFindingCount = 0
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $limitedWindows -Encoding utf8
+    Assert-ComparisonRejected -ExpectedMessage 'Generation eligibility differs' `
+        -Label 'generator eligibility mismatch'
+    $linuxReport = New-TestReport -SeedStart 41000 -Targets @('js', 'wasm', 'wasm-gc')
+    $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release')
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
 
     # A one-backend native cross-check cannot produce a multi-target parity
     # result. Its null value must not be mistaken for a failed parity matrix.
