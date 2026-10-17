@@ -70,6 +70,9 @@ jobs:
           gcc --version
           moon test --target native --deny-warn
           pwsh -NoProfile -File scripts/test_issue_1322.ps1
+          ulimit -s 8192
+          ulimit -c 0
+          pwsh -NoProfile -File scripts/test_issue_2228.ps1
 
       - name: Check historical MoonBit coverage ICE regression
         run: |
@@ -119,6 +122,7 @@ jobs:
             .moonsmith/reduced/injected/
             .moonsmith/reduction/
             .moonsmith/issue_1322.json
+            .moonsmith/issue_2228.json
           if-no-files-found: ignore
           retention-days: 30
 

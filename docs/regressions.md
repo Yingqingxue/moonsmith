@@ -193,6 +193,23 @@ moon -C regressions/issue_1133_js_link_core_trait_identity check --target js --d
 moon -C regressions/issue_1133_js_link_core_trait_identity run --target js --deny-warn main
 ```
 
+## Case 5: native stack overflow exits as a bare SIGSEGV
+
+- Upstream report: [moonbitlang/moon#2228](https://github.com/moonbitlang/moon/issues/2228)
+- Reported behavior: a deep non-tail recursive native program can terminate
+  with Linux exit code 139 and lose redirected output, while JavaScript reports
+  a `RangeError` with source locations. The issue is publicly reported and
+  pending triage; MoonSmith does not claim this as its discovery.
+- Local probe: `regressions/issue_2228_native_stack_overflow.mbt`.
+- Validation: `scripts/test_issue_2228.ps1` compares native and JavaScript runs
+  through MoonSmith's process-level verifier under an 8 MiB Linux stack and a
+  60-second timeout. It requires the JS `RangeError` control and accepts either
+  the reported native child failure (`runtime-failed`, exit 139, redirected
+  stdout lost) or a successful native run with expected output, so a future
+  upstream fix does not break CI. Any other outcome fails. This demonstrates
+  process-level crash capture for one externally reported case; it does not
+  prove general crash-signal coverage or establish a new compiler defect.
+
 ## Candidate not yet included
 
 [moonbitlang/moonbit-docs#1272](https://github.com/moonbitlang/moonbit-docs/issues/1272)
