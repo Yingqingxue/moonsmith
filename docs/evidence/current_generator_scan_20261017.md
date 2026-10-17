@@ -329,3 +329,22 @@ compiler execution. There were zero unexpected findings. Across the four
 focused depth-10 cohorts (seeds 19445–19464), 20 distinct bodies are recorded;
 ten were compiled on both platforms and ten were excluded by the size guard.
 This is finite exploratory evidence only, not a result about excluded inputs.
+
+## Fifth focused depth-10 cohort
+
+The next adjacent cohort covered seeds 19465–19469, all at depth 10:
+
+- Workflow: [MoonSmith CI run 39074195992](https://github.com/Yingqingxue/moonsmith/actions/runs/39074195992)
+- Commit: `2669ac4411f081cb2d04a2c3aa74e1e21ca09baf`
+- Cohort: seeds 19465–19469, all at depth 10.
+
+Linux scan, Windows native cross-check, report comparison, and regular
+verification passed. All five generated bodies were within the 16,300-line
+source bound (maximum 15,885 lines), with matching source hashes and expected
+outputs: 15 Linux JS/Wasm/Wasm-GC executions and five Windows native-release
+executions. All five cases were cross-platform consistent; no unexpected
+findings were recorded. Across the five focused depth-10 cohorts (seeds
+19445–19469), 25 distinct bodies are recorded: 15 were compiled on both
+platforms and ten were excluded by the size guard. This remains finite
+exploratory evidence; it is not evidence about excluded inputs or proof that
+the compiler has no bugs.
