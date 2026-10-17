@@ -20,6 +20,14 @@ on:
         required: false
         type: string
         default: '13990'
+      scan_profile:
+        description: Standard uses 230 seeds at depths 4, 6, and 8; depth10 uses a focused five-seed cohort.
+        required: false
+        type: choice
+        options:
+          - standard
+          - depth10
+        default: standard
       gcc_fma_experiment:
         description: Run the opt-in GCC/FMA reproduction and contraction-disabled control
         required: false
@@ -288,6 +296,7 @@ jobs:
         shell: pwsh
         env:
           SCAN_START: ${{ inputs.scan_start }}
+          SCAN_PROFILE: ${{ inputs.scan_profile }}
         run: |
           $seedStart = 0
           if ($env:SCAN_START -notmatch '^\d+$' -or
@@ -297,9 +306,15 @@ jobs:
           if ($seedStart -lt 13990 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
             throw 'scan_start must be >= 13990 to avoid the documented samples and leave room for 230 32-bit seeds.'
           }
-          ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
-          ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
-          ./scripts/run_batch.ps1 -SeedStart ($seedStart + 200) -Count 30 -Depth 8 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+          if ($env:SCAN_PROFILE -eq 'depth10') {
+            ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 5 -Depth 10 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 60
+          } elseif ($env:SCAN_PROFILE -eq 'standard') {
+            ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+            ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+            ./scripts/run_batch.ps1 -SeedStart ($seedStart + 200) -Count 30 -Depth 8 -Targets @('js','wasm','wasm-gc') -TimeoutSeconds 30
+          } else {
+            throw "Unknown scan profile '$($env:SCAN_PROFILE)'."
+          }
 
       - name: Preserve extended scan reports
         if: always()
@@ -344,6 +359,7 @@ jobs:
         shell: pwsh
         env:
           CROSSCHECK_START: ${{ inputs.scan_start }}
+          CROSSCHECK_PROFILE: ${{ inputs.scan_profile }}
         run: |
           $seedStart = 0
           if ($env:CROSSCHECK_START -notmatch '^\d+$' -or
@@ -353,9 +369,15 @@ jobs:
           if ($seedStart -lt 13000 -or ([long]$seedStart + 229) -gt [int]::MaxValue) {
             throw 'Choose the start of a completed Linux extended scan and leave room for 230 32-bit seeds.'
           }
-          ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('native-release') -TimeoutSeconds 60
-          ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('native-release') -TimeoutSeconds 60
-          ./scripts/run_batch.ps1 -SeedStart ($seedStart + 200) -Count 30 -Depth 8 -Targets @('native-release') -TimeoutSeconds 60
+          if ($env:CROSSCHECK_PROFILE -eq 'depth10') {
+            ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 5 -Depth 10 -Targets @('native-release') -TimeoutSeconds 120
+          } elseif ($env:CROSSCHECK_PROFILE -eq 'standard') {
+            ./scripts/run_batch.ps1 -SeedStart $seedStart -Count 100 -Depth 4 -Targets @('native-release') -TimeoutSeconds 60
+            ./scripts/run_batch.ps1 -SeedStart ($seedStart + 100) -Count 100 -Depth 6 -Targets @('native-release') -TimeoutSeconds 60
+            ./scripts/run_batch.ps1 -SeedStart ($seedStart + 200) -Count 30 -Depth 8 -Targets @('native-release') -TimeoutSeconds 60
+          } else {
+            throw "Unknown cross-check profile '$($env:CROSSCHECK_PROFILE)'."
+          }
 
       - name: Preserve Windows cross-check reports
         if: always()
