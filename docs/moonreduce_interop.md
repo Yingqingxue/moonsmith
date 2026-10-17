@@ -87,3 +87,10 @@ change as `layout-only` when the nonblank, non-`///|` source lines are identical
 so a byte-count reduction cannot be mistaken for changed program content. This
 is a conservative line-level classification, not a parser, semantic-equivalence
 proof, or substitute for failure replay.
+
+The manual interoperability workflow now also attempts the public native-stack
+overflow report [moonbitlang/moon#2228](https://github.com/moonbitlang/moon/issues/2228).
+Its artifact records whether the issue reproduces on that runner, whether
+MoonReduce changed non-layout source lines, and whether the recursive trigger
+survived final replay. This is an experiment, not yet evidence of successful
+semantic reduction; `verified_reduction` alone will not be presented as such.

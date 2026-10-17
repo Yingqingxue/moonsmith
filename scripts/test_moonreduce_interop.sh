@@ -61,3 +61,10 @@ PY
 pwsh -NoProfile -File "$repo_root/scripts/test_moonreduce_issue_1322.ps1" \
   -MoonReduceBinary "$moonreduce_binary" \
   -OutputDirectory "$out_dir/upstream-1322"
+
+# Repeat the reduction study on a runtime crash rather than a compile-time
+# ICE. The summary distinguishes edits to source content from formatting-only
+# changes and records whether the recursive failure trigger survived.
+pwsh -NoProfile -File "$repo_root/scripts/test_moonreduce_issue_2228.ps1" \
+  -MoonReduceBinary "$moonreduce_binary" \
+  -OutputDirectory "$out_dir/upstream-2228"
