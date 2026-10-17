@@ -52,6 +52,13 @@ The corrected, manual MoonReduce interoperability workflow also passed in
   run 39060757697 exposed old accounting that treated those exclusions as CI
   failures; this was a reporting-policy defect, not a compiler mismatch, and the
   rerun validates its correction. See the linked scan evidence for details.
+  The adjacent cohort (seeds 19455–19459) also passed in
+  [run 39065818510](https://github.com/Yingqingxue/moonsmith/actions/runs/39065818510):
+  one seed completed four matching backend executions while four were
+  size-guard exclusions. Across seeds 19445–19459, eight of 15 programs were
+  executed on both platforms and seven were not compiled due to the 16,300-line
+  bound; no unexpected outcomes were found. This remains exploratory coverage
+  only.
   #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
   finite clean scans do not establish that no new compiler bug exists.
 

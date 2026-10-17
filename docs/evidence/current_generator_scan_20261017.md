@@ -292,3 +292,22 @@ workflow failures under the older result-accounting rule. Review of its paired
 artifacts found no backend divergence; the corrected rule preserves the legacy
 `unexpectedCount` field while separately reporting unexpected findings. The
 successful follow-up confirms the reporting correction on the same seed range.
+
+## Third focused depth-10 cohort
+
+A further adjacent cohort checked seeds 19455–19459 at depth 10:
+
+- Workflow: [MoonSmith CI run 39065818510](https://github.com/Yingqingxue/moonsmith/actions/runs/39065818510)
+- Commit: `18aa86afbc3e4e45bbb0bd8612bdce3d0ed9a371`
+- Cohort: seeds 19455–19459, all at depth 10.
+
+Linux scan, Windows native cross-check, comparison, and regular CI succeeded.
+All five generated bodies had matching source hashes. One source was within the
+size bound and matched reference outputs across three Linux backends and
+Windows native-release (four executions total); the other four exceeded the
+bound and were consistently classified as `generator-limit` without compiler
+execution. There were zero unexpected findings. Together, the three focused
+depth-10 cohorts (seeds 19445–19459) contain 15 samples, of which eight were
+compiled on both platforms and seven were excluded by the size guard. This is
+limited exploratory coverage, not evidence about the excluded programs and not
+a compiler-bug discovery.
