@@ -176,3 +176,22 @@ and zero unexpected findings. Across nine independent cohorts, seeds
 backend executions, and 2,070 Windows native-release executions. No new
 compiler issue was found in these finite samples; this remains bounded
 negative evidence.
+
+## Tenth independent follow-up cohort
+
+A tenth non-overlapping range was run with Linux and Windows jobs enabled:
+
+- Workflow: [MoonSmith CI run 39055709523](https://github.com/Yingqingxue/moonsmith/actions/runs/39055709523)
+- Commit: `abc2533afac58bf4d5d9ebcf8425cdcac16d46da`
+- Cohort: seeds 18520–18749, split into depth 4 (100), depth 6 (100), and
+  depth 8 (30).
+
+The extended scan, Windows cross-check, and report-comparison jobs succeeded.
+The comparison artifact records 230/230 distinct program bodies, matching
+source hashes and expected outputs, 690 Linux JS/Wasm/Wasm-GC executions, 230
+Windows native-release executions, 230/230 cross-platform-consistent cases,
+and zero unexpected findings. Across ten independent cohorts, seeds
+16450–18749 are covered without gaps or overlap: 2,300 programs, 6,900 Linux
+backend executions, and 2,300 Windows native-release executions. No new
+compiler issue was found in these finite samples; this remains bounded
+negative evidence.

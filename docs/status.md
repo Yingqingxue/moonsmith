@@ -36,11 +36,11 @@ The corrected, manual MoonReduce interoperability workflow also passed in
   README excludes numeric simplification and AST reduction. The initial
   diagnostic run exposed and fixed an incorrect `0` expectation for the
   native-success/JS-RangeError partial case.
-- Nine disjoint [230-seed cross-platform scans](evidence/current_generator_scan_20261017.md)
-  (seeds 16450–16679 through 18290–18519) found no unexpected compiler
-  outcomes. In total these cohorts compared 6,210 Linux and 2,070 Windows
+- Ten disjoint [230-seed cross-platform scans](evidence/current_generator_scan_20261017.md)
+  (seeds 16450–16679 through 18520–18749) found no unexpected compiler
+  outcomes. In total these cohorts compared 6,900 Linux and 2,300 Windows
   native-release executions on the same MoonBit toolchain. The newest cohort's
-  CI report comparison passed in [run 39054292378](https://github.com/Yingqingxue/moonsmith/actions/runs/39054292378).
+  report comparison passed in [run 39055709523](https://github.com/Yingqingxue/moonsmith/actions/runs/39055709523); its regular Windows CI job is still running.
   #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
   finite clean scans do not establish that no new compiler bug exists.
 
