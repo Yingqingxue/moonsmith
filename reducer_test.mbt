@@ -43,6 +43,18 @@ test "minimum integer literals retain a nonnegative shrink complexity" {
     }
   }
   assert_true(can_remove_compound)
+
+  let maximum = @moonsmith.IntLiteral(2147483647)
+  assert_eq(maximum.complexity(), 2147483648L)
+  assert_eq(maximum.shrink_candidates().length(), 2)
+
+  // Halving -1 produces zero, the same candidate as the explicit zero
+  // reduction. Candidate de-duplication must keep this edge case singular.
+  let negative_one = @moonsmith.IntLiteral(-1)
+  assert_eq(negative_one.complexity(), 2L)
+  assert_eq(negative_one.shrink_candidates().length(), 1)
+  assert_eq(negative_one.shrink_candidates()[0].to_source(), "0")
+  assert_eq(@moonsmith.IntLiteral(0).shrink_candidates().length(), 0)
 }
 
 ///|
