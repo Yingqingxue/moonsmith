@@ -56,8 +56,12 @@ function Test-RecursionDepth {
         finding = [string]$report.finding
         nativeStatus = [string]$native.status
         nativeExitCode = $native.exitCode
+        nativeError = [string]$native.error
         nativeStdoutLength = ([string]$native.output).Length
         javascriptStatus = [string]$js.status
+        javascriptExitCode = $js.exitCode
+        javascriptError = [string]$js.error
+        javascriptStdoutLength = ([string]$js.output).Length
         javascriptRangeError = [bool]($js.error -match 'RangeError|Maximum call stack size exceeded')
         candidatePath = $candidatePath
     }
@@ -97,7 +101,9 @@ while ($next -ge 1 -and $checks.Count -lt $MaxSearchChecks) {
     $result = Test-RecursionDepth -Depth $next
     $checks.Add($result)
     if (-not $result.reproduced -and -not $result.notReproduced) {
-        throw "Candidate at depth $next had an unknown result; it cannot be used as a lower bound."
+        $result | ConvertTo-Json -Depth 8 | Set-Content `
+            -LiteralPath (Join-Path $OutputDirectory "unknown-depth-$next.json") -Encoding utf8NoBOM
+        throw "Candidate at depth $next had an unknown result; it cannot be used as a lower bound. Details: $($result | ConvertTo-Json -Compress -Depth 8)"
     }
     if ($result.reproduced) {
         $high = $next

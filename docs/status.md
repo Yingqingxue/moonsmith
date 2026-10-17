@@ -11,8 +11,9 @@ evidence-led and not a claim that all concerns are closed:
   transcripts and calls CaseKit's comparator. Local integration-script tests
   with a protocol-compatible test double cover normal agreement, a backend-only
   injected mismatch, and a common-mode wrong value that MoonSmith's reference
-  evaluator catches. The real pinned CaseKit CLI still needs its hosted CI run;
-  the bridge does not invoke CaseKit's observation-package runner.
+  evaluator catches. The actual pinned CaseKit CLI build and all three hosted
+  comparisons passed in [CI run 39015643110](https://github.com/Yingqingxue/moonsmith/actions/runs/39015643110).
+  The bridge does not invoke CaseKit's observation-package runner.
 - The public MoonGrammata README explicitly excludes native process isolation
   and crash-signal capture. MoonSmith's #2228 regression exercises that narrow
   process-level boundary, but overlap in generation, differential testing, and
@@ -20,8 +21,11 @@ evidence-led and not a claim that all concerns are closed:
 - MoonReduce's #2228 run preserved the external failure and the pre-crash print
   but removed zero non-layout source lines (385 to 379 bytes, layout-only).
   MoonSmith now has a separate bounded search over only the recursion-depth
-  integer, using the same native/JS signature and three final replays. Its
-  real hosted result is pending; it is not MoonReduce functionality or a
+  integer, using the same native/JS signature and three final replays. The
+  first hosted attempt stopped safely because the 500,000-depth candidate
+  returned an unclassified mixed result; it was not counted as a reduction.
+  A regression now preserves structured details for unknown candidates, and
+  the real hosted rerun is pending. This is not MoonReduce functionality or a
   general arbitrary-source reducer.
 - The fresh [230-seed cross-platform scan](evidence/current_generator_scan_20261017.md)
   found no unexpected compiler outcomes. #1322 and #2228 remain upstream
