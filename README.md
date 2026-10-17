@@ -128,6 +128,13 @@ directory. A saved injected output mismatch can be replayed with
 For an optional bridge to MoonReduce's text reducer, see
 [`docs/moonreduce_interop.md`](docs/moonreduce_interop.md); MoonSmith remains
 the checker, while MoonReduce performs candidate deletions.
+The CI also checks an optional [CaseKit](https://github.com/kaigeliang/moonbit-casekit)
+bridge: it converts captured JS/Wasm stdout into CaseKit v1 transcripts and
+uses CaseKit's comparator as an independent cross-check. The test includes both
+a backend-only injected mismatch and a common-mode wrong value, so it also
+shows why CaseKit's pairwise comparison complements rather than replaces
+MoonSmith's reference evaluator. It does not rerun MoonSmith's generated cases
+through CaseKit's observation-package runner.
 To create a Markdown and standalone offline HTML case report, run
 `pwsh -File scripts/moonsmith.ps1 report -CasePath <finding-directory>`.
 Pass `-ReductionPath <reduction-directory>` to include verified reduction

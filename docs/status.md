@@ -1,6 +1,32 @@
 # Implementation status
 
-Last updated: 2026-10-16
+Last updated: 2026-10-17
+
+## Competition-review follow-up: integration boundaries and evidence
+
+The current response to the four overlap/validation concerns is intentionally
+evidence-led and not a claim that all concerns are closed:
+
+- A pinned CaseKit CI bridge serializes captured JS/Wasm stdout into CaseKit v1
+  transcripts and calls CaseKit's comparator. Local integration-script tests
+  with a protocol-compatible test double cover normal agreement, a backend-only
+  injected mismatch, and a common-mode wrong value that MoonSmith's reference
+  evaluator catches. The real pinned CaseKit CLI still needs its hosted CI run;
+  the bridge does not invoke CaseKit's observation-package runner.
+- The public MoonGrammata README explicitly excludes native process isolation
+  and crash-signal capture. MoonSmith's #2228 regression exercises that narrow
+  process-level boundary, but overlap in generation, differential testing, and
+  reduction remains; no comparative effectiveness advantage is established.
+- MoonReduce's #2228 run preserved the external failure and the pre-crash print
+  but removed zero non-layout source lines (385 to 379 bytes, layout-only).
+  MoonSmith now has a separate bounded search over only the recursion-depth
+  integer, using the same native/JS signature and three final replays. Its
+  real hosted result is pending; it is not MoonReduce functionality or a
+  general arbitrary-source reducer.
+- The fresh [230-seed cross-platform scan](evidence/current_generator_scan_20261017.md)
+  found no unexpected compiler outcomes. #1322 and #2228 remain upstream
+  reports, not MoonSmith discoveries. A finite clean scan does not establish
+  that no new compiler bug exists.
 
 ## Saved-source integrity during replay
 

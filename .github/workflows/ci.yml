@@ -126,6 +126,48 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  casekit-interop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out MoonSmith
+        uses: actions/checkout@v5
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonSmith dependencies
+        run: moon update
+
+      - name: Check out pinned CaseKit comparator
+        uses: actions/checkout@v5
+        with:
+          repository: kaigeliang/moonbit-casekit
+          ref: cd1a4a12347b781706a25964a428a4a2fdf21996
+          path: casekit-upstream
+
+      - name: Build CaseKit native comparator
+        working-directory: casekit-upstream
+        run: |
+          moon update
+          moon build --target native
+          echo "CASEKIT_CLI=$PWD/_build/native/debug/build/cli/cli.exe" >> "$GITHUB_ENV"
+
+      - name: Cross-check MoonSmith observations with CaseKit
+        shell: pwsh
+        run: ./scripts/test_casekit_interop.ps1 -CaseKitCliPath "$env:CASEKIT_CLI"
+
+      - name: Preserve CaseKit interoperability evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: casekit-interop-report
+          path: .moonsmith/casekit-interop/
+          if-no-files-found: ignore
+          retention-days: 30
+
   windows-native:
     runs-on: windows-latest
     timeout-minutes: 20

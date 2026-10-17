@@ -94,10 +94,17 @@ so a byte-count reduction cannot be mistaken for changed program content. This
 is a conservative line-level classification, not a parser, semantic-equivalence
 proof, or substitute for failure replay.
 
-The manual interoperability workflow now also attempts the public native-stack
+The manual interoperability workflow also exercises the public native-stack
 overflow report [moonbitlang/moon#2228](https://github.com/moonbitlang/moon/issues/2228).
 It pins the Linux stack limit to 8 MiB (and disables core dumps) to match the
-upstream reproduction conditions. Its artifact records whether the issue reproduces on that runner, whether
-MoonReduce changed non-layout source lines, and whether the recursive trigger
-survived final replay. This is an experiment, not yet evidence of successful
-semantic reduction; `verified_reduction` alone will not be presented as such.
+upstream reproduction conditions. In
+[run 39014185307](https://github.com/Yingqingxue/moonsmith/actions/runs/39014185307),
+MoonReduce preserved the native exit-139/empty-stdout signature, JS `RangeError`,
+and pre-crash print required by the issue report; final replay passed. It
+reduced 385 to 379 bytes, but deleted zero non-layout source lines: the change
+was `layout-only`. This is not semantic reduction of the real issue. The
+detailed [#2228 evidence note](evidence/moonreduce_upstream_2228_20261017.md)
+records the artifact and limits. A separate MoonSmith parameter-search
+experiment tests whether changing only that recursion-depth literal can
+produce a smaller replayable reproducer; it is a distinct capability and must
+not be attributed to MoonReduce.

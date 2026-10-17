@@ -68,3 +68,9 @@ pwsh -NoProfile -File "$repo_root/scripts/test_moonreduce_issue_1322.ps1" \
 pwsh -NoProfile -File "$repo_root/scripts/test_moonreduce_issue_2228.ps1" \
   -MoonReduceBinary "$moonreduce_binary" \
   -OutputDirectory "$out_dir/upstream-2228"
+
+# MoonReduce's current line reducer cannot alter an integer literal. Measure a
+# narrowly scoped MoonSmith parameter search on the same real issue, using the
+# same externally reported native/JS signature and a 3x final replay.
+pwsh -NoProfile -File "$repo_root/scripts/test_issue_2228_numeric_shrink.ps1" \
+  -OutputDirectory "$out_dir/upstream-2228-numeric-shrink"
