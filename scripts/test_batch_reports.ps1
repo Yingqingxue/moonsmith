@@ -160,13 +160,26 @@ try {
         throw 'valid paired reports produced an incorrect comparison summary.'
     }
 
-    $windowsReport.cases[1].targetParity.status = 'divergent'
+    # A one-backend native cross-check cannot produce a multi-target parity
+    # result. Its null value must not be mistaken for a failed parity matrix.
+    foreach ($case in $windowsReport.cases) { $case.targetParity = $null }
+    $windowsReport.targetParityPassCount = 0
     $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    $singleTargetComparison = (& $scriptPath -LinuxReportDirectory $linuxDirectory `
+        -WindowsReportDirectory $windowsDirectory | ConvertFrom-Json)
+    if ($singleTargetComparison.seedsCompared -ne 2) {
+        throw 'single-target Windows reports with no Target Parity object were rejected.'
+    }
+
+    $windowsReport = New-TestReport -SeedStart 41000 -Targets @('native-release')
+    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    $linuxReport.cases[1].targetParity.status = 'divergent'
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
     Assert-ComparisonRejected -ExpectedMessage 'does not have a passing Target Parity result' `
         -Label 'non-passing Target Parity'
     $rejectedNonPassingTargetParity = $true
-    $windowsReport.cases[1].targetParity.status = 'pass'
-    $windowsReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $windowsDirectory 'batch_windows.json') -Encoding utf8
+    $linuxReport.cases[1].targetParity.status = 'pass'
+    $linuxReport | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $linuxDirectory 'batch_linux.json') -Encoding utf8
 
     $linuxReport.schemaVersion = 7
     $windowsReport.schemaVersion = 7

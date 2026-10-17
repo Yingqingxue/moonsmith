@@ -82,7 +82,7 @@ function Read-BatchReportSet {
             if (-not $case.referenceChecked -or $case.finding -ne 'consistent') {
                 throw "$Label seed $seed was not reference-checked as consistent."
             }
-            if ($report.schemaVersion -ge 11 -and
+            if ($report.schemaVersion -ge 11 -and $report.targets.Count -gt 1 -and
                 $case.targetParity.status -ne 'pass') {
                 throw "$Label seed $seed does not have a passing Target Parity result."
             }
@@ -135,7 +135,8 @@ foreach ($seedKey in $linuxSeeds) {
         $windows.CasesBySeed[$seedKey].expectedOutput) {
         $outputMismatches.Add([int]$seedKey)
     }
-    if ($linux.CasesBySeed[$seedKey].targetParityStatus -cne
+    if ($linux.Targets.Count -gt 1 -and $windows.Targets.Count -gt 1 -and
+        $linux.CasesBySeed[$seedKey].targetParityStatus -cne
         $windows.CasesBySeed[$seedKey].targetParityStatus) {
         throw "Target Parity statuses differ between platforms for seed $seedKey."
     }
