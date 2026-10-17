@@ -266,3 +266,29 @@ hashes and expected outputs, 15 Linux JS/Wasm/Wasm-GC executions, and five
 Windows native-release executions; all five cases were consistent across
 platforms, with zero unexpected findings. This small exploratory cohort
 broadens the sampled generation depth but is not a completeness claim.
+
+## Follow-up: depth-10 size-guard accounting
+
+A second five-seed depth-10 cohort checked reporting for generated sources above
+the scanner's 16,300-line safety bound:
+
+- Workflow: [MoonSmith CI run 39063712489](https://github.com/Yingqingxue/moonsmith/actions/runs/39063712489)
+- Commit: `afd9cd980946917ef7d6ff9dae315fb2b4becc73`
+- Cohort: seeds 19450–19454, all at depth 10.
+
+All workflow jobs, including Linux scan, Windows native cross-check, report
+comparison, and regular verification, passed. The comparison artifact records
+five distinct bodies and matching source hashes. Two seeds were within the
+size bound and produced matching reference outputs on both platforms (six
+Linux JS/Wasm/Wasm-GC executions and two Windows native-release executions).
+The other three exceeded the source-size bound and were classified as
+`generator-limit` on both platforms; they were not compiled or counted as
+backend executions. There were zero unexpected findings. This follow-up
+validates consistent exclusion/reporting behavior; it does not establish
+compiler behavior for the excluded programs or a new compiler issue.
+
+The preceding attempt (run 39060757697) treated these size-guard cases as
+workflow failures under the older result-accounting rule. Review of its paired
+artifacts found no backend divergence; the corrected rule preserves the legacy
+`unexpectedCount` field while separately reporting unexpected findings. The
+successful follow-up confirms the reporting correction on the same seed range.

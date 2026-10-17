@@ -7,8 +7,8 @@ Last updated: 2026-10-17
 The current response to the four overlap/validation concerns is intentionally
 evidence-led and not a claim that all concerns are closed:
 
-The latest pushed state (`a4946da`) passed the regular Linux/Windows CI in
-[run 39017846437](https://github.com/Yingqingxue/moonsmith/actions/runs/39017846437).
+The latest pushed state (`afd9cd9`) passed regular Linux/Windows verification
+and the focused scan/cross-check in [run 39063712489](https://github.com/Yingqingxue/moonsmith/actions/runs/39063712489).
 The corrected, manual MoonReduce interoperability workflow also passed in
 [run 39017854306](https://github.com/Yingqingxue/moonsmith/actions/runs/39017854306).
 
@@ -45,6 +45,13 @@ The corrected, manual MoonReduce interoperability workflow also passed in
   also passed in [run 39059031700](https://github.com/Yingqingxue/moonsmith/actions/runs/39059031700):
   15 Linux backend executions and five Windows native executions were consistent.
   It broadens complexity sampling but is too small to support a completeness claim.
+  A second depth-10 cohort (seeds 19450–19454) passed in run 39063712489:
+  two in-bound seeds matched across six Linux and two Windows executions; three
+  oversized sources were symmetrically classified as generator-limit exclusions
+  and were not compiled. There were zero unexpected findings. The preceding
+  run 39060757697 exposed old accounting that treated those exclusions as CI
+  failures; this was a reporting-policy defect, not a compiler mismatch, and the
+  rerun validates its correction. See the linked scan evidence for details.
   #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
   finite clean scans do not establish that no new compiler bug exists.
 
