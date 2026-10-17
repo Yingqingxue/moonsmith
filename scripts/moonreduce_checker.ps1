@@ -4,7 +4,10 @@ param(
     [string]$BaselineReportPath,
 
     [Parameter(Mandatory, Position = 0)]
-    [string]$CandidateSourcePath
+    [string]$CandidateSourcePath,
+
+    [Parameter()]
+    [string]$RequiredSourceFragment = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -66,6 +69,23 @@ try {
     $candidatePath = (Resolve-Path -LiteralPath $CandidateSourcePath -ErrorAction Stop).Path
     if (-not (Test-Path -LiteralPath $candidatePath -PathType Leaf)) {
         throw "Candidate source is not a file: $candidatePath"
+    }
+
+    if (-not [string]::IsNullOrEmpty($RequiredSourceFragment)) {
+        $baselineText = [IO.File]::ReadAllText($baselineSourcePath)
+        $candidateText = [IO.File]::ReadAllText($candidatePath)
+        if (-not $baselineText.Contains($RequiredSourceFragment)) {
+            throw 'The required source fragment is absent from the pinned baseline.'
+        }
+        if (-not $candidateText.Contains($RequiredSourceFragment)) {
+            Return-CheckerResult -ExitCode 1 -Result ([pscustomobject]@{
+                preserved = $false
+                reason = 'required-source-fragment-missing'
+                expectedFinding = $baseline.finding
+                observedFinding = $null
+                missingSourceFragment = $RequiredSourceFragment
+            })
+        }
     }
 
     # MoonReduce writes candidates as unverified.txt. `moon run` dispatches on

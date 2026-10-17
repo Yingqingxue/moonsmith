@@ -78,6 +78,8 @@ $arguments = @(
     '--checker-arg', (Join-Path $PSScriptRoot 'moonreduce_checker.ps1'),
     '--checker-arg', '-BaselineReportPath',
     '--checker-arg', $baselinePath,
+    '--checker-arg', '-RequiredSourceFragment',
+    '--checker-arg', 'println("before-deep-recursion")',
     '--out', $reductionDirectory,
     '--timeout-ms', '60000',
     '--max-tests', '100'
@@ -105,7 +107,13 @@ if ($reduction.status -notin @('verified_reduction', 'verified_unchanged') -or
 $original = [IO.File]::ReadAllText($originalPath)
 $reduced = [IO.File]::ReadAllText($reducedPath)
 $reducedTextLines = @($reduced -split '\r?\n' | Where-Object { $_.Trim().Length -gt 0 -and $_.Trim() -ne '///|' })
-$requiredTriggerLines = @('fn deep(n : Int) -> Int {', 'if n <= 0 {', '1 + deep(n - 1)', 'println(deep(1_000_000))')
+$requiredTriggerLines = @(
+    'fn deep(n : Int) -> Int {',
+    'if n <= 0 {',
+    '1 + deep(n - 1)',
+    'println("before-deep-recursion")',
+    'println(deep(1_000_000))'
+)
 $triggerPreserved = $true
 foreach ($line in $requiredTriggerLines) {
     if (-not $reduced.Contains($line)) { $triggerPreserved = $false }
@@ -125,6 +133,7 @@ Write-StudySummary ([pscustomobject]@{
     searchTests = [int]$reduction.search_tests
     verificationPassed = [bool]$reduction.verification_passed
     triggerPreserved = $triggerPreserved
+    preCrashOutputWritePreserved = $reduced.Contains('println("before-deep-recursion")')
     removedContentLines = $removedContentLines
     triggerPreservingContentReduction = $triggerPreserved -and $removedContentLines -gt 0
     toolchainVersion = $baseline.toolchainVersion

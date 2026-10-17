@@ -19,6 +19,12 @@ finding, and `125` means the result is unknown (for example, the baseline
 artifact is invalid or the toolchain is unavailable). The baseline must have
 its original `source.mbt` and a valid matching `sourceSha256`; the checker
 reuses its seed, depth, backend matrix, timeout, and reference-output contract.
+An optional `-RequiredSourceFragment` constraint can preserve a source-level
+symptom that is not represented in the normalized finding key; candidates
+missing that fragment are rejected before backend execution. The #2228 study
+uses this to retain the pre-crash `println` that is necessary to test buffered
+stdout loss, rather than reducing only the SIGSEGV and silently dropping that
+part of the reported behavior.
 
 Example from an environment with MoonReduce, PowerShell 7, MoonBit, and this
 MoonSmith checkout available:

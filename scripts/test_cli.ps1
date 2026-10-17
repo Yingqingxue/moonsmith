@@ -430,6 +430,17 @@ try {
         throw 'MoonReduce checker did not accept a candidate preserving the saved finding.'
     }
 
+    $requiredFragmentOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $injected.savedTo `
+        -RequiredSourceFragment '(if' `
+        (Join-Path $injected.savedTo 'source.mbt')
+    $requiredFragmentExitCode = $LASTEXITCODE
+    $requiredFragmentResult = ($requiredFragmentOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($requiredFragmentExitCode -ne 0 -or -not $requiredFragmentResult.preserved) {
+        throw 'MoonReduce checker did not accept a baseline containing its required source fragment.'
+    }
+    $requiredFragmentPreserved = $true
+
     $moonReduceTxtCandidatePath = Join-Path $tamperedFixtureRoot 'unverified.txt'
     Copy-Item -LiteralPath (Join-Path $injected.savedTo 'source.mbt') `
         -Destination $moonReduceTxtCandidatePath
@@ -459,6 +470,18 @@ try {
         $changedCandidate.reason -ne 'finding-changed') {
         throw 'MoonReduce checker did not reject a candidate that lost the saved finding.'
     }
+
+    $missingFragmentOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
+        -BaselineReportPath $injected.savedTo `
+        -RequiredSourceFragment '(if' `
+        $changedCandidatePath
+    $missingFragmentExitCode = $LASTEXITCODE
+    $missingFragmentResult = ($missingFragmentOutput -join [Environment]::NewLine) | ConvertFrom-Json
+    if ($missingFragmentExitCode -ne 1 -or $missingFragmentResult.preserved -or
+        $missingFragmentResult.reason -ne 'required-source-fragment-missing') {
+        throw 'MoonReduce checker did not reject a candidate that dropped a required reported symptom.'
+    }
+    $requiredFragmentRejection = $true
 
     $noReferenceOutput = & $pwshPath -NoProfile -File $moonReduceChecker `
         -BaselineReportPath $unreferencedInjected.savedTo `
@@ -625,6 +648,8 @@ if ($LASTEXITCODE -ne 0 -or $demo.command -ne 'demo' -or
     replayFinding = $replay.replayFinding
     moonReduceCheckerPreserved = $preservedCandidate.preserved
     moonReduceCheckerRejectedChangedFinding = -not $changedCandidate.preserved
+    moonReduceCheckerRequiredFragmentPreserved = $requiredFragmentPreserved
+    moonReduceCheckerRequiredFragmentRejectsCandidate = $requiredFragmentRejection
     moonReduceCheckerNoReferencePreserved = $noReferenceCandidate.preserved
     moonReduceCheckerRejectsNonActionableBaselines = $nonActionableBaselinesRejected
     moonReduceCheckerUnknownExitCode = $unknownExitCode
