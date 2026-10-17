@@ -311,3 +311,21 @@ depth-10 cohorts (seeds 19445–19459) contain 15 samples, of which eight were
 compiled on both platforms and seven were excluded by the size guard. This is
 limited exploratory coverage, not evidence about the excluded programs and not
 a compiler-bug discovery.
+
+## Fourth focused depth-10 cohort
+
+The next adjacent cohort covered seeds 19460–19464 at depth 10:
+
+- Workflow: [MoonSmith CI run 39070044826](https://github.com/Yingqingxue/moonsmith/actions/runs/39070044826)
+- Commit: `50d2dde2adf48ac818eae9e36b222037518df0bc`
+- Cohort: seeds 19460–19464, all at depth 10.
+
+Linux scan, Windows native cross-check, report comparison, and regular CI all
+passed. The five program bodies had matching source hashes. Two in-bound
+programs matched expected outputs on six Linux JS/Wasm/Wasm-GC executions and
+two Windows native-release executions. Three programs exceeded the 16,300-line
+source limit and were classified as `generator-limit` on both platforms without
+compiler execution. There were zero unexpected findings. Across the four
+focused depth-10 cohorts (seeds 19445–19464), 20 distinct bodies are recorded;
+ten were compiled on both platforms and ten were excluded by the size guard.
+This is finite exploratory evidence only, not a result about excluded inputs.

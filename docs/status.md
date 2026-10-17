@@ -59,6 +59,12 @@ The corrected, manual MoonReduce interoperability workflow also passed in
   executed on both platforms and seven were not compiled due to the 16,300-line
   bound; no unexpected outcomes were found. This remains exploratory coverage
   only.
+  The next adjacent cohort (19460–19464) passed in
+  [run 39070044826](https://github.com/Yingqingxue/moonsmith/actions/runs/39070044826):
+  two in-bound samples matched across eight executions and three were excluded
+  by the same size guard. Across the four focused depth-10 cohorts, ten of 20
+  generated bodies were executed on both platforms; the other ten were not
+  compiled. No new compiler issue was found in this finite sample.
   #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
   finite clean scans do not establish that no new compiler bug exists.
 
