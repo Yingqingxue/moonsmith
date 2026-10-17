@@ -30,10 +30,11 @@ evidence-led and not a claim that all concerns are closed:
   A regression now preserves structured details for unknown candidates, and
   the real hosted rerun is pending. This is not MoonReduce functionality or a
   general arbitrary-source reducer.
-- The fresh [230-seed cross-platform scan](evidence/current_generator_scan_20261017.md)
-  found no unexpected compiler outcomes. #1322 and #2228 remain upstream
-  reports, not MoonSmith discoveries. A finite clean scan does not establish
-  that no new compiler bug exists.
+- Two disjoint [230-seed cross-platform scans](evidence/current_generator_scan_20261017.md)
+  (seeds 16450–16679 and 16680–16909) found no unexpected compiler outcomes;
+  the second run compared 690 Linux and 230 Windows native-release executions.
+  #1322 and #2228 remain upstream reports, not MoonSmith discoveries. These
+  finite clean scans do not establish that no new compiler bug exists.
 
 ## Saved-source integrity during replay
 

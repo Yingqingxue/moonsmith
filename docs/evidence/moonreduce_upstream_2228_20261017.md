@@ -31,10 +31,15 @@ line is identical. Thus this real-case run verifies baseline checking, symptom
 preservation, and replay, but **does not demonstrate semantic source
 simplification or effective reduction of this actual issue**. MoonReduce's
 current line-deletion strategy cannot change the recursive depth literal. A
-separate, narrowly scoped MoonSmith integer-parameter experiment is being added
-to measure that one source transformation against the same failure signature;
-it must not be described as MoonReduce functionality, general AST reduction,
-or a MoonSmith discovery.
+separate, narrowly scoped MoonSmith integer-parameter experiment was added to
+measure that one source transformation against the same failure signature.
+Its first hosted attempt stopped at depth 500,000 on an unclassified mixed
+result; it did not report a semantic reduction. The classifier and regression
+tests have since been refined to distinguish the exact paired signature,
+recognized partial outcomes, and unknown harness outcomes. A hosted rerun is
+still needed before claiming a smaller reproducer. This experiment must not be
+described as MoonReduce functionality, general AST reduction, or a MoonSmith
+discovery.
 
 The complete run artifact contains baseline reports, original and reduced
 source, reduction report, check log, and the `RequiredSourceFragment` argument.

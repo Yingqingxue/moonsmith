@@ -105,6 +105,8 @@ reduced 385 to 379 bytes, but deleted zero non-layout source lines: the change
 was `layout-only`. This is not semantic reduction of the real issue. The
 detailed [#2228 evidence note](evidence/moonreduce_upstream_2228_20261017.md)
 records the artifact and limits. A separate MoonSmith parameter-search
-experiment tests whether changing only that recursion-depth literal can
-produce a smaller replayable reproducer; it is a distinct capability and must
-not be attributed to MoonReduce.
+experiment changes only that recursion-depth literal. Its first hosted run
+stopped at depth 500,000 on a mixed result rather than counting it as a valid
+bound; diagnostics and a known-partial-signature regression are now in place,
+and the real rerun is pending. It is distinct from MoonReduce and does not yet
+demonstrate a smaller replayable reproducer.

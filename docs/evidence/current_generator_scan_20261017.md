@@ -27,3 +27,20 @@ The raw Linux and Windows batch JSON plus the cross-platform summary are
 preserved as the workflow's `moonsmith-current-generator-seed-scan`,
 `moonsmith-windows-current-generator-crosscheck`, and
 `moonsmith-cross-platform-seed-comparison` artifacts.
+
+## Independent follow-up cohort
+
+A second, non-overlapping range was run on the same toolchain and workflow:
+
+- Workflow: [MoonSmith CI run 39016632668](https://github.com/Yingqingxue/moonsmith/actions/runs/39016632668)
+- Commit: `424bcfa9a85fc062ab60054a9960ae29bb8e49bd`
+- Cohort: seeds 16680–16909, again split into depth 4 (100), depth 6 (100),
+  and depth 8 (30).
+
+The Windows native-release cross-check and report-comparison jobs passed. The
+summary records 230/230 distinct source bodies within this cohort, identical
+Linux/Windows source hashes and reference-expected outputs, 690 Linux
+JS/Wasm/Wasm-GC executions, 230 Windows native-release executions, 230/230
+cross-platform-consistent cases, and zero unexpected findings. These 1,840
+backend executions across both cohorts still yielded no new compiler issue;
+they provide bounded negative evidence, not proof that none exists.
