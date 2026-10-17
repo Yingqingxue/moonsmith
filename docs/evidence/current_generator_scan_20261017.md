@@ -372,6 +372,27 @@ cross-platform consistent. Across the six focused depth-10 cohorts (seeds
 and 11 excluded by the size guard. This is bounded exploratory evidence, not a
 claim about excluded cases or proof of absence of compiler bugs.
 
+## Eighth focused depth-10 cohort
+
+Seeds 19480–19484 were scanned at depth 10 on Linux and Windows:
+
+- Workflow: [MoonSmith CI run 39078199671](https://github.com/Yingqingxue/moonsmith/actions/runs/39078199671)
+- Commit: `b8590bf38d7fb025f7514610248d59f5212b31e0`
+- Cohort: seeds 19480–19484, all at depth 10.
+
+All workflow jobs passed, including regular verification, CaseKit interop,
+Linux scan, Windows native cross-check, and report comparison. Four generated
+programs matched the reference on 12 Linux JS/Wasm/Wasm-GC executions and four
+Windows native-release executions. Seed 19481 exceeded the 16,300-line limit
+(20,678 lines); both reports classify it as `generator-limit`, not as a
+compiled result. Thus legacy `unexpectedCount` is one while
+`unexpectedFindingCount` is zero. All five source hashes matched, and there
+were no unexpected findings among executed cases. Across the eight focused
+depth-10 cohorts (seeds 19445–19484), 40 bodies are recorded: 27 were compiled
+on both platforms and 13 were excluded by the size guard. These exclusions
+remain untested; this finite sample is not evidence that no compiler bugs
+exist.
+
 ## Seventh focused depth-10 cohort
 
 The adjacent range 19475–19479 was scanned on Linux and Windows at depth 10:
