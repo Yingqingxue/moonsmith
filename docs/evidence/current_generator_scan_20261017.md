@@ -83,3 +83,21 @@ show 230/230 distinct bodies, matching source hashes and expected outputs,
 the four independent cohorts the range is 16450–17369 with no gaps or overlap:
 920 programs, 2,760 Linux backend executions, and 920 Windows executions.
 No new compiler issue was found in these bounded samples.
+
+## Fifth independent follow-up cohort
+
+A fifth non-overlapping range was run with Linux and Windows jobs enabled:
+
+- Workflow: [MoonSmith CI run 39048540857](https://github.com/Yingqingxue/moonsmith/actions/runs/39048540857)
+- Commit: `a4946da56ac3c03e9c5c5a9cea2963b29c8cfeb9`
+- Cohort: seeds 17370–17599, split into depth 4 (100), depth 6 (100), and
+  depth 8 (30).
+
+All workflow jobs succeeded. The comparison artifact reports 230/230 distinct
+program bodies, matching source hashes and expected outputs, 690 Linux
+JS/Wasm/Wasm-GC executions, 230 Windows native-release executions, and zero
+unexpected findings. The artifact comparison was also rerun locally with
+`compare_batch_reports.ps1` and reproduced the 230-seed result. Across the five
+independent cohorts, seeds 16450–17599 are covered without gaps or overlap:
+1,150 programs, 3,450 Linux backend executions, and 1,150 Windows executions.
+No new compiler issue was found in these samples.
