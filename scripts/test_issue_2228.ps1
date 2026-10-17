@@ -33,7 +33,7 @@ if ($native.status -eq 'runtime-failed' -and $native.exitCode -eq 139 -and
     $classification = 'upstream-reported-sigsegv-reproduced'
 } elseif ($native.status -eq 'succeeded' -and
     $outputLines -contains 'before-deep-recursion' -and
-    $outputLines -contains '0') {
+    $outputLines -contains '1000000') {
     # Keep this historical regression useful after a future upstream fix.
     $classification = 'not-reproduced-on-this-toolchain'
 } else {

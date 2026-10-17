@@ -106,7 +106,10 @@ was `layout-only`. This is not semantic reduction of the real issue. The
 detailed [#2228 evidence note](evidence/moonreduce_upstream_2228_20261017.md)
 records the artifact and limits. A separate MoonSmith parameter-search
 experiment changes only that recursion-depth literal. Its first hosted run
-stopped at depth 500,000 on a mixed result rather than counting it as a valid
-bound; diagnostics and a known-partial-signature regression are now in place,
-and the real rerun is pending. It is distinct from MoonReduce and does not yet
+stopped at depth 500,000 on native success/JS `RangeError`, rather than counting
+it as a valid bound. The report showed native stdout ending in `500000`; the
+classifier had incorrectly expected `0`, even though `deep(n)` returns `n`.
+That logic and the existing #2228 future-fixed native-output assertion are
+corrected, with a known-partial-signature regression test. A real hosted rerun
+is pending. This experiment is distinct from MoonReduce and does not yet
 demonstrate a smaller replayable reproducer.

@@ -25,11 +25,12 @@ evidence-led and not a claim that all concerns are closed:
   but removed zero non-layout source lines (385 to 379 bytes, layout-only).
   MoonSmith now has a separate bounded search over only the recursion-depth
   integer, using the same native/JS signature and three final replays. The
-  first hosted attempt stopped safely because the 500,000-depth candidate
-  returned an unclassified mixed result; it was not counted as a reduction.
-  A regression now preserves structured details for unknown candidates, and
-  the real hosted rerun is pending. This is not MoonReduce functionality or a
-  general arbitrary-source reducer.
+  hosted attempts stopped safely at depth 500,000 because the candidate was
+  native-success/JS-RangeError, not the exact paired signature. The captured
+  stdout was `before-deep-recursion` then `500000`; the classifier incorrectly
+  expected `0`, despite `deep(n)` returning `n`. That expectation is corrected
+  and covered by a mocked boundary test; the real hosted rerun is pending.
+  This is not MoonReduce functionality or a general arbitrary-source reducer.
 - Two disjoint [230-seed cross-platform scans](evidence/current_generator_scan_20261017.md)
   (seeds 16450–16679 and 16680–16909) found no unexpected compiler outcomes;
   the second run compared 690 Linux and 230 Windows native-release executions.

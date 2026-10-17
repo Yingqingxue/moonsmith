@@ -33,11 +33,14 @@ $searchOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1')
     -OutputDirectory $searchDirectory `
     -VerifierScriptPath (Join-Path $PSScriptRoot 'testdata/issue_2228_mock_verifier.ps1')
 $searchResult = ($searchOutput -join [Environment]::NewLine) | ConvertFrom-Json
+$partial = $searchResult.checks | Where-Object depth -eq 500000 | Select-Object -First 1
 if ($searchResult.status -ne 'verified_parameter_reduction' -or
     $searchResult.reducedDepth -ne 750000 -or
     -not $searchResult.minimalWithinMonotoneSearchInterval -or
     $searchResult.finalIndependentReplays -ne 3 -or
-    -not $searchResult.sourceChangedOnlyAtDepthArgument) {
+    -not $searchResult.sourceChangedOnlyAtDepthArgument -or
+    $null -eq $partial -or -not $partial.signatureAbsent -or
+    -not $partial.nativeExpectedNormalOutput) {
     throw 'Known partial outcomes did not produce the expected bounded parameter-search result.'
 }
 Write-Output 'Unknown outcomes fail closed with diagnostics; known partial signatures guide a tested bounded search.'

@@ -40,8 +40,10 @@ function Test-RecursionDepth {
     $js = $report.runs | Where-Object target -eq 'js' | Select-Object -First 1
     $nativeOutput = [string]$native.output
     $nativeOutputLines = [regex]::Split($nativeOutput, '\r?\n')
+    # deep(n) returns n after exactly n recursive increments. A candidate that
+    # completes natively therefore prints the depth, not the base-case value 0.
     $nativeNormalOutput = $nativeOutputLines -contains 'before-deep-recursion' -and
-        $nativeOutputLines -contains '0'
+        $nativeOutputLines -contains [string]$Depth
     $nativeReportedCrash = $native.status -eq 'runtime-failed' -and
         $native.exitCode -eq 139
     $jsRangeError = $js.error -match 'RangeError|Maximum call stack size exceeded'

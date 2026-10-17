@@ -33,13 +33,17 @@ simplification or effective reduction of this actual issue**. MoonReduce's
 current line-deletion strategy cannot change the recursive depth literal. A
 separate, narrowly scoped MoonSmith integer-parameter experiment was added to
 measure that one source transformation against the same failure signature.
-Its first hosted attempt stopped at depth 500,000 on an unclassified mixed
-result; it did not report a semantic reduction. The classifier and regression
-tests have since been refined to distinguish the exact paired signature,
-recognized partial outcomes, and unknown harness outcomes. A hosted rerun is
-still needed before claiming a smaller reproducer. This experiment must not be
-described as MoonReduce functionality, general AST reduction, or a MoonSmith
-discovery.
+The hosted attempts stopped at depth 500,000 without reporting a reduction. A
+diagnostic run ([39017337237](https://github.com/Yingqingxue/moonsmith/actions/runs/39017337237))
+showed the partial outcome: native succeeded and printed
+`before-deep-recursion` then `500000`, while JS raised `RangeError`. The
+classifier incorrectly expected `0`, even though `deep(n)` returns `n`; this
+accounted for the false unknown. The candidate was not counted as a reduction.
+The return-value expectation and the pre-existing regression's future-fixed
+native branch have now been corrected and tested with a mocked threshold. A
+real hosted rerun is still needed before claiming a smaller reproducer. This
+experiment must not be described as MoonReduce functionality, general AST
+reduction, or a MoonSmith discovery.
 
 The complete run artifact contains baseline reports, original and reduced
 source, reduction report, check log, and the `RequiredSourceFragment` argument.

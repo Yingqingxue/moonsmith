@@ -34,7 +34,7 @@ if ($candidateDepth -ge 750000) {
 } else {
     # Below the native crash boundary, the exact paired signature is absent:
     # native returns the known pre-crash print and value while JS still errors.
-    $native.output = "before-deep-recursion`n0`n"
+    $native.output = "before-deep-recursion`n$candidateDepth`n"
     if ($candidateDepth -gt 0) {
         $finding = 'runtime-failure'
         $js.status = 'runtime-failed'
