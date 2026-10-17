@@ -13,7 +13,8 @@ evidence-led and not a claim that all concerns are closed:
   injected mismatch, and a common-mode wrong value that MoonSmith's reference
   evaluator catches. The actual pinned CaseKit CLI build and all three hosted
   comparisons passed in [CI run 39015643110](https://github.com/Yingqingxue/moonsmith/actions/runs/39015643110).
-  The bridge does not invoke CaseKit's observation-package runner.
+  The [artifact-level evidence](evidence/casekit_interop_20261017.md) records
+  each result. The bridge does not invoke CaseKit's observation-package runner.
 - The public MoonGrammata README explicitly excludes native process isolation
   and crash-signal capture. MoonSmith's #2228 regression exercises that narrow
   process-level boundary, but overlap in generation, differential testing, and
