@@ -33,6 +33,12 @@ jobs:
       - name: Show toolchain version
         run: moon version --all
 
+      - name: Update Mooncakes registry index
+        run: moon update
+
+      - name: Preflight module dependencies
+        run: moon check --deny-warn
+
       - name: Run the fixed 1,000-seed corpus
         shell: pwsh
         run: |

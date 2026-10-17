@@ -106,6 +106,18 @@ function Assert-ComparisonRejected {
 }
 
 try {
+    $repoRoot = Split-Path -Parent $PSScriptRoot
+    $nightlyWorkflowPath = Join-Path $repoRoot '.github/workflows/nightly-generator-corpus.yml'
+    $nightlyWorkflow = Get-Content -LiteralPath $nightlyWorkflowPath -Raw
+    $dependencyUpdateIndex = $nightlyWorkflow.IndexOf('run: moon update')
+    $dependencyCheckIndex = $nightlyWorkflow.IndexOf('run: moon check --deny-warn')
+    $corpusRunIndex = $nightlyWorkflow.IndexOf('$summary = ./scripts/run_batch.ps1')
+    if ($dependencyUpdateIndex -lt 0 -or $dependencyCheckIndex -lt 0 -or
+        $corpusRunIndex -lt 0 -or $dependencyUpdateIndex -ge $corpusRunIndex -or
+        $dependencyCheckIndex -ge $corpusRunIndex) {
+        throw 'Nightly corpus must resolve and check Mooncakes dependencies before running the batch.'
+    }
+
     $clusterCases = @(
         [pscustomobject]@{ seed = 21; finding = 'output-mismatch'; signature = 'sig-a'; caseId = 'case-21' }
         [pscustomobject]@{ seed = 7; finding = 'output-mismatch'; signature = 'sig-a'; caseId = 'case-7' }
