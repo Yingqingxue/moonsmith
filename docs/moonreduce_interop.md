@@ -90,7 +90,8 @@ proof, or substitute for failure replay.
 
 The manual interoperability workflow now also attempts the public native-stack
 overflow report [moonbitlang/moon#2228](https://github.com/moonbitlang/moon/issues/2228).
-Its artifact records whether the issue reproduces on that runner, whether
+It pins the Linux stack limit to 8 MiB (and disables core dumps) to match the
+upstream reproduction conditions. Its artifact records whether the issue reproduces on that runner, whether
 MoonReduce changed non-layout source lines, and whether the recursive trigger
 survived final replay. This is an experiment, not yet evidence of successful
 semantic reduction; `verified_reduction` alone will not be presented as such.

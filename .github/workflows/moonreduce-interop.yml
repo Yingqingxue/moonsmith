@@ -43,7 +43,12 @@ jobs:
         run: moon update
 
       - name: Exercise the real external-checker protocol
-        run: bash scripts/test_moonreduce_interop.sh
+        run: |
+          # Match the upstream #2228 reproduction conditions; without this,
+          # some hosted runner defaults let the million-frame case complete.
+          ulimit -s 8192
+          ulimit -c 0
+          bash scripts/test_moonreduce_interop.sh
 
       - name: Preserve interoperability artifacts
         if: always()
