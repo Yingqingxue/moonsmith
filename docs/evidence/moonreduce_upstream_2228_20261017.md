@@ -40,10 +40,12 @@ showed the partial outcome: native succeeded and printed
 classifier incorrectly expected `0`, even though `deep(n)` returns `n`; this
 accounted for the false unknown. The candidate was not counted as a reduction.
 The return-value expectation and the pre-existing regression's future-fixed
-native branch have now been corrected and tested with a mocked threshold. A
-real hosted rerun is still needed before claiming a smaller reproducer. This
-experiment must not be described as MoonReduce functionality, general AST
-reduction, or a MoonSmith discovery.
+native branch have now been corrected and tested with a mocked threshold. The
+corrected hosted search reduced the parameter to `523682`, preserved the
+paired signature, and passed three independent replays; see the separate
+[parameter-reduction evidence](moonreduce_upstream_2228_numeric_parameter_20261017.md).
+This is a MoonSmith-side parameter search, not MoonReduce functionality,
+general AST reduction, or a MoonSmith discovery.
 
 The complete run artifact contains baseline reports, original and reduced
 source, reduction report, check log, and the `RequiredSourceFragment` argument.

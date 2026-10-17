@@ -1,19 +1,20 @@
 param(
     [ValidateRange(1, 300)]
-    [int]$TimeoutSeconds = 60
+    [int]$TimeoutSeconds = 60,
+    [string]$VerifierScriptPath = (Join-Path $PSScriptRoot 'verify_seed.ps1'),
+    [string]$OutputDirectory = (Join-Path (Split-Path -Parent $PSScriptRoot) '.moonsmith')
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$verifyScript = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $sourcePath = Join-Path $projectRoot 'regressions/issue_2228_native_stack_overflow.mbt'
 
 # CI sets the upstream report's 8 MiB Linux stack limit and disables core files.
 # verify_seed launches `moon run` as a child and bounds it with a timeout.
-$raw = & $verifyScript -SourcePath $sourcePath -Targets @('native', 'js') `
+$raw = & $VerifierScriptPath -SourcePath $sourcePath -Targets @('native', 'js') `
     -TimeoutSeconds $TimeoutSeconds -NoPersist
-$verifyExitCode = $LASTEXITCODE
 $report = $raw | ConvertFrom-Json
+$verifyExitCode = if ($report.finding -eq 'consistent') { 0 } else { 1 }
 $native = $report.runs | Where-Object target -eq 'native' | Select-Object -First 1
 $js = $report.runs | Where-Object target -eq 'js' | Select-Object -First 1
 $outputLines = if ($null -ne $native) {
@@ -56,7 +57,7 @@ $result = [pscustomobject]@{
     toolchainVersion = $report.toolchainVersion
 }
 
-$evidenceDirectory = Join-Path $projectRoot '.moonsmith'
+$evidenceDirectory = $OutputDirectory
 New-Item -ItemType Directory -Force -Path $evidenceDirectory | Out-Null
 $evidencePath = Join-Path $evidenceDirectory 'issue_2228.json'
 $resultJson = $result | ConvertTo-Json -Depth 3

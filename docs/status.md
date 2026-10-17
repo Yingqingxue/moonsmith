@@ -7,6 +7,11 @@ Last updated: 2026-10-17
 The current response to the four overlap/validation concerns is intentionally
 evidence-led and not a claim that all concerns are closed:
 
+The latest pushed state (`a4946da`) passed the regular Linux/Windows CI in
+[run 39017846437](https://github.com/Yingqingxue/moonsmith/actions/runs/39017846437).
+The corrected, manual MoonReduce interoperability workflow also passed in
+[run 39017854306](https://github.com/Yingqingxue/moonsmith/actions/runs/39017854306).
+
 - A pinned CaseKit CI bridge serializes captured JS/Wasm stdout into CaseKit v1
   transcripts and calls CaseKit's comparator. Local integration-script tests
   with a protocol-compatible test double cover normal agreement, a backend-only
@@ -23,14 +28,14 @@ evidence-led and not a claim that all concerns are closed:
   [process-boundary evidence](evidence/moongrammata_process_boundary_20261017.md).
 - MoonReduce's #2228 run preserved the external failure and the pre-crash print
   but removed zero non-layout source lines (385 to 379 bytes, layout-only).
-  MoonSmith now has a separate bounded search over only the recursion-depth
-  integer, using the same native/JS signature and three final replays. The
-  hosted attempts stopped safely at depth 500,000 because the candidate was
-  native-success/JS-RangeError, not the exact paired signature. The captured
-  stdout was `before-deep-recursion` then `500000`; the classifier incorrectly
-  expected `0`, despite `deep(n)` returning `n`. That expectation is corrected
-  and covered by a mocked boundary test; the real hosted rerun is pending.
-  This is not MoonReduce functionality or a general arbitrary-source reducer.
+  A separate MoonSmith parameter search then changed only the recursion depth
+  from 1,000,000 to 523,682, preserved native exit 139/empty stdout plus JS
+  RangeError, and passed three final replays ([evidence](evidence/moonreduce_upstream_2228_numeric_parameter_20261017.md)).
+  This proves a source-specific MoonSmith parameter reduction on the actual
+  upstream case, not semantic reduction by MoonReduce: its pinned first-version
+  README excludes numeric simplification and AST reduction. The initial
+  diagnostic run exposed and fixed an incorrect `0` expectation for the
+  native-success/JS-RangeError partial case.
 - Two disjoint [230-seed cross-platform scans](evidence/current_generator_scan_20261017.md)
   (seeds 16450–16679 and 16680–16909) found no unexpected compiler outcomes;
   the second run compared 690 Linux and 230 Windows native-release executions.

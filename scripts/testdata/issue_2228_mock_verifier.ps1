@@ -9,13 +9,20 @@ param(
 )
 
 $source = [IO.File]::ReadAllText($SourcePath)
-$match = [regex]::Match($source, 'println\(deep\((\d+)\)\)')
+$match = [regex]::Match($source, 'println\(deep\(([\d_]+)\)\)')
 if (-not $match.Success) { throw 'Expected the depth argument in the candidate source.' }
-$candidateDepth = [int]$match.Groups[1].Value
+$candidateDepth = [int]($match.Groups[1].Value -replace '_', '')
 $native = [pscustomobject]@{ target = 'native'; status = 'succeeded'; exitCode = 0; output = ''; error = '' }
 $js = [pscustomobject]@{ target = 'js'; status = 'succeeded'; exitCode = 0; output = ''; error = '' }
 $finding = 'consistent'
-if ($candidateDepth -ge 750000) {
+if ($candidateDepth -eq 1000000 -and $env:MOONSMITH_MOCK_NATIVE_FIXED -eq '1') {
+    # Model the normal return path after a hypothetical upstream fix.
+    $finding = 'runtime-failure'
+    $native.output = "before-deep-recursion`n1000000`n"
+    $js.status = 'runtime-failed'
+    $js.exitCode = 1
+    $js.error = 'RangeError: Maximum call stack size exceeded'
+} elseif ($candidateDepth -ge 750000) {
     $finding = 'runtime-failure'
     $native.status = 'runtime-failed'
     $native.exitCode = 139

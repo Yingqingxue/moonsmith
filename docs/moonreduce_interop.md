@@ -8,6 +8,16 @@ verification as the external-checker protocol used by
 text/JSON reducer; this adapter only decides whether a candidate still
 reproduces the exact MoonSmith finding.
 
+The [pinned MoonReduce README](https://github.com/Hing7/moonreduce/blob/f256f264a2e8853c2e7ec67e3488e61aefaff17d/README.md)
+explicitly lists numeric/string simplification and source-AST reduction as
+outside its first-version scope. Therefore the current CLI cannot semantically
+minimize the `deep(1_000_000)` integer through its built-in line/JSON deletion
+strategies. The separate parameter search below is a MoonSmith-side
+source-specific experiment, not proof that MoonReduce itself performs semantic
+reduction. Demonstrating the latter would require an upstream MoonReduce
+capability change or a clearly identified fork/plugin, neither of which is
+included here.
+
 The checker takes a saved finding report as a fixed option and receives the
 candidate source as its final positional argument. Only compile failure, runtime
 failure, timeout, output mismatch, reference mismatch, and mixed failure are
@@ -110,6 +120,12 @@ stopped at depth 500,000 on native success/JS `RangeError`, rather than counting
 it as a valid bound. The report showed native stdout ending in `500000`; the
 classifier had incorrectly expected `0`, even though `deep(n)` returns `n`.
 That logic and the existing #2228 future-fixed native-output assertion are
-corrected, with a known-partial-signature regression test. A real hosted rerun
-is pending. This experiment is distinct from MoonReduce and does not yet
-demonstrate a smaller replayable reproducer.
+corrected, with a known-partial-signature regression test. The corrected
+hosted run [39017854306](https://github.com/Yingqingxue/moonsmith/actions/runs/39017854306)
+reduced the parameter from 1,000,000 to 523,682 (adjacent lower value 523,681
+did not reproduce), changed no other source content, preserved the paired
+native/JS signature, and passed three final replays. Full metrics and the
+monotonicity caveat are in the [parameter-reduction evidence](evidence/moonreduce_upstream_2228_numeric_parameter_20261017.md).
+This result belongs to the separate MoonSmith parameter search; it does not
+change MoonReduce's documented first-version limits or demonstrate that
+MoonReduce itself performs semantic minimization.

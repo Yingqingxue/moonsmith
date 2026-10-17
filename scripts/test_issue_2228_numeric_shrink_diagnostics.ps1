@@ -1,5 +1,32 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$mockVerifier = Join-Path $PSScriptRoot 'testdata/issue_2228_mock_verifier.ps1'
+
+# Cover both branches of the checked-in #2228 probe without requiring a local
+# native compiler: the reported SIGSEGV path and a hypothetical native fix.
+$reproDirectory = Join-Path ([IO.Path]::GetTempPath()) "moonsmith-issue-2228-repro-$([guid]::NewGuid().ToString('N'))"
+$reproOutput = & (Join-Path $PSScriptRoot 'test_issue_2228.ps1') `
+    -VerifierScriptPath $mockVerifier -OutputDirectory $reproDirectory
+$reproReport = ($reproOutput -join [Environment]::NewLine) | ConvertFrom-Json
+if ($reproReport.classification -ne 'upstream-reported-sigsegv-reproduced' -or
+    $reproReport.targetExitCode -ne 139 -or $reproReport.stdoutBytes -ne 0) {
+    throw 'The mocked #2228 native-crash signature was not classified correctly.'
+}
+
+$fixedDirectory = Join-Path ([IO.Path]::GetTempPath()) "moonsmith-issue-2228-fixed-$([guid]::NewGuid().ToString('N'))"
+$env:MOONSMITH_MOCK_NATIVE_FIXED = '1'
+try {
+    $fixedOutput = & (Join-Path $PSScriptRoot 'test_issue_2228.ps1') `
+        -VerifierScriptPath $mockVerifier -OutputDirectory $fixedDirectory
+} finally {
+    Remove-Item Env:MOONSMITH_MOCK_NATIVE_FIXED -ErrorAction SilentlyContinue
+}
+$fixedReport = ($fixedOutput -join [Environment]::NewLine) | ConvertFrom-Json
+if ($fixedReport.classification -ne 'not-reproduced-on-this-toolchain' -or
+    $fixedReport.targetExitCode -ne 0 -or $fixedReport.stdoutBytes -eq 0) {
+    throw 'The mocked native-success path after a hypothetical fix was not classified correctly.'
+}
+
 $outputDirectory = Join-Path ([IO.Path]::GetTempPath()) "moonsmith-numeric-shrink-unknown-$([guid]::NewGuid().ToString('N'))"
 $unknownReport = Join-Path $outputDirectory 'unknown-depth-500000.json'
 $caught = $false
@@ -7,7 +34,7 @@ $env:MOONSMITH_MOCK_UNKNOWN_AT_500K = '1'
 try {
     & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
         -OutputDirectory $outputDirectory `
-        -VerifierScriptPath (Join-Path $PSScriptRoot 'testdata/issue_2228_mock_verifier.ps1')
+        -VerifierScriptPath $mockVerifier
 } catch {
     $caught = $true
     if ($_.Exception.Message -notmatch 'nativeStatus.*timed-out') {
@@ -31,7 +58,7 @@ if ($report.finding -ne 'mixed-failure' -or $report.nativeStatus -ne 'timed-out'
 $searchDirectory = Join-Path ([IO.Path]::GetTempPath()) "moonsmith-numeric-shrink-boundary-$([guid]::NewGuid().ToString('N'))"
 $searchOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
     -OutputDirectory $searchDirectory `
-    -VerifierScriptPath (Join-Path $PSScriptRoot 'testdata/issue_2228_mock_verifier.ps1')
+    -VerifierScriptPath $mockVerifier
 $searchResult = ($searchOutput -join [Environment]::NewLine) | ConvertFrom-Json
 $partial = $searchResult.checks | Where-Object depth -eq 500000 | Select-Object -First 1
 if ($searchResult.status -ne 'verified_parameter_reduction' -or

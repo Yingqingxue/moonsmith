@@ -128,6 +128,11 @@ directory. A saved injected output mismatch can be replayed with
 For an optional bridge to MoonReduce's text reducer, see
 [`docs/moonreduce_interop.md`](docs/moonreduce_interop.md); MoonSmith remains
 the checker, while MoonReduce performs candidate deletions.
+The interoperability study also includes a separate, bounded MoonSmith
+parameter search on the already public #2228 reproducer. It reduced only the
+recursion-depth value while preserving the native/JS failure signature; this
+single-case experiment is not MoonReduce functionality or a general source
+reducer. See the [recorded metrics and limits](docs/evidence/moonreduce_upstream_2228_numeric_parameter_20261017.md).
 The CI also checks an optional [CaseKit](https://github.com/kaigeliang/moonbit-casekit)
 bridge: it converts captured JS/Wasm stdout into CaseKit v1 transcripts and
 uses CaseKit's comparator as an independent cross-check. The test includes both
