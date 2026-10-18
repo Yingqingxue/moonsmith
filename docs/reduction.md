@@ -63,6 +63,19 @@ source files; the `native-release` target is present in the five-configuration
 matrix. This verifies the upload path as well as configuration, without making
 the injected mismatch evidence of a real compiler bug.
 
+The #1322 regression now has a separate conditional path for exercising the
+AST reducer on the generated probe's real, externally reported native-debug
+compile-failure signature. It runs only on Linux when the generated probe
+actually reproduces that signature; Windows/MSVC is a control and is not
+forced into an injected failure. The check requires a smaller AST and source,
+at least one accepted step, and the same reducer finding, while the reducer
+itself independently checks the baseline and final replay against the same
+failure key. The report and original/minimized corpus sources are included in
+the CI artifact. On this Windows workstation there is no C compiler, so the
+new real-failure branch has not yet run locally; no reduction metrics are
+claimed until a Linux CI run records them. #1322 remains an upstream report,
+not a MoonSmith discovery.
+
 A separate workstation run used a 100-attempt budget on the same deterministic
 seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced
 the source from 2,376 to 1,367 bytes and AST complexity from 39,300 to 11,014,

@@ -239,6 +239,31 @@ if ($generatedExitCode -notin @(0, 1) -or
     throw "Generated #1322 probe produced an unexpected verifier classification. Finding=$($generated.finding); exit=$generatedExitCode; nativeDebug=$generatedNativeDebugClassification"
 }
 
+# Exercise semantic AST reduction against the real, already-public upstream
+# signature when this Linux/GCC runner reproduces it. This is regression
+# evidence for the reducer, not a MoonSmith discovery. Windows/MSVC is a
+# control where the same probe may pass, so do not manufacture an injected
+# failure there just to force a reduction result.
+$generatedProbeReduction = $null
+if ($IsLinux -and
+    $generatedNativeDebugClassification -eq 'upstream-issue-signature-reproduced-in-generated-program') {
+    $reduceScript = Join-Path $PSScriptRoot 'reduce_case.ps1'
+    $global:LASTEXITCODE = 0
+    $reductionRaw = & $reduceScript -Seed 4 -Depth 3 `
+        -Targets $generatedTargets -MaxAttempts 100
+    $reductionExitCode = $LASTEXITCODE
+    if (-not $reductionRaw -or $reductionExitCode -ne 0) {
+        throw "Generated #1322 reducer run failed. Exit=$reductionExitCode"
+    }
+    $generatedProbeReduction = $reductionRaw | ConvertFrom-Json
+    if ($generatedProbeReduction.finding -ne 'compile-failure' -or
+        $generatedProbeReduction.acceptedSteps -lt 1 -or
+        $generatedProbeReduction.finalComplexity -ge $generatedProbeReduction.originalComplexity -or
+        $generatedProbeReduction.finalBytes -ge $generatedProbeReduction.originalBytes) {
+        throw 'AST reduction did not make the real upstream #1322 generated reproducer smaller while preserving its failure signature.'
+    }
+}
+
 $result = [pscustomobject]@{
     upstreamIssue = 1322
     sourceIssue = 'https://github.com/moonbitlang/moonbit-docs/issues/1322'
@@ -262,6 +287,7 @@ $result = [pscustomobject]@{
     generatedProbeExpectedOutput = $generated.expectedOutput
     generatedProbeTargets = @($generated.runs | ForEach-Object target)
     generatedProbeNativeDebugClassification = $generatedNativeDebugClassification
+    generatedProbeReduction = $generatedProbeReduction
     expectedOutput = @('0', 'x')
     outputSource = 'External upstream reproducer; not discovered by MoonSmith.'
 }
