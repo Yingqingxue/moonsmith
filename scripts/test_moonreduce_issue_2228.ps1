@@ -184,8 +184,18 @@ Write-StudySummary ([pscustomobject]@{
         semanticStepProducer = 'MoonSmith, not MoonReduce'
         parameterBefore = [int]$parameterSummary.originalDepth
         parameterAfter = [int]$parameterSummary.reducedDepth
-        adjacentLowerNonReproducing = [int]$parameterSummary.lowerNonReproducingDepth
+        lastObservedNonReproducingDepth = [int]$parameterSummary.lowerNonReproducingDepth
+        binarySearchCandidate = [int]$parameterSummary.binarySearchCandidate
+        stabilityAdjusted = [bool]$parameterSummary.stabilityAdjusted
+        stabilityAdjustmentStep = [int]$parameterSummary.stabilityAdjustmentStep
+        stabilityChecks = @($parameterSummary.stabilityChecks | ForEach-Object {
+            [pscustomobject]@{
+                depth = [int]$_.depth
+                reproducedRuns = [int]$_.reproducedRuns
+            }
+        })
         minimalWithinMonotoneSearchInterval = [bool]$parameterSummary.minimalWithinMonotoneSearchInterval
+        selectedAfterThreeReplayStabilityGate = ([int]$parameterSummary.finalIndependentReplays -eq 3)
         searchChecks = [int]$parameterSummary.searchChecks
         independentParameterReplays = [int]$parameterSummary.finalIndependentReplays
         parameterSourceOnlyChangedAtArgument = [bool]$parameterSummary.sourceChangedOnlyAtDepthArgument

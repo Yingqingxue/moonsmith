@@ -40,3 +40,34 @@ success (printing the depth) while JS still failed. A mistaken expectation of
 classifier distinguishes the exact paired signature, recognized partial
 outcomes, and genuinely unknown outcomes; a mock regression covers these
 branches. The actual hosted result above is from the corrected search.
+
+## Composed MoonReduce → MoonSmith run (2026-10-18)
+
+The interoperability workflow now continues the independently verified
+MoonReduce artifact with the separate MoonSmith integer-parameter search. This
+tests whether the combined workflow can make a real source-level change while
+preserving the same observed issue signature; it does not transfer credit for
+that change to MoonReduce.
+
+- Hosted run: [39100323165](https://github.com/Yingqingxue/moonsmith/actions/runs/39100323165)
+- Pinned MoonReduce stage: 385 → 379 bytes, one accepted deletion, 40 checks;
+  zero non-layout lines changed (`layout-only`).
+- MoonSmith stage input: MoonReduce's verified `reduced.txt`; only the recursion
+  depth argument was changed by the parameter pass.
+- Parameter: 1,000,000 → 533,712; last observed non-reproducing value 523,711.
+- The parameter search used 20 checks; the selected value passed three
+  independent replays, followed by an additional replay of the composed source.
+- Final source: 376 bytes (9 bytes smaller than the original); the final replay
+  retained native exit 139 with empty redirected stdout and the JS stack
+  `RangeError`.
+- `minimalWithinMonotoneSearchInterval` is false for this run. A near-threshold
+  candidate did not pass all independent replays, so the reducer moved upward
+  by a fixed stability step and selected a stable value instead of claiming
+  that the first observed boundary was minimal. The bound is runner/toolchain
+  specific and does not prove a global minimum.
+
+This is a narrow, composed text-plus-integer reduction for the already public
+upstream #2228 reproducer. The semantic parameter change is produced by
+MoonSmith, not MoonReduce; neither stage establishes that MoonSmith discovered
+the issue or that either tool supports general arbitrary-source AST
+minimization.
