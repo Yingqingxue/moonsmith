@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "poolSource": null,
+  "configurationReport": ".\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.configuration.json",
+  "poolCandidateCount": 0,
+  "poolReferencePathKinds": 0,
+  "moonGrammata": {
+    "name": "MoonGrammata integer-seed grammar with synchronous live MoonSmith verifier feedback",
+    "feedbackSource": "synchronous per-Target callback on newly generated or mutated integer seeds; reference trace, finding, backend outcome, source-size bucket, and verifier cost",
+    "generatorMode": "integer-seed-range",
+    "generatedSeedMinimum": 602000,
+    "generatedSeedMaximum": 603000,
+    "liveEvaluations": 8,
+    "liveFailures": 0,
+    "liveGeneratorLimitObservations": 0,
+    "liveReferenceChecks": 8,
+    "liveBackendExecutions": 24,
+    "observations": [
+      {
+        "seed": 602113,
+        "finding": "consistent",
+        "verifierDurationMs": 7305,
+        "sourceLineCount": 7,
+        "generationDurationMs": 453,
+        "referenceEvaluationDurationMs": 587,
+        "referenceTraceDurationMs": 607,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1345,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1259,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1194,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602941,
+        "finding": "consistent",
+        "verifierDurationMs": 6905,
+        "sourceLineCount": 14,
+        "generationDurationMs": 447,
+        "referenceEvaluationDurationMs": 480,
+        "referenceTraceDurationMs": 462,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1235,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1209,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1186,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602382,
+        "finding": "consistent",
+        "verifierDurationMs": 7286,
+        "sourceLineCount": 9,
+        "generationDurationMs": 452,
+        "referenceEvaluationDurationMs": 484,
+        "referenceTraceDurationMs": 504,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-grow",
+          "array-grow-index-0",
+          "array-grow-push",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1333,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1336,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1271,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602901,
+        "finding": "consistent",
+        "verifierDurationMs": 7883,
+        "sourceLineCount": 7,
+        "generationDurationMs": 488,
+        "referenceEvaluationDurationMs": 522,
+        "referenceTraceDurationMs": 467,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1733,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1363,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1294,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602728,
+        "finding": "consistent",
+        "verifierDurationMs": 7659,
+        "sourceLineCount": 14,
+        "generationDurationMs": 504,
+        "referenceEvaluationDurationMs": 522,
+        "referenceTraceDurationMs": 626,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1523,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1275,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1331,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602861,
+        "finding": "consistent",
+        "verifierDurationMs": 6914,
+        "sourceLineCount": 28,
+        "generationDurationMs": 531,
+        "referenceEvaluationDurationMs": 488,
+        "referenceTraceDurationMs": 464,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1248,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1152,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1138,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602688,
+        "finding": "consistent",
+        "verifierDurationMs": 7147,
+        "sourceLineCount": 7,
+        "generationDurationMs": 565,
+        "referenceEvaluationDurationMs": 508,
+        "referenceTraceDurationMs": 490,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "let",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1325,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1230,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1167,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 602515,
+        "finding": "consistent",
+        "verifierDurationMs": 7100,
+        "sourceLineCount": 14,
+        "generationDurationMs": 465,
+        "referenceEvaluationDurationMs": 475,
+        "referenceTraceDurationMs": 473,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1418,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1241,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1151,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ],
+    "liveArtifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.moongrammata.json.artifacts",
+    "liveArtifactCallbackCount": 8,
+    "liveLastError": "",
+    "liveVerifierDurationMs": 58199,
+    "liveCampaignWallClockMs": 59719,
+    "liveGenerationDurationMs": 3905,
+    "liveReferenceEvaluationDurationMs": 4066,
+    "liveReferenceTraceDurationMs": 4093,
+    "liveBackendBuildAndExecutionDurationMs": 30957,
+    "liveVerifierResidualDurationMs": 15178,
+    "liveReferencePathKinds": [
+      "struct-value",
+      "match-true",
+      "choice-number",
+      "int-literal",
+      "bool-literal",
+      "array-grow",
+      "not",
+      "struct-field-flag",
+      "choice-value",
+      "less-than",
+      "struct-result-flag",
+      "array-grow-index-0",
+      "array-grow-push",
+      "struct-field-number",
+      "add",
+      "struct-result-number",
+      "variable",
+      "let",
+      "match-bool"
+    ],
+    "liveFindings": "consistent",
+    "liveBackendOutcomes": [
+      "js:succeeded:0",
+      "wasm-gc:succeeded:0",
+      "wasm:succeeded:0"
+    ],
+    "liveSourceSizeBuckets": "under-50",
+    "verifierKind": "scripts/verify_seed.ps1",
+    "poolSize": 0,
+    "seed": 20261303,
+    "requestedExecutions": 8,
+    "completedExecutions": 8,
+    "targetExecutionOrder": [
+      602113,
+      602941,
+      602382,
+      602901,
+      602728,
+      602861,
+      602688,
+      602515
+    ],
+    "uniqueCandidatesObserved": 8,
+    "selectedSeeds": [
+      602113,
+      602941,
+      602382,
+      602901,
+      602728,
+      602861,
+      602688,
+      602515
+    ],
+    "distinctReferencePathKinds": 19,
+    "sourceSizeQuartileCounts": {},
+    "uniqueFeedbackFeatures": 24,
+    "uniqueFeedbackSignatures": 7,
+    "mutationFailures": 0,
+    "corpusEntries": 7
+  },
+  "moonSmith": {
+    "baselineSelectedSeeds": null,
+    "baselineDistinctReferencePathKinds": null,
+    "semanticGuidedSelectedSeeds": null,
+    "semanticGuidedDistinctReferencePathKinds": null,
+    "prescreenDurationMs": null,
+    "selectedExecutionBudget": null,
+    "backendExecutionsPerArm": null,
+    "sizeQuartilesMatched": null,
+    "commonUniqueCandidateBudget": null,
+    "commonUniqueCandidateCountsByQuartile": {},
+    "baselinePathKindsAtCommonUniqueBudget": null,
+    "semanticGuidedPathKindsAtCommonUniqueBudget": null,
+    "moonGrammataPathKindsAtCommonUniqueBudget": null,
+    "baselineMatchedQuartileCounts": null,
+    "semanticGuidedMatchedQuartileCounts": null,
+    "moonGrammataMatchedQuartileCounts": null
+  },
+  "liveVerification": null,
+  "interpretation": "Live integer-seed grammar prototype: MoonGrammata generates and mutates seed IDs from the declared numeric range; each Target callback regenerates the MoonSmith program for that seed and synchronously returns verifier findings before scheduling continues. No precomputed candidate outcomes are fed to the target. The run has no matched offline control and does not establish effectiveness or throughput superiority.",
+  "moonGrammataRevision": "d9cf3512b636fd45e941f30010d3fceb7cc2e4fc",
+  "moonGrammataVersion": "0.1.1",
+  "moonGrammataApi": "GrammarBuilder::integer + CampaignConfig + run_campaign; isolated benchmark dependency"
+}

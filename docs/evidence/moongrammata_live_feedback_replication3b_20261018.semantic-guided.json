@@ -1,0 +1,1455 @@
+{
+  "schemaVersion": 1,
+  "arm": "semantic-guided",
+  "selectionImplementation": "live-control-policy-v1",
+  "selectionRule": "maximum unseen reference-path kinds per source line within first valid candidate size band; ties by count then ascending seed",
+  "seedStart": 601000,
+  "seedEndExclusive": 601032,
+  "proposalOrderSeed": 20261302,
+  "executionBudget": 8,
+  "proposalBatchSize": 4,
+  "proposalCount": 32,
+  "selectedCount": 8,
+  "configuredTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "depth": 1,
+  "timeoutSecondsPerTarget": 30,
+  "backendChecks": 24,
+  "backendExecutionAttempts": 24,
+  "distinctSelectedReferencePathKinds": 20,
+  "findings": {
+    "consistent": 8
+  },
+  "generatorLimitProposals": 0,
+  "proposalGenerationDurationMs": 16357,
+  "proposalReferenceEvaluationDurationMs": 15559,
+  "proposalReferenceTraceDurationMs": 15748,
+  "selectedCandidateVerifierWallClockMs": 46553,
+  "campaignWallClockMs": 94436,
+  "candidateProposalWorkIsChargedToCampaign": true,
+  "artifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts",
+  "candidateSourcesAndReferenceTracesPreserved": true,
+  "semanticFeedbackUsesOnlyPreviouslySelectedReferencePaths": true,
+  "selectedSourceSizeBandCounts": [
+    {
+      "band": "lt50",
+      "count": 8
+    }
+  ],
+  "perArmCases": [
+    {
+      "round": 0,
+      "policy": "semantic-guided",
+      "seed": 601020,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601007,
+        601020,
+        601019,
+        601030
+      ],
+      "proposalWindowStatuses": [
+        "601007:checked",
+        "601020:checked",
+        "601019:checked",
+        "601030:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 1.0,
+      "novelPathKindCount": 4,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "f25cfdcf6e2809be43cb0695dd13811f0b757a90a01b1b079a3262d2d59456ae",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "seenPathKindsBeforeSelection": [],
+      "newlyCoveredPathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-10\n",
+          "error": "",
+          "durationMs": 1287,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-10\n",
+          "error": "",
+          "durationMs": 1352,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-10\n",
+          "error": "",
+          "durationMs": 1421,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5901
+    },
+    {
+      "round": 1,
+      "policy": "semantic-guided",
+      "seed": 601010,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601017,
+        601010,
+        601024,
+        601021
+      ],
+      "proposalWindowStatuses": [
+        "601017:checked",
+        "601010:checked",
+        "601024:checked",
+        "601021:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.38461538461538464,
+      "novelPathKindCount": 5,
+      "sourceLineCount": 13,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "bab94d1a86845fc90a31eeff32796babcc43092c9f64cc9c6f9c985365ed099e",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "newlyCoveredPathKinds": [
+        "add",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-7\n",
+          "error": "",
+          "durationMs": 1278,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-7\n",
+          "error": "",
+          "durationMs": 1198,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-7\n",
+          "error": "",
+          "durationMs": 1170,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5818
+    },
+    {
+      "round": 2,
+      "policy": "semantic-guided",
+      "seed": 601005,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601027,
+        601005,
+        601029,
+        601018
+      ],
+      "proposalWindowStatuses": [
+        "601027:checked",
+        "601005:checked",
+        "601029:checked",
+        "601018:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.15,
+      "novelPathKindCount": 3,
+      "sourceLineCount": 20,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "151cfb86c28b7f13fa9163eb2ae354c1953ff4228d583af0933d9e4a99908d06",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "variable"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "and",
+        "and-rhs-executed",
+        "function-call"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1400,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1233,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1244,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5805
+    },
+    {
+      "round": 3,
+      "policy": "semantic-guided",
+      "seed": 601013,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601004,
+        601013,
+        601023,
+        601022
+      ],
+      "proposalWindowStatuses": [
+        "601004:checked",
+        "601013:checked",
+        "601023:checked",
+        "601022:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.25,
+      "novelPathKindCount": 1,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "5079751e4e140503571dfc5c81874085bc54e1c21a60959c7187b8059ca0045a",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "not"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1294,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1388,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1196,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5774
+    },
+    {
+      "round": 4,
+      "policy": "semantic-guided",
+      "seed": 601002,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601008,
+        601028,
+        601011,
+        601002
+      ],
+      "proposalWindowStatuses": [
+        "601008:checked",
+        "601028:checked",
+        "601011:checked",
+        "601002:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.14285714285714285,
+      "novelPathKindCount": 1,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "4d36d128d690c1f86f311113c85b1e35b8dcc28cf04cbfd1172d1791d57ee305",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "if",
+        "if-then",
+        "int-literal",
+        "not",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "let"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "8\n",
+          "error": "",
+          "durationMs": 1345,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "8\n",
+          "error": "",
+          "durationMs": 1282,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "8\n",
+          "error": "",
+          "durationMs": 1244,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5774
+    },
+    {
+      "round": 5,
+      "policy": "semantic-guided",
+      "seed": 601014,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601012,
+        601000,
+        601014,
+        601009
+      ],
+      "proposalWindowStatuses": [
+        "601012:checked",
+        "601000:checked",
+        "601014:checked",
+        "601009:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.3333333333333333,
+      "novelPathKindCount": 3,
+      "sourceLineCount": 9,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "34d72ca74ac1bdf27a4e5d15d1d2a93ef2f05094f1f7e30ce89f5f3792566a12",
+      "referencePathKinds": [
+        "add",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "int-literal",
+        "variable"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "if",
+        "if-then",
+        "int-literal",
+        "let",
+        "not",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "27\n",
+          "error": "",
+          "durationMs": 1246,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "27\n",
+          "error": "",
+          "durationMs": 1242,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "27\n",
+          "error": "",
+          "durationMs": 1233,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 6191
+    },
+    {
+      "round": 6,
+      "policy": "semantic-guided",
+      "seed": 601031,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601015,
+        601026,
+        601031,
+        601003
+      ],
+      "proposalWindowStatuses": [
+        "601015:checked",
+        "601026:checked",
+        "601031:checked",
+        "601003:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.25,
+      "novelPathKindCount": 1,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "f0a70e1c936aa67dded06b7095614de1424ee4a17b035ec315cd031bc868c124",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "function-call",
+        "if",
+        "if-then",
+        "int-literal",
+        "let",
+        "not",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "less-than"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1337,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1288,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1240,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5705
+    },
+    {
+      "round": 7,
+      "policy": "semantic-guided",
+      "seed": 601025,
+      "proposalOrderSeed": 20261302,
+      "proposalWindowSeeds": [
+        601006,
+        601016,
+        601001,
+        601025
+      ],
+      "proposalWindowStatuses": [
+        "601006:checked",
+        "601016:checked",
+        "601001:checked",
+        "601025:checked"
+      ],
+      "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+      "noveltyScore": 0.07142857142857142,
+      "novelPathKindCount": 2,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "e53e828b44fcffff5b6ced1efeaba25f9144557e25416304ee539def370a80b2",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "add",
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "function-call",
+        "if",
+        "if-then",
+        "int-literal",
+        "less-than",
+        "let",
+        "not",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "newlyCoveredPathKinds": [
+        "choice-number",
+        "choice-value"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1311,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1180,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1201,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5585
+    }
+  ],
+  "proposalOutcomes": [
+    {
+      "seed": 601007,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 457,
+      "referenceEvaluationDurationMs": 447,
+      "referenceTraceDurationMs": 450,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601007.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601007.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601007.trace.json"
+    },
+    {
+      "seed": 601020,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 456,
+      "referenceEvaluationDurationMs": 452,
+      "referenceTraceDurationMs": 455,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601020.mbt",
+      "expectedOutput": "-10\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601020.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601020.trace.json"
+    },
+    {
+      "seed": 601019,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 449,
+      "referenceEvaluationDurationMs": 453,
+      "referenceTraceDurationMs": 462,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601019.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601019.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601019.trace.json"
+    },
+    {
+      "seed": 601030,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 448,
+      "referenceEvaluationDurationMs": 455,
+      "referenceTraceDurationMs": 444,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601030.mbt",
+      "expectedOutput": "-4\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601030.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601030.trace.json"
+    },
+    {
+      "seed": 601017,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 451,
+      "referenceEvaluationDurationMs": 479,
+      "referenceTraceDurationMs": 487,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601017.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601017.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601017.trace.json"
+    },
+    {
+      "seed": 601010,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 496,
+      "referenceEvaluationDurationMs": 466,
+      "referenceTraceDurationMs": 497,
+      "sourceLineCount": 13,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601010.mbt",
+      "expectedOutput": "-7\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601010.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601010.trace.json"
+    },
+    {
+      "seed": 601024,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 465,
+      "referenceEvaluationDurationMs": 451,
+      "referenceTraceDurationMs": 485,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601024.mbt",
+      "expectedOutput": "5\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601024.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601024.trace.json"
+    },
+    {
+      "seed": 601021,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 496,
+      "referenceEvaluationDurationMs": 492,
+      "referenceTraceDurationMs": 458,
+      "sourceLineCount": 31,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "function-call",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601021.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601021.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601021.trace.json"
+    },
+    {
+      "seed": 601027,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 492,
+      "referenceEvaluationDurationMs": 494,
+      "referenceTraceDurationMs": 574,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601027.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601027.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601027.trace.json"
+    },
+    {
+      "seed": 601005,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 589,
+      "referenceEvaluationDurationMs": 517,
+      "referenceTraceDurationMs": 481,
+      "sourceLineCount": 20,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601005.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601005.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601005.trace.json"
+    },
+    {
+      "seed": 601029,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 763,
+      "referenceEvaluationDurationMs": 562,
+      "referenceTraceDurationMs": 593,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-skipped",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601029.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601029.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601029.trace.json"
+    },
+    {
+      "seed": 601018,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 615,
+      "referenceEvaluationDurationMs": 472,
+      "referenceTraceDurationMs": 460,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601018.mbt",
+      "expectedOutput": "3\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601018.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601018.trace.json"
+    },
+    {
+      "seed": 601004,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 476,
+      "referenceEvaluationDurationMs": 457,
+      "referenceTraceDurationMs": 501,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601004.mbt",
+      "expectedOutput": "23\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601004.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601004.trace.json"
+    },
+    {
+      "seed": 601013,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 464,
+      "referenceEvaluationDurationMs": 454,
+      "referenceTraceDurationMs": 455,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601013.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601013.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601013.trace.json"
+    },
+    {
+      "seed": 601023,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 569,
+      "referenceEvaluationDurationMs": 663,
+      "referenceTraceDurationMs": 474,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601023.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601023.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601023.trace.json"
+    },
+    {
+      "seed": 601022,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 448,
+      "referenceEvaluationDurationMs": 458,
+      "referenceTraceDurationMs": 495,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601022.mbt",
+      "expectedOutput": "18\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601022.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601022.trace.json"
+    },
+    {
+      "seed": 601008,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 449,
+      "referenceEvaluationDurationMs": 455,
+      "referenceTraceDurationMs": 449,
+      "sourceLineCount": 13,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601008.mbt",
+      "expectedOutput": "17\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601008.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601008.trace.json"
+    },
+    {
+      "seed": 601028,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 484,
+      "referenceEvaluationDurationMs": 459,
+      "referenceTraceDurationMs": 462,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601028.mbt",
+      "expectedOutput": "20\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601028.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601028.trace.json"
+    },
+    {
+      "seed": 601011,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 450,
+      "referenceEvaluationDurationMs": 452,
+      "referenceTraceDurationMs": 451,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601011.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601011.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601011.trace.json"
+    },
+    {
+      "seed": 601002,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 487,
+      "referenceEvaluationDurationMs": 447,
+      "referenceTraceDurationMs": 460,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601002.mbt",
+      "expectedOutput": "8\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601002.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601002.trace.json"
+    },
+    {
+      "seed": 601012,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 455,
+      "referenceEvaluationDurationMs": 469,
+      "referenceTraceDurationMs": 463,
+      "sourceLineCount": 13,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601012.mbt",
+      "expectedOutput": "92\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601012.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601012.trace.json"
+    },
+    {
+      "seed": 601000,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 447,
+      "referenceEvaluationDurationMs": 508,
+      "referenceTraceDurationMs": 452,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601000.mbt",
+      "expectedOutput": "-7\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601000.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601000.trace.json"
+    },
+    {
+      "seed": 601014,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 450,
+      "referenceEvaluationDurationMs": 453,
+      "referenceTraceDurationMs": 454,
+      "sourceLineCount": 9,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "int-literal",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601014.mbt",
+      "expectedOutput": "27\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601014.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601014.trace.json"
+    },
+    {
+      "seed": 601009,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 455,
+      "referenceEvaluationDurationMs": 452,
+      "referenceTraceDurationMs": 449,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601009.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601009.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601009.trace.json"
+    },
+    {
+      "seed": 601015,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 592,
+      "referenceEvaluationDurationMs": 509,
+      "referenceTraceDurationMs": 523,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "not"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601015.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601015.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601015.trace.json"
+    },
+    {
+      "seed": 601026,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 520,
+      "referenceEvaluationDurationMs": 587,
+      "referenceTraceDurationMs": 635,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601026.mbt",
+      "expectedOutput": "-8\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601026.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601026.trace.json"
+    },
+    {
+      "seed": 601031,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 941,
+      "referenceEvaluationDurationMs": 647,
+      "referenceTraceDurationMs": 750,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601031.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601031.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601031.trace.json"
+    },
+    {
+      "seed": 601003,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 476,
+      "referenceEvaluationDurationMs": 495,
+      "referenceTraceDurationMs": 538,
+      "sourceLineCount": 20,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601003.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601003.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601003.trace.json"
+    },
+    {
+      "seed": 601006,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 573,
+      "referenceEvaluationDurationMs": 491,
+      "referenceTraceDurationMs": 521,
+      "sourceLineCount": 13,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "int-literal",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601006.mbt",
+      "expectedOutput": "104\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601006.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601006.trace.json"
+    },
+    {
+      "seed": 601016,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 536,
+      "referenceEvaluationDurationMs": 454,
+      "referenceTraceDurationMs": 458,
+      "sourceLineCount": 9,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "add",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "int-literal",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601016.mbt",
+      "expectedOutput": "-38\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601016.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601016.trace.json"
+    },
+    {
+      "seed": 601001,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 454,
+      "referenceEvaluationDurationMs": 457,
+      "referenceTraceDurationMs": 454,
+      "sourceLineCount": 20,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "function-call",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601001.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601001.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601001.trace.json"
+    },
+    {
+      "seed": 601025,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 454,
+      "referenceEvaluationDurationMs": 452,
+      "referenceTraceDurationMs": 458,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601025.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601025.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication3b_20261018.semantic-guided.json.artifacts\\candidate_601025.trace.json"
+    }
+  ],
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "caveat": "Equal proposal count, backend-check budget, target matrix, depth, and per-target timeout are enforced per arm. Candidate preflight generation/reference/trace runs add cost and are reported. The proposal order is deterministically shuffled from the recorded per-arm seed; arms use disjoint candidate seed windows and separate order seeds, and share no candidate or backend results. No equal wall-clock throughput claim is implied."
+}
