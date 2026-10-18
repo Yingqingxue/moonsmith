@@ -19,19 +19,26 @@ param(
     [switch]$NoPersist
 )
 $diverges = $Seed % 2 -eq 0
-$report = [pscustomobject]@{
-    seed = $Seed
-    referenceChecked = $true
-    finding = if ($diverges) { 'output-mismatch' } else { 'consistent' }
-    referenceTrace = [pscustomobject]@{ visited = @("live-only-seed-$Seed") }
-    runs = @($Targets | ForEach-Object {
-        $failed = $diverges -and $_ -eq 'wasm-gc'
-        [pscustomobject]@{
-            target = $_
+$generatorLimit = $Seed % 7 -eq 0
+$runs = [System.Collections.Generic.List[object]]::new()
+if (-not $generatorLimit) {
+    foreach ($target in $Targets) {
+        $failed = $diverges -and $target -eq 'wasm-gc'
+        $runs.Add([pscustomobject]@{
+            target = $target
             status = if ($failed) { 'runtime-failed' } else { 'succeeded' }
             exitCode = if ($failed) { 1 } else { 0 }
-        }
-    })
+            executionAttempted = $true
+        })
+    }
+}
+$report = [pscustomobject]@{
+    seed = $Seed
+    referenceChecked = -not $generatorLimit
+    sourceLineCount = 40 + ($Seed % 60)
+    finding = if ($generatorLimit) { 'generator-limit' } elseif ($diverges) { 'output-mismatch' } else { 'consistent' }
+    referenceTrace = if ($generatorLimit) { $null } else { [pscustomobject]@{ visited = @("live-only-seed-$Seed") } }
+    runs = $runs.ToArray()
 }
 $report | ConvertTo-Json -Depth 5 -Compress
 if ($diverges) { exit 1 }
@@ -90,13 +97,19 @@ if ($diverges) { exit 1 }
     [IO.File]::WriteAllText($inputPath, ($fixture | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
     $outputPath = Join-Path $testRoot 'live-result.json'
     $staticOutputPath = Join-Path $testRoot 'static-result.json'
+    $generatedOutputPath = Join-Path $testRoot 'generated-live-result.json'
     $null = & $runner -InputReport $inputPath -ExecutionBudget $ExecutionBudget `
         -Seed $Seed -OutputPath $staticOutputPath
     if ($LASTEXITCODE -ne 0) { throw 'MoonGrammata cached-feedback control failed.' }
     $null = & $runner -InputReport $inputPath -ExecutionBudget $ExecutionBudget `
         -Seed $Seed -OutputPath $outputPath -LiveTarget -LiveVerifierScript $mockVerifier
     if ($LASTEXITCODE -ne 0) { throw 'MoonGrammata live-target runner failed.' }
+    $null = & $runner -InputReport $inputPath -ExecutionBudget $ExecutionBudget `
+        -Seed $Seed -OutputPath $generatedOutputPath -LiveGeneratedSeeds `
+        -GeneratedSeedMinimum 100000 -GeneratedSeedMaximum 1000000 -LiveVerifierScript $mockVerifier
+    if ($LASTEXITCODE -ne 0) { throw 'MoonGrammata live-generated-seed runner failed.' }
     $result = Get-Content -LiteralPath $outputPath -Raw -Encoding utf8 | ConvertFrom-Json
+    $generatedResult = Get-Content -LiteralPath $generatedOutputPath -Raw -Encoding utf8 | ConvertFrom-Json
     $staticResult = Get-Content -LiteralPath $staticOutputPath -Raw -Encoding utf8 | ConvertFrom-Json
     $pool = Get-Content -LiteralPath $inputPath -Raw -Encoding utf8 | ConvertFrom-Json
     $poolPaths = @($pool.candidatePool | ForEach-Object { $_.paths } | Sort-Object -Unique)
@@ -127,6 +140,13 @@ if ($diverges) { exit 1 }
     if ($livePaths.Count -le 0 -or
         @($result.moonGrammata.liveFindings) -notcontains 'consistent' -or
         @($result.moonGrammata.liveFindings) -notcontains 'output-mismatch' -or
+        @($result.moonGrammata.liveFindings) -notcontains 'generator-limit' -or
+        [int]$result.moonGrammata.liveGeneratorLimitObservations -ne
+            @($result.moonGrammata.targetExecutionOrder | Where-Object { $_ % 7 -eq 0 }).Count -or
+        [int]$result.moonGrammata.liveReferenceChecks -ne
+            ($ExecutionBudget - [int]$result.moonGrammata.liveGeneratorLimitObservations) -or
+        [int]$result.moonGrammata.liveBackendExecutions -ne
+            ($ExecutionBudget - [int]$result.moonGrammata.liveGeneratorLimitObservations) * 3 -or
         @($result.moonGrammata.liveBackendOutcomes) -notcontains 'wasm-gc:runtime-failed:1' -or
         @($result.moonGrammata.liveBackendOutcomes | Where-Object { $_ -notlike 'wasm-gc:runtime-failed:1' -and $_ -notlike '*:succeeded:0' }).Count -gt 0 -or
         @($livePaths | Where-Object { $_ -notlike 'live-only-seed-*' }).Count -gt 0 -or
@@ -164,6 +184,30 @@ if ($diverges) { exit 1 }
     if (-not $staleRejected -or (Test-Path -LiteralPath $staleOutputPath)) {
         throw 'Live target mode did not reject stale generated-pool metadata before writing a result.'
     }
+    $generatedOrder = @($generatedResult.moonGrammata.targetExecutionOrder)
+    if ($generatedResult.moonGrammata.generatorMode -ne 'integer-seed-range' -or
+        $generatedResult.moonGrammataApi -notlike 'GrammarBuilder::integer*' -or
+        $generatedResult.moonGrammata.poolSize -ne 0 -or
+        $null -ne $generatedResult.moonGrammata.selectedSeeds -and
+            @($generatedResult.moonGrammata.selectedSeeds | Where-Object { $_ -lt 100000 -or $_ -gt 1000000 }).Count -gt 0 -or
+        $generatedOrder.Count -ne $ExecutionBudget -or
+        @($generatedOrder | Where-Object { $_ -lt 100000 -or $_ -gt 1000000 }).Count -gt 0 -or
+        [int]$generatedResult.moonGrammata.liveEvaluations -ne $ExecutionBudget -or
+        [int]$generatedResult.moonGrammata.liveFailures -ne 0 -or
+        [int]$generatedResult.moonGrammata.liveGeneratorLimitObservations -ne
+            @($generatedOrder | Where-Object { $_ % 7 -eq 0 }).Count -or
+        [int]$generatedResult.moonGrammata.liveReferenceChecks -ne
+            ($ExecutionBudget - [int]$generatedResult.moonGrammata.liveGeneratorLimitObservations) -or
+        [int]$generatedResult.moonGrammata.liveBackendExecutions -ne
+            ($ExecutionBudget - [int]$generatedResult.moonGrammata.liveGeneratorLimitObservations) * 3 -or
+        @($generatedResult.moonGrammata.liveSourceSizeBuckets).Count -eq 0 -or
+        $null -ne $generatedResult.moonSmith.commonUniqueCandidateBudget -or
+        $generatedResult.interpretation -notlike 'Live integer-seed grammar prototype:*') {
+        throw 'Integer grammar mode did not generate in-range inputs, return live feedback, or suppress invalid comparisons.'
+    }
+    if (@($generatedOrder | Where-Object { $_ -in $pool.candidatePool.seed }).Count -gt 0) {
+        throw 'Integer grammar mode unexpectedly reused an identifier from the cached candidate pool.'
+    }
     [pscustomobject]@{
         passed = $true
         executionBudget = $ExecutionBudget
@@ -171,6 +215,9 @@ if ($diverges) { exit 1 }
         postInitialScheduleChanged = $true
         mockVerifierUsed = $true
         stalePoolRejected = $staleRejected
+        generatedSeedModePassed = $true
+        generatedSeedRange = '100000..1000000'
+        generatedLimitObservations = [int]$generatedResult.moonGrammata.liveGeneratorLimitObservations
         onlinePathFeatureCount = $livePaths.Count
         liveDurationRecorded = ([long]$result.moonGrammata.liveVerifierDurationMs -ge 0)
         fixedPoolCaveatRetained = $true

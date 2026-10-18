@@ -56,21 +56,29 @@ extern "js" fn invoke_live_verifier(
   #|   let report;
   #|   try { report = JSON.parse((result.stdout || "").trim()); }
   #|   catch (error) { return "ERROR\tinvalid verifier JSON\t" + String(error); }
-  #|   if (report.seed !== seed || !report.referenceChecked ||
-  #|       !report.referenceTrace || !Array.isArray(report.referenceTrace.visited) ||
-  #|       !Array.isArray(report.runs) || report.runs.length !== targetNames.length) {
+  #|   const sizeOnly = report.finding === "generator-limit" &&
+  #|     !report.referenceChecked && Number.isInteger(report.sourceLineCount) &&
+  #|     Array.isArray(report.runs) && report.runs.length === 0;
+  #|   if (report.seed !== seed || !Number.isInteger(report.sourceLineCount) ||
+  #|       (!sizeOnly && (!report.referenceChecked || !report.referenceTrace ||
+  #|       !Array.isArray(report.referenceTrace.visited) ||
+  #|       !Array.isArray(report.runs) || report.runs.length !== targetNames.length))) {
   #|     return "ERROR\tincomplete verifier report seed=" + String(report.seed) +
   #|       " ref=" + String(report.referenceChecked) + " paths=" +
   #|       String(report.referenceTrace && Array.isArray(report.referenceTrace.visited)) +
   #|       " runs=" + String(report.runs && report.runs.length) +
   #|       " expected=" + String(targetNames.length);
   #|   }
-  #|   const lines = ["OK\t" + report.finding + "\t" + elapsed];
+  #|   const lines = ["OK\t" + report.finding + "\t" + elapsed + "\t" +
+  #|     String(report.sourceLineCount)];
+  #|   lines.push("SIZE\t" + report.sourceLineCount);
+  #|   if (sizeOnly) return lines.join("\n");
   #|   for (const path of [...new Set(report.referenceTrace.visited)].sort()) {
   #|     lines.push("PATH\t" + String(path));
   #|   }
   #|   for (const run of report.runs) {
-  #|     lines.push("BACKEND\t" + run.target + "\t" + run.status + "\t" + run.exitCode);
+  #|     lines.push("BACKEND\t" + run.target + "\t" + run.status + "\t" +
+  #|       run.exitCode + "\t" + String(Boolean(run.executionAttempted)));
   #|   }
   #|   return lines.join("\n");
   #| }
@@ -116,20 +124,34 @@ fn parse_candidate(spec : String) -> Candidate {
 ///|
 fn main {
   let raw_args = cli_args()
-  let live_mode = raw_args.length() > 0 && raw_args[0] == "live"
+  let live_pool_mode = raw_args.length() > 0 && raw_args[0] == "live"
+  let live_generated_mode = raw_args.length() > 0 &&
+    raw_args[0] == "live-generated"
+  let live_mode = live_pool_mode || live_generated_mode
   let args = if live_mode { raw_args[1:] } else { raw_args }
-  let config_count = if live_mode { 4 } else { 0 }
-  if args.length() < 3 + config_count + 2 {
+  let config_count = if live_pool_mode {
+    4
+  } else if live_generated_mode {
+    6
+  } else {
+    0
+  }
+  let candidate_count = if live_generated_mode { 0 } else { 2 }
+  if args.length() < 3 + config_count + candidate_count {
     abort(
-      "usage: moon run cmd/main -- [live] EXECUTIONS SEED PATHS_CSV " +
-      "[VERIFY_SCRIPT TARGETS_CSV DEPTH TIMEOUT_SECONDS] CANDIDATE...",
+      "usage: moon run cmd/main -- [live|live-generated] EXECUTIONS SEED PATHS_CSV " +
+      "[VERIFY_SCRIPT TARGETS_CSV DEPTH TIMEOUT_SECONDS [SEED_MIN SEED_MAX]] CANDIDATE...",
     )
   }
   let executions = parse_int(args[0], "execution budget")
   let seed = @string.parse_int64(args[1]) catch {
     _ => abort("invalid campaign seed")
   }
-  let paths = args[2].split(",").map(value => value.to_owned()).to_array()
+  let paths = if args[2] == "-" {
+    []
+  } else {
+    args[2].split(",").map(value => value.to_owned()).to_array()
+  }
   let verify_script = if live_mode { args[3] } else { "" }
   let targets_csv = if live_mode { args[4] } else { "" }
   let depth = if live_mode { parse_int(args[5], "depth") } else { 0 }
@@ -138,12 +160,30 @@ fn main {
   } else {
     0
   }
-  let candidate_start = if live_mode { 7 } else { 3 }
+  let seed_minimum = if live_generated_mode {
+    parse_int(args[7], "minimum generator seed")
+  } else {
+    0
+  }
+  let seed_maximum = if live_generated_mode {
+    parse_int(args[8], "maximum generator seed")
+  } else {
+    0
+  }
+  let candidate_start = if live_pool_mode {
+    7
+  } else if live_generated_mode {
+    9
+  } else {
+    3
+  }
   let candidates : Array[Candidate] = []
   for spec in args[candidate_start:] {
     candidates.push(parse_candidate(spec))
   }
-  if executions <= 0 || candidates.length() < 2 || paths.is_empty() {
+  if executions <= 0 ||
+    (!live_generated_mode && candidates.length() < 2) ||
+    (!live_generated_mode && paths.is_empty()) {
     abort("need positive budget, at least two candidates, and path labels")
   }
   if live_mode &&
@@ -157,6 +197,9 @@ fn main {
       "live mode requires verifier, targets, nonnegative depth, and positive timeout",
     )
   }
+  if live_generated_mode && (seed_minimum < 0 || seed_maximum < seed_minimum) {
+    abort("generated seed range must be nonnegative and ordered")
+  }
   for candidate in candidates {
     if candidate.size_quartile < 0 || candidate.size_quartile > 3 {
       abort("candidate size quartile must be 0..3")
@@ -167,10 +210,16 @@ fn main {
       }
     }
   }
-  let values = candidates.map(candidate => candidate.seed.to_string())
   let builder = @grammata.GrammarBuilder::new()
-  let pool_rule = builder.dictionary(values, name="frozen-candidate-id")
-  let grammar = builder.set_start(pool_rule).build().unwrap()
+  let start_rule = if live_generated_mode {
+    builder.integer(seed_minimum, seed_maximum, name="moonsmith-generator-seed")
+  } else {
+    builder.dictionary(
+      candidates.map(candidate => candidate.seed.to_string()),
+      name="frozen-candidate-id",
+    )
+  }
+  let grammar = builder.set_start(start_rule).build().unwrap()
   let observed : @hashmap.HashMap[Int, Unit] = @hashmap.HashMap([])
   let observed_order : Array[Int] = []
   let target_execution_order : Array[Int] = []
@@ -178,13 +227,20 @@ fn main {
   let live_findings : @hashmap.HashMap[String, Unit] = @hashmap.HashMap([])
   let live_backend_outcomes : @hashmap.HashMap[String, Unit] = @hashmap.HashMap([],
   )
+  let live_source_size_buckets : @hashmap.HashMap[String, Unit] = @hashmap.HashMap([],
+  )
   let mut live_evaluations = 0
   let mut live_failures = 0
+  let mut live_generator_limits = 0
+  let mut live_reference_checks = 0
+  let mut live_backend_executions = 0
   let mut live_duration_ms = 0
   let mut live_last_error = ""
   let target = @grammata.Target::new(
-    if live_mode {
-      "moonsmith-live-verifier"
+    if live_generated_mode {
+      "moonsmith-live-generated-seed-verifier"
+    } else if live_mode {
+      "moonsmith-live-pool-verifier"
     } else {
       "moonsmith-frozen-candidate-pool"
     },
@@ -196,27 +252,33 @@ fn main {
         _ => return @grammata.rejected("invalid-candidate-id")
       }
       let mut candidate : Candidate? = None
-      for entry in candidates {
-        if entry.seed == id {
-          candidate = Some(entry)
-          break
+      if !live_generated_mode {
+        for entry in candidates {
+          if entry.seed == id {
+            candidate = Some(entry)
+            break
+          }
         }
       }
-      let candidate = match candidate {
+      let candidate_quartile = match candidate {
+        None if live_generated_mode => -1
         None => return @grammata.rejected("candidate-outside-frozen-pool")
-        Some(value) => value
+        Some(value) => value.size_quartile
       }
       target_execution_order.push(id)
       if !observed.contains(id) {
         observed.set(id, ())
         observed_order.push(id)
       }
-      let features : Array[@grammata.Feature] = [
-        @grammata.feature(
-          "source-size-quartile",
-          candidate.size_quartile.to_string(),
-        ),
-      ]
+      let features : Array[@grammata.Feature] = []
+      if candidate_quartile >= 0 {
+        features.push(
+          @grammata.feature(
+            "source-size-quartile",
+            candidate_quartile.to_string(),
+          ),
+        )
+      }
       if live_mode {
         live_evaluations += 1
         let response = invoke_live_verifier(
@@ -230,7 +292,7 @@ fn main {
           .split("\t")
           .map(value => value.to_owned())
           .to_array()
-        if first[0] != "OK" || first.length() != 3 {
+        if first[0] != "OK" || first.length() != 4 {
           live_failures += 1
           live_last_error = response
             .split("\n")
@@ -240,20 +302,41 @@ fn main {
         }
         let finding = first[1]
         live_findings.set(finding, ())
+        if finding == "generator-limit" {
+          live_generator_limits += 1
+        } else {
+          live_reference_checks += 1
+        }
         let duration_ms = parse_int(first[2], "live verifier duration")
+        let source_lines = parse_int(
+          first[3],
+          "live verifier source-line count",
+        )
         live_duration_ms += duration_ms
         features.push(@grammata.feature("live-finding", finding))
+        let size_bucket = if source_lines < 50 {
+          "under-50"
+        } else if source_lines < 100 {
+          "50-to-99"
+        } else {
+          "100-or-more"
+        }
+        live_source_size_buckets.set(size_bucket, ())
+        features.push(@grammata.feature("source-size-bucket", size_bucket))
         for line in lines[1:] {
           let parts = line.split("\t").map(value => value.to_owned()).to_array()
           if parts.length() == 2 && parts[0] == "PATH" {
             let path = parts[1]
             live_observed_paths.set(path, ())
             features.push(@grammata.feature("reference-path", path))
-          } else if parts.length() == 4 && parts[0] == "BACKEND" {
+          } else if parts.length() == 5 && parts[0] == "BACKEND" {
             live_backend_outcomes.set(
               parts[1] + ":" + parts[2] + ":" + parts[3],
               (),
             )
+            if parts[4] == "true" {
+              live_backend_executions += 1
+            }
             features.push(
               @grammata.feature(
                 "backend-outcome",
@@ -267,8 +350,14 @@ fn main {
           cost_class=(duration_ms / 1000).max(0),
         )
       }
-      for path_id in candidate.path_ids {
-        features.push(@grammata.feature("reference-path", paths[path_id]))
+      if !live_mode {
+        match candidate {
+          None => ()
+          Some(value) =>
+            for path_id in value.path_ids {
+              features.push(@grammata.feature("reference-path", paths[path_id]))
+            }
+        }
       }
       @grammata.accepted(features~)
     },
@@ -282,7 +371,9 @@ fn main {
   let result = @grammata.run_campaign(grammar, target, config).unwrap()
   let stats = result.statistics
   println(
-    if live_mode {
+    if live_generated_mode {
+      "MOONSMITH_LIVE_GENERATED_V1"
+    } else if live_pool_mode {
       "MOONSMITH_LIVE_POOL_V1"
     } else {
       "MOONSMITH_FIXED_POOL_V1"
@@ -311,7 +402,14 @@ fn main {
   if live_mode {
     println("live_callback_evaluations=" + live_evaluations.to_string())
     println("live_callback_failures=" + live_failures.to_string())
+    println("live_generator_limits=" + live_generator_limits.to_string())
+    println("live_reference_checks=" + live_reference_checks.to_string())
+    println("live_backend_executions=" + live_backend_executions.to_string())
     println("live_verifier_duration_ms=" + live_duration_ms.to_string())
+    println(
+      "live_source_size_buckets=" +
+      live_source_size_buckets.keys().to_array().join(","),
+    )
     println(
       "live_reference_paths=" + live_observed_paths.keys().to_array().join(","),
     )
