@@ -658,3 +658,25 @@ depth 6, and 150 at depth 8. The runs comprise 3,450 Linux and 1,150 Windows
 executions, all consistent with reference outputs. This remains bounded
 sample evidence, not proof of absence of compiler bugs beyond these inputs
 or configurations.
+
+## Sixth standard mixed-depth cohort
+
+Seeds 20670–20899 were scanned at the standard depths 4, 6, and 8:
+
+- Workflow: [MoonSmith CI run 39091187155](https://github.com/Yingqingxue/moonsmith/actions/runs/39091187155)
+- Commit: `0ff9a5e479abbd4ecc92f40ea493e296bbd4c455`
+- Cohort: 230 distinct generated bodies: 100 at depth 4, 100 at depth 6,
+  and 30 at depth 8.
+
+All workflow jobs passed, including regular verification, CaseKit
+interoperability, Windows native testing, and cross-platform report
+comparison. All 230 bodies were within the configured source-size limit and
+matched their reference outputs on 690 Linux JS/Wasm/Wasm-GC executions and
+230 Windows native-release executions. All source hashes and expected
+outputs matched across reports, with zero unexpected findings and no
+generator-limit exclusions. Across the six contiguous standard cohorts
+(seeds 19520–20899), 1,380 bodies have been checked: 600 at depth 4, 600 at
+depth 6, and 180 at depth 8. The runs comprise 4,140 Linux and 1,380 Windows
+executions, all consistent with reference outputs. This remains bounded
+sample evidence, not proof of absence of compiler bugs beyond these inputs
+or configurations.
