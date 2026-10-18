@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "method": "greedy inverse-pool-frequency reference-path novelty with deterministic seed tie-break",
+  "referenceTraceSource": "MoonBit reference interpreter; not backend runtime coverage",
+  "seedStart": 400000,
+  "candidateCount": 6,
+  "executionBudgetCasesPerArm": 2,
+  "configuredTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "expectedBackendExecutionsPerArm": 6,
+  "equalBackendExecutionBudget": true,
+  "unexpectedFindingCount": 0,
+  "depth": 1,
+  "timeoutSeconds": 30,
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "gitHead": "49fa90154d03746b37a69fd29b8ac40074607c95",
+  "gitDirty": true,
+  "harnessDigestStart": "56b3305f222aee9af81db4f4d680381c2dd714a238e730808b2998f3e3eebe69",
+  "harnessDigestEnd": "56b3305f222aee9af81db4f4d680381c2dd714a238e730808b2998f3e3eebe69",
+  "harnessChangedDuringRun": false,
+  "prescreenDurationMs": 5241,
+  "candidatePool": [
+    {
+      "seed": 400000,
+      "paths": [
+        "add",
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 400001,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 400002,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 400003,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 400004,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 400005,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    }
+  ],
+  "baseline": {
+    "name": "sequential",
+    "seeds": [
+      400000,
+      400001
+    ],
+    "durationMs": 11731,
+    "metrics": {
+      "caseCount": 2,
+      "backendBuildAttempts": 6,
+      "backendExecutions": 6,
+      "unavailableBackends": 0,
+      "distinctReferencePaths": 10,
+      "uniqueProgramBodies": 2,
+      "meanSourceLines": 14.5,
+      "maximumSourceLines": 15,
+      "findings": {
+        "consistent": 2
+      }
+    },
+    "cases": [
+      {
+        "seed": 400000,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-16\n,err=0:|4:wasm=succeeded,exit=0,out=4:-16\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-16\n,err=0:|reference=4:-16\n",
+        "referenceChecked": true,
+        "bodySha256": "28b362b52b64d17fa030a038d0b40384112e7a802c250619d7b70262ba60d55e",
+        "sourceLineCount": 15,
+        "referencePathKinds": [
+          "add",
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 400001,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "cf7a2f4f52d41367eb78e624f3a44f3e16a8d870cdd868e1c83336931c0bce47",
+        "sourceLineCount": 14,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      }
+    ]
+  },
+  "guided": {
+    "name": "semantic-guided",
+    "seeds": [
+      400000,
+      400001
+    ],
+    "durationMs": 11024,
+    "metrics": {
+      "caseCount": 2,
+      "backendBuildAttempts": 6,
+      "backendExecutions": 6,
+      "unavailableBackends": 0,
+      "distinctReferencePaths": 10,
+      "uniqueProgramBodies": 2,
+      "meanSourceLines": 14.5,
+      "maximumSourceLines": 15,
+      "findings": {
+        "consistent": 2
+      }
+    },
+    "cases": [
+      {
+        "seed": 400000,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-16\n,err=0:|4:wasm=succeeded,exit=0,out=4:-16\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-16\n,err=0:|reference=4:-16\n",
+        "referenceChecked": true,
+        "bodySha256": "28b362b52b64d17fa030a038d0b40384112e7a802c250619d7b70262ba60d55e",
+        "sourceLineCount": 15,
+        "referencePathKinds": [
+          "add",
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 400001,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "cf7a2f4f52d41367eb78e624f3a44f3e16a8d870cdd868e1c83336931c0bce47",
+        "sourceLineCount": 14,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      }
+    ]
+  },
+  "overlapSeedCount": 2,
+  "baselineSourceSizeQuartileCounts": {
+    "3": 1,
+    "1": 1
+  },
+  "guidedSourceSizeQuartileCounts": {
+    "3": 1,
+    "1": 1
+  },
+  "sourceSizeQuartilesMatched": true,
+  "executionOrder": [
+    "baseline",
+    "guided"
+  ],
+  "caution": "Compare path diversity only when equalBackendExecutionBudget is true; prescreen cost is additional, and one cohort cannot establish effectiveness. Native debug has known upstream #1322 ICE and should not be treated as a newly discovered finding."
+}

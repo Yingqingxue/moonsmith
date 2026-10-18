@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "poolSource": null,
+  "configurationReport": ".\\docs\\evidence\\moongrammata_live_feedback_three_arm_smoke_20261018.configuration.json",
+  "poolCandidateCount": 0,
+  "poolReferencePathKinds": 0,
+  "moonGrammata": {
+    "name": "MoonGrammata integer-seed grammar with synchronous live MoonSmith verifier feedback",
+    "feedbackSource": "synchronous per-Target callback on newly generated or mutated integer seeds; reference trace, finding, backend outcome, source-size bucket, and verifier cost",
+    "generatorMode": "integer-seed-range",
+    "generatedSeedMinimum": 430000,
+    "generatedSeedMaximum": 430100,
+    "liveEvaluations": 2,
+    "liveFailures": 0,
+    "liveGeneratorLimitObservations": 0,
+    "liveReferenceChecks": 2,
+    "liveBackendExecutions": 6,
+    "observations": [
+      {
+        "seed": 430076,
+        "finding": "consistent",
+        "verifierDurationMs": 6425,
+        "sourceLineCount": 17,
+        "generationDurationMs": 424,
+        "referenceEvaluationDurationMs": 479,
+        "referenceTraceDurationMs": 425,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1233,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1089,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1098,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 430067,
+        "finding": "consistent",
+        "verifierDurationMs": 7280,
+        "sourceLineCount": 14,
+        "generationDurationMs": 538,
+        "referenceEvaluationDurationMs": 472,
+        "referenceTraceDurationMs": 461,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1297,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1186,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1394,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ],
+    "liveLastError": "",
+    "liveVerifierDurationMs": 13705,
+    "liveCampaignWallClockMs": 15119,
+    "liveGenerationDurationMs": 962,
+    "liveReferenceEvaluationDurationMs": 951,
+    "liveReferenceTraceDurationMs": 886,
+    "liveBackendBuildAndExecutionDurationMs": 7297,
+    "liveVerifierResidualDurationMs": 3609,
+    "liveReferencePathKinds": [
+      "array-alias-update-index-0",
+      "bool-literal",
+      "struct-result-flag",
+      "int-literal",
+      "array-alias-update",
+      "struct-value",
+      "struct-field-flag",
+      "struct-field-number"
+    ],
+    "liveFindings": "consistent",
+    "liveBackendOutcomes": [
+      "js:succeeded:0",
+      "wasm-gc:succeeded:0",
+      "wasm:succeeded:0"
+    ],
+    "liveSourceSizeBuckets": "under-50",
+    "verifierKind": "scripts/verify_seed.ps1",
+    "poolSize": 0,
+    "seed": 20261019,
+    "requestedExecutions": 2,
+    "completedExecutions": 2,
+    "targetExecutionOrder": [
+      430076,
+      430067
+    ],
+    "uniqueCandidatesObserved": 2,
+    "selectedSeeds": [
+      430076,
+      430067
+    ],
+    "distinctReferencePathKinds": 8,
+    "sourceSizeQuartileCounts": {},
+    "uniqueFeedbackFeatures": 13,
+    "uniqueFeedbackSignatures": 2,
+    "mutationFailures": 0,
+    "corpusEntries": 2
+  },
+  "moonSmith": {
+    "baselineSelectedSeeds": null,
+    "baselineDistinctReferencePathKinds": null,
+    "semanticGuidedSelectedSeeds": null,
+    "semanticGuidedDistinctReferencePathKinds": null,
+    "prescreenDurationMs": null,
+    "selectedExecutionBudget": null,
+    "backendExecutionsPerArm": null,
+    "sizeQuartilesMatched": null,
+    "commonUniqueCandidateBudget": null,
+    "commonUniqueCandidateCountsByQuartile": {},
+    "baselinePathKindsAtCommonUniqueBudget": null,
+    "semanticGuidedPathKindsAtCommonUniqueBudget": null,
+    "moonGrammataPathKindsAtCommonUniqueBudget": null,
+    "baselineMatchedQuartileCounts": null,
+    "semanticGuidedMatchedQuartileCounts": null,
+    "moonGrammataMatchedQuartileCounts": null
+  },
+  "liveVerification": null,
+  "interpretation": "Live integer-seed grammar prototype: MoonGrammata generates and mutates seed IDs from the declared numeric range; each Target callback regenerates the MoonSmith program for that seed and synchronously returns verifier findings before scheduling continues. No precomputed candidate outcomes are fed to the target. The run has no matched offline control and does not establish effectiveness or throughput superiority.",
+  "moonGrammataRevision": "d9cf3512b636fd45e941f30010d3fceb7cc2e4fc",
+  "moonGrammataVersion": "0.1.1",
+  "moonGrammataApi": "GrammarBuilder::integer + CampaignConfig + run_campaign; isolated benchmark dependency"
+}

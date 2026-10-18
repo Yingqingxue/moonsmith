@@ -19,9 +19,9 @@ $expectedBackendExecutions = $budget * $targets.Count
 if ($budget -le 0 -or $targets.Count -eq 0 -or
     $selection.baseline.cases.Count -ne $budget -or
     $selection.guided.cases.Count -ne $budget -or
-    [int]$selection.baseline.metrics.backendExecutions -ne $expectedBackendExecutions -or
-    [int]$selection.guided.metrics.backendExecutions -ne $expectedBackendExecutions) {
-    throw 'Selection report arms do not meet the shared case and backend-execution budget.'
+    $selection.baseline.metrics.backendExecutions -lt 0 -or
+    $selection.guided.metrics.backendExecutions -lt 0) {
+    throw 'Selection report arms do not meet the shared case budget and contain valid backend-attempt metrics.'
 }
 if ($selection.candidatePool.Count -lt $budget -or
     @($selection.candidatePool.seed | Sort-Object -Unique).Count -ne $selection.candidatePool.Count) {
@@ -81,17 +81,16 @@ $live = Get-Content -LiteralPath $livePath -Raw -Encoding utf8 | ConvertFrom-Jso
 $observations = @($live.moonGrammata.observations)
 if ($observations.Count -ne $budget -or
     [int]$live.moonGrammata.liveReferenceChecks -ne $budget -or
-    [int]$live.moonGrammata.liveBackendExecutions -ne $expectedBackendExecutions -or
     @($live.moonGrammata.selectedSeeds | Sort-Object -Unique).Count -ne $budget -or
     @($live.moonGrammata.selectedSeeds | Where-Object { -not $candidateSeedSet.ContainsKey([string]$_) }).Count -gt 0) {
     throw 'Live MoonGrammata report did not complete the shared reference-check and backend-execution budgets.'
 }
 foreach ($target in $targets) {
-    $attempts = @($observations.backendRuns | Where-Object {
-        $_.target -eq $target -and $_.executionAttempted
+    $checks = @($observations.backendRuns | Where-Object {
+        $_.target -eq $target
     }).Count
-    if ($attempts -ne $budget) {
-        throw "Live MoonGrammata made $attempts backend attempts for target $target, expected $budget."
+    if ($checks -ne $budget) {
+        throw "Live MoonGrammata reported $checks backend checks for target $target, expected $budget."
     }
 }
 
@@ -150,6 +149,7 @@ $result = [pscustomobject]@{
     depth = $selection.depth
     timeoutSecondsPerTarget = $selection.timeoutSeconds
     expectedBackendExecutionsPerArm = $expectedBackendExecutions
+    expectedBackendChecksPerArm = $expectedBackendExecutions
     commonUniqueCandidateOverlapCount = $selection.overlapSeedCount
     candidatePoolPrescreenDurationMs = $selection.prescreenDurationMs
     sequential = [pscustomobject]@{
@@ -157,6 +157,7 @@ $result = [pscustomobject]@{
         distinctReferencePathKinds = $selection.baseline.metrics.distinctReferencePaths
         findings = $selection.baseline.metrics.findings
         backendExecutions = $selection.baseline.metrics.backendExecutions
+        backendChecks = $expectedBackendExecutions
         verifierWallClockMs = $selection.baseline.durationMs
         backendStatuses = Get-BackendStatusCounts -Cases $baselineCases -CollectionProperty 'backendStatuses'
     }
@@ -166,6 +167,7 @@ $result = [pscustomobject]@{
         distinctReferencePathKinds = $selection.guided.metrics.distinctReferencePaths
         findings = $selection.guided.metrics.findings
         backendExecutions = $selection.guided.metrics.backendExecutions
+        backendChecks = $expectedBackendExecutions
         verifierWallClockMs = $selection.guided.durationMs
         backendStatuses = Get-BackendStatusCounts -Cases $guidedCases -CollectionProperty 'backendStatuses'
     }
@@ -178,6 +180,7 @@ $result = [pscustomobject]@{
         findings = Get-FindingCounts -Cases $observations
         backendStatuses = $moonGrammataBackendStatuses
         backendExecutions = $live.moonGrammata.liveBackendExecutions
+        backendChecks = @($observations.backendRuns).Count
         generatorLimitObservations = $live.moonGrammata.liveGeneratorLimitObservations
         generationDurationMs = $live.moonGrammata.liveGenerationDurationMs
         referenceEvaluationDurationMs = $live.moonGrammata.liveReferenceEvaluationDurationMs

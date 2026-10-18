@@ -11,6 +11,9 @@ param(
     [string[]]$Targets = @('js', 'wasm', 'wasm-gc'),
 
     [Parameter()]
+    [string]$TargetsCsv = '',
+
+    [Parameter()]
     [string]$InjectOutputMismatchTarget = '',
 
     [Parameter()]
@@ -30,11 +33,33 @@ param(
     [string]$ExpectedOutput = '',
 
     [Parameter()]
+    [string]$ExpectedOutputPath = '',
+
+    [Parameter()]
+    [string]$ReferenceTracePath = '',
+
+    [Parameter()]
     [switch]$NoPersist
 )
 
 $ErrorActionPreference = 'Stop'
-$referenceChecked = -not $SourcePath -or $PSBoundParameters.ContainsKey('ExpectedOutput')
+if ($TargetsCsv) {
+    $Targets = @($TargetsCsv -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    $allowedTargets = @('js', 'wasm', 'wasm-gc', 'native', 'native-release')
+    $invalidTargets = @($Targets | Where-Object { $_ -notin $allowedTargets })
+    if ($Targets.Count -eq 0 -or $invalidTargets.Count -gt 0) {
+        throw "-TargetsCsv contains an invalid target: $($invalidTargets -join ',')."
+    }
+}
+if ($ExpectedOutputPath) {
+    if ($PSBoundParameters.ContainsKey('ExpectedOutput')) {
+        throw 'Choose either -ExpectedOutput or -ExpectedOutputPath.'
+    }
+    $resolvedExpectedOutputPath = (Resolve-Path -LiteralPath $ExpectedOutputPath -ErrorAction Stop).Path
+    $ExpectedOutput = Get-Content -LiteralPath $resolvedExpectedOutputPath -Raw -Encoding utf8
+}
+$hasExplicitExpectedOutput = $PSBoundParameters.ContainsKey('ExpectedOutput') -or [bool]$ExpectedOutputPath
+$referenceChecked = -not $SourcePath -or $hasExplicitExpectedOutput
 . (Join-Path $PSScriptRoot 'validate_targets.ps1')
 Assert-UniqueTargets -Targets $Targets
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -179,6 +204,16 @@ if (-not $SourcePath) {
 } else {
     $source = Get-Content -LiteralPath $casePath -Raw -Encoding utf8
     $sourceLineCount = [regex]::Matches($source, "`n").Count
+    if ($ReferenceTracePath) {
+        if (-not $hasExplicitExpectedOutput) {
+            throw '-ReferenceTracePath requires an explicit -ExpectedOutput.'
+        }
+        $tracePath = (Resolve-Path -LiteralPath $ReferenceTracePath -ErrorAction Stop).Path
+        $referenceTrace = Get-Content -LiteralPath $tracePath -Raw -Encoding utf8 | ConvertFrom-Json
+        if ($null -eq $referenceTrace.visited) {
+            throw 'Reference trace must contain a visited array.'
+        }
+    }
 }
 
 $runs = foreach ($target in $Targets) {
