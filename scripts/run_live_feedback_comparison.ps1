@@ -27,6 +27,28 @@ if ($selection.candidatePool.Count -lt $budget -or
     @($selection.candidatePool.seed | Sort-Object -Unique).Count -ne $selection.candidatePool.Count) {
     throw 'Selection report does not provide a unique common candidate-seed pool.'
 }
+$candidateSeedSet = @{}
+foreach ($candidate in $selection.candidatePool) { $candidateSeedSet[[string]$candidate.seed] = $true }
+foreach ($armName in @('baseline', 'guided')) {
+    $arm = $selection.$armName
+    $armSeeds = @($arm.seeds | ForEach-Object { [string]$_ })
+    $caseSeeds = @($arm.cases | ForEach-Object { [string]$_.seed })
+    if ($armSeeds.Count -ne $budget -or @($armSeeds | Sort-Object -Unique).Count -ne $budget -or
+        $caseSeeds.Count -ne $budget -or @($caseSeeds | Sort-Object -Unique).Count -ne $budget -or
+        @($armSeeds | Where-Object { -not $candidateSeedSet.ContainsKey($_) }).Count -gt 0 -or
+        @($caseSeeds | Where-Object { -not $candidateSeedSet.ContainsKey($_) }).Count -gt 0) {
+        throw "Selection report $armName arm must contain $budget unique in-pool selections and verifier records."
+    }
+}
+foreach ($target in $targets) {
+    foreach ($armName in @('baseline', 'guided')) {
+        $statuses = @($selection.$armName.cases | ForEach-Object { $_.backendStatuses })
+        $targetRuns = @($statuses | Where-Object { [string]$_ -like "$target`:*" })
+        if ($targetRuns.Count -ne $budget) {
+            throw "Selection report $armName arm has $($targetRuns.Count) recorded statuses for target $target, expected $budget."
+        }
+    }
+}
 
 $outputPath = if ($OutputPath) {
     [IO.Path]::GetFullPath($OutputPath)
@@ -59,8 +81,18 @@ $live = Get-Content -LiteralPath $livePath -Raw -Encoding utf8 | ConvertFrom-Jso
 $observations = @($live.moonGrammata.observations)
 if ($observations.Count -ne $budget -or
     [int]$live.moonGrammata.liveReferenceChecks -ne $budget -or
-    [int]$live.moonGrammata.liveBackendExecutions -ne $expectedBackendExecutions) {
+    [int]$live.moonGrammata.liveBackendExecutions -ne $expectedBackendExecutions -or
+    @($live.moonGrammata.selectedSeeds | Sort-Object -Unique).Count -ne $budget -or
+    @($live.moonGrammata.selectedSeeds | Where-Object { -not $candidateSeedSet.ContainsKey([string]$_) }).Count -gt 0) {
     throw 'Live MoonGrammata report did not complete the shared reference-check and backend-execution budgets.'
+}
+foreach ($target in $targets) {
+    $attempts = @($observations.backendRuns | Where-Object {
+        $_.target -eq $target -and $_.executionAttempted
+    }).Count
+    if ($attempts -ne $budget) {
+        throw "Live MoonGrammata made $attempts backend attempts for target $target, expected $budget."
+    }
 }
 
 function Get-FindingCounts {
