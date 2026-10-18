@@ -58,3 +58,12 @@ limitations are in the
 This is a narrow, cached-feature selection comparison—not the common live target,
 process-isolated workload, or equal end-to-end cost required above. The evidence
 does **not** establish that MoonSmith is more effective overall.
+
+A follow-up now executes all three selected arms through the same current
+MoonSmith verifier on a matched, unique-candidate subset. One current cohort
+showed the MoonGrammata arm tying sequential selection on live reference-path
+diversity and trailing semantic-guided selection by two paths, with no backend
+disagreements in any arm. This is a post-selection blind check using cached
+feedback for the MoonGrammata selection phase—not an online, live-feedback
+head-to-head. See the [live selected-outcomes record](moongrammata_live_selected_outcomes_20261018.md)
+for the exact protocol, sample counts, and limitations.

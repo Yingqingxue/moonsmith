@@ -435,9 +435,10 @@ jobs:
           $outputReport = ".moonsmith/runs/moongrammata_selection_${seedStart}_100_20.json"
           ./scripts/run_moongrammata_selection.ps1 `
             -InputReport $inputReport -ExecutionBudget 20 -Seed 20261018 `
-            -OutputPath $outputReport
+            -OutputPath $outputReport -LiveVerifySelectedArms
           ./scripts/test_moongrammata_selection.ps1 `
-            -InputReport $inputReport -ExecutionBudget 20 -Seed 20261018
+            -InputReport $inputReport -ExecutionBudget 20 -Seed 20261018 `
+            -LiveVerificationPath $outputReport
 
       - name: Preserve semantic-selection report
         if: always()
