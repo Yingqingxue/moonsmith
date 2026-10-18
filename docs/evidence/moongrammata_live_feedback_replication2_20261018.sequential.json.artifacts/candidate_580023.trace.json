@@ -1,0 +1,10 @@
+{
+  "value": "true",
+  "visited": [
+    "array-alias-update",
+    "bool-literal",
+    "bool-literal",
+    "bool-literal",
+    "array-alias-update-index-1"
+  ]
+}

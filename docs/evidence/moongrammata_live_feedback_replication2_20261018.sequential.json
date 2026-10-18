@@ -1,0 +1,1449 @@
+{
+  "schemaVersion": 1,
+  "arm": "sequential",
+  "selectionImplementation": "live-control-policy-v1",
+  "selectionRule": "first valid candidate in each ascending seed window",
+  "seedStart": 580000,
+  "seedEndExclusive": 580032,
+  "proposalOrderSeed": 20261201,
+  "executionBudget": 8,
+  "proposalBatchSize": 4,
+  "proposalCount": 32,
+  "selectedCount": 8,
+  "configuredTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "depth": 1,
+  "timeoutSecondsPerTarget": 30,
+  "backendChecks": 24,
+  "backendExecutionAttempts": 24,
+  "distinctSelectedReferencePathKinds": 17,
+  "findings": {
+    "consistent": 8
+  },
+  "generatorLimitProposals": 0,
+  "proposalGenerationDurationMs": 14696,
+  "proposalReferenceEvaluationDurationMs": 14549,
+  "proposalReferenceTraceDurationMs": 14651,
+  "selectedCandidateVerifierWallClockMs": 42704,
+  "campaignWallClockMs": 86845,
+  "candidateProposalWorkIsChargedToCampaign": true,
+  "artifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts",
+  "candidateSourcesAndReferenceTracesPreserved": true,
+  "semanticFeedbackUsesOnlyPreviouslySelectedReferencePaths": false,
+  "selectedSourceSizeBandCounts": [
+    {
+      "band": "lt50",
+      "count": 8
+    }
+  ],
+  "perArmCases": [
+    {
+      "round": 0,
+      "policy": "sequential",
+      "seed": 580006,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580006,
+        580030,
+        580015,
+        580002
+      ],
+      "proposalWindowStatuses": [
+        "580006:checked",
+        "580030:checked",
+        "580015:checked",
+        "580002:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "dfc018fb56cd4a48e8ede750acc266b2ca726b061b4d53d09ddf63a9d5038ff2",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "seenPathKindsBeforeSelection": [],
+      "newlyCoveredPathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-1\n",
+          "error": "",
+          "durationMs": 1159,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-1\n",
+          "error": "",
+          "durationMs": 1167,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-1\n",
+          "error": "",
+          "durationMs": 1159,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5229
+    },
+    {
+      "round": 1,
+      "policy": "sequential",
+      "seed": 580025,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580025,
+        580009,
+        580017,
+        580022
+      ],
+      "proposalWindowStatuses": [
+        "580025:checked",
+        "580009:checked",
+        "580017:checked",
+        "580022:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "25cb41fe1b873c18137d96173ad359cb88aca9cb3b57a91955560d58c5778820",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "newlyCoveredPathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1442,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1282,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1189,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5880
+    },
+    {
+      "round": 2,
+      "policy": "sequential",
+      "seed": 580001,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580001,
+        580004,
+        580010,
+        580005
+      ],
+      "proposalWindowStatuses": [
+        "580001:checked",
+        "580004:checked",
+        "580010:checked",
+        "580005:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "b89ef855ac9685e95c75841fbbc91ff800a6043c9adffc903dcf2d5769c8afa1",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "variable"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "newlyCoveredPathKinds": [
+        "and",
+        "and-rhs-executed",
+        "choice-flag",
+        "choice-value",
+        "variable"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1265,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1204,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1125,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5367
+    },
+    {
+      "round": 3,
+      "policy": "sequential",
+      "seed": 580023,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580023,
+        580003,
+        580029,
+        580020
+      ],
+      "proposalWindowStatuses": [
+        "580023:checked",
+        "580003:checked",
+        "580029:checked",
+        "580020:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "243b0eeecbd055b794db22591857d448903807fcc259241565613035e9e21b35",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-index-1",
+        "bool-literal"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "and",
+        "and-rhs-executed",
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value",
+        "variable"
+      ],
+      "newlyCoveredPathKinds": [
+        "array-alias-update-index-1"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1179,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1114,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1124,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5109
+    },
+    {
+      "round": 4,
+      "policy": "sequential",
+      "seed": 580007,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580007,
+        580011,
+        580031,
+        580027
+      ],
+      "proposalWindowStatuses": [
+        "580007:checked",
+        "580011:checked",
+        "580031:checked",
+        "580027:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "e88492c90f27aa6e5ba6e5e8014a377a4d317dbcd8f4fb2c70b55959dcd8174b",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "and",
+        "and-rhs-executed",
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "array-alias-update-index-1",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value",
+        "variable"
+      ],
+      "newlyCoveredPathKinds": [
+        "less-than"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1179,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1110,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "true\n",
+          "error": "",
+          "durationMs": 1142,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5126
+    },
+    {
+      "round": 5,
+      "policy": "sequential",
+      "seed": 580016,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580016,
+        580013,
+        580008,
+        580021
+      ],
+      "proposalWindowStatuses": [
+        "580016:checked",
+        "580013:checked",
+        "580008:checked",
+        "580021:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "d1cb8ab08cf02af92e28d960c67959c3b0873e093cfa60e1f46ed74c445f996f",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "and",
+        "and-rhs-executed",
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "array-alias-update-index-1",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value",
+        "variable"
+      ],
+      "newlyCoveredPathKinds": [
+        "subtract"
+      ],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "30\n",
+          "error": "",
+          "durationMs": 1247,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "30\n",
+          "error": "",
+          "durationMs": 1221,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "30\n",
+          "error": "",
+          "durationMs": 1171,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5475
+    },
+    {
+      "round": 6,
+      "policy": "sequential",
+      "seed": 580024,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580024,
+        580026,
+        580018,
+        580014
+      ],
+      "proposalWindowStatuses": [
+        "580024:checked",
+        "580026:checked",
+        "580018:checked",
+        "580014:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "db621be07e0d6cb399032e3742a7e446ff24abbae0457f9d95b92239b9e7150e",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "and",
+        "and-rhs-executed",
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "array-alias-update-index-1",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value",
+        "subtract",
+        "variable"
+      ],
+      "newlyCoveredPathKinds": [],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-11\n",
+          "error": "",
+          "durationMs": 1286,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-11\n",
+          "error": "",
+          "durationMs": 1140,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "-11\n",
+          "error": "",
+          "durationMs": 1217,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5347
+    },
+    {
+      "round": 7,
+      "policy": "sequential",
+      "seed": 580019,
+      "proposalOrderSeed": 20261201,
+      "proposalWindowSeeds": [
+        580019,
+        580028,
+        580012,
+        580000
+      ],
+      "proposalWindowStatuses": [
+        "580019:checked",
+        "580028:checked",
+        "580012:checked",
+        "580000:checked"
+      ],
+      "selectionRule": "first valid seed in ascending proposal window",
+      "noveltyScore": null,
+      "novelPathKindCount": null,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "sourceSha256": "f9e6b0012bc2d2b08c58c3c9d69474f66925bb023cb34ac0275d7bb59dfc701d",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal"
+      ],
+      "seenPathKindsBeforeSelection": [
+        "and",
+        "and-rhs-executed",
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "array-alias-update-index-1",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "int-literal",
+        "less-than",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value",
+        "subtract",
+        "variable"
+      ],
+      "newlyCoveredPathKinds": [],
+      "referenceChecked": true,
+      "finding": "consistent",
+      "backendStatuses": [
+        "js:succeeded:0",
+        "wasm:succeeded:0",
+        "wasm-gc:succeeded:0"
+      ],
+      "backendRuns": [
+        {
+          "target": "js",
+          "backend": "js",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1177,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm",
+          "backend": "wasm",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1137,
+          "executionAttempted": true
+        },
+        {
+          "target": "wasm-gc",
+          "backend": "wasm-gc",
+          "buildMode": "default",
+          "status": "succeeded",
+          "exitCode": 0,
+          "output": "false\n",
+          "error": "",
+          "durationMs": 1163,
+          "executionAttempted": true
+        }
+      ],
+      "verifierWallClockMs": 5171
+    }
+  ],
+  "proposalOutcomes": [
+    {
+      "seed": 580006,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 494,
+      "referenceEvaluationDurationMs": 460,
+      "referenceTraceDurationMs": 468,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580006.mbt",
+      "expectedOutput": "-1\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580006.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580006.trace.json"
+    },
+    {
+      "seed": 580030,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 437,
+      "referenceEvaluationDurationMs": 429,
+      "referenceTraceDurationMs": 444,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-else",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580030.mbt",
+      "expectedOutput": "18\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580030.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580030.trace.json"
+    },
+    {
+      "seed": 580015,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 432,
+      "referenceEvaluationDurationMs": 430,
+      "referenceTraceDurationMs": 427,
+      "sourceLineCount": 9,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-grow",
+        "array-grow-index-0",
+        "array-grow-push",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580015.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580015.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580015.trace.json"
+    },
+    {
+      "seed": 580002,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 422,
+      "referenceEvaluationDurationMs": 429,
+      "referenceTraceDurationMs": 421,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580002.mbt",
+      "expectedOutput": "-5\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580002.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580002.trace.json"
+    },
+    {
+      "seed": 580025,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 556,
+      "referenceEvaluationDurationMs": 497,
+      "referenceTraceDurationMs": 459,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580025.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580025.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580025.trace.json"
+    },
+    {
+      "seed": 580009,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 459,
+      "referenceEvaluationDurationMs": 481,
+      "referenceTraceDurationMs": 474,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580009.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580009.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580009.trace.json"
+    },
+    {
+      "seed": 580017,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 437,
+      "referenceEvaluationDurationMs": 485,
+      "referenceTraceDurationMs": 438,
+      "sourceLineCount": 9,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-grow",
+        "array-grow-index-1",
+        "array-grow-push",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580017.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580017.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580017.trace.json"
+    },
+    {
+      "seed": 580022,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 462,
+      "referenceEvaluationDurationMs": 459,
+      "referenceTraceDurationMs": 544,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580022.mbt",
+      "expectedOutput": "30\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580022.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580022.trace.json"
+    },
+    {
+      "seed": 580001,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 533,
+      "referenceEvaluationDurationMs": 454,
+      "referenceTraceDurationMs": 504,
+      "sourceLineCount": 28,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "and",
+        "and-rhs-executed",
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580001.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580001.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580001.trace.json"
+    },
+    {
+      "seed": 580004,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 441,
+      "referenceEvaluationDurationMs": 450,
+      "referenceTraceDurationMs": 430,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580004.mbt",
+      "expectedOutput": "12\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580004.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580004.trace.json"
+    },
+    {
+      "seed": 580010,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 420,
+      "referenceEvaluationDurationMs": 422,
+      "referenceTraceDurationMs": 419,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580010.mbt",
+      "expectedOutput": "14\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580010.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580010.trace.json"
+    },
+    {
+      "seed": 580005,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 508,
+      "referenceEvaluationDurationMs": 426,
+      "referenceTraceDurationMs": 542,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580005.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580005.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580005.trace.json"
+    },
+    {
+      "seed": 580023,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 426,
+      "referenceEvaluationDurationMs": 440,
+      "referenceTraceDurationMs": 423,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-index-1",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580023.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580023.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580023.trace.json"
+    },
+    {
+      "seed": 580003,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 431,
+      "referenceEvaluationDurationMs": 428,
+      "referenceTraceDurationMs": 424,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580003.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580003.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580003.trace.json"
+    },
+    {
+      "seed": 580029,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 429,
+      "referenceEvaluationDurationMs": 421,
+      "referenceTraceDurationMs": 439,
+      "sourceLineCount": 48,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push",
+        "valtype-raise-probe",
+        "valtype-raise-success-path"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580029.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580029.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580029.trace.json"
+    },
+    {
+      "seed": 580020,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 425,
+      "referenceEvaluationDurationMs": 426,
+      "referenceTraceDurationMs": 424,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580020.mbt",
+      "expectedOutput": "-11\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580020.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580020.trace.json"
+    },
+    {
+      "seed": 580007,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 427,
+      "referenceEvaluationDurationMs": 451,
+      "referenceTraceDurationMs": 427,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580007.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580007.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580007.trace.json"
+    },
+    {
+      "seed": 580011,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 418,
+      "referenceEvaluationDurationMs": 432,
+      "referenceTraceDurationMs": 427,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580011.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580011.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580011.trace.json"
+    },
+    {
+      "seed": 580031,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 427,
+      "referenceEvaluationDurationMs": 429,
+      "referenceTraceDurationMs": 420,
+      "sourceLineCount": 48,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push",
+        "valtype-raise-probe",
+        "valtype-raise-success-path"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580031.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580031.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580031.trace.json"
+    },
+    {
+      "seed": 580027,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 426,
+      "referenceEvaluationDurationMs": 431,
+      "referenceTraceDurationMs": 422,
+      "sourceLineCount": 48,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push",
+        "valtype-raise-error-path",
+        "valtype-raise-probe"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580027.mbt",
+      "expectedOutput": "true\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580027.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580027.trace.json"
+    },
+    {
+      "seed": 580016,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 555,
+      "referenceEvaluationDurationMs": 465,
+      "referenceTraceDurationMs": 451,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580016.mbt",
+      "expectedOutput": "30\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580016.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580016.trace.json"
+    },
+    {
+      "seed": 580013,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 427,
+      "referenceEvaluationDurationMs": 543,
+      "referenceTraceDurationMs": 578,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "less-than"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580013.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580013.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580013.trace.json"
+    },
+    {
+      "seed": 580008,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 443,
+      "referenceEvaluationDurationMs": 526,
+      "referenceTraceDurationMs": 643,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580008.mbt",
+      "expectedOutput": "-14\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580008.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580008.trace.json"
+    },
+    {
+      "seed": 580021,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 448,
+      "referenceEvaluationDurationMs": 429,
+      "referenceTraceDurationMs": 458,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580021.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580021.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580021.trace.json"
+    },
+    {
+      "seed": 580024,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 439,
+      "referenceEvaluationDurationMs": 483,
+      "referenceTraceDurationMs": 443,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580024.mbt",
+      "expectedOutput": "-11\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580024.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580024.trace.json"
+    },
+    {
+      "seed": 580026,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 607,
+      "referenceEvaluationDurationMs": 613,
+      "referenceTraceDurationMs": 510,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-else",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580026.mbt",
+      "expectedOutput": "3\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580026.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580026.trace.json"
+    },
+    {
+      "seed": 580018,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 575,
+      "referenceEvaluationDurationMs": 463,
+      "referenceTraceDurationMs": 462,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580018.mbt",
+      "expectedOutput": "-11\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580018.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580018.trace.json"
+    },
+    {
+      "seed": 580014,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 494,
+      "referenceEvaluationDurationMs": 446,
+      "referenceTraceDurationMs": 452,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "int-literal",
+        "subtract"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580014.mbt",
+      "expectedOutput": "-11\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580014.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580014.trace.json"
+    },
+    {
+      "seed": 580019,
+      "proposalOrdinal": 0,
+      "preflightStatus": "checked",
+      "generationDurationMs": 434,
+      "referenceEvaluationDurationMs": 434,
+      "referenceTraceDurationMs": 428,
+      "sourceLineCount": 17,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "array-alias-update",
+        "array-alias-update-collision",
+        "array-alias-update-index-0",
+        "bool-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580019.mbt",
+      "expectedOutput": "false\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580019.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580019.trace.json"
+    },
+    {
+      "seed": 580028,
+      "proposalOrdinal": 1,
+      "preflightStatus": "checked",
+      "generationDurationMs": 417,
+      "referenceEvaluationDurationMs": 424,
+      "referenceTraceDurationMs": 414,
+      "sourceLineCount": 7,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-else",
+        "int-literal",
+        "let",
+        "variable"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580028.mbt",
+      "expectedOutput": "-10\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580028.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580028.trace.json"
+    },
+    {
+      "seed": 580012,
+      "proposalOrdinal": 2,
+      "preflightStatus": "checked",
+      "generationDurationMs": 422,
+      "referenceEvaluationDurationMs": 428,
+      "referenceTraceDurationMs": 419,
+      "sourceLineCount": 14,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-number",
+        "struct-value"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580012.mbt",
+      "expectedOutput": "1\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580012.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580012.trace.json"
+    },
+    {
+      "seed": 580000,
+      "proposalOrdinal": 3,
+      "preflightStatus": "checked",
+      "generationDurationMs": 425,
+      "referenceEvaluationDurationMs": 415,
+      "referenceTraceDurationMs": 417,
+      "sourceLineCount": 4,
+      "sourceSizeBand": "lt50",
+      "referencePathKinds": [
+        "bool-literal",
+        "if",
+        "if-then",
+        "int-literal"
+      ],
+      "preflightError": null,
+      "sourcePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580000.mbt",
+      "expectedOutput": "8\n",
+      "expectedOutputPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580000.expected.txt",
+      "referenceTracePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication2_20261018.sequential.json.artifacts\\candidate_580000.trace.json"
+    }
+  ],
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "caveat": "Equal proposal count, backend-check budget, target matrix, depth, and per-target timeout are enforced per arm. Candidate preflight generation/reference/trace runs add cost and are reported. The proposal order is deterministically shuffled from the recorded per-arm seed; arms use disjoint candidate seed windows and separate order seeds, and share no candidate or backend results. No equal wall-clock throughput claim is implied."
+}
