@@ -252,10 +252,14 @@ if ($IsLinux -and
     $reductionRaw = & $reduceScript -Seed 4 -Depth 3 `
         -Targets $generatedTargets -MaxAttempts 100
     $reductionExitCode = $LASTEXITCODE
-    if (-not $reductionRaw -or $reductionExitCode -ne 0) {
+    if (-not $reductionRaw -or $reductionExitCode -notin @(0, 1)) {
         throw "Generated #1322 reducer run failed. Exit=$reductionExitCode"
     }
-    $generatedProbeReduction = $reductionRaw | ConvertFrom-Json
+    try {
+        $generatedProbeReduction = $reductionRaw | ConvertFrom-Json -ErrorAction Stop
+    } catch {
+        throw "Generated #1322 reducer did not return a valid JSON record. Exit=$reductionExitCode; error=$($_.Exception.Message)"
+    }
     if ($generatedProbeReduction.finding -ne 'compile-failure' -or
         $generatedProbeReduction.acceptedSteps -lt 1 -or
         $generatedProbeReduction.finalComplexity -ge $generatedProbeReduction.originalComplexity -or
