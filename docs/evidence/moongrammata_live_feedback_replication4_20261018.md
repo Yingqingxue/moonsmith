@@ -51,7 +51,12 @@ Semantic-guided was higher in all four observed cohorts, while MoonGrammata
 varied around or below sequential. This is hypothesis-generating only: arms
 are unpaired, sample size is eight per arm per run, candidate generation is
 not budget-matched, and path diversity is a proxy rather than a bug-finding
-outcome. No statistical or general-purpose fuzzer comparison is justified.
+outcome. More importantly, semantic-guided selection explicitly chooses
+candidates by unseen reference-path kinds per source line, so this outcome
+metric is aligned with that arm's optimization rule. Its higher counts are
+therefore not a neutral test of overall fuzzer effectiveness and are partly
+expected by construction. No statistical or general-purpose fuzzer comparison
+is justified.
 
 ## Raw files and reproduction
 

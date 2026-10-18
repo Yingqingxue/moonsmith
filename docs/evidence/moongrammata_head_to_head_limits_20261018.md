@@ -75,6 +75,9 @@ semantic-guided selection observed more reference-path kinds than either
 sequential or MoonGrammata in each run. This is still not a valid general
 effectiveness claim: the controls preflight 32 proposals while MoonGrammata
 generates/mutates 8 callback candidates, so candidate and total-compute budgets
-are not matched; path diversity is only a proxy for bugs found. The fourth
-cohort's raw reports and caveats are recorded in
+are not matched; path diversity is only a proxy for bugs found. In addition,
+the semantic-guided control directly optimizes this same path-novelty metric,
+so its higher path count is an objective-aligned outcome, not a neutral measure
+of overall fuzzer effectiveness. The fourth cohort's raw reports and caveats
+are recorded in
 [`moongrammata_live_feedback_replication4_20261018.md`](moongrammata_live_feedback_replication4_20261018.md).
