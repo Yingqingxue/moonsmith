@@ -47,6 +47,38 @@ differ; cross-environment durations are not comparable. The arms were also
 run sequentially, so within-run timing differences are not a controlled
 throughput comparison.
 
+## Independent second cohort
+
+A second, non-overlapping pool (`24220..24319`) was run with the same depth,
+selection seed, target set, budgets, size-quartile matching, and live verifier.
+The clean hosted run used the same harness digest
+`6846500968acb92203cda413384f370637c71c4b3516cbc2eb3d97c4796dabee`, Moon
+`0.1.20261012`, and source commit
+`6fbb953d25332d9c51a5b2fe3626143c5b934961`; the recorded start/end digests
+matched and the worktree was clean. The result is preserved in
+[GitHub Actions run 39113950702](https://github.com/Yingqingxue/moonsmith/actions/runs/39113950702)
+(artifact retained for 30 days).
+
+MoonGrammata observed 17 unique candidates in its 20 campaign executions. The
+common, unique, size-quartile-matched subset contained 10 candidates per arm,
+with quartiles 0/1/2/3 contributing 3/2/4/1 candidates. Each arm received 30
+backend executions across JS, Wasm, and Wasm-GC. All 30 live traces matched the
+frozen-pool reference-path labels. The arms each had 10 `consistent` outcomes
+and no mismatch. Their distinct live reference-path counts were 50 for
+sequential, 55 for semantic-guided, and 50 for MoonGrammata-selected. This
+hosted cohort's per-arm verification durations were 10.460 s, 10.276 s, and
+10.307 s respectively; these are descriptive sequential-run timings, not a
+controlled throughput result.
+
+Across the two independent pools, the narrow observed pattern repeated:
+MoonGrammata tied sequential selection on the measured reference-path count
+(51 vs. 51 in the first matched subset; 50 vs. 50 in the second) and was below
+semantic-guided selection (53 and 55, respectively). No selected program in
+either cohort produced a backend/reference mismatch. These two bounded cohorts
+strengthen reproducibility of this specific fixed-pool observation, but do not
+show general or online-feedback effectiveness, bug-finding superiority, or
+statistical significance.
+
 ## Interpretation and limits
 
 On this cohort, MoonGrammata's selected programs tied the sequential arm on
