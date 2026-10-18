@@ -1,0 +1,9 @@
+import {
+  "erzhuzi259/moongrammata" @grammata,
+  "moonbitlang/core/env",
+  "moonbitlang/core/hashmap",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/utf8",
+}
+
+pkgtype(kind: "executable")

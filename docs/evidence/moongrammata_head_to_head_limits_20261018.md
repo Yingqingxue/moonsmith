@@ -51,7 +51,10 @@ features, preserved failures, and total orchestration cost separately. A
 process-isolated compiler target must not be silently replaced with an
 in-process toy target, and any in-process-only result must be labelled as such.
 
-The current repositories do not provide that shared adapter or workload. Until
-one is implemented and tested, the defensible result is **no direct effectiveness
-comparison yet**. Do not claim MoonSmith is more effective based on these
-separate experiments.
+An experimental fixed-pool adapter now connects the MoonGrammata campaign API
+to two existing MoonSmith candidate-pool reports. Its exact result and
+limitations are in the
+[fixed-pool selection evidence](moongrammata_fixed_pool_selection_20261018.md).
+This is a narrow, cached-feature selection comparison—not the common live target,
+process-isolated workload, or equal end-to-end cost required above. The evidence
+does **not** establish that MoonSmith is more effective overall.

@@ -425,12 +425,29 @@ jobs:
             -Targets @('js','wasm','wasm-gc') -SizeMatched `
             -OutputPath ".moonsmith/runs/selection_${seedStart}_100_20_d4_size_matched.json"
 
+      - name: Compare MoonGrammata feedback on the identical frozen candidate pool
+        shell: pwsh
+        env:
+          SEMANTIC_SELECTION_SEED_START: ${{ inputs.semantic_selection_seed_start }}
+        run: |
+          $seedStart = [int]$env:SEMANTIC_SELECTION_SEED_START
+          $inputReport = ".moonsmith/runs/selection_${seedStart}_100_20_d4_size_matched.json"
+          $outputReport = ".moonsmith/runs/moongrammata_selection_${seedStart}_100_20.json"
+          ./scripts/run_moongrammata_selection.ps1 `
+            -InputReport $inputReport -ExecutionBudget 20 -Seed 20261018 `
+            -OutputPath $outputReport
+          ./scripts/test_moongrammata_selection.ps1 `
+            -InputReport $inputReport -ExecutionBudget 20 -Seed 20261018
+
       - name: Preserve semantic-selection report
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: moonsmith-semantic-selection-replication
-          path: .moonsmith/runs/selection_*_100_20_d4_size_matched.json
+          path: |
+            .moonsmith/runs/selection_*_100_20_d4_size_matched.json
+            .moonsmith/runs/moongrammata_selection_*_100_20.json
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
 
