@@ -22,6 +22,15 @@ recorded Git head was `34c9aa47c051214b43eb89ad095872af163b442b`; the worktree
 was marked dirty because the experiment runner and workflow update were in
 progress. Those files are not part of the candidate-generation/verifier digest.
 
+The same seed, pool, configuration, and digest were then reproduced in a clean
+GitHub Actions run at commit
+`6fbb953d25332d9c51a5b2fe3626143c5b934961` (`moon 0.1.20261012`), with
+`gitDirty=false` and `harnessChangedDuringRun=false`. The optional
+semantic-selection job in
+[run 39109430420](https://github.com/Yingqingxue/moonsmith/actions/runs/39109430420)
+passed, including the stale-pool rejection test; its artifact contains both
+the frozen report and live-verification report (retained for 30 days).
+
 ## Result
 
 | Selection arm | Unique live-verified candidates | Backend executions | Distinct live reference paths | Verifier findings |
@@ -31,9 +40,12 @@ progress. Those files are not part of the candidate-generation/verifier digest.
 | MoonGrammata-selected | 15 | 45 | 51 | 15 consistent |
 
 The live traces for all 45 candidates matched the path labels stored in the
-fresh frozen-pool report. The three verifier-arm durations were approximately
-107.9 s, 107.0 s, and 108.0 s respectively. Runs were sequential, so these
-small timing differences are not a controlled throughput comparison.
+fresh frozen-pool report. On this Windows workstation, the three verifier-arm
+durations were 107.9 s, 107.0 s, and 108.0 s. The GitHub-hosted Ubuntu rerun
+recorded 15.4 s, 15.0 s, and 14.8 s. These machines and build-cache states
+differ; cross-environment durations are not comparable. The arms were also
+run sequentially, so within-run timing differences are not a controlled
+throughput comparison.
 
 ## Interpretation and limits
 
