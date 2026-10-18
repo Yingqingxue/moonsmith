@@ -1,0 +1,11 @@
+{
+  "value": "false",
+  "visited": [
+    "array-alias-update",
+    "bool-literal",
+    "bool-literal",
+    "bool-literal",
+    "array-alias-update-collision",
+    "array-alias-update-index-1"
+  ]
+}

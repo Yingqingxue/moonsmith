@@ -1,0 +1,9 @@
+{
+  "value": "true",
+  "visited": [
+    "let",
+    "bool-literal",
+    "not",
+    "variable"
+  ]
+}

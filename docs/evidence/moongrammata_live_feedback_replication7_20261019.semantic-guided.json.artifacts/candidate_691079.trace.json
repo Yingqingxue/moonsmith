@@ -1,0 +1,11 @@
+{
+  "value": "true",
+  "visited": [
+    "array-grow",
+    "bool-literal",
+    "array-grow-push",
+    "bool-literal",
+    "array-grow-push",
+    "array-grow-index-1"
+  ]
+}

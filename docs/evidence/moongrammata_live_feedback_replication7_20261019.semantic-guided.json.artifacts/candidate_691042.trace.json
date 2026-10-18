@@ -1,0 +1,10 @@
+{
+  "value": "9",
+  "visited": [
+    "let",
+    "int-literal",
+    "add",
+    "variable",
+    "int-literal"
+  ]
+}

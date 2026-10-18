@@ -1,0 +1,13 @@
+{
+  "value": "false",
+  "visited": [
+    "function-call",
+    "bool-literal",
+    "choice-value",
+    "variable",
+    "choice-flag",
+    "and",
+    "variable",
+    "and-rhs-skipped"
+  ]
+}

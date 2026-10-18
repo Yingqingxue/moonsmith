@@ -1,0 +1,11 @@
+{
+  "value": "-5",
+  "visited": [
+    "let",
+    "bool-literal",
+    "if",
+    "variable",
+    "if-then",
+    "int-literal"
+  ]
+}

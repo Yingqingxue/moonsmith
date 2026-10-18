@@ -1,0 +1,1391 @@
+{
+  "schemaVersion": 1,
+  "poolSource": null,
+  "configurationReport": ".\\docs\\evidence\\moongrammata_live_feedback_replication7_20261019.configuration.json",
+  "poolCandidateCount": 0,
+  "poolReferencePathKinds": 0,
+  "moonGrammata": {
+    "name": "MoonGrammata integer-seed grammar with synchronous live MoonSmith verifier feedback",
+    "feedbackSource": "synchronous per-Target callback on newly generated or mutated integer seeds; reference trace, finding, backend outcome, source-size bucket, and verifier cost",
+    "generatorMode": "integer-seed-range",
+    "generatedSeedMinimum": 692000,
+    "generatedSeedMaximum": 693000,
+    "liveEvaluations": 32,
+    "liveFailures": 0,
+    "liveGeneratorLimitObservations": 0,
+    "liveReferenceChecks": 32,
+    "liveBackendExecutions": 96,
+    "observations": [
+      {
+        "seed": 692459,
+        "finding": "consistent",
+        "verifierDurationMs": 6857,
+        "sourceLineCount": 4,
+        "generationDurationMs": 486,
+        "referenceEvaluationDurationMs": 507,
+        "referenceTraceDurationMs": 522,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "not"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1185,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1102,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1095,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692286,
+        "finding": "consistent",
+        "verifierDurationMs": 6775,
+        "sourceLineCount": 17,
+        "generationDurationMs": 492,
+        "referenceEvaluationDurationMs": 506,
+        "referenceTraceDurationMs": 499,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-1",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1286,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1101,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1105,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692419,
+        "finding": "consistent",
+        "verifierDurationMs": 7121,
+        "sourceLineCount": 17,
+        "generationDurationMs": 525,
+        "referenceEvaluationDurationMs": 499,
+        "referenceTraceDurationMs": 498,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "or",
+          "or-rhs-executed"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1172,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1352,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1204,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692246,
+        "finding": "consistent",
+        "verifierDurationMs": 7059,
+        "sourceLineCount": 7,
+        "generationDurationMs": 497,
+        "referenceEvaluationDurationMs": 510,
+        "referenceTraceDurationMs": 536,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1186,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1201,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1318,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692765,
+        "finding": "consistent",
+        "verifierDurationMs": 8067,
+        "sourceLineCount": 4,
+        "generationDurationMs": 524,
+        "referenceEvaluationDurationMs": 647,
+        "referenceTraceDurationMs": 621,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "int-literal",
+          "less-than"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1797,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1266,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1234,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692206,
+        "finding": "consistent",
+        "verifierDurationMs": 6818,
+        "sourceLineCount": 14,
+        "generationDurationMs": 520,
+        "referenceEvaluationDurationMs": 536,
+        "referenceTraceDurationMs": 506,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1238,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1091,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1118,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692033,
+        "finding": "consistent",
+        "verifierDurationMs": 7236,
+        "sourceLineCount": 4,
+        "generationDurationMs": 503,
+        "referenceEvaluationDurationMs": 520,
+        "referenceTraceDurationMs": 600,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "not"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1235,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1194,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1339,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692552,
+        "finding": "consistent",
+        "verifierDurationMs": 6793,
+        "sourceLineCount": 4,
+        "generationDurationMs": 521,
+        "referenceEvaluationDurationMs": 546,
+        "referenceTraceDurationMs": 498,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1192,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1103,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1113,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692994,
+        "finding": "consistent",
+        "verifierDurationMs": 6705,
+        "sourceLineCount": 17,
+        "generationDurationMs": 492,
+        "referenceEvaluationDurationMs": 517,
+        "referenceTraceDurationMs": 505,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1176,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1098,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1131,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692821,
+        "finding": "consistent",
+        "verifierDurationMs": 6907,
+        "sourceLineCount": 4,
+        "generationDurationMs": 500,
+        "referenceEvaluationDurationMs": 509,
+        "referenceTraceDurationMs": 499,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1296,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1098,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1131,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692339,
+        "finding": "consistent",
+        "verifierDurationMs": 7829,
+        "sourceLineCount": 4,
+        "generationDurationMs": 528,
+        "referenceEvaluationDurationMs": 579,
+        "referenceTraceDurationMs": 549,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "int-literal",
+          "less-than"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1255,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1430,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1285,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692781,
+        "finding": "consistent",
+        "verifierDurationMs": 7215,
+        "sourceLineCount": 17,
+        "generationDurationMs": 595,
+        "referenceEvaluationDurationMs": 563,
+        "referenceTraceDurationMs": 595,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-collision",
+          "array-alias-update-index-1",
+          "bool-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1273,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1158,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1100,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692608,
+        "finding": "consistent",
+        "verifierDurationMs": 6751,
+        "sourceLineCount": 4,
+        "generationDurationMs": 518,
+        "referenceEvaluationDurationMs": 513,
+        "referenceTraceDurationMs": 505,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "if",
+          "if-then",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1199,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1099,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1106,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692741,
+        "finding": "consistent",
+        "verifierDurationMs": 6869,
+        "sourceLineCount": 4,
+        "generationDurationMs": 510,
+        "referenceEvaluationDurationMs": 515,
+        "referenceTraceDurationMs": 493,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "not"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1213,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1175,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1128,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692568,
+        "finding": "consistent",
+        "verifierDurationMs": 6858,
+        "sourceLineCount": 17,
+        "generationDurationMs": 496,
+        "referenceEvaluationDurationMs": 527,
+        "referenceTraceDurationMs": 502,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-1",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1204,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1178,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1148,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692086,
+        "finding": "consistent",
+        "verifierDurationMs": 7296,
+        "sourceLineCount": 7,
+        "generationDurationMs": 513,
+        "referenceEvaluationDurationMs": 647,
+        "referenceTraceDurationMs": 653,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "if",
+          "if-then",
+          "int-literal",
+          "let",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1337,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1170,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1112,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692000,
+        "finding": "consistent",
+        "verifierDurationMs": 7679,
+        "sourceLineCount": 17,
+        "generationDurationMs": 517,
+        "referenceEvaluationDurationMs": 670,
+        "referenceTraceDurationMs": 545,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1261,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1162,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1359,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692084,
+        "finding": "consistent",
+        "verifierDurationMs": 7495,
+        "sourceLineCount": 7,
+        "generationDurationMs": 675,
+        "referenceEvaluationDurationMs": 653,
+        "referenceTraceDurationMs": 546,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "if",
+          "if-then",
+          "int-literal",
+          "let",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1299,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1158,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1274,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692001,
+        "finding": "consistent",
+        "verifierDurationMs": 6751,
+        "sourceLineCount": 17,
+        "generationDurationMs": 502,
+        "referenceEvaluationDurationMs": 518,
+        "referenceTraceDurationMs": 512,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "or",
+          "or-rhs-executed"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1191,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1091,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1135,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692796,
+        "finding": "consistent",
+        "verifierDurationMs": 7200,
+        "sourceLineCount": 7,
+        "generationDurationMs": 506,
+        "referenceEvaluationDurationMs": 540,
+        "referenceTraceDurationMs": 556,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1468,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1176,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1135,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692001,
+        "finding": "consistent",
+        "verifierDurationMs": 6778,
+        "sourceLineCount": 17,
+        "generationDurationMs": 511,
+        "referenceEvaluationDurationMs": 535,
+        "referenceTraceDurationMs": 541,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "or",
+          "or-rhs-executed"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1175,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1093,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1127,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692628,
+        "finding": "consistent",
+        "verifierDurationMs": 6770,
+        "sourceLineCount": 14,
+        "generationDurationMs": 501,
+        "referenceEvaluationDurationMs": 523,
+        "referenceTraceDurationMs": 507,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1223,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1118,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1123,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692628,
+        "finding": "consistent",
+        "verifierDurationMs": 7157,
+        "sourceLineCount": 14,
+        "generationDurationMs": 504,
+        "referenceEvaluationDurationMs": 564,
+        "referenceTraceDurationMs": 544,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1353,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1170,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1159,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692000,
+        "finding": "consistent",
+        "verifierDurationMs": 8516,
+        "sourceLineCount": 17,
+        "generationDurationMs": 627,
+        "referenceEvaluationDurationMs": 650,
+        "referenceTraceDurationMs": 582,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1586,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1541,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1250,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692151,
+        "finding": "consistent",
+        "verifierDurationMs": 6820,
+        "sourceLineCount": 7,
+        "generationDurationMs": 519,
+        "referenceEvaluationDurationMs": 525,
+        "referenceTraceDurationMs": 520,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1198,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1122,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1103,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692999,
+        "finding": "consistent",
+        "verifierDurationMs": 6804,
+        "sourceLineCount": 7,
+        "generationDurationMs": 518,
+        "referenceEvaluationDurationMs": 541,
+        "referenceTraceDurationMs": 518,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1192,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1123,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1090,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692863,
+        "finding": "consistent",
+        "verifierDurationMs": 6932,
+        "sourceLineCount": 7,
+        "generationDurationMs": 546,
+        "referenceEvaluationDurationMs": 639,
+        "referenceTraceDurationMs": 510,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1183,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1126,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1090,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692001,
+        "finding": "consistent",
+        "verifierDurationMs": 7338,
+        "sourceLineCount": 17,
+        "generationDurationMs": 538,
+        "referenceEvaluationDurationMs": 540,
+        "referenceTraceDurationMs": 513,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "or",
+          "or-rhs-executed"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1239,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1155,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1416,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692863,
+        "finding": "consistent",
+        "verifierDurationMs": 8054,
+        "sourceLineCount": 7,
+        "generationDurationMs": 561,
+        "referenceEvaluationDurationMs": 659,
+        "referenceTraceDurationMs": 801,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1294,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1395,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1376,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692000,
+        "finding": "consistent",
+        "verifierDurationMs": 7906,
+        "sourceLineCount": 17,
+        "generationDurationMs": 939,
+        "referenceEvaluationDurationMs": 671,
+        "referenceTraceDurationMs": 716,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1298,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1204,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1166,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692218,
+        "finding": "consistent",
+        "verifierDurationMs": 7012,
+        "sourceLineCount": 4,
+        "generationDurationMs": 584,
+        "referenceEvaluationDurationMs": 567,
+        "referenceTraceDurationMs": 584,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "int-literal",
+          "subtract"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1213,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1109,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1104,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 692001,
+        "finding": "consistent",
+        "verifierDurationMs": 7121,
+        "sourceLineCount": 17,
+        "generationDurationMs": 518,
+        "referenceEvaluationDurationMs": 540,
+        "referenceTraceDurationMs": 517,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "or",
+          "or-rhs-executed"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1188,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1110,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1363,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ],
+    "liveArtifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication7_20261019.moongrammata.json.artifacts",
+    "liveArtifactCallbackCount": 32,
+    "liveLastError": "",
+    "liveVerifierDurationMs": 229489,
+    "liveCampaignWallClockMs": 230982,
+    "liveGenerationDurationMs": 17286,
+    "liveReferenceEvaluationDurationMs": 17976,
+    "liveReferenceTraceDurationMs": 17593,
+    "liveBackendBuildAndExecutionDurationMs": 116211,
+    "liveVerifierResidualDurationMs": 60423,
+    "liveReferencePathKinds": [
+      "match-false",
+      "struct-value",
+      "match-bool",
+      "array-alias-update",
+      "add",
+      "or-rhs-executed",
+      "function-call",
+      "array-alias-update-index-0",
+      "array-alias-update-index-1",
+      "struct-result-number",
+      "struct-field-flag",
+      "or",
+      "subtract",
+      "struct-field-number",
+      "less-than",
+      "let",
+      "variable",
+      "not",
+      "if",
+      "int-literal",
+      "array-alias-update-collision",
+      "if-then",
+      "equal-int",
+      "bool-literal"
+    ],
+    "liveFindings": "consistent",
+    "liveBackendOutcomes": [
+      "js:succeeded:0",
+      "wasm-gc:succeeded:0",
+      "wasm:succeeded:0"
+    ],
+    "liveSourceSizeBuckets": "under-50",
+    "verifierKind": "scripts/verify_seed.ps1",
+    "poolSize": 0,
+    "seed": 20261507,
+    "requestedExecutions": 32,
+    "completedExecutions": 32,
+    "targetExecutionOrder": [
+      692459,
+      692286,
+      692419,
+      692246,
+      692765,
+      692206,
+      692033,
+      692552,
+      692994,
+      692821,
+      692339,
+      692781,
+      692608,
+      692741,
+      692568,
+      692086,
+      692000,
+      692084,
+      692001,
+      692796,
+      692001,
+      692628,
+      692628,
+      692000,
+      692151,
+      692999,
+      692863,
+      692001,
+      692863,
+      692000,
+      692218,
+      692001
+    ],
+    "uniqueCandidatesObserved": 25,
+    "selectedSeeds": [
+      692459,
+      692286,
+      692419,
+      692246,
+      692765,
+      692206,
+      692033,
+      692552,
+      692994,
+      692821,
+      692339,
+      692781,
+      692608,
+      692741,
+      692568,
+      692086,
+      692000,
+      692084,
+      692001,
+      692796,
+      692628,
+      692151,
+      692999,
+      692863,
+      692218
+    ],
+    "distinctReferencePathKinds": 24,
+    "sourceSizeQuartileCounts": {},
+    "uniqueFeedbackFeatures": 29,
+    "uniqueFeedbackSignatures": 15,
+    "mutationFailures": 0,
+    "corpusEntries": 15
+  },
+  "moonSmith": {
+    "baselineSelectedSeeds": null,
+    "baselineDistinctReferencePathKinds": null,
+    "semanticGuidedSelectedSeeds": null,
+    "semanticGuidedDistinctReferencePathKinds": null,
+    "prescreenDurationMs": null,
+    "selectedExecutionBudget": null,
+    "backendExecutionsPerArm": null,
+    "sizeQuartilesMatched": null,
+    "commonUniqueCandidateBudget": null,
+    "commonUniqueCandidateCountsByQuartile": {},
+    "baselinePathKindsAtCommonUniqueBudget": null,
+    "semanticGuidedPathKindsAtCommonUniqueBudget": null,
+    "moonGrammataPathKindsAtCommonUniqueBudget": null,
+    "baselineMatchedQuartileCounts": null,
+    "semanticGuidedMatchedQuartileCounts": null,
+    "moonGrammataMatchedQuartileCounts": null
+  },
+  "liveVerification": null,
+  "interpretation": "Live integer-seed grammar prototype: MoonGrammata generates and mutates seed IDs from the declared numeric range; each Target callback regenerates the MoonSmith program for that seed and synchronously returns verifier findings before scheduling continues. No precomputed candidate outcomes are fed to the target. The run has no matched offline control and does not establish effectiveness or throughput superiority.",
+  "moonGrammataRevision": "d9cf3512b636fd45e941f30010d3fceb7cc2e4fc",
+  "moonGrammataVersion": "0.1.1",
+  "moonGrammataApi": "GrammarBuilder::integer + CampaignConfig + run_campaign; isolated benchmark dependency"
+}

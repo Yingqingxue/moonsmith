@@ -68,17 +68,18 @@ feedback for the MoonGrammata selection phase—not an online, live-feedback
 head-to-head. See the [live selected-outcomes record](moongrammata_live_selected_outcomes_20261018.md)
 for the exact protocol, sample counts, and limitations.
 
-Separately, six exploratory online-feedback replications now use synchronous
+Separately, seven exploratory online-feedback replications now use synchronous
 MoonGrammata Target callbacks and preserve each callback's source/report
 artifacts. In the first four small, unpaired cohorts (8 selected cases per
 arm per run), semantic-guided selection observed more reference-path kinds
-than either sequential or MoonGrammata. A fifth, larger cohort used 16 cases
-per arm and observed 21/35/32 path kinds for sequential/semantic-guided/
-MoonGrammata; a sixth used 24 cases and observed 39/44/34 path kinds. These
-are not general effectiveness claims: the controls preflighted 96 proposals
-in run 6 (64 in run 5 and 32 in runs 1–4), while MoonGrammata made 24, 16,
-and 8 callback evaluations respectively, so candidate and total-compute
-budgets are not matched; path diversity is only a proxy for bugs found. In addition,
+than either sequential or MoonGrammata. A fifth cohort used 16 cases per arm
+and observed 21/35/32 path kinds; a sixth used 24 cases and observed 39/44/34.
+The seventh used 32 cases and observed 38/48/24 path kinds for sequential,
+semantic-guided, and MoonGrammata. These are not general effectiveness claims:
+the controls preflighted 128 proposals in run 7 (96 in run 6, 64 in run 5 and
+32 in runs 1–4), while MoonGrammata made 32, 24, 16, and 8 callback
+evaluations respectively, so candidate and total-compute budgets are not
+matched; path diversity is only a proxy for bugs found. In addition,
 the semantic-guided control directly optimizes this same path-novelty metric,
 so its higher path count is an objective-aligned outcome, not a neutral measure
 of overall fuzzer effectiveness. Fourth-run evidence is recorded in
@@ -86,4 +87,5 @@ of overall fuzzer effectiveness. Fourth-run evidence is recorded in
 The larger fifth cohort's raw reports and limitations are recorded in
 [`moongrammata_live_feedback_replication5_20261019.md`](moongrammata_live_feedback_replication5_20261019.md).
 The sixth cohort's raw reports and limits are recorded in
-[`moongrammata_live_feedback_replication6_20261019.md`](moongrammata_live_feedback_replication6_20261019.md).
+[`moongrammata_live_feedback_replication6_20261019.md`](moongrammata_live_feedback_replication6_20261019.md), and the larger seventh cohort in
+[`moongrammata_live_feedback_replication7_20261019.md`](moongrammata_live_feedback_replication7_20261019.md).

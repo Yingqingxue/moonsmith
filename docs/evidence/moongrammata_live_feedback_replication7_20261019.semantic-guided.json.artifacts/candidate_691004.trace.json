@@ -1,0 +1,8 @@
+{
+  "value": "-5",
+  "visited": [
+    "add",
+    "int-literal",
+    "int-literal"
+  ]
+}

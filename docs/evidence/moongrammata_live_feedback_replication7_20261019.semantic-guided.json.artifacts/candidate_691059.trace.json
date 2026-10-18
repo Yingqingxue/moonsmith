@@ -1,0 +1,13 @@
+{
+  "value": "true",
+  "visited": [
+    "function-call",
+    "int-literal",
+    "choice-value",
+    "variable",
+    "choice-number",
+    "less-than",
+    "variable",
+    "int-literal"
+  ]
+}

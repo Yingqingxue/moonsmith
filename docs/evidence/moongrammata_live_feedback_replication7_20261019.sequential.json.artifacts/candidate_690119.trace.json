@@ -1,0 +1,9 @@
+{
+  "value": "false",
+  "visited": [
+    "match-bool",
+    "bool-literal",
+    "match-true",
+    "bool-literal"
+  ]
+}

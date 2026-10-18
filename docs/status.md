@@ -4,21 +4,21 @@ Last updated: 2026-10-19
 
 ## Competition-review follow-up: integration boundaries and evidence
 
-The live MoonGrammata adapter now has six exploratory synchronous-feedback
-cohorts, including a 24-case-per-arm run. In that sixth run, sequential,
-semantic-guided, and MoonGrammata arms observed 39/44/34 reference-path kinds
-over 72 backend executions each. The controls preflighted 96 proposals each,
-versus 24 MoonGrammata callbacks, so candidate-work and total-compute budgets
+The live MoonGrammata adapter now has seven exploratory synchronous-feedback
+cohorts, including 32 selected cases per arm in the seventh. That run observed
+38/48/24 reference-path kinds for sequential/semantic-guided/MoonGrammata, with
+96 backend attempts per arm. The controls preflighted 128 proposals each,
+versus 32 MoonGrammata callbacks, so candidate-work and total-compute budgets
 remain unequal. This measures a path-diversity proxy, not bug-finding
 effectiveness. The raw artifacts and caveats are in the
-[sixth replication report](evidence/moongrammata_live_feedback_replication6_20261019.md).
+[seventh replication report](evidence/moongrammata_live_feedback_replication7_20261019.md).
 
 The current response to the four overlap/validation concerns is intentionally
 evidence-led and not a claim that all concerns are closed:
 
-The baseline for this evidence update was commit `3442728`, whose regular
-Linux/Windows CI passed in [run 39144400466](https://github.com/Yingqingxue/moonsmith/actions/runs/39144400466).
-The sixth online-feedback cohort is recorded below and in its raw evidence
+The baseline for this evidence update is commit `b177635`, whose regular
+Linux/Windows and CaseKit CI passed in [run 39148454828](https://github.com/Yingqingxue/moonsmith/actions/runs/39148454828).
+The seventh online-feedback cohort is recorded below and in its raw evidence
 files; local MoonBit tests pass 111/111. The untracked application draft is
 preserved and excluded from the project changes.
 

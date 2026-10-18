@@ -1,0 +1,14 @@
+{
+  "value": "-4",
+  "visited": [
+    "function-call",
+    "bool-literal",
+    "choice-value",
+    "variable",
+    "choice-flag",
+    "if",
+    "variable",
+    "if-else",
+    "int-literal"
+  ]
+}

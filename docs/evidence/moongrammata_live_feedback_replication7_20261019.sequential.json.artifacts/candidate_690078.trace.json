@@ -1,0 +1,11 @@
+{
+  "value": "-13",
+  "visited": [
+    "struct-value",
+    "int-literal",
+    "bool-literal",
+    "struct-field-number",
+    "struct-field-flag",
+    "struct-result-number"
+  ]
+}
