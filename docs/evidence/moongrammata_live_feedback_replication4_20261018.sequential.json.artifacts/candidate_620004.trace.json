@@ -1,0 +1,12 @@
+{
+  "value": "8",
+  "visited": [
+    "choice-value",
+    "bool-literal",
+    "choice-flag",
+    "if",
+    "variable",
+    "if-else",
+    "int-literal"
+  ]
+}

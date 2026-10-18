@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 1,
+  "poolSource": null,
+  "configurationReport": ".\\docs\\evidence\\moongrammata_live_feedback_replication4_20261018.configuration.json",
+  "poolCandidateCount": 0,
+  "poolReferencePathKinds": 0,
+  "moonGrammata": {
+    "name": "MoonGrammata integer-seed grammar with synchronous live MoonSmith verifier feedback",
+    "feedbackSource": "synchronous per-Target callback on newly generated or mutated integer seeds; reference trace, finding, backend outcome, source-size bucket, and verifier cost",
+    "generatorMode": "integer-seed-range",
+    "generatedSeedMinimum": 622000,
+    "generatedSeedMaximum": 623000,
+    "liveEvaluations": 8,
+    "liveFailures": 0,
+    "liveGeneratorLimitObservations": 0,
+    "liveReferenceChecks": 8,
+    "liveBackendExecutions": 24,
+    "observations": [
+      {
+        "seed": 622523,
+        "finding": "consistent",
+        "verifierDurationMs": 7670,
+        "sourceLineCount": 7,
+        "generationDurationMs": 470,
+        "referenceEvaluationDurationMs": 478,
+        "referenceTraceDurationMs": 478,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1651,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1283,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1245,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622041,
+        "finding": "consistent",
+        "verifierDurationMs": 7118,
+        "sourceLineCount": 4,
+        "generationDurationMs": 476,
+        "referenceEvaluationDurationMs": 531,
+        "referenceTraceDurationMs": 499,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "not"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1290,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1165,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1157,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622483,
+        "finding": "consistent",
+        "verifierDurationMs": 6914,
+        "sourceLineCount": 4,
+        "generationDurationMs": 481,
+        "referenceEvaluationDurationMs": 486,
+        "referenceTraceDurationMs": 476,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "int-literal",
+          "less-than"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1286,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1166,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1144,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622310,
+        "finding": "consistent",
+        "verifierDurationMs": 6987,
+        "sourceLineCount": 7,
+        "generationDurationMs": 473,
+        "referenceEvaluationDurationMs": 481,
+        "referenceTraceDurationMs": 481,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "let",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1287,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1171,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1169,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622829,
+        "finding": "consistent",
+        "verifierDurationMs": 7802,
+        "sourceLineCount": 4,
+        "generationDurationMs": 477,
+        "referenceEvaluationDurationMs": 498,
+        "referenceTraceDurationMs": 554,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1358,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1461,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1385,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622270,
+        "finding": "consistent",
+        "verifierDurationMs": 8157,
+        "sourceLineCount": 4,
+        "generationDurationMs": 588,
+        "referenceEvaluationDurationMs": 758,
+        "referenceTraceDurationMs": 616,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1533,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1374,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1238,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622097,
+        "finding": "consistent",
+        "verifierDurationMs": 7349,
+        "sourceLineCount": 7,
+        "generationDurationMs": 543,
+        "referenceEvaluationDurationMs": 611,
+        "referenceTraceDurationMs": 575,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1392,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1169,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1164,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 622616,
+        "finding": "consistent",
+        "verifierDurationMs": 6953,
+        "sourceLineCount": 4,
+        "generationDurationMs": 468,
+        "referenceEvaluationDurationMs": 492,
+        "referenceTraceDurationMs": 474,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "if",
+          "if-else",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1255,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1188,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1186,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ],
+    "liveArtifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication4_20261018.moongrammata.json.artifacts",
+    "liveArtifactCallbackCount": 8,
+    "liveLastError": "",
+    "liveVerifierDurationMs": 58950,
+    "liveCampaignWallClockMs": 60535,
+    "liveGenerationDurationMs": 3976,
+    "liveReferenceEvaluationDurationMs": 4335,
+    "liveReferenceTraceDurationMs": 4153,
+    "liveBackendBuildAndExecutionDurationMs": 30717,
+    "liveVerifierResidualDurationMs": 15769,
+    "liveReferencePathKinds": [
+      "if",
+      "match-bool",
+      "if-else",
+      "int-literal",
+      "let",
+      "bool-literal",
+      "not",
+      "add",
+      "match-true",
+      "equal-int",
+      "variable",
+      "less-than"
+    ],
+    "liveFindings": "consistent",
+    "liveBackendOutcomes": [
+      "js:succeeded:0",
+      "wasm-gc:succeeded:0",
+      "wasm:succeeded:0"
+    ],
+    "liveSourceSizeBuckets": "under-50",
+    "verifierKind": "scripts/verify_seed.ps1",
+    "poolSize": 0,
+    "seed": 20261403,
+    "requestedExecutions": 8,
+    "completedExecutions": 8,
+    "targetExecutionOrder": [
+      622523,
+      622041,
+      622483,
+      622310,
+      622829,
+      622270,
+      622097,
+      622616
+    ],
+    "uniqueCandidatesObserved": 8,
+    "selectedSeeds": [
+      622523,
+      622041,
+      622483,
+      622310,
+      622829,
+      622270,
+      622097,
+      622616
+    ],
+    "distinctReferencePathKinds": 12,
+    "sourceSizeQuartileCounts": {},
+    "uniqueFeedbackFeatures": 17,
+    "uniqueFeedbackSignatures": 7,
+    "mutationFailures": 0,
+    "corpusEntries": 7
+  },
+  "moonSmith": {
+    "baselineSelectedSeeds": null,
+    "baselineDistinctReferencePathKinds": null,
+    "semanticGuidedSelectedSeeds": null,
+    "semanticGuidedDistinctReferencePathKinds": null,
+    "prescreenDurationMs": null,
+    "selectedExecutionBudget": null,
+    "backendExecutionsPerArm": null,
+    "sizeQuartilesMatched": null,
+    "commonUniqueCandidateBudget": null,
+    "commonUniqueCandidateCountsByQuartile": {},
+    "baselinePathKindsAtCommonUniqueBudget": null,
+    "semanticGuidedPathKindsAtCommonUniqueBudget": null,
+    "moonGrammataPathKindsAtCommonUniqueBudget": null,
+    "baselineMatchedQuartileCounts": null,
+    "semanticGuidedMatchedQuartileCounts": null,
+    "moonGrammataMatchedQuartileCounts": null
+  },
+  "liveVerification": null,
+  "interpretation": "Live integer-seed grammar prototype: MoonGrammata generates and mutates seed IDs from the declared numeric range; each Target callback regenerates the MoonSmith program for that seed and synchronously returns verifier findings before scheduling continues. No precomputed candidate outcomes are fed to the target. The run has no matched offline control and does not establish effectiveness or throughput superiority.",
+  "moonGrammataRevision": "d9cf3512b636fd45e941f30010d3fceb7cc2e4fc",
+  "moonGrammataVersion": "0.1.1",
+  "moonGrammataApi": "GrammarBuilder::integer + CampaignConfig + run_campaign; isolated benchmark dependency"
+}

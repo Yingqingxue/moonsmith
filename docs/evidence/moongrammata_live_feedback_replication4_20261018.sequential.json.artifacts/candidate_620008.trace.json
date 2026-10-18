@@ -1,0 +1,11 @@
+{
+  "value": "-12",
+  "visited": [
+    "choice-value",
+    "int-literal",
+    "choice-number",
+    "add",
+    "variable",
+    "int-literal"
+  ]
+}

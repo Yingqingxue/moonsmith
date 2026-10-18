@@ -67,3 +67,14 @@ disagreements in any arm. This is a post-selection blind check using cached
 feedback for the MoonGrammata selection phase—not an online, live-feedback
 head-to-head. See the [live selected-outcomes record](moongrammata_live_selected_outcomes_20261018.md)
 for the exact protocol, sample counts, and limitations.
+
+Separately, four exploratory online-feedback replications now use synchronous
+MoonGrammata Target callbacks and preserve each callback's source/report
+artifacts. In these small, unpaired cohorts (8 selected cases per arm per run),
+semantic-guided selection observed more reference-path kinds than either
+sequential or MoonGrammata in each run. This is still not a valid general
+effectiveness claim: the controls preflight 32 proposals while MoonGrammata
+generates/mutates 8 callback candidates, so candidate and total-compute budgets
+are not matched; path diversity is only a proxy for bugs found. The fourth
+cohort's raw reports and caveats are recorded in
+[`moongrammata_live_feedback_replication4_20261018.md`](moongrammata_live_feedback_replication4_20261018.md).

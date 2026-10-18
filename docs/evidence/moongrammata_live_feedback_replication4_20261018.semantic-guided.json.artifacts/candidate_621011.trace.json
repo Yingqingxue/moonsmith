@@ -1,0 +1,9 @@
+{
+  "value": "false",
+  "visited": [
+    "or",
+    "bool-literal",
+    "or-rhs-executed",
+    "bool-literal"
+  ]
+}

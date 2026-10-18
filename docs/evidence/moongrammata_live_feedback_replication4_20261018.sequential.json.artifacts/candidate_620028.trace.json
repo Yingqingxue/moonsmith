@@ -1,0 +1,10 @@
+{
+  "value": "-16",
+  "visited": [
+    "array-alias-update",
+    "int-literal",
+    "int-literal",
+    "int-literal",
+    "array-alias-update-index-1"
+  ]
+}
