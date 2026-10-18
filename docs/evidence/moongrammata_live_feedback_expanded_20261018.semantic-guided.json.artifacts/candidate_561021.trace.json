@@ -1,0 +1,8 @@
+{
+  "value": "false",
+  "visited": [
+    "equal-int",
+    "int-literal",
+    "int-literal"
+  ]
+}

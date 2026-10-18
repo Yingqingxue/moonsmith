@@ -1,0 +1,1894 @@
+{
+  "schemaVersion": 1,
+  "protocol": "Three online campaigns with the same depth, target matrix, per-target timeout, requested case budget, and proposal-count budget for the two controls. Each arm uses a disjoint seed range and does not share verifier outcomes. Sequential and semantic-guided controls synchronously preflight fresh proposals; MoonGrammata synchronously verifies each generated/mutated integer seed inside its Target callback.",
+  "sourceConfigurationReport": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.configuration.json",
+  "sourceConfigurationSha256": "58084542ef0715eb21a458fc24490c64227531e6a0c18ef937e2793bd29250d9",
+  "configuration": {
+    "targets": [
+      "js",
+      "wasm",
+      "wasm-gc"
+    ],
+    "depth": 1,
+    "timeoutSecondsPerTarget": 30,
+    "requestedCasesPerArm": 8
+  },
+  "backendCheckBudgetPerArm": 24,
+  "actualBackendChecks": {
+    "sequential": 24,
+    "semanticGuided": 24,
+    "moonGrammata": 24
+  },
+  "matchedActualBackendCheckBudget": true,
+  "seedRanges": {
+    "sequential": {
+      "start": 560000,
+      "endExclusive": 560032
+    },
+    "semanticGuided": {
+      "start": 561000,
+      "endExclusive": 561032
+    },
+    "moonGrammata": {
+      "minimum": 562000,
+      "maximum": 563000,
+      "campaignSeed": 20261103
+    },
+    "proposalOrderSeeds": {
+      "sequential": 20261101,
+      "semanticGuided": 20261102
+    },
+    "orderSeedsDistinctFromMoonGrammataCampaignSeed": true,
+    "disjoint": true
+  },
+  "sequential": {
+    "reportPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.sequential.json",
+    "distinctReferencePathKinds": 15,
+    "findings": {
+      "consistent": 8
+    },
+    "backendExecutionAttempts": 24,
+    "proposalCount": 32,
+    "proposalGenerationDurationMs": 15487,
+    "proposalReferenceEvaluationDurationMs": 15679,
+    "proposalReferenceTraceDurationMs": 15733,
+    "verifierWallClockMs": 47422,
+    "campaignWallClockMs": 94600,
+    "cases": [
+      {
+        "round": 0,
+        "policy": "sequential",
+        "seed": 560031,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560031,
+          560008,
+          560028,
+          560006
+        ],
+        "proposalWindowStatuses": [
+          "560031:checked",
+          "560008:checked",
+          "560028:checked",
+          "560006:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 4,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "8fa6d99287bf9dacc159a8294d6e51031665ecef2fff91ba51f9ff732b7d6baa",
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "seenPathKindsBeforeSelection": [],
+        "newlyCoveredPathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1295,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1225,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1193,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5608
+      },
+      {
+        "round": 1,
+        "policy": "sequential",
+        "seed": 560018,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560018,
+          560004,
+          560003,
+          560017
+        ],
+        "proposalWindowStatuses": [
+          "560018:checked",
+          "560004:checked",
+          "560003:checked",
+          "560017:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 7,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "fd16257ef9a9547f2e527f07adc032633f9b8f04fee35c6b834e8ea56f396b6c",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "equal-int",
+          "int-literal"
+        ],
+        "newlyCoveredPathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1652,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1792,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1533,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 7160
+      },
+      {
+        "round": 2,
+        "policy": "sequential",
+        "seed": 560029,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560029,
+          560027,
+          560005,
+          560002
+        ],
+        "proposalWindowStatuses": [
+          "560029:checked",
+          "560027:checked",
+          "560005:checked",
+          "560002:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 4,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "77f0e796106125a0a124898d16c478cee48be3ea2d9ca98987308e70cb3b6178",
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "bool-literal",
+          "equal-int",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "newlyCoveredPathKinds": [],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1269,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1185,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1236,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5591
+      },
+      {
+        "round": 3,
+        "policy": "sequential",
+        "seed": 560013,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560013,
+          560015,
+          560021,
+          560026
+        ],
+        "proposalWindowStatuses": [
+          "560013:checked",
+          "560015:checked",
+          "560021:checked",
+          "560026:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 13,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "df049a9620dc28b60d0d577525daae2c7248ec234b09a442f40654cfb78b21e1",
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "bool-literal",
+          "equal-int",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "newlyCoveredPathKinds": [
+          "add",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1258,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1195,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1187,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5490
+      },
+      {
+        "round": 4,
+        "policy": "sequential",
+        "seed": 560016,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560016,
+          560022,
+          560000,
+          560024
+        ],
+        "proposalWindowStatuses": [
+          "560016:checked",
+          "560022:checked",
+          "560000:checked",
+          "560024:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 7,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "1dcc6f149fe8d1fe313171a63f48f588741bf59a8670726551354804d2abfd7b",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "equal-int",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "-13\n",
+            "error": "",
+            "durationMs": 1295,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "-13\n",
+            "error": "",
+            "durationMs": 1276,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "-13\n",
+            "error": "",
+            "durationMs": 1188,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5708
+      },
+      {
+        "round": 5,
+        "policy": "sequential",
+        "seed": 560014,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560014,
+          560020,
+          560011,
+          560012
+        ],
+        "proposalWindowStatuses": [
+          "560014:checked",
+          "560020:checked",
+          "560011:checked",
+          "560012:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 7,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "caee360d982fdd683ba7044e34d23dfdba89e9ce5b093fff15477d1540ffd5d1",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "equal-int",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1572,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1391,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1309,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 6485
+      },
+      {
+        "round": 6,
+        "policy": "sequential",
+        "seed": 560019,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560019,
+          560023,
+          560007,
+          560010
+        ],
+        "proposalWindowStatuses": [
+          "560019:checked",
+          "560023:checked",
+          "560007:checked",
+          "560010:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 9,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "1a863b6b63fbb80d0d130e2f3d6bd2f4c456e1d66a3c48fe1454b3d46e92aed7",
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "equal-int",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1268,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1212,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1461,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5857
+      },
+      {
+        "round": 7,
+        "policy": "sequential",
+        "seed": 560009,
+        "proposalOrderSeed": 20261101,
+        "proposalWindowSeeds": [
+          560009,
+          560030,
+          560001,
+          560025
+        ],
+        "proposalWindowStatuses": [
+          "560009:checked",
+          "560030:checked",
+          "560001:checked",
+          "560025:checked"
+        ],
+        "selectionRule": "first valid seed in ascending proposal window",
+        "noveltyScore": null,
+        "novelPathKindCount": null,
+        "sourceLineCount": 7,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "073a4b0d0a478db02c5a80f0f8fbc61cbb42b798cf2362c6cd2a6a55307f52bf",
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "equal-int",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "match-false"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1272,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1197,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1189,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5523
+      }
+    ]
+  },
+  "semanticGuided": {
+    "reportPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.semantic-guided.json",
+    "distinctReferencePathKinds": 24,
+    "findings": {
+      "consistent": 8
+    },
+    "backendExecutionAttempts": 24,
+    "proposalCount": 32,
+    "proposalGenerationDurationMs": 15590,
+    "proposalReferenceEvaluationDurationMs": 15583,
+    "proposalReferenceTraceDurationMs": 16542,
+    "verifierWallClockMs": 46298,
+    "campaignWallClockMs": 94234,
+    "cases": [
+      {
+        "round": 0,
+        "policy": "semantic-guided",
+        "seed": 561002,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561001,
+          561008,
+          561002,
+          561017
+        ],
+        "proposalWindowStatuses": [
+          "561001:checked",
+          "561008:checked",
+          "561002:checked",
+          "561017:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.5714285714285714,
+        "novelPathKindCount": 4,
+        "sourceLineCount": 7,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "b7556d33cac259d3a94a71f0cd7659abc3eb57e3ad9baecb1ab6cd42e03f9bab",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "seenPathKindsBeforeSelection": [],
+        "newlyCoveredPathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1254,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1367,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "15\n",
+            "error": "",
+            "durationMs": 1270,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5835
+      },
+      {
+        "round": 1,
+        "policy": "semantic-guided",
+        "seed": 561003,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561005,
+          561021,
+          561000,
+          561003
+        ],
+        "proposalWindowStatuses": [
+          "561005:checked",
+          "561021:checked",
+          "561000:checked",
+          "561003:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.46153846153846156,
+        "novelPathKindCount": 6,
+        "sourceLineCount": 13,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "985dc5f5d5e604f785985da79b87ff95b07621480f8b5939ba7d69b5aae92dd1",
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "newlyCoveredPathKinds": [
+          "add",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1463,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1322,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1216,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 6147
+      },
+      {
+        "round": 2,
+        "policy": "semantic-guided",
+        "seed": 561027,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561030,
+          561016,
+          561027,
+          561026
+        ],
+        "proposalWindowStatuses": [
+          "561030:checked",
+          "561016:checked",
+          "561027:checked",
+          "561026:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.2857142857142857,
+        "novelPathKindCount": 4,
+        "sourceLineCount": 14,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "ff8e80c841d84ec4ce1cc3ce1856870ffde0c802dc5f627b492ce71d9cf50746",
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1281,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1217,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1233,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5551
+      },
+      {
+        "round": 3,
+        "policy": "semantic-guided",
+        "seed": 561012,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561012,
+          561024,
+          561029,
+          561019
+        ],
+        "proposalWindowStatuses": [
+          "561012:checked",
+          "561024:checked",
+          "561029:checked",
+          "561019:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.26666666666666666,
+        "novelPathKindCount": 4,
+        "sourceLineCount": 15,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "1299a3cb7b05dbc2215d449b51008e71d7e765d87e4cc0730d27adefc309e0ff",
+        "referencePathKinds": [
+          "bool-literal",
+          "choice-flag",
+          "choice-value",
+          "if",
+          "if-then",
+          "int-literal",
+          "variable"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "choice-flag",
+          "choice-value",
+          "if",
+          "if-then"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "10\n",
+            "error": "",
+            "durationMs": 1268,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "10\n",
+            "error": "",
+            "durationMs": 1225,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "10\n",
+            "error": "",
+            "durationMs": 1457,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5880
+      },
+      {
+        "round": 4,
+        "policy": "semantic-guided",
+        "seed": 561013,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561018,
+          561006,
+          561010,
+          561013
+        ],
+        "proposalWindowStatuses": [
+          "561018:checked",
+          "561006:checked",
+          "561010:checked",
+          "561013:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.25,
+        "novelPathKindCount": 1,
+        "sourceLineCount": 4,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "2a6ec653cbfe5032a7170696d63fac11832d0bbbaa579aebfbd9b00efc943017",
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "choice-flag",
+          "choice-value",
+          "if",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "equal-int"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1271,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1271,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1563,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 6043
+      },
+      {
+        "round": 5,
+        "policy": "semantic-guided",
+        "seed": 561020,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561025,
+          561014,
+          561020,
+          561028
+        ],
+        "proposalWindowStatuses": [
+          "561025:checked",
+          "561014:checked",
+          "561020:checked",
+          "561028:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.06666666666666667,
+        "novelPathKindCount": 1,
+        "sourceLineCount": 15,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "7386d9cfe77299ee7f8027574ed1450fb251347b6f596b69e8a5950d46c16d6d",
+        "referencePathKinds": [
+          "add",
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "variable"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "choice-flag",
+          "choice-value",
+          "equal-int",
+          "if",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "choice-number"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1335,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1373,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "0\n",
+            "error": "",
+            "durationMs": 1199,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5740
+      },
+      {
+        "round": 6,
+        "policy": "semantic-guided",
+        "seed": 561007,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561007,
+          561031,
+          561004,
+          561023
+        ],
+        "proposalWindowStatuses": [
+          "561007:checked",
+          "561031:checked",
+          "561004:checked",
+          "561023:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.3333333333333333,
+        "novelPathKindCount": 3,
+        "sourceLineCount": 9,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "1cdfc6204fd1443d36c1c0a3fa8e387e389cbb5be24369e6306a03bd58d55825",
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "choice-flag",
+          "choice-number",
+          "choice-value",
+          "equal-int",
+          "if",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1300,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1184,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "false\n",
+            "error": "",
+            "durationMs": 1197,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5538
+      },
+      {
+        "round": 7,
+        "policy": "semantic-guided",
+        "seed": 561009,
+        "proposalOrderSeed": 20261102,
+        "proposalWindowSeeds": [
+          561015,
+          561022,
+          561011,
+          561009
+        ],
+        "proposalWindowStatuses": [
+          "561015:checked",
+          "561022:checked",
+          "561011:checked",
+          "561009:checked"
+        ],
+        "selectionRule": "highest unseen reference-path kinds per source line within the first valid proposal size band; ties by count then ascending seed",
+        "noveltyScore": 0.1111111111111111,
+        "novelPathKindCount": 1,
+        "sourceLineCount": 9,
+        "sourceSizeBand": "lt50",
+        "sourceSha256": "f14997f921e3e1c5a716c5d2f2aef244b5820178a46f4bc063633dad73ba37b7",
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "subtract",
+          "variable"
+        ],
+        "seenPathKindsBeforeSelection": [
+          "add",
+          "bool-literal",
+          "choice-flag",
+          "choice-number",
+          "choice-value",
+          "equal-int",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "if",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "newlyCoveredPathKinds": [
+          "subtract"
+        ],
+        "referenceChecked": true,
+        "finding": "consistent",
+        "backendStatuses": [
+          "js:succeeded:0",
+          "wasm:succeeded:0",
+          "wasm-gc:succeeded:0"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "backend": "js",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1355,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "backend": "wasm",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1189,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "backend": "wasm-gc",
+            "buildMode": "default",
+            "status": "succeeded",
+            "exitCode": 0,
+            "output": "true\n",
+            "error": "",
+            "durationMs": 1182,
+            "executionAttempted": true
+          }
+        ],
+        "verifierWallClockMs": 5564
+      }
+    ]
+  },
+  "moonGrammata": {
+    "reportPath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.moongrammata.json",
+    "generatorMode": "integer-seed-range",
+    "selectedSeeds": [
+      562603,
+      562430,
+      562872,
+      562390,
+      562217,
+      562350,
+      562177,
+      562004
+    ],
+    "uniqueSelectedSeeds": 8,
+    "callbackCount": 8,
+    "referenceChecks": 8,
+    "generatorLimitObservations": 0,
+    "distinctReferencePathKinds": 19,
+    "findings": [
+      "consistent"
+    ],
+    "backendStatuses": {
+      "js:succeeded:0": 8,
+      "wasm-gc:succeeded:0": 8,
+      "wasm:succeeded:0": 8
+    },
+    "backendExecutionAttempts": 24,
+    "generationDurationMs": 4382,
+    "referenceEvaluationDurationMs": 4674,
+    "referenceTraceDurationMs": 4281,
+    "backendBuildAndExecutionDurationMs": 31189,
+    "verifierWallClockMs": 60163,
+    "campaignWallClockMs": 61698,
+    "observations": [
+      {
+        "seed": 562603,
+        "finding": "consistent",
+        "verifierDurationMs": 7428,
+        "sourceLineCount": 7,
+        "generationDurationMs": 461,
+        "referenceEvaluationDurationMs": 535,
+        "referenceTraceDurationMs": 549,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1411,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1366,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1233,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562430,
+        "finding": "consistent",
+        "verifierDurationMs": 8827,
+        "sourceLineCount": 15,
+        "generationDurationMs": 893,
+        "referenceEvaluationDurationMs": 618,
+        "referenceTraceDurationMs": 722,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1604,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1422,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1252,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562872,
+        "finding": "consistent",
+        "verifierDurationMs": 6956,
+        "sourceLineCount": 17,
+        "generationDurationMs": 497,
+        "referenceEvaluationDurationMs": 482,
+        "referenceTraceDurationMs": 466,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "int-literal"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1252,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1173,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1190,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562390,
+        "finding": "consistent",
+        "verifierDurationMs": 6871,
+        "sourceLineCount": 7,
+        "generationDurationMs": 467,
+        "referenceEvaluationDurationMs": 468,
+        "referenceTraceDurationMs": 511,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "if",
+          "if-else",
+          "int-literal",
+          "let",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1285,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1162,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1160,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562217,
+        "finding": "consistent",
+        "verifierDurationMs": 6888,
+        "sourceLineCount": 28,
+        "generationDurationMs": 461,
+        "referenceEvaluationDurationMs": 468,
+        "referenceTraceDurationMs": 463,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "choice-number",
+          "choice-value",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1356,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1164,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1161,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562350,
+        "finding": "consistent",
+        "verifierDurationMs": 7426,
+        "sourceLineCount": 9,
+        "generationDurationMs": 540,
+        "referenceEvaluationDurationMs": 677,
+        "referenceTraceDurationMs": 508,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "subtract",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1340,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1312,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1200,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562177,
+        "finding": "consistent",
+        "verifierDurationMs": 7424,
+        "sourceLineCount": 7,
+        "generationDurationMs": 464,
+        "referenceEvaluationDurationMs": 507,
+        "referenceTraceDurationMs": 486,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1350,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1382,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1264,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 562004,
+        "finding": "consistent",
+        "verifierDurationMs": 8343,
+        "sourceLineCount": 15,
+        "generationDurationMs": 599,
+        "referenceEvaluationDurationMs": 919,
+        "referenceTraceDurationMs": 576,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "bool-literal",
+          "choice-flag",
+          "choice-value",
+          "if",
+          "if-then",
+          "int-literal",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1533,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1376,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1241,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ]
+  },
+  "harnessDigestStart": "762be06472bc22e54772061c7387edd48c47c1fddd469b9460415f9dd4a8ca0a",
+  "harnessDigestEnd": "762be06472bc22e54772061c7387edd48c47c1fddd469b9460415f9dd4a8ca0a",
+  "selectionHarnessDigestExpected": "56b3305f222aee9af81db4f4d680381c2dd714a238e730808b2998f3e3eebe69",
+  "selectionHarnessDigestCurrent": "56b3305f222aee9af81db4f4d680381c2dd714a238e730808b2998f3e3eebe69",
+  "harnessChangedDuringRun": false,
+  "wallClockThroughputClaimAllowed": false,
+  "interpretation": "Exploratory online feedback comparison only. The controls use fresh candidate preflight traces and sequential feedback across rounds; MoonGrammata receives synchronous per-callback feedback. The seed ranges are disjoint and random behavior is not paired. Preflight work and wall-clock are reported; this does not establish general fuzzer effectiveness or throughput superiority.",
+  "rawArtifacts": [
+    "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.sequential.json",
+    "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.semantic-guided.json",
+    "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.moongrammata.json",
+    "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_expanded_20261018.configuration.json"
+  ]
+}
