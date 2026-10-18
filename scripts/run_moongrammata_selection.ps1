@@ -21,6 +21,7 @@ if ($LiveGeneratedSeeds -and $GeneratedSeedMaximum -lt $GeneratedSeedMinimum) {
 }
 $onlineLive = $LiveTarget -or $LiveGeneratedSeeds
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$liveArtifactDirectory = ''
 $inputPath = (Resolve-Path -LiteralPath $InputReport -ErrorAction Stop).Path
 $report = Get-Content -LiteralPath $inputPath -Raw -Encoding utf8 | ConvertFrom-Json
 if ($report.schemaVersion -ne 1 -or
@@ -29,6 +30,17 @@ if ($report.schemaVersion -ne 1 -or
 }
 if ($report.harnessChangedDuringRun -or -not $report.equalBackendExecutionBudget) {
     throw 'Refusing an incomplete or internally invalid MoonSmith candidate-pool report.'
+}
+if ($LiveGeneratedSeeds) {
+    $liveArtifactDirectory = if ($OutputPath) {
+        [IO.Path]::GetFullPath($OutputPath) + '.artifacts'
+    } else {
+        Join-Path $projectRoot ('.moonsmith\\runs\\moongrammata-live-' + [guid]::NewGuid().ToString('N') + '.artifacts')
+    }
+    if (Test-Path -LiteralPath $liveArtifactDirectory) {
+        throw "Live artifact directory already exists; choose a fresh output path to preserve earlier evidence: $liveArtifactDirectory"
+    }
+    New-Item -ItemType Directory -Path $liveArtifactDirectory -Force | Out-Null
 }
 
     $pathNames = if ($LiveGeneratedSeeds) {
@@ -88,7 +100,8 @@ try {
             $args = @('run', '--target', 'js', 'cmd/main', '--', 'live-generated',
                 [string]$ExecutionBudget, [string]$Seed, '-', $verifyScript,
                 ($targets -join ','), [string]$depth, [string]$timeoutSeconds,
-                [string]$GeneratedSeedMinimum, [string]$GeneratedSeedMaximum)
+                [string]$GeneratedSeedMinimum, [string]$GeneratedSeedMaximum,
+                $liveArtifactDirectory)
         } else {
             $args = @('run', '--target', 'js', 'cmd/main', '--', 'live',
                 [string]$ExecutionBudget, [string]$Seed, ($pathNames -join ','),
@@ -422,6 +435,10 @@ try {
         liveReferenceChecks = if ($onlineLive) { [int]$summary.live_reference_checks } else { 0 }
         liveBackendExecutions = if ($onlineLive) { [int]$summary.live_backend_executions } else { 0 }
         observations = if ($onlineLive) { @($liveObservationRecords) } else { @() }
+        liveArtifactDirectory = if ($LiveGeneratedSeeds) { $liveArtifactDirectory } else { $null }
+        liveArtifactCallbackCount = if ($LiveGeneratedSeeds) {
+            @(Get-ChildItem -LiteralPath $liveArtifactDirectory -Directory -Filter 'callback_*').Count
+        } else { 0 }
         liveLastError = if ($onlineLive) { [string]$summary.live_error } else { '' }
         liveVerifierDurationMs = if ($onlineLive) { [long]$summary.live_verifier_duration_ms } else { 0 }
         liveCampaignWallClockMs = if ($onlineLive) { $campaignTimer.ElapsedMilliseconds } else { $null }

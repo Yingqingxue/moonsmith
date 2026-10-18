@@ -16,6 +16,7 @@ param(
     [int]$Depth,
     [string[]]$Targets,
     [int]$TimeoutSeconds,
+    [string]$ArtifactDirectory = '',
     [switch]$NoPersist
 )
 $diverges = $Seed % 2 -eq 0
@@ -43,6 +44,19 @@ $report = [pscustomobject]@{
     finding = if ($generatorLimit) { 'generator-limit' } elseif ($diverges) { 'output-mismatch' } else { 'consistent' }
     referenceTrace = if ($generatorLimit) { $null } else { [pscustomobject]@{ visited = @("live-only-seed-$Seed") } }
     runs = $runs.ToArray()
+}
+if ($ArtifactDirectory) {
+    $stableArtifactDirectory = Join-Path $ArtifactDirectory "candidate_$Seed"
+    New-Item -ItemType Directory -Force -Path $stableArtifactDirectory | Out-Null
+    $stableSourcePath = Join-Path $stableArtifactDirectory 'source.mbt'
+    [IO.File]::WriteAllText($stableSourcePath, "// mock seed $Seed`n", [Text.UTF8Encoding]::new($false))
+    $report | Add-Member -NotePropertyName casePath -NotePropertyValue $stableSourcePath
+    $report | Add-Member -NotePropertyName artifactDirectory -NotePropertyValue $stableArtifactDirectory
+    [IO.File]::WriteAllText(
+        (Join-Path $stableArtifactDirectory 'report.json'),
+        ($report | ConvertTo-Json -Depth 5 -Compress),
+        [Text.UTF8Encoding]::new($false)
+    )
 }
 $report | ConvertTo-Json -Depth 5 -Compress
 if ($diverges) { exit 1 }
@@ -230,6 +244,22 @@ if ($diverges) { exit 1 }
              $observation.referenceTraceDurationMs -ne 3 -or
              @($observation.backendRuns).Count -ne 3)) {
             throw 'A completed observation is missing its reference or backend results.'
+        }
+    }
+    $artifactRoot = [string]$generatedResult.moonGrammata.liveArtifactDirectory
+    $artifactCallbacks = @(Get-ChildItem -LiteralPath $artifactRoot -Directory -Filter 'callback_*')
+    if (-not $artifactRoot -or
+        $generatedResult.moonGrammata.liveArtifactCallbackCount -ne $ExecutionBudget -or
+        $artifactCallbacks.Count -ne $ExecutionBudget) {
+        throw 'Live-generated callbacks did not preserve one artifact directory per verifier invocation.'
+    }
+    foreach ($callback in $artifactCallbacks) {
+        $candidateArtifact = Get-ChildItem -LiteralPath $callback.FullName -Directory -Filter 'candidate_*' |
+            Select-Object -First 1
+        if (-not $candidateArtifact -or
+            -not (Test-Path -LiteralPath (Join-Path $candidateArtifact.FullName 'source.mbt')) -or
+            -not (Test-Path -LiteralPath (Join-Path $candidateArtifact.FullName 'report.json'))) {
+            throw 'A live-generated callback artifact is missing its source or verifier report.'
         }
     }
     if ($generatedResult.moonGrammata.liveGenerationDurationMs -ne 5 * $ExecutionBudget -or

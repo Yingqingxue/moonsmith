@@ -314,6 +314,25 @@ if ($nearLimit.finding -ne 'consistent' -or $nearLimitLineCount -ge 16300 -or
     throw 'source below the configured line limit was incorrectly rejected.'
 }
 
+$artifactRoot = Join-Path ([IO.Path]::GetTempPath()) `
+    ('moonsmith-live-candidate-artifacts-' + [guid]::NewGuid().ToString('N'))
+$artifactRaw = & $verify -Seed 42 -Depth 0 -Targets @('js') `
+    -ArtifactDirectory $artifactRoot -NoPersist
+$artifactReport = $artifactRaw | ConvertFrom-Json
+$savedArtifactDirectory = [string]$artifactReport.artifactDirectory
+$savedArtifactSource = Join-Path $savedArtifactDirectory 'source.mbt'
+$savedArtifactReport = Get-Content -LiteralPath (Join-Path $savedArtifactDirectory 'report.json') -Raw -Encoding utf8 |
+    ConvertFrom-Json
+if ($artifactReport.finding -ne 'consistent' -or
+    -not (Test-Path -LiteralPath $savedArtifactSource) -or
+    $savedArtifactReport.sourceSha256 -ne $artifactReport.sourceSha256 -or
+    (Get-FileHash -LiteralPath $savedArtifactSource -Algorithm SHA256).Hash.ToLowerInvariant() -ne $artifactReport.sourceSha256 -or
+    $savedArtifactReport.casePath -ne $savedArtifactSource -or
+    -not $savedArtifactDirectory.StartsWith([IO.Path]::GetFullPath($artifactRoot), [StringComparison]::OrdinalIgnoreCase)) {
+    throw 'verify_seed did not preserve a hash-verifiable source and matching report in the requested artifact directory.'
+}
+Remove-Item -LiteralPath $artifactRoot -Recurse -Force
+
 $injected = (& $verify -Seed 0 -Depth 3 `
     -InjectOutputMismatchTarget wasm-gc `
     -InjectOnlyWhenSourceContains '(if' | ConvertFrom-Json)

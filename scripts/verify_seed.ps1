@@ -39,6 +39,9 @@ param(
     [string]$ReferenceTracePath = '',
 
     [Parameter()]
+    [string]$ArtifactDirectory = '',
+
+    [Parameter()]
     [switch]$NoPersist
 )
 
@@ -71,6 +74,31 @@ $casePath = if ($SourcePath) {
     Join-Path $caseDirectory ("seed_{0}_depth_{1}.mbt" -f $Seed, $Depth)
 }
 $referenceTrace = $null
+
+function Save-CandidateArtifact {
+    param([Parameter(Mandatory)][object]$Report)
+    if (-not $Report.PSObject.Properties['artifactDirectory']) {
+        $Report | Add-Member -NotePropertyName artifactDirectory -NotePropertyValue $null
+    }
+    if (-not $ArtifactDirectory) { return $Report | ConvertTo-Json -Depth 5 }
+
+    $stableArtifactDirectory = Join-Path ([IO.Path]::GetFullPath($ArtifactDirectory)) "candidate_$Seed"
+    if (Test-Path -LiteralPath $stableArtifactDirectory) {
+        throw "Candidate artifact already exists; choose a fresh artifact directory: $stableArtifactDirectory"
+    }
+    New-Item -ItemType Directory -Path $stableArtifactDirectory | Out-Null
+    $stableSourcePath = Join-Path $stableArtifactDirectory 'source.mbt'
+    Copy-Item -LiteralPath $casePath -Destination $stableSourcePath
+    $Report.casePath = $stableSourcePath
+    $Report.artifactDirectory = $stableArtifactDirectory
+    $json = $Report | ConvertTo-Json -Depth 5
+    [IO.File]::WriteAllText(
+        (Join-Path $stableArtifactDirectory 'report.json'),
+        $json + [Environment]::NewLine,
+        [Text.UTF8Encoding]::new($false)
+    )
+    return $json
+}
 
 function Invoke-CapturedProcess {
     param(
@@ -180,7 +208,7 @@ if (-not $SourcePath) {
             savedTo = $null
             runs = @()
         }
-        $sizeLimitReport | ConvertTo-Json -Depth 3
+        Save-CandidateArtifact -Report $sizeLimitReport
         return
     }
 
@@ -407,10 +435,11 @@ $report = [pscustomobject]@{
     referenceEvaluationDurationMs = $referenceEvaluationDurationMs
     referenceTraceDurationMs = $referenceTraceDurationMs
     savedTo       = $savedTo
+    artifactDirectory = $null
     runs          = @($runs)
 }
 
-$reportJson = $report | ConvertTo-Json -Depth 5
+$reportJson = Save-CandidateArtifact -Report $report
 if ($null -ne $savedTo) {
     if (-not (Test-Path -LiteralPath $savedTo)) {
         New-Item -ItemType Directory -Force -Path $savedTo | Out-Null

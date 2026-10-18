@@ -31,15 +31,17 @@ extern "js" fn invoke_live_verifier(
   depth : Int,
   targets : String,
   timeout_seconds : Int,
+  artifact_directory : String,
 ) -> String =
-  #| (script, seed, depth, targets, timeoutSeconds) => {
+  #| (script, seed, depth, targets, timeoutSeconds, artifactDirectory) => {
   #|   const { spawnSync } = require("node:child_process");
   #|   const targetNames = targets.split(",").filter((name) => name.length > 0);
   #|   const quote = (value) => "'" + String(value).replace(/'/g, "''") + "'";
   #|   const targetArray = "@(" + targetNames.map(quote).join(",") + ")";
   #|   const command = "& " + quote(script) + " -Seed " + String(seed) +
   #|     " -Depth " + String(depth) + " -Targets " + targetArray +
-  #|     " -TimeoutSeconds " + String(timeoutSeconds) + " -NoPersist";
+  #|     " -TimeoutSeconds " + String(timeoutSeconds) + " -NoPersist" +
+  #|     (artifactDirectory ? " -ArtifactDirectory " + quote(artifactDirectory) : "");
   #|   const args = ["-NoLogo", "-NoProfile", "-Command", command];
   #|   const outerTimeout = Math.max(120000, (targetNames.length * 2 * timeoutSeconds + 60) * 1000);
   #|   const started = Date.now();
@@ -95,6 +97,7 @@ fn invoke_live_verifier(
   _depth : Int,
   _targets : String,
   _timeout_seconds : Int,
+  _artifact_directory : String,
 ) -> String {
   "ERROR\tlive target requires the JavaScript host"
 }
@@ -136,7 +139,7 @@ fn main {
   let config_count = if live_pool_mode {
     4
   } else if live_generated_mode {
-    6
+    7
   } else {
     0
   }
@@ -174,10 +177,11 @@ fn main {
   } else {
     0
   }
+  let artifact_root = if live_generated_mode { args[9] } else { "" }
   let candidate_start = if live_pool_mode {
     7
   } else if live_generated_mode {
-    9
+    10
   } else {
     3
   }
@@ -287,7 +291,16 @@ fn main {
       if live_mode {
         live_evaluations += 1
         let response = invoke_live_verifier(
-          verify_script, id, depth, targets_csv, timeout_seconds,
+          verify_script,
+          id,
+          depth,
+          targets_csv,
+          timeout_seconds,
+          if artifact_root == "" {
+            ""
+          } else {
+            artifact_root + "/callback_" + live_evaluations.to_string()
+          },
         )
         let lines = response
           .split("\n")

@@ -34,6 +34,24 @@ try {
     foreach ($path in $result.rawArtifacts) {
         if (-not (Test-Path -LiteralPath $path)) { throw "Missing preserved raw arm artifact: $path" }
     }
+    $liveArtifactRoot = [string]$result.moonGrammata.reportPath + '.artifacts'
+    $liveRaw = Get-Content -LiteralPath $result.moonGrammata.reportPath -Raw -Encoding utf8 | ConvertFrom-Json
+    $liveCallbackArtifacts = @(Get-ChildItem -LiteralPath $liveArtifactRoot -Directory -Filter 'callback_*')
+    if ($result.rawArtifacts -notcontains $liveArtifactRoot -or
+        $liveRaw.moonGrammata.liveArtifactDirectory -ne $liveArtifactRoot -or
+        $liveRaw.moonGrammata.liveArtifactCallbackCount -ne $result.moonGrammata.callbackCount -or
+        $liveCallbackArtifacts.Count -ne $result.moonGrammata.callbackCount) {
+        throw 'Three-arm raw artifacts do not expose every synchronous MoonGrammata verifier callback.'
+    }
+    foreach ($callbackArtifact in $liveCallbackArtifacts) {
+        $candidateArtifact = Get-ChildItem -LiteralPath $callbackArtifact.FullName -Directory -Filter 'candidate_*' |
+            Select-Object -First 1
+        if (-not $candidateArtifact -or
+            -not (Test-Path -LiteralPath (Join-Path $candidateArtifact.FullName 'source.mbt')) -or
+            -not (Test-Path -LiteralPath (Join-Path $candidateArtifact.FullName 'report.json'))) {
+            throw 'A three-arm MoonGrammata callback artifact lacks replayable source or verifier JSON.'
+        }
+    }
     foreach ($arm in @($result.sequential, $result.semanticGuided)) {
         $controlReport = Get-Content -LiteralPath $arm.reportPath -Raw -Encoding utf8 | ConvertFrom-Json
         foreach ($proposal in $controlReport.proposalOutcomes) {

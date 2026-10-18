@@ -187,7 +187,7 @@ $result = [pscustomobject]@{
     } else {
         'Exploratory online feedback comparison only. The controls use fresh candidate preflight traces and sequential feedback across rounds; MoonGrammata receives synchronous per-callback feedback. The seed ranges are disjoint and random behavior is not paired. Preflight work and wall-clock are reported; this does not establish general fuzzer effectiveness or throughput superiority.'
     }
-    rawArtifacts = @($sequentialPath, $guidedPath, $moonGrammataPath, $poolPath)
+    rawArtifacts = @($sequentialPath, $guidedPath, $moonGrammataPath, ($moonGrammataPath + '.artifacts'), $poolPath)
 }
 $json = $result | ConvertTo-Json -Depth 14
 if ($OutputPath) {
