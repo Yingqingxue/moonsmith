@@ -185,12 +185,15 @@ if ($diverges) { exit 1 }
         throw 'Live target mode did not reject stale generated-pool metadata before writing a result.'
     }
     $generatedOrder = @($generatedResult.moonGrammata.targetExecutionOrder)
+    $generatedObservations = @($generatedResult.moonGrammata.observations)
     if ($generatedResult.moonGrammata.generatorMode -ne 'integer-seed-range' -or
         $generatedResult.moonGrammataApi -notlike 'GrammarBuilder::integer*' -or
         $generatedResult.moonGrammata.poolSize -ne 0 -or
         $null -ne $generatedResult.moonGrammata.selectedSeeds -and
             @($generatedResult.moonGrammata.selectedSeeds | Where-Object { $_ -lt 100000 -or $_ -gt 1000000 }).Count -gt 0 -or
         $generatedOrder.Count -ne $ExecutionBudget -or
+        $generatedObservations.Count -ne $ExecutionBudget -or
+        (@($generatedObservations.seed) -join ',') -ne ($generatedOrder -join ',') -or
         @($generatedOrder | Where-Object { $_ -lt 100000 -or $_ -gt 1000000 }).Count -gt 0 -or
         [int]$generatedResult.moonGrammata.liveEvaluations -ne $ExecutionBudget -or
         [int]$generatedResult.moonGrammata.liveFailures -ne 0 -or
@@ -204,6 +207,21 @@ if ($diverges) { exit 1 }
         $null -ne $generatedResult.moonSmith.commonUniqueCandidateBudget -or
         $generatedResult.interpretation -notlike 'Live integer-seed grammar prototype:*') {
         throw 'Integer grammar mode did not generate in-range inputs, return live feedback, or suppress invalid comparisons.'
+    }
+    foreach ($observation in $generatedObservations) {
+        if ($observation.seed -lt 100000 -or $observation.seed -gt 1000000) {
+            throw 'A per-callback observation contains a seed outside the configured range.'
+        }
+        if ($observation.finding -eq 'generator-limit' -and
+            ($observation.referenceStatus -ne 'not-checked' -or
+             @($observation.backendRuns).Count -ne 0)) {
+            throw 'A generator-limit observation was misreported as an executed verifier case.'
+        }
+        if ($observation.finding -ne 'generator-limit' -and
+            ($observation.referenceStatus -ne 'checked' -or
+             @($observation.backendRuns).Count -ne 3)) {
+            throw 'A completed observation is missing its reference or backend results.'
+        }
     }
     if (@($generatedOrder | Where-Object { $_ -in $pool.candidatePool.seed }).Count -gt 0) {
         throw 'Integer grammar mode unexpectedly reused an identifier from the cached candidate pool.'

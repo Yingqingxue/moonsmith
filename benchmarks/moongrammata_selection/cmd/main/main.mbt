@@ -229,6 +229,7 @@ fn main {
   )
   let live_source_size_buckets : @hashmap.HashMap[String, Unit] = @hashmap.HashMap([],
   )
+  let live_observations : Array[String] = []
   let mut live_evaluations = 0
   let mut live_failures = 0
   let mut live_generator_limits = 0
@@ -323,17 +324,28 @@ fn main {
         }
         live_source_size_buckets.set(size_bucket, ())
         features.push(@grammata.feature("source-size-bucket", size_bucket))
+        let observation_paths : Array[String] = []
+        let observation_backends : Array[String] = []
         for line in lines[1:] {
           let parts = line.split("\t").map(value => value.to_owned()).to_array()
           if parts.length() == 2 && parts[0] == "PATH" {
             let path = parts[1]
             live_observed_paths.set(path, ())
+            observation_paths.push(path)
             features.push(@grammata.feature("reference-path", path))
           } else if parts.length() == 5 && parts[0] == "BACKEND" {
+            let backend_outcome = parts[1] +
+              ":" +
+              parts[2] +
+              ":" +
+              parts[3] +
+              ":" +
+              parts[4]
             live_backend_outcomes.set(
               parts[1] + ":" + parts[2] + ":" + parts[3],
               (),
             )
+            observation_backends.push(backend_outcome)
             if parts[4] == "true" {
               live_backend_executions += 1
             }
@@ -345,6 +357,21 @@ fn main {
             )
           }
         }
+        live_observations.push(
+          [
+            id.to_string(),
+            finding,
+            duration_ms.to_string(),
+            source_lines.to_string(),
+            if finding == "generator-limit" {
+              "not-checked"
+            } else {
+              "checked"
+            },
+            observation_paths.join(","),
+            observation_backends.join(","),
+          ].join("|"),
+        )
         return @grammata.accepted(
           features~,
           cost_class=(duration_ms / 1000).max(0),
@@ -405,6 +432,9 @@ fn main {
     println("live_generator_limits=" + live_generator_limits.to_string())
     println("live_reference_checks=" + live_reference_checks.to_string())
     println("live_backend_executions=" + live_backend_executions.to_string())
+    for observation in live_observations {
+      println("live_observation=" + observation)
+    }
     println("live_verifier_duration_ms=" + live_duration_ms.to_string())
     println(
       "live_source_size_buckets=" +

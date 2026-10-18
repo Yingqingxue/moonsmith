@@ -22,7 +22,10 @@ Generated programs that exceed the verifier's source-size safety limit still
 produce a `generator-limit` feedback observation, but do not pretend to have a
 reference check or backend execution. The output separately counts total live
 callbacks, generator-limit observations, reference checks, and attempted
-backend executions.
+backend executions. The JSON report also preserves one per-callback record
+with the seed, finding, duration, source size, reference paths, and per-target
+status/attempt information, so aggregates can be audited back to individual
+verifier outcomes.
 
 The online modes are still prototypes, not a matched comparison. Sequential
 and semantic-guided comparison arms remain offline in this harness. There is
@@ -72,6 +75,11 @@ as comparable outcomes.
   kinds and took 28,385 ms in aggregate; all findings were `consistent` and
   all three backend statuses succeeded. This remains a four-input smoke test,
   not an effectiveness comparison.
+- A subsequent run with seed `351887` checked the new per-callback records:
+  seeds `100861`, `100994`, `100821`, and `100648` each have one record with
+  three attempted backend runs, a checked reference trace, and matching seed
+  order. The run observed 43 distinct path kinds. This is a reporting-integrity
+  check over another four-input sample, not an efficacy result.
 
 The four-execution smoke runs are too small and too seed-specific to estimate
 effectiveness. The measured duration includes process startup, generation,

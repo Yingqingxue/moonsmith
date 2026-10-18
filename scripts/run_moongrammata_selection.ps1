@@ -114,13 +114,44 @@ try {
         throw "MoonGrammata benchmark did not emit its result marker: $text"
     }
     $summary = @{}
+    $liveObservationLines = [System.Collections.Generic.List[string]]::new()
     foreach ($line in $text -split '\r?\n') {
-        if ($line -match '^([a-z_]+)=(.*)$') { $summary[$Matches[1]] = $Matches[2] }
+        if ($line -match '^live_observation=(.*)$') {
+            $liveObservationLines.Add([string]$Matches[1])
+        } elseif ($line -match '^([a-z_]+)=(.*)$') {
+            $summary[$Matches[1]] = $Matches[2]
+        }
     }
     $expectedPoolSize = if ($LiveGeneratedSeeds) { 0 } else { $report.candidatePool.Count }
     if ([int]$summary.completed -ne $ExecutionBudget -or
         [int]$summary.candidate_pool -ne $expectedPoolSize) {
         throw 'MoonGrammata campaign did not honor its generator mode and execution budget.'
+    }
+    $liveObservationRecords = foreach ($record in $liveObservationLines) {
+        $fields = $record -split '\|', 7
+        if ($fields.Count -ne 7) { throw "Malformed live observation record: $record" }
+        $backendRecords = foreach ($backend in ($fields[6] -split ',' | Where-Object { $_ })) {
+            $backendFields = $backend -split ':', 4
+            if ($backendFields.Count -ne 4) { throw "Malformed backend result in observation: $backend" }
+            [pscustomobject]@{
+                target = $backendFields[0]
+                status = $backendFields[1]
+                exitCode = $backendFields[2]
+                executionAttempted = [bool]::Parse($backendFields[3])
+            }
+        }
+        [pscustomobject]@{
+            seed = [int]$fields[0]
+            finding = [string]$fields[1]
+            verifierDurationMs = [long]$fields[2]
+            sourceLineCount = [int]$fields[3]
+            referenceStatus = [string]$fields[4]
+            referencePathKinds = @($fields[5] -split ',' | Where-Object { $_ })
+            backendRuns = @($backendRecords)
+        }
+    }
+    if ($onlineLive -and $liveObservationRecords.Count -ne $ExecutionBudget) {
+        throw 'Live target did not preserve one observation record per callback.'
     }
     $selectedSeeds = @($summary.observed_seeds -split ',' | Where-Object { $_ -ne '' } | ForEach-Object { [int]$_ })
     $candidateMap = @{}
@@ -376,6 +407,7 @@ try {
         liveGeneratorLimitObservations = if ($onlineLive) { [int]$summary.live_generator_limits } else { 0 }
         liveReferenceChecks = if ($onlineLive) { [int]$summary.live_reference_checks } else { 0 }
         liveBackendExecutions = if ($onlineLive) { [int]$summary.live_backend_executions } else { 0 }
+        observations = if ($onlineLive) { @($liveObservationRecords) } else { @() }
         liveLastError = if ($onlineLive) { [string]$summary.live_error } else { '' }
         liveVerifierDurationMs = if ($onlineLive) { [long]$summary.live_verifier_duration_ms } else { 0 }
         liveReferencePathKinds = if ($onlineLive) { @($summary.live_reference_paths -split ',' | Where-Object { $_ }) } else { @() }
