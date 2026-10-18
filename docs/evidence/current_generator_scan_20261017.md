@@ -489,3 +489,22 @@ depth-10 cohorts (seeds 19445–19504) contain 60 bodies: 44 were compiled on
 both platforms and 16 were excluded by the size guard. No issue was found in
 this executed sample; this does not establish behavior for excluded inputs or
 prove absence of compiler bugs.
+
+## Thirteenth focused depth-10 cohort
+
+Seeds 19505–19509 were scanned at depth 10 on Linux and Windows:
+
+- Workflow: [MoonSmith CI run 39081453016](https://github.com/Yingqingxue/moonsmith/actions/runs/39081453016)
+- Commit: `6ee1d63d6750ec55d334c2ee47a4eba7ee1eb252`
+- Cohort: seeds 19505–19509, all at depth 10.
+
+All workflow jobs passed. Four cases matched reference outputs on 12 Linux
+JS/Wasm/Wasm-GC executions and four Windows native-release executions. Seed
+19507 exceeded the 16,300-line bound (17,972 lines), was classified as
+`generator-limit` in both reports, and was not compiled. Legacy
+`unexpectedCount` is one for that exclusion; `unexpectedFindingCount` is
+zero. All five source hashes matched, and all four executable cases were
+consistent across platforms. Across the thirteen focused depth-10 cohorts
+(seeds 19445–19509), 65 bodies are recorded: 48 were compiled on both
+platforms and 17 were excluded by the size guard. Excluded cases remain
+untested; no issue was found in this bounded executed sample.
