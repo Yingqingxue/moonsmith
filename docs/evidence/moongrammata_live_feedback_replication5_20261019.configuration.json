@@ -1,0 +1,1541 @@
+{
+  "schemaVersion": 1,
+  "method": "greedy inverse-pool-frequency reference-path novelty, constrained to the sequential arm source-size quartile counts",
+  "referenceTraceSource": "MoonBit reference interpreter; not backend runtime coverage",
+  "seedStart": 630000,
+  "candidateCount": 64,
+  "executionBudgetCasesPerArm": 16,
+  "configuredTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "expectedBackendExecutionsPerArm": 48,
+  "equalBackendExecutionBudget": true,
+  "unexpectedFindingCount": 0,
+  "depth": 1,
+  "timeoutSeconds": 30,
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "gitHead": "eb8849cbbc3e24140e078cfad635272f947f20b6",
+  "gitDirty": true,
+  "harnessDigestStart": "cfc5b9fb8f946609bfb2953f42567900f87cd2978b401af9367188d5d68595ee",
+  "harnessDigestEnd": "cfc5b9fb8f946609bfb2953f42567900f87cd2978b401af9367188d5d68595ee",
+  "harnessChangedDuringRun": false,
+  "prescreenDurationMs": 59862,
+  "candidatePool": [
+    {
+      "seed": 630000,
+      "paths": [
+        "add",
+        "function-call",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630001,
+      "paths": [
+        "bool-literal",
+        "match-bool",
+        "match-false"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630002,
+      "paths": [
+        "add",
+        "function-call",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630003,
+      "paths": [
+        "bool-literal",
+        "match-bool",
+        "match-false"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630004,
+      "paths": [
+        "add",
+        "function-call",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630005,
+      "paths": [
+        "bool-literal",
+        "match-bool",
+        "match-false"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630006,
+      "paths": [
+        "add",
+        "function-call",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630007,
+      "paths": [
+        "add",
+        "int-literal",
+        "less-than",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "sourceLineCount": 14,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630008,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630009,
+      "paths": [
+        "add",
+        "int-literal",
+        "less-than",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "sourceLineCount": 14,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630010,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630011,
+      "paths": [
+        "add",
+        "int-literal",
+        "less-than",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "sourceLineCount": 14,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630012,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630013,
+      "paths": [
+        "add",
+        "int-literal",
+        "less-than",
+        "variable",
+        "while-iteration",
+        "while-loop",
+        "while-normal-exit"
+      ],
+      "sourceLineCount": 14,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630014,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630015,
+      "paths": [
+        "add",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "sourceLineCount": 10,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630016,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630017,
+      "paths": [
+        "add",
+        "for-iteration",
+        "for-loop",
+        "for-normal-exit",
+        "int-literal",
+        "less-than",
+        "variable"
+      ],
+      "sourceLineCount": 10,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630018,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "match-bool",
+        "match-true"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630019,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630020,
+      "paths": [
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630021,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630022,
+      "paths": [
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630023,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630024,
+      "paths": [
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630025,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630026,
+      "paths": [
+        "bool-literal",
+        "choice-flag",
+        "choice-value",
+        "if",
+        "if-then",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630027,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630028,
+      "paths": [
+        "add",
+        "choice-number",
+        "choice-value",
+        "function-call",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 19,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630029,
+      "paths": [
+        "equal-int",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630030,
+      "paths": [
+        "add",
+        "choice-number",
+        "choice-value",
+        "int-literal",
+        "variable"
+      ],
+      "sourceLineCount": 16,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630031,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630032,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630033,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630034,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630035,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630036,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630037,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630038,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630039,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630040,
+      "paths": [
+        "add",
+        "int-literal"
+      ],
+      "sourceLineCount": 5,
+      "sizeQuartile": "0"
+    },
+    {
+      "seed": 630041,
+      "paths": [
+        "bool-literal",
+        "int-literal",
+        "struct-field-flag",
+        "struct-field-number",
+        "struct-result-flag",
+        "struct-value"
+      ],
+      "sourceLineCount": 15,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630042,
+      "paths": [
+        "array-grow",
+        "array-grow-index-0",
+        "array-grow-push",
+        "int-literal"
+      ],
+      "sourceLineCount": 10,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630043,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630044,
+      "paths": [
+        "array-grow",
+        "array-grow-index-1",
+        "array-grow-push",
+        "int-literal"
+      ],
+      "sourceLineCount": 10,
+      "sizeQuartile": "2"
+    },
+    {
+      "seed": 630045,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630046,
+      "paths": [
+        "array-alias-update",
+        "array-alias-update-index-0",
+        "int-literal"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630047,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630048,
+      "paths": [
+        "array-alias-update",
+        "array-alias-update-index-0",
+        "int-literal"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630049,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630050,
+      "paths": [
+        "array-alias-update",
+        "array-alias-update-index-1",
+        "int-literal"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630051,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630052,
+      "paths": [
+        "array-alias-update",
+        "array-alias-update-index-0",
+        "int-literal"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630053,
+      "paths": [
+        "bool-literal",
+        "or",
+        "or-rhs-skipped"
+      ],
+      "sourceLineCount": 18,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630054,
+      "paths": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push"
+      ],
+      "sourceLineCount": 24,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630055,
+      "paths": [
+        "bool-literal",
+        "let",
+        "not",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630056,
+      "paths": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push"
+      ],
+      "sourceLineCount": 24,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630057,
+      "paths": [
+        "bool-literal",
+        "let",
+        "not",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630058,
+      "paths": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push"
+      ],
+      "sourceLineCount": 24,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630059,
+      "paths": [
+        "bool-literal",
+        "let",
+        "not",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630060,
+      "paths": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push"
+      ],
+      "sourceLineCount": 24,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630061,
+      "paths": [
+        "bool-literal",
+        "let",
+        "not",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    },
+    {
+      "seed": 630062,
+      "paths": [
+        "int-literal",
+        "valtype-enum-array-empty-init",
+        "valtype-enum-array-growth-push",
+        "valtype-enum-array-index",
+        "valtype-enum-array-index-after-growth",
+        "valtype-enum-array-probe",
+        "valtype-enum-array-push"
+      ],
+      "sourceLineCount": 24,
+      "sizeQuartile": "3"
+    },
+    {
+      "seed": 630063,
+      "paths": [
+        "bool-literal",
+        "let",
+        "not",
+        "variable"
+      ],
+      "sourceLineCount": 8,
+      "sizeQuartile": "1"
+    }
+  ],
+  "baseline": {
+    "name": "sequential",
+    "seeds": [
+      630000,
+      630001,
+      630002,
+      630003,
+      630004,
+      630005,
+      630006,
+      630007,
+      630008,
+      630009,
+      630010,
+      630011,
+      630012,
+      630013,
+      630014,
+      630015
+    ],
+    "durationMs": 94275,
+    "metrics": {
+      "caseCount": 16,
+      "backendBuildAttempts": 48,
+      "backendExecutions": 48,
+      "unavailableBackends": 0,
+      "distinctReferencePaths": 15,
+      "uniqueProgramBodies": 14,
+      "meanSourceLines": 8.6,
+      "maximumSourceLines": 13,
+      "findings": {
+        "consistent": 16
+      }
+    },
+    "cases": [
+      {
+        "seed": 630000,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=3:10\n,err=0:|4:wasm=succeeded,exit=0,out=3:10\n,err=0:|7:wasm-gc=succeeded,exit=0,out=3:10\n,err=0:|reference=3:10\n",
+        "referenceChecked": true,
+        "bodySha256": "bb99888aa7b3f2533bd9e64fd8fc33c8e26f9bc30f454e5f2d19934f07335abb",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630001,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "8ef8545c794b4934448b84b043d5f671c4f5edeb73ca9e127389c51bd81cc1f6",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630002,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-16\n,err=0:|4:wasm=succeeded,exit=0,out=4:-16\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-16\n,err=0:|reference=4:-16\n",
+        "referenceChecked": true,
+        "bodySha256": "8cfd2fdb50e404172a2b8df924a08cc73f75e8ac5149cf30febd007d600b8853",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630003,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "8ef8545c794b4934448b84b043d5f671c4f5edeb73ca9e127389c51bd81cc1f6",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630004,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=3:-1\n,err=0:|4:wasm=succeeded,exit=0,out=3:-1\n,err=0:|7:wasm-gc=succeeded,exit=0,out=3:-1\n,err=0:|reference=3:-1\n",
+        "referenceChecked": true,
+        "bodySha256": "33863e5c655730439087e84ed33ad488a59e305c87ddc0c301919841a9d848cc",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630005,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "8ef8545c794b4934448b84b043d5f671c4f5edeb73ca9e127389c51bd81cc1f6",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630006,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=3:14\n,err=0:|4:wasm=succeeded,exit=0,out=3:14\n,err=0:|7:wasm-gc=succeeded,exit=0,out=3:14\n,err=0:|reference=3:14\n",
+        "referenceChecked": true,
+        "bodySha256": "0e4e1ac0febf2e1df399326af3ed90a8d43623b90a11bb3e07b40acafb28167d",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630007,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "6cc277556385d8ab3372db563ce7975a4d09abda3d9b876717e83e55241ad63d",
+        "sourceLineCount": 13,
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630008,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-19\n,err=0:|4:wasm=succeeded,exit=0,out=4:-19\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-19\n,err=0:|reference=4:-19\n",
+        "referenceChecked": true,
+        "bodySha256": "8d252b69fd065f3f84da4173f069d3487b00b6120ac8350cf50653285d4bb4b5",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630009,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "07f8869e42aab3658956a7bc5ac8c3a2cef3ad2c36d399118ca652d943284ddb",
+        "sourceLineCount": 13,
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630010,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=2:9\n,err=0:|4:wasm=succeeded,exit=0,out=2:9\n,err=0:|7:wasm-gc=succeeded,exit=0,out=2:9\n,err=0:|reference=2:9\n",
+        "referenceChecked": true,
+        "bodySha256": "3b897980c985cac64116f28c1c93cf8c49cf6e553447079b756f3c8f020d8290",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630011,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "3e0486baf592da0defff3f4af9a008ea1f755154c015d9bbcc6654706121d68d",
+        "sourceLineCount": 13,
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630012,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=3:-4\n,err=0:|4:wasm=succeeded,exit=0,out=3:-4\n,err=0:|7:wasm-gc=succeeded,exit=0,out=3:-4\n,err=0:|reference=3:-4\n",
+        "referenceChecked": true,
+        "bodySha256": "ee8ae351b0dc02397eba14ae8a86cb339aa8ca57832d9e1028d3ff5a8cc643da",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630013,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "65821769e8bd386da4a0e91587f802fcace5bace0112c4674358411ddfabbb66",
+        "sourceLineCount": 13,
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630014,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-17\n,err=0:|4:wasm=succeeded,exit=0,out=4:-17\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-17\n,err=0:|reference=4:-17\n",
+        "referenceChecked": true,
+        "bodySha256": "0e789e482c2131e9f14306d7aa34625a9ee766d8b9ec0aa4b4dc5c320337c4a3",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630015,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "ec0499e39843198146ac1cf5576f29135bc78b02716783e455b969392477c404",
+        "sourceLineCount": 9,
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      }
+    ]
+  },
+  "guided": {
+    "name": "semantic-guided",
+    "seeds": [
+      630042,
+      630015,
+      630044,
+      630020,
+      630007,
+      630017,
+      630031,
+      630001,
+      630055,
+      630008,
+      630000,
+      630057,
+      630003,
+      630019,
+      630059,
+      630002
+    ],
+    "durationMs": 94452,
+    "metrics": {
+      "caseCount": 16,
+      "backendBuildAttempts": 48,
+      "backendExecutions": 48,
+      "unavailableBackends": 0,
+      "distinctReferencePaths": 30,
+      "uniqueProgramBodies": 13,
+      "meanSourceLines": 8.6,
+      "maximumSourceLines": 15,
+      "findings": {
+        "consistent": 16
+      }
+    },
+    "cases": [
+      {
+        "seed": 630042,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-19\n,err=0:|4:wasm=succeeded,exit=0,out=4:-19\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-19\n,err=0:|reference=4:-19\n",
+        "referenceChecked": true,
+        "bodySha256": "db8bc9c2b98bcd49138b724e3d5e8f8b37d1a146e4d2688bbf6a2a0adb10e3ba",
+        "sourceLineCount": 9,
+        "referencePathKinds": [
+          "array-grow",
+          "array-grow-index-0",
+          "array-grow-push",
+          "int-literal"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630015,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "ec0499e39843198146ac1cf5576f29135bc78b02716783e455b969392477c404",
+        "sourceLineCount": 9,
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630044,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-18\n,err=0:|4:wasm=succeeded,exit=0,out=4:-18\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-18\n,err=0:|reference=4:-18\n",
+        "referenceChecked": true,
+        "bodySha256": "c712d7765618ec5f16c0a1f43c8e66599cb91dead1e3cf63b558138593c9fe1b",
+        "sourceLineCount": 9,
+        "referencePathKinds": [
+          "array-grow",
+          "array-grow-index-1",
+          "array-grow-push",
+          "int-literal"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630020,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=2:1\n,err=0:|4:wasm=succeeded,exit=0,out=2:1\n,err=0:|7:wasm-gc=succeeded,exit=0,out=2:1\n,err=0:|reference=2:1\n",
+        "referenceChecked": true,
+        "bodySha256": "fbeac9d60525df32eeb21cf71afec7d0fe6eb9086bc34f9fc50dd21eb01b4dce",
+        "sourceLineCount": 15,
+        "referencePathKinds": [
+          "bool-literal",
+          "choice-flag",
+          "choice-value",
+          "if",
+          "if-then",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630007,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "6cc277556385d8ab3372db563ce7975a4d09abda3d9b876717e83e55241ad63d",
+        "sourceLineCount": 13,
+        "referencePathKinds": [
+          "add",
+          "int-literal",
+          "less-than",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630017,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "b0179c017a8e5913da6e253ec7d8f9f240866c902dba12953b29decfd151d9ab",
+        "sourceLineCount": 9,
+        "referencePathKinds": [
+          "add",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "int-literal",
+          "less-than",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630031,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "8786da634235f5916e99b9d91a86fcde055b0d919c4907f77268b9a3f2f570d4",
+        "sourceLineCount": 14,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630001,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "8ef8545c794b4934448b84b043d5f671c4f5edeb73ca9e127389c51bd81cc1f6",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630055,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "95c98d331e2ae64fdb318e8056d38017005e83ea452729fbfeac8eda2ed927ae",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630008,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-19\n,err=0:|4:wasm=succeeded,exit=0,out=4:-19\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-19\n,err=0:|reference=4:-19\n",
+        "referenceChecked": true,
+        "bodySha256": "8d252b69fd065f3f84da4173f069d3487b00b6120ac8350cf50653285d4bb4b5",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "int-literal",
+          "match-bool",
+          "match-true"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630000,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=3:10\n,err=0:|4:wasm=succeeded,exit=0,out=3:10\n,err=0:|7:wasm-gc=succeeded,exit=0,out=3:10\n,err=0:|reference=3:10\n",
+        "referenceChecked": true,
+        "bodySha256": "bb99888aa7b3f2533bd9e64fd8fc33c8e26f9bc30f454e5f2d19934f07335abb",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630057,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "95c98d331e2ae64fdb318e8056d38017005e83ea452729fbfeac8eda2ed927ae",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630003,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "8ef8545c794b4934448b84b043d5f671c4f5edeb73ca9e127389c51bd81cc1f6",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "match-bool",
+          "match-false"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630019,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=6:false\n,err=0:|4:wasm=succeeded,exit=0,out=6:false\n,err=0:|7:wasm-gc=succeeded,exit=0,out=6:false\n,err=0:|reference=6:false\n",
+        "referenceChecked": true,
+        "bodySha256": "b51214b7ecd52eb03fca3d1d981ae5346caae48e6cdcf778416c538679c401df",
+        "sourceLineCount": 4,
+        "referencePathKinds": [
+          "equal-int",
+          "int-literal"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630059,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=5:true\n,err=0:|4:wasm=succeeded,exit=0,out=5:true\n,err=0:|7:wasm-gc=succeeded,exit=0,out=5:true\n,err=0:|reference=5:true\n",
+        "referenceChecked": true,
+        "bodySha256": "95c98d331e2ae64fdb318e8056d38017005e83ea452729fbfeac8eda2ed927ae",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "bool-literal",
+          "let",
+          "not",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      },
+      {
+        "seed": 630002,
+        "finding": "consistent",
+        "caseId": null,
+        "savedTo": null,
+        "signature": "consistent|2:js=succeeded,exit=0,out=4:-16\n,err=0:|4:wasm=succeeded,exit=0,out=4:-16\n,err=0:|7:wasm-gc=succeeded,exit=0,out=4:-16\n,err=0:|reference=4:-16\n",
+        "referenceChecked": true,
+        "bodySha256": "8cfd2fdb50e404172a2b8df924a08cc73f75e8ac5149cf30febd007d600b8853",
+        "sourceLineCount": 7,
+        "referencePathKinds": [
+          "add",
+          "function-call",
+          "int-literal",
+          "variable"
+        ],
+        "backendStatuses": [
+          "js:succeeded",
+          "wasm:succeeded",
+          "wasm-gc:succeeded"
+        ]
+      }
+    ]
+  },
+  "overlapSeedCount": 7,
+  "baselineSourceSizeQuartileCounts": {
+    "1": 7,
+    "0": 5,
+    "2": 4
+  },
+  "guidedSourceSizeQuartileCounts": {
+    "1": 7,
+    "0": 5,
+    "2": 4
+  },
+  "sourceSizeQuartilesMatched": true,
+  "executionOrder": [
+    "baseline",
+    "guided"
+  ],
+  "caution": "Compare path diversity only when equalBackendExecutionBudget is true; prescreen cost is additional, and one cohort cannot establish effectiveness. Native debug has known upstream #1322 ICE and should not be treated as a newly discovered finding."
+}

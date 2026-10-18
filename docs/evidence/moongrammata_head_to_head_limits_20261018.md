@@ -68,16 +68,19 @@ feedback for the MoonGrammata selection phase—not an online, live-feedback
 head-to-head. See the [live selected-outcomes record](moongrammata_live_selected_outcomes_20261018.md)
 for the exact protocol, sample counts, and limitations.
 
-Separately, four exploratory online-feedback replications now use synchronous
+Separately, five exploratory online-feedback replications now use synchronous
 MoonGrammata Target callbacks and preserve each callback's source/report
-artifacts. In these small, unpaired cohorts (8 selected cases per arm per run),
-semantic-guided selection observed more reference-path kinds than either
-sequential or MoonGrammata in each run. This is still not a valid general
-effectiveness claim: the controls preflight 32 proposals while MoonGrammata
-generates/mutates 8 callback candidates, so candidate and total-compute budgets
+artifacts. In the first four small, unpaired cohorts (8 selected cases per
+arm per run), semantic-guided selection observed more reference-path kinds
+than either sequential or MoonGrammata. A fifth, larger cohort used 16 cases
+per arm and observed 21/35/32 path kinds for sequential/semantic-guided/
+MoonGrammata. These are not general effectiveness claims: the controls
+preflighted 64 proposals in run 5 (32 in runs 1–4), while MoonGrammata made 16
+(8 in runs 1–4) callback evaluations, so candidate and total-compute budgets
 are not matched; path diversity is only a proxy for bugs found. In addition,
 the semantic-guided control directly optimizes this same path-novelty metric,
 so its higher path count is an objective-aligned outcome, not a neutral measure
-of overall fuzzer effectiveness. The fourth cohort's raw reports and caveats
-are recorded in
+of overall fuzzer effectiveness. Fourth-run evidence is recorded in
 [`moongrammata_live_feedback_replication4_20261018.md`](moongrammata_live_feedback_replication4_20261018.md).
+The larger fifth cohort's raw reports and limitations are recorded in
+[`moongrammata_live_feedback_replication5_20261019.md`](moongrammata_live_feedback_replication5_20261019.md).

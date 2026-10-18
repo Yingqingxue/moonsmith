@@ -1,0 +1,8 @@
+{
+  "value": "true",
+  "visited": [
+    "int-literal",
+    "valtype-raise-probe",
+    "valtype-raise-error-path"
+  ]
+}

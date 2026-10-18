@@ -1,0 +1,11 @@
+{
+  "value": "16",
+  "visited": [
+    "array-grow",
+    "int-literal",
+    "array-grow-push",
+    "int-literal",
+    "array-grow-push",
+    "array-grow-index-1"
+  ]
+}
