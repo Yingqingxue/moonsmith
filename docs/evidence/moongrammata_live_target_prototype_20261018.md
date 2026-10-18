@@ -89,13 +89,17 @@ semantic-guided campaigns under equal wall-clock budgets.
 
 ## Remaining work
 
-1. Build live sequential and semantic-guided control arms against the same
-   integer-seed proposal space, target matrix, per-target timeout, and actual
-   verifier-cost stopping budget. Define the semantic-guided policy before
-   comparing it with MoonGrammata.
-2. Repeat across multiple preregistered campaign seeds and report unique reference
+1. A first three-arm harness has now been exercised in two tiny, non-overlapping
+   pools; results and raw artifacts are recorded in
+   [the online-feedback pilot](moongrammata_online_feedback_comparison_pilot_20261018.md).
+   The two control arms still select from a frozen, reference-path-prescreened
+   pool. Build live sequential and explicitly defined live semantic-guided
+   controls against the same proposal space, target matrix, per-target timeout,
+   and actual verifier-cost or common wall-clock stopping budget.
+2. Repeat across many preregistered campaign seeds and report unique reference
    paths, backend divergence/crashes, verifier outcomes, and total generation
-   and verification costs. Keep all raw run artifacts and report failures as
-   well as successes.
+   and verification costs. The two current 3-case pilots are plumbing checks,
+   not effectiveness evidence. Keep all raw run artifacts and report failures
+   as well as successes.
 
 No new MoonBit compiler issue is claimed by this prototype.

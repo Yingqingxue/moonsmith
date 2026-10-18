@@ -70,7 +70,10 @@ extern "js" fn invoke_live_verifier(
   #|       " expected=" + String(targetNames.length);
   #|   }
   #|   const lines = ["OK\t" + report.finding + "\t" + elapsed + "\t" +
-  #|     String(report.sourceLineCount)];
+  #|     String(report.sourceLineCount) + "\t" +
+  #|     String(report.generationDurationMs || 0) + "\t" +
+  #|     String(report.referenceEvaluationDurationMs || 0) + "\t" +
+  #|     String(report.referenceTraceDurationMs || 0)];
   #|   lines.push("SIZE\t" + report.sourceLineCount);
   #|   if (sizeOnly) return lines.join("\n");
   #|   for (const path of [...new Set(report.referenceTrace.visited)].sort()) {
@@ -78,7 +81,8 @@ extern "js" fn invoke_live_verifier(
   #|   }
   #|   for (const run of report.runs) {
   #|     lines.push("BACKEND\t" + run.target + "\t" + run.status + "\t" +
-  #|       run.exitCode + "\t" + String(Boolean(run.executionAttempted)));
+  #|       run.exitCode + "\t" + String(run.durationMs || 0) + "\t" +
+  #|       String(Boolean(run.executionAttempted)));
   #|   }
   #|   return lines.join("\n");
   #| }
@@ -293,7 +297,7 @@ fn main {
           .split("\t")
           .map(value => value.to_owned())
           .to_array()
-        if first[0] != "OK" || first.length() != 4 {
+        if first[0] != "OK" || first.length() != 7 {
           live_failures += 1
           live_last_error = response
             .split("\n")
@@ -313,6 +317,9 @@ fn main {
           first[3],
           "live verifier source-line count",
         )
+        let generation_ms = parse_int(first[4], "generation duration")
+        let reference_ms = parse_int(first[5], "reference evaluation duration")
+        let trace_ms = parse_int(first[6], "reference trace duration")
         live_duration_ms += duration_ms
         features.push(@grammata.feature("live-finding", finding))
         let size_bucket = if source_lines < 50 {
@@ -333,20 +340,22 @@ fn main {
             live_observed_paths.set(path, ())
             observation_paths.push(path)
             features.push(@grammata.feature("reference-path", path))
-          } else if parts.length() == 5 && parts[0] == "BACKEND" {
+          } else if parts.length() == 6 && parts[0] == "BACKEND" {
             let backend_outcome = parts[1] +
               ":" +
               parts[2] +
               ":" +
               parts[3] +
               ":" +
-              parts[4]
+              parts[4] +
+              ":" +
+              parts[5]
             live_backend_outcomes.set(
               parts[1] + ":" + parts[2] + ":" + parts[3],
               (),
             )
             observation_backends.push(backend_outcome)
-            if parts[4] == "true" {
+            if parts[5] == "true" {
               live_backend_executions += 1
             }
             features.push(
@@ -363,6 +372,9 @@ fn main {
             finding,
             duration_ms.to_string(),
             source_lines.to_string(),
+            generation_ms.to_string(),
+            reference_ms.to_string(),
+            trace_ms.to_string(),
             if finding == "generator-limit" {
               "not-checked"
             } else {

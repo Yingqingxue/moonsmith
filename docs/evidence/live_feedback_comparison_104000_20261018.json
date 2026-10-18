@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "protocol": "Common candidate pool, equal per-arm case/callback budget, same backend target matrix, depth, and per-target timeout. Sequential and semantic-guided choose from the frozen pool; MoonGrammata receives synchronous verifier feedback while selecting from that same pool. This is a matched backend-execution-budget pilot, not an equal-wall-clock stopping comparison.",
+  "candidatePoolReport": "docs\\evidence\\live_feedback_pool_104000_20261018.json",
+  "candidatePoolReportSha256": "eff0711cd19839eafd541c79598b6c9c2a6db9bae6e11be8d9530af6f6b4b22a",
+  "candidateCount": 8,
+  "selectionSeedStart": 104000,
+  "moonGrammataCampaignSeed": 20261021,
+  "executionBudgetCasesPerArm": 3,
+  "configuredTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "depth": 4,
+  "timeoutSecondsPerTarget": 30,
+  "expectedBackendExecutionsPerArm": 9,
+  "commonUniqueCandidateOverlapCount": 1,
+  "candidatePoolPrescreenDurationMs": 7108,
+  "sequential": {
+    "selectedSeeds": [
+      104000,
+      104001,
+      104002
+    ],
+    "distinctReferencePathKinds": 44,
+    "findings": {
+      "consistent": 3
+    },
+    "backendExecutions": 9,
+    "verifierWallClockMs": 17131,
+    "backendStatuses": {
+      "wasm:succeeded": 3,
+      "js:succeeded": 3,
+      "wasm-gc:succeeded": 3
+    }
+  },
+  "semanticGuided": {
+    "policy": "greedy inverse-pool-frequency reference-path novelty, constrained to the sequential arm source-size quartile counts",
+    "selectedSeeds": [
+      104000,
+      104004,
+      104003
+    ],
+    "distinctReferencePathKinds": 44,
+    "findings": {
+      "consistent": 3
+    },
+    "backendExecutions": 9,
+    "verifierWallClockMs": 16852,
+    "backendStatuses": {
+      "wasm:succeeded": 3,
+      "js:succeeded": 3,
+      "wasm-gc:succeeded": 3
+    }
+  },
+  "moonGrammata": {
+    "selectionMode": "fixed-pool-identifiers",
+    "selectedUniqueSeeds": [
+      104002,
+      104003,
+      104005
+    ],
+    "callbackExecutionOrder": [
+      104002,
+      104003,
+      104005
+    ],
+    "callbackCount": 3,
+    "uniqueReferencePathKinds": 41,
+    "findings": {
+      "consistent": 3
+    },
+    "backendStatuses": {
+      "wasm-gc:succeeded:0": 3,
+      "wasm:succeeded:0": 3,
+      "js:succeeded:0": 3
+    },
+    "backendExecutions": 9,
+    "generatorLimitObservations": 0,
+    "generationDurationMs": 1289,
+    "referenceEvaluationDurationMs": 1302,
+    "referenceTraceDurationMs": 1266,
+    "backendBuildAndExecutionDurationMs": 10545,
+    "verifierResidualDurationMs": 5172,
+    "verifierWallClockMs": 19574,
+    "campaignWallClockMs": 20992,
+    "observations": [
+      {
+        "seed": 104002,
+        "finding": "consistent",
+        "verifierDurationMs": 6726,
+        "sourceLineCount": 125,
+        "generationDurationMs": 424,
+        "referenceEvaluationDurationMs": 433,
+        "referenceTraceDurationMs": 418,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "array-alias-update",
+          "array-alias-update-collision",
+          "array-alias-update-index-0",
+          "bool-literal",
+          "choice-flag",
+          "choice-number",
+          "choice-value",
+          "equal-int",
+          "if",
+          "if-else",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "let",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value",
+          "subtract",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1170,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1290,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1247,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 104003,
+        "finding": "consistent",
+        "verifierDurationMs": 6349,
+        "sourceLineCount": 107,
+        "generationDurationMs": 431,
+        "referenceEvaluationDurationMs": 434,
+        "referenceTraceDurationMs": 425,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "bool-literal",
+          "choice-number",
+          "choice-value",
+          "for-iteration",
+          "for-loop",
+          "for-normal-exit",
+          "function-call",
+          "if",
+          "if-else",
+          "int-literal",
+          "less-than",
+          "let",
+          "match-bool",
+          "match-false",
+          "not",
+          "or",
+          "or-rhs-executed",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-number",
+          "struct-value",
+          "subtract",
+          "variable"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1184,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1098,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1102,
+            "executionAttempted": true
+          }
+        ]
+      },
+      {
+        "seed": 104005,
+        "finding": "consistent",
+        "verifierDurationMs": 6499,
+        "sourceLineCount": 147,
+        "generationDurationMs": 434,
+        "referenceEvaluationDurationMs": 435,
+        "referenceTraceDurationMs": 423,
+        "referenceStatus": "checked",
+        "referencePathKinds": [
+          "add",
+          "array-alias-update",
+          "array-alias-update-index-0",
+          "bool-literal",
+          "choice-flag",
+          "choice-number",
+          "choice-value",
+          "if",
+          "if-else",
+          "if-then",
+          "int-literal",
+          "less-than",
+          "let",
+          "match-bool",
+          "match-true",
+          "struct-field-flag",
+          "struct-field-number",
+          "struct-result-flag",
+          "struct-value",
+          "subtract",
+          "valtype-enum-array-empty-init",
+          "valtype-enum-array-growth-push",
+          "valtype-enum-array-index",
+          "valtype-enum-array-index-after-growth",
+          "valtype-enum-array-probe",
+          "valtype-enum-array-push",
+          "variable",
+          "while-iteration",
+          "while-loop",
+          "while-normal-exit"
+        ],
+        "backendRuns": [
+          {
+            "target": "js",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1210,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1115,
+            "executionAttempted": true
+          },
+          {
+            "target": "wasm-gc",
+            "status": "succeeded",
+            "exitCode": "0",
+            "durationMs": 1129,
+            "executionAttempted": true
+          }
+        ]
+      }
+    ]
+  },
+  "runnerWallClockMs": 21521,
+  "candidatePoolPreparationIsSharedOverhead": true,
+  "wallClockThroughputClaimAllowed": false,
+  "caveat": "The sequential and semantic-guided arms use a reference-trace prescreened pool, while MoonGrammata consumes verifier feedback online. The pool-prescreen cost is reported separately. Per-arm backend budgets and timeouts match, but total wall-clock stopping budgets do not; raw durations are descriptive and do not establish throughput superiority.",
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "moonGrammataVersion": "0.1.1",
+  "moonGrammataRevision": "d9cf3512b636fd45e941f30010d3fceb7cc2e4fc",
+  "verifierKind": "scripts/verify_seed.ps1"
+}

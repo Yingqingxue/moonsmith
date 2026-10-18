@@ -28,6 +28,7 @@ if (-not $generatorLimit) {
             target = $target
             status = if ($failed) { 'runtime-failed' } else { 'succeeded' }
             exitCode = if ($failed) { 1 } else { 0 }
+            durationMs = 10
             executionAttempted = $true
         })
     }
@@ -36,6 +37,9 @@ $report = [pscustomobject]@{
     seed = $Seed
     referenceChecked = -not $generatorLimit
     sourceLineCount = 40 + ($Seed % 60)
+    generationDurationMs = 5
+    referenceEvaluationDurationMs = if ($generatorLimit) { 0 } else { 7 }
+    referenceTraceDurationMs = if ($generatorLimit) { 0 } else { 3 }
     finding = if ($generatorLimit) { 'generator-limit' } elseif ($diverges) { 'output-mismatch' } else { 'consistent' }
     referenceTrace = if ($generatorLimit) { $null } else { [pscustomobject]@{ visited = @("live-only-seed-$Seed") } }
     runs = $runs.ToArray()
@@ -214,14 +218,31 @@ if ($diverges) { exit 1 }
         }
         if ($observation.finding -eq 'generator-limit' -and
             ($observation.referenceStatus -ne 'not-checked' -or
+             $observation.referenceEvaluationDurationMs -ne 0 -or
+             $observation.referenceTraceDurationMs -ne 0 -or
              @($observation.backendRuns).Count -ne 0)) {
             throw 'A generator-limit observation was misreported as an executed verifier case.'
         }
         if ($observation.finding -ne 'generator-limit' -and
             ($observation.referenceStatus -ne 'checked' -or
+             $observation.generationDurationMs -ne 5 -or
+             $observation.referenceEvaluationDurationMs -ne 7 -or
+             $observation.referenceTraceDurationMs -ne 3 -or
              @($observation.backendRuns).Count -ne 3)) {
             throw 'A completed observation is missing its reference or backend results.'
         }
+    }
+    if ($generatedResult.moonGrammata.liveGenerationDurationMs -ne 5 * $ExecutionBudget -or
+        $generatedResult.moonGrammata.liveReferenceEvaluationDurationMs -ne 7 *
+            [int]$generatedResult.moonGrammata.liveReferenceChecks -or
+        $generatedResult.moonGrammata.liveReferenceTraceDurationMs -ne 3 *
+            [int]$generatedResult.moonGrammata.liveReferenceChecks -or
+        $generatedResult.moonGrammata.liveBackendBuildAndExecutionDurationMs -ne
+            30 * [int]$generatedResult.moonGrammata.liveReferenceChecks -or
+        $generatedResult.moonGrammata.liveVerifierResidualDurationMs -lt 0 -or
+        $generatedResult.moonGrammata.liveCampaignWallClockMs -lt
+            $generatedResult.moonGrammata.liveVerifierDurationMs) {
+        throw 'Online campaign phase timings are incomplete or do not reconcile with callback totals.'
     }
     if (@($generatedOrder | Where-Object { $_ -in $pool.candidatePool.seed }).Count -gt 0) {
         throw 'Integer grammar mode unexpectedly reused an identifier from the cached candidate pool.'

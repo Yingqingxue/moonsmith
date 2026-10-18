@@ -98,9 +98,11 @@ try {
         $args = @('run', '--target', 'js', 'cmd/main', '--', [string]$ExecutionBudget,
             [string]$Seed, ($pathNames -join ',')) + @($specifications)
     }
+    $campaignTimer = [System.Diagnostics.Stopwatch]::StartNew()
     Push-Location $tempRoot
     try { $raw = & $moon @args 2>&1 }
     finally { Pop-Location }
+    $campaignTimer.Stop()
     if ($LASTEXITCODE -ne 0) { throw "MoonGrammata benchmark failed: $($raw -join [Environment]::NewLine)" }
     $text = $raw -join [Environment]::NewLine
     $expectedMarker = if ($LiveGeneratedSeeds) {
@@ -128,16 +130,17 @@ try {
         throw 'MoonGrammata campaign did not honor its generator mode and execution budget.'
     }
     $liveObservationRecords = foreach ($record in $liveObservationLines) {
-        $fields = $record -split '\|', 7
-        if ($fields.Count -ne 7) { throw "Malformed live observation record: $record" }
-        $backendRecords = foreach ($backend in ($fields[6] -split ',' | Where-Object { $_ })) {
-            $backendFields = $backend -split ':', 4
-            if ($backendFields.Count -ne 4) { throw "Malformed backend result in observation: $backend" }
+        $fields = $record -split '\|', 10
+        if ($fields.Count -ne 10) { throw "Malformed live observation record: $record" }
+        $backendRecords = foreach ($backend in ($fields[9] -split ',' | Where-Object { $_ })) {
+            $backendFields = $backend -split ':', 5
+            if ($backendFields.Count -ne 5) { throw "Malformed backend result in observation: $backend" }
             [pscustomobject]@{
                 target = $backendFields[0]
                 status = $backendFields[1]
                 exitCode = $backendFields[2]
-                executionAttempted = [bool]::Parse($backendFields[3])
+                durationMs = [long]$backendFields[3]
+                executionAttempted = [bool]::Parse($backendFields[4])
             }
         }
         [pscustomobject]@{
@@ -145,14 +148,25 @@ try {
             finding = [string]$fields[1]
             verifierDurationMs = [long]$fields[2]
             sourceLineCount = [int]$fields[3]
-            referenceStatus = [string]$fields[4]
-            referencePathKinds = @($fields[5] -split ',' | Where-Object { $_ })
+            generationDurationMs = [long]$fields[4]
+            referenceEvaluationDurationMs = [long]$fields[5]
+            referenceTraceDurationMs = [long]$fields[6]
+            referenceStatus = [string]$fields[7]
+            referencePathKinds = @($fields[8] -split ',' | Where-Object { $_ })
             backendRuns = @($backendRecords)
         }
     }
     if ($onlineLive -and $liveObservationRecords.Count -ne $ExecutionBudget) {
         throw 'Live target did not preserve one observation record per callback.'
     }
+    $liveGenerationDurationMs = [long](($liveObservationRecords | Measure-Object generationDurationMs -Sum).Sum)
+    $liveReferenceEvaluationDurationMs = [long](($liveObservationRecords | Measure-Object referenceEvaluationDurationMs -Sum).Sum)
+    $liveReferenceTraceDurationMs = [long](($liveObservationRecords | Measure-Object referenceTraceDurationMs -Sum).Sum)
+    $liveBackendDurationMs = [long](($liveObservationRecords.backendRuns | Measure-Object durationMs -Sum).Sum)
+    $liveVerifierDurationMs = [long](($liveObservationRecords | Measure-Object verifierDurationMs -Sum).Sum)
+    $liveVerifierResidualDurationMs = [Math]::Max(0L, $liveVerifierDurationMs -
+        $liveGenerationDurationMs - $liveReferenceEvaluationDurationMs -
+        $liveReferenceTraceDurationMs - $liveBackendDurationMs)
     $selectedSeeds = @($summary.observed_seeds -split ',' | Where-Object { $_ -ne '' } | ForEach-Object { [int]$_ })
     $candidateMap = @{}
     foreach ($candidate in $report.candidatePool) { $candidateMap[[string]$candidate.seed] = $candidate }
@@ -410,6 +424,12 @@ try {
         observations = if ($onlineLive) { @($liveObservationRecords) } else { @() }
         liveLastError = if ($onlineLive) { [string]$summary.live_error } else { '' }
         liveVerifierDurationMs = if ($onlineLive) { [long]$summary.live_verifier_duration_ms } else { 0 }
+        liveCampaignWallClockMs = if ($onlineLive) { $campaignTimer.ElapsedMilliseconds } else { $null }
+        liveGenerationDurationMs = if ($onlineLive) { $liveGenerationDurationMs } else { $null }
+        liveReferenceEvaluationDurationMs = if ($onlineLive) { $liveReferenceEvaluationDurationMs } else { $null }
+        liveReferenceTraceDurationMs = if ($onlineLive) { $liveReferenceTraceDurationMs } else { $null }
+        liveBackendBuildAndExecutionDurationMs = if ($onlineLive) { $liveBackendDurationMs } else { $null }
+        liveVerifierResidualDurationMs = if ($onlineLive) { $liveVerifierResidualDurationMs } else { $null }
         liveReferencePathKinds = if ($onlineLive) { @($summary.live_reference_paths -split ',' | Where-Object { $_ }) } else { @() }
         liveFindings = if ($onlineLive) { @($summary.live_findings -split ',' | Where-Object { $_ } | Sort-Object) } else { @() }
         liveBackendOutcomes = if ($onlineLive) { @($summary.live_backend_outcomes -split ',' | Where-Object { $_ } | Sort-Object) } else { @() }

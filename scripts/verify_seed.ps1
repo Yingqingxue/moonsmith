@@ -105,6 +105,9 @@ function Invoke-CapturedProcess {
 New-Item -ItemType Directory -Force -Path $caseDirectory | Out-Null
 $sourceLineCount = $null
 $sourceLineLimit = $null
+$generationDurationMs = 0L
+$referenceEvaluationDurationMs = 0L
+$referenceTraceDurationMs = 0L
 
 if (-not $SourcePath) {
     $generation = Invoke-CapturedProcess -FilePath $moonExe `
@@ -116,6 +119,7 @@ if (-not $SourcePath) {
     if ($generation.exitCode -ne 0) {
         throw "MoonSmith failed to generate seed $Seed at depth $Depth.`n$($generation.stderr)"
     }
+    $generationDurationMs = [long]$generation.durationMs
 
     $source = $generation.stdout.TrimEnd() + "`n"
     $sourceLineCount = [regex]::Matches($source, "`n").Count
@@ -144,6 +148,9 @@ if (-not $SourcePath) {
             sourceSha256 = (Get-FileHash -LiteralPath $casePath -Algorithm SHA256).Hash.ToLowerInvariant()
             sourceLineCount = $sourceLineCount
             sourceLineLimit = $sourceLineLimit
+            generationDurationMs = $generationDurationMs
+            referenceEvaluationDurationMs = 0
+            referenceTraceDurationMs = 0
             error = "Generated source exceeds the safe $maxSourceLines-line limit; MoonBit reports a text-segment limit at 16384 lines. Reduce -Depth."
             savedTo = $null
             runs = @()
@@ -158,6 +165,7 @@ if (-not $SourcePath) {
     if ($referenceRun.timedOut -or $referenceRun.exitCode -ne 0) {
         throw "Reference evaluation failed for seed $Seed at depth $Depth.`n$($referenceRun.stderr)"
     }
+    $referenceEvaluationDurationMs = [long]$referenceRun.durationMs
     $ExpectedOutput = $referenceRun.stdout
 
     $traceRun = Invoke-CapturedProcess -FilePath $moonExe `
@@ -166,6 +174,7 @@ if (-not $SourcePath) {
     if ($traceRun.timedOut -or $traceRun.exitCode -ne 0) {
         throw "Reference path trace failed for seed $Seed at depth $Depth.`n$($traceRun.stderr)"
     }
+    $referenceTraceDurationMs = [long]$traceRun.durationMs
     $referenceTrace = $traceRun.stdout | ConvertFrom-Json
 } else {
     $source = Get-Content -LiteralPath $casePath -Raw -Encoding utf8
@@ -359,6 +368,9 @@ $report = [pscustomobject]@{
     sourceSha256 = (Get-FileHash -LiteralPath $casePath -Algorithm SHA256).Hash.ToLowerInvariant()
     sourceLineCount = $sourceLineCount
     sourceLineLimit = $sourceLineLimit
+    generationDurationMs = $generationDurationMs
+    referenceEvaluationDurationMs = $referenceEvaluationDurationMs
+    referenceTraceDurationMs = $referenceTraceDurationMs
     savedTo       = $savedTo
     runs          = @($runs)
 }
