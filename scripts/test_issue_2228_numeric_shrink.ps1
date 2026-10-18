@@ -2,16 +2,21 @@
 param(
     [string]$OutputDirectory = (Join-Path (Split-Path -Parent $PSScriptRoot) '.moonsmith/issue-2228-numeric-shrink'),
     [ValidateRange(1, 100)][int]$MaxSearchChecks = 24,
-    [string]$VerifierScriptPath = (Join-Path $PSScriptRoot 'verify_seed.ps1')
+    [string]$VerifierScriptPath = (Join-Path $PSScriptRoot 'verify_seed.ps1'),
+    [string]$SourcePath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'regressions/issue_2228_native_stack_overflow.mbt')
 )
 
 $ErrorActionPreference = 'Stop'
-$projectRoot = Split-Path -Parent $PSScriptRoot
-$sourcePath = Join-Path $projectRoot 'regressions/issue_2228_native_stack_overflow.mbt'
+$sourcePath = (Resolve-Path -LiteralPath $SourcePath -ErrorAction Stop).Path
 $source = [IO.File]::ReadAllText($sourcePath)
-$matches = [regex]::Matches($source, 'println\(deep\(1_000_000\)\)')
-if ($matches.Count -ne 1) {
-    throw "Expected one known #2228 recursion-depth trigger, found $($matches.Count)."
+$depthPattern = 'println\(deep\((?<depth>[\d_]+)\)\)'
+$depthMatch = [regex]::Match($source, $depthPattern)
+if (-not $depthMatch.Success -or [regex]::Matches($source, $depthPattern).Count -ne 1) {
+    throw 'Expected exactly one println(deep(<integer>)) recursion-depth trigger.'
+}
+$originalDepth = [int](($depthMatch.Groups['depth'].Value) -replace '_', '')
+if ($originalDepth -lt 1) {
+    throw "The recursion-depth trigger must be positive; got $originalDepth."
 }
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 
@@ -19,12 +24,8 @@ function Test-RecursionDepth {
     param([Parameter(Mandatory)][int]$Depth)
 
     $candidatePath = Join-Path $OutputDirectory "candidate-$Depth.mbt"
-    $candidateSource = [regex]::Replace(
-        $source,
-        'println\(deep\(1_000_000\)\)',
-        "println(deep($Depth))",
-        1
-    )
+    $literal = $depthMatch.Groups['depth']
+    $candidateSource = $source.Remove($literal.Index, $literal.Length).Insert($literal.Index, [string]$Depth)
     [IO.File]::WriteAllText($candidatePath, $candidateSource, [Text.UTF8Encoding]::new($false))
     $raw = & $VerifierScriptPath -Seed 0 -Depth 0 -Targets @('native', 'js') `
         -TimeoutSeconds 60 -SourcePath $candidatePath -NoPersist
@@ -88,7 +89,7 @@ function Test-RecursionDepth {
 # halving, then bisect the first non-reproducing/reproducing interval. This is
 # intentionally scoped to one integer argument, not an arbitrary-source AST reducer.
 $checks = [Collections.Generic.List[object]]::new()
-$high = 1000000
+$high = $originalDepth
 $highResult = Test-RecursionDepth -Depth $high
 $checks.Add($highResult)
 if (-not $highResult.reproduced -and -not $highResult.signatureAbsent) {
@@ -99,7 +100,7 @@ if ($highResult.signatureAbsent) {
         status = 'not-reproduced'
         source = 'upstream issue #2228; not discovered by MoonSmith'
         toolchainVersion = (& moon version | Select-Object -First 1)
-        originalDepth = 1000000
+        originalDepth = $originalDepth
         reducedDepth = $null
         searchChecks = 1
         finalIndependentReplays = 0
@@ -172,11 +173,19 @@ $reducedSourcePath = Join-Path $OutputDirectory 'reduced.mbt'
 Copy-Item -LiteralPath $finalChecks[0].candidatePath -Destination $reducedSourcePath -Force
 $originalBytes = (Get-Item -LiteralPath $sourcePath).Length
 $reducedBytes = (Get-Item -LiteralPath $reducedSourcePath).Length
+$reducedSource = [IO.File]::ReadAllText($reducedSourcePath)
+$reducedDepthMatch = [regex]::Match($reducedSource, $depthPattern)
+$onlyParameterChanged = $false
+if ($reducedDepthMatch.Success -and [regex]::Matches($reducedSource, $depthPattern).Count -eq 1) {
+    $reducedLiteral = $reducedDepthMatch.Groups['depth']
+    $restoredSource = $reducedSource.Remove($reducedLiteral.Index, $reducedLiteral.Length).Insert($reducedLiteral.Index, $depthMatch.Groups['depth'].Value)
+    $onlyParameterChanged = $restoredSource -ceq $source
+}
 $summary = [pscustomobject]@{
     status = 'verified_parameter_reduction'
     source = 'upstream issue #2228; not discovered by MoonSmith'
     toolchainVersion = (& moon version | Select-Object -First 1)
-    originalDepth = 1000000
+    originalDepth = $originalDepth
     reducedDepth = $high
     lowerNonReproducingDepth = $low
     minimalWithinMonotoneSearchInterval = ($high -eq $low + 1 -or $high -eq 1)
@@ -188,7 +197,8 @@ $summary = [pscustomobject]@{
     finalReplaysPassed = $true
     nativeSignature = 'runtime-failed; exit 139; empty redirected stdout'
     javascriptControl = 'RangeError'
-    sourceChangedOnlyAtDepthArgument = (([IO.File]::ReadAllText($reducedSourcePath) -replace "deep\($high\)", 'deep(1_000_000)') -ceq $source)
+    sourceChangedOnlyAtDepthArgument = $onlyParameterChanged
+    inputSourcePath = $sourcePath
     checks = $checks
     reducedSourcePath = $reducedSourcePath
 }

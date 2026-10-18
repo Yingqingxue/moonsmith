@@ -70,4 +70,27 @@ if ($searchResult.status -ne 'verified_parameter_reduction' -or
     -not $partial.nativeExpectedNormalOutput) {
     throw 'Known partial outcomes did not produce the expected bounded parameter-search result.'
 }
+
+# Exercise the same public SourcePath input used to continue a MoonReduce
+# artifact. This checks composition on a layout-only transformed reproducer;
+# it does not credit the integer shrink to MoonReduce.
+$layoutDirectory = Join-Path ([IO.Path]::GetTempPath()) "moonsmith-numeric-shrink-layout-$([guid]::NewGuid().ToString('N'))"
+New-Item -ItemType Directory -Force -Path $layoutDirectory | Out-Null
+$checkedInSource = Join-Path $projectRoot 'regressions/issue_2228_native_stack_overflow.mbt'
+$layoutSourcePath = Join-Path $layoutDirectory 'reduced.txt'
+$layoutSource = [IO.File]::ReadAllText($checkedInSource) -replace '(?m)^///\|\r?\n', ''
+[IO.File]::WriteAllText($layoutSourcePath, $layoutSource, [Text.UTF8Encoding]::new($false))
+$composedDirectory = Join-Path $layoutDirectory 'parameter-pass'
+$composedOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
+    -SourcePath $layoutSourcePath `
+    -OutputDirectory $composedDirectory `
+    -VerifierScriptPath $mockVerifier
+$composedResult = ($composedOutput -join [Environment]::NewLine) | ConvertFrom-Json
+if ($composedResult.status -ne 'verified_parameter_reduction' -or
+    $composedResult.originalDepth -ne 1000000 -or
+    $composedResult.reducedDepth -ne 750000 -or
+    -not $composedResult.sourceChangedOnlyAtDepthArgument -or
+    $composedResult.inputSourcePath -ne (Resolve-Path -LiteralPath $layoutSourcePath).Path) {
+    throw 'The numeric reducer did not preserve and shrink a MoonReduce-style layout-only source artifact.'
+}
 Write-Output 'Unknown outcomes fail closed with diagnostics; known partial signatures guide a tested bounded search.'

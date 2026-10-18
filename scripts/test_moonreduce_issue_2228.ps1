@@ -126,6 +126,46 @@ $removedContentLines = $originalContentLineCount - $reducedTextLines.Count
 $changeClass = & (Join-Path $PSScriptRoot 'classify_moonreduce_change.ps1') `
     -OriginalPath $originalPath -ReducedPath $reducedPath
 
+# MoonReduce's pinned text strategies cannot edit integer literals. Continue
+# the verified artifact with MoonSmith's separate, source-anchored parameter
+# search so the combined pipeline can be measured without attributing the
+# semantic change to MoonReduce.
+$parameterDirectory = Join-Path $OutputDirectory 'moonsmith-parameter-reduction'
+$parameterOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
+    -SourcePath $reducedPath `
+    -OutputDirectory $parameterDirectory `
+    -VerifierScriptPath $verifyScript
+if (-not $parameterOutput) {
+    throw 'MoonSmith parameter reduction emitted no result after MoonReduce.'
+}
+$parameterSummary = ($parameterOutput -join [Environment]::NewLine) | ConvertFrom-Json
+if ($parameterSummary.status -ne 'verified_parameter_reduction' -or
+    -not $parameterSummary.minimalWithinMonotoneSearchInterval -or
+    -not $parameterSummary.finalReplaysPassed -or
+    -not $parameterSummary.sourceChangedOnlyAtDepthArgument) {
+    throw "The composed MoonReduce + MoonSmith parameter-reduction pipeline did not verify: $($parameterSummary | ConvertTo-Json -Compress -Depth 5)"
+}
+$composedSourcePath = Join-Path $parameterDirectory 'reduced.mbt'
+$composedReplay = & $verifyScript -Seed 0 -Depth 0 -Targets @('native', 'js') `
+    -TimeoutSeconds 60 -SourcePath $composedSourcePath -NoPersist
+if (-not $composedReplay) {
+    throw 'The composed reduced source failed its independent final replay.'
+}
+$composedReport = ($composedReplay -join [Environment]::NewLine) | ConvertFrom-Json
+$composedNative = $composedReport.runs | Where-Object target -eq 'native' | Select-Object -First 1
+$composedJs = $composedReport.runs | Where-Object target -eq 'js' | Select-Object -First 1
+if ($composedReport.finding -ne 'runtime-failure' -or
+    $composedNative.status -ne 'runtime-failed' -or $composedNative.exitCode -ne 139 -or
+    -not [string]::IsNullOrEmpty([string]$composedNative.output) -or
+    $composedJs.status -ne 'runtime-failed' -or
+    $composedJs.error -notmatch 'RangeError|Maximum call stack size exceeded') {
+    throw 'The composed reduced source did not independently preserve the paired #2228 signature.'
+}
+$composedBytes = (Get-Item -LiteralPath $composedSourcePath).Length
+if ($composedBytes -ge (Get-Item -LiteralPath $originalPath).Length) {
+    throw "The composed pipeline did not reduce source bytes: original=$((Get-Item -LiteralPath $originalPath).Length), final=$composedBytes."
+}
+
 Write-StudySummary ([pscustomobject]@{
     status = [string]$reduction.status
     changeClass = [string]$changeClass
@@ -139,5 +179,19 @@ Write-StudySummary ([pscustomobject]@{
     preCrashOutputWritePreserved = $reduced.Contains('println("before-deep-recursion")')
     removedContentLines = $removedContentLines
     triggerPreservingContentReduction = $triggerPreserved -and $removedContentLines -gt 0
+    composedPipeline = [pscustomobject]@{
+        description = 'MoonReduce text deletion followed by separate MoonSmith numeric-parameter shrink'
+        semanticStepProducer = 'MoonSmith, not MoonReduce'
+        parameterBefore = [int]$parameterSummary.originalDepth
+        parameterAfter = [int]$parameterSummary.reducedDepth
+        adjacentLowerNonReproducing = [int]$parameterSummary.lowerNonReproducingDepth
+        searchChecks = [int]$parameterSummary.searchChecks
+        independentParameterReplays = [int]$parameterSummary.finalIndependentReplays
+        parameterSourceOnlyChangedAtArgument = [bool]$parameterSummary.sourceChangedOnlyAtDepthArgument
+        finalReplayPreservedPairedSignature = $true
+        totalBytesReduced = [long]((Get-Item -LiteralPath $originalPath).Length - $composedBytes)
+        finalBytes = [long]$composedBytes
+        parameterReducedSource = $composedSourcePath
+    }
     toolchainVersion = $baseline.toolchainVersion
 })
