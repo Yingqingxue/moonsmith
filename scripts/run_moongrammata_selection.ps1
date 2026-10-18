@@ -3,10 +3,15 @@ param(
     [Parameter()][ValidateRange(1, 10000)][int]$ExecutionBudget = 20,
     [Parameter()][long]$Seed = 20261018,
     [Parameter()][string]$OutputPath = '',
-    [Parameter()][switch]$LiveVerifySelectedArms
+    [Parameter()][switch]$LiveVerifySelectedArms,
+    [Parameter()][switch]$LiveTarget,
+    [Parameter()][string]$LiveVerifierScript = ''
 )
 
 $ErrorActionPreference = 'Stop'
+if ($LiveTarget -and $LiveVerifySelectedArms) {
+    throw 'Choose either synchronous LiveTarget feedback or post-selection LiveVerifySelectedArms; combining them is not a defined experiment.'
+}
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $inputPath = (Resolve-Path -LiteralPath $InputReport -ErrorAction Stop).Path
 $report = Get-Content -LiteralPath $inputPath -Raw -Encoding utf8 | ConvertFrom-Json
@@ -36,14 +41,50 @@ try {
     Copy-Item -LiteralPath (Join-Path $template 'cmd\main\moon.pkg') -Destination $commandPackage
     Copy-Item -LiteralPath (Join-Path $template 'cmd\main\main.mbt') -Destination $commandPackage
     $moon = (Get-Command moon -ErrorAction Stop).Source
-    $args = @('run', '--target', 'js', 'cmd/main', '--', [string]$ExecutionBudget, [string]$Seed,
-        ($pathNames -join ',')) + @($specifications)
+    if ($LiveTarget) {
+        $targets = @($report.configuredTargets | ForEach-Object { [string]$_ })
+        if ($targets.Count -eq 0) { throw 'Candidate-pool report has no configured targets.' }
+        $depth = [int]$report.depth
+        $timeoutSeconds = [int]$report.timeoutSeconds
+        $isTestDouble = [bool]$LiveVerifierScript
+        $verifyScript = if ($isTestDouble) {
+            (Resolve-Path -LiteralPath $LiveVerifierScript -ErrorAction Stop).Path
+        } else {
+            Join-Path $PSScriptRoot 'verify_seed.ps1'
+        }
+        if (-not $isTestDouble) {
+            $harnessParts = foreach ($relativePath in @(
+                'moon.mod', 'moon.pkg', 'moonsmith.mbt', 'reference.mbt', 'oracle.mbt',
+                'cmd/main/main.mbt', 'scripts/verify_seed.ps1',
+                'scripts/semantic_selection.ps1', 'scripts/compare_semantic_selection.ps1'
+            )) {
+                $path = Join-Path $projectRoot $relativePath
+                "${relativePath}:$((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash)"
+            }
+            $harnessBytes = [System.Text.Encoding]::UTF8.GetBytes(($harnessParts -join "`n"))
+            $currentHarnessDigest = [System.Convert]::ToHexString(
+                [System.Security.Cryptography.SHA256]::HashData($harnessBytes)
+            ).ToLowerInvariant()
+            if ($report.harnessChangedDuringRun -or
+                -not $report.harnessDigestEnd -or
+                [string]$report.harnessDigestEnd -ne $currentHarnessDigest) {
+                throw 'Live target requires an unchanged candidate-generation, reference, and verifier harness.'
+            }
+        }
+        $args = @('run', '--target', 'js', 'cmd/main', '--', 'live',
+            [string]$ExecutionBudget, [string]$Seed, ($pathNames -join ','),
+            $verifyScript, ($targets -join ','), [string]$depth, [string]$timeoutSeconds) + @($specifications)
+    } else {
+        $args = @('run', '--target', 'js', 'cmd/main', '--', [string]$ExecutionBudget,
+            [string]$Seed, ($pathNames -join ',')) + @($specifications)
+    }
     Push-Location $tempRoot
     try { $raw = & $moon @args 2>&1 }
     finally { Pop-Location }
     if ($LASTEXITCODE -ne 0) { throw "MoonGrammata benchmark failed: $($raw -join [Environment]::NewLine)" }
     $text = $raw -join [Environment]::NewLine
-    if (-not $text.Contains('MOONSMITH_FIXED_POOL_V1')) {
+    $expectedMarker = if ($LiveTarget) { 'MOONSMITH_LIVE_POOL_V1' } else { 'MOONSMITH_FIXED_POOL_V1' }
+    if (-not $text.Contains($expectedMarker)) {
         throw "MoonGrammata benchmark did not emit its result marker: $text"
     }
     $summary = @{}
@@ -268,19 +309,35 @@ try {
     }
 
     $selectedPaths = [System.Collections.Generic.HashSet[string]]::new()
-    foreach ($selectedSeed in $selectedSeeds) {
-        if (-not $candidateMap.ContainsKey([string]$selectedSeed)) {
-            throw "MoonGrammata generated an ID outside the fixed candidate pool: $selectedSeed"
+    if ($LiveTarget) {
+        foreach ($path in ([string]$summary.live_reference_paths -split ',' | Where-Object { $_ })) {
+            [void]$selectedPaths.Add([string]$path)
         }
-        $candidate = $candidateMap[[string]$selectedSeed]
-        foreach ($path in $candidate.paths) { [void]$selectedPaths.Add([string]$path) }
+    } else {
+        foreach ($selectedSeed in $selectedSeeds) {
+            if (-not $candidateMap.ContainsKey([string]$selectedSeed)) {
+                throw "MoonGrammata generated an ID outside the fixed candidate pool: $selectedSeed"
+            }
+            $candidate = $candidateMap[[string]$selectedSeed]
+            foreach ($path in $candidate.paths) { [void]$selectedPaths.Add([string]$path) }
+        }
     }
     $candidateBody = [pscustomobject]@{
-        name = 'Unstratified MoonGrammata campaign on MoonSmith fixed pool'
+        name = if ($LiveTarget) { 'MoonGrammata campaign with synchronous live MoonSmith verifier feedback over fixed seed pool' } else { 'Unstratified MoonGrammata campaign on MoonSmith fixed pool' }
+        feedbackSource = if ($LiveTarget) { 'synchronous per-Target callback: regenerated MoonSmith source, reference trace, and configured backend outcomes' } else { 'cached candidate-pool report' }
+        liveEvaluations = if ($LiveTarget) { [int]$summary.live_callback_evaluations } else { 0 }
+        liveFailures = if ($LiveTarget) { [int]$summary.live_callback_failures } else { 0 }
+        liveLastError = if ($LiveTarget) { [string]$summary.live_error } else { '' }
+        liveVerifierDurationMs = if ($LiveTarget) { [long]$summary.live_verifier_duration_ms } else { 0 }
+        liveReferencePathKinds = if ($LiveTarget) { @($summary.live_reference_paths -split ',' | Where-Object { $_ }) } else { @() }
+        liveFindings = if ($LiveTarget) { @($summary.live_findings -split ',' | Where-Object { $_ } | Sort-Object) } else { @() }
+        liveBackendOutcomes = if ($LiveTarget) { @($summary.live_backend_outcomes -split ',' | Where-Object { $_ } | Sort-Object) } else { @() }
+        verifierKind = if (-not $LiveTarget) { 'none' } elseif ($isTestDouble) { 'test-double' } else { 'scripts/verify_seed.ps1' }
         poolSize = $report.candidatePool.Count
         seed = $Seed
         requestedExecutions = [int]$summary.requested
         completedExecutions = [int]$summary.completed
+        targetExecutionOrder = @($summary.target_execution_order -split ',' | Where-Object { $_ } | ForEach-Object { [int]$_ })
         uniqueCandidatesObserved = [int]$summary.unique_observed
         selectedSeeds = $selectedSeeds
         distinctReferencePathKinds = $selectedPaths.Count
@@ -345,6 +402,20 @@ try {
         -CountsByQuartile $commonQuotas -CandidatesBySeed $candidateMap
     $moonSmithGuidedComparable = Measure-PathKindsBySizeProfile -Cases $report.guided.cases `
         -CountsByQuartile $commonQuotas -CandidatesBySeed $candidateMap
+    $comparableBudget = if ($LiveTarget) { $null } else { $commonUniqueBudget }
+    $baselineComparablePaths = if ($LiveTarget) { $null } else { $moonSmithBaselineComparable.distinctPathKinds }
+    $guidedComparablePaths = if ($LiveTarget) { $null } else { $moonSmithGuidedComparable.distinctPathKinds }
+    $moonGrammataComparablePaths = if ($LiveTarget) { $null } else { $moonGrammataComparable.distinctPathKinds }
+    $baselineComparableQuotas = if ($LiveTarget) { $null } else { $moonSmithBaselineComparable.quartileCounts }
+    $guidedComparableQuotas = if ($LiveTarget) { $null } else { $moonSmithGuidedComparable.quartileCounts }
+    $moonGrammataComparableQuotas = if ($LiveTarget) { $null } else { $moonGrammataComparable.quartileCounts }
+    $interpretation = if ($LiveTarget) {
+        'Online-feedback wiring prototype: each MoonGrammata Target callback synchronously invokes the configured verifier and returns that execution reference-path, finding, and backend-outcome features before the campaign continues. Feedback is live rather than cached, but candidates remain identifiers from a fixed seed pool and the comparison arms still select offline. This does not establish a fair end-to-end effectiveness or throughput win; effectiveness claims require matched cost, timeout, and seed studies.'
+    } elseif ($LiveVerifySelectedArms) {
+        'Two-stage fixed-pool experiment: MoonGrammata selection still consumes cached MoonSmith reference-path feedback; afterward, a size-quartile-matched common unique-candidate subset from all three arms is regenerated and blindly run through the same current MoonSmith verifier on identical configured targets and equal backend-execution budgets. This measures selected-candidate outcomes, not online feedback effectiveness, throughput superiority, or general fuzzer effectiveness. Duplicate campaign observations are excluded from the unique-candidate arm; prescreen and selection costs remain additional.'
+    } else {
+        'Exploratory fixed-pool selection comparison only. The MoonGrammata campaign uses cached MoonSmith reference-path features and does not execute compilers or the live reference evaluator. Path coverage is also reported on an intersection subset with identical source-size quartile counts; duplicate campaign evaluations mean this subset may be smaller than the requested execution budget. This is not an end-to-end fuzzer effectiveness comparison.'
+    }
     $result = [pscustomobject]@{
         schemaVersion = 1
         poolSource = (Resolve-Path -Relative $inputPath)
@@ -360,21 +431,17 @@ try {
             selectedExecutionBudget = [int]$report.executionBudgetCasesPerArm
             backendExecutionsPerArm = [int]$report.expectedBackendExecutionsPerArm
             sizeQuartilesMatched = [bool]$report.sourceSizeQuartilesMatched
-            commonUniqueCandidateBudget = $commonUniqueBudget
+            commonUniqueCandidateBudget = $comparableBudget
             commonUniqueCandidateCountsByQuartile = $commonQuotas
-            baselinePathKindsAtCommonUniqueBudget = $moonSmithBaselineComparable.distinctPathKinds
-            semanticGuidedPathKindsAtCommonUniqueBudget = $moonSmithGuidedComparable.distinctPathKinds
-            moonGrammataPathKindsAtCommonUniqueBudget = $moonGrammataComparable.distinctPathKinds
-            baselineMatchedQuartileCounts = $moonSmithBaselineComparable.quartileCounts
-            semanticGuidedMatchedQuartileCounts = $moonSmithGuidedComparable.quartileCounts
-            moonGrammataMatchedQuartileCounts = $moonGrammataComparable.quartileCounts
+            baselinePathKindsAtCommonUniqueBudget = $baselineComparablePaths
+            semanticGuidedPathKindsAtCommonUniqueBudget = $guidedComparablePaths
+            moonGrammataPathKindsAtCommonUniqueBudget = $moonGrammataComparablePaths
+            baselineMatchedQuartileCounts = $baselineComparableQuotas
+            semanticGuidedMatchedQuartileCounts = $guidedComparableQuotas
+            moonGrammataMatchedQuartileCounts = $moonGrammataComparableQuotas
         }
         liveVerification = $liveVerification
-        interpretation = if ($LiveVerifySelectedArms) {
-            'Two-stage fixed-pool experiment: MoonGrammata selection still consumes cached MoonSmith reference-path feedback; afterward, a size-quartile-matched common unique-candidate subset from all three arms is regenerated and blindly run through the same current MoonSmith verifier on identical configured targets and equal backend-execution budgets. This measures selected-candidate outcomes, not online feedback effectiveness, throughput superiority, or general fuzzer effectiveness. Duplicate campaign observations are excluded from the unique-candidate arm; prescreen and selection costs remain additional.'
-        } else {
-            'Exploratory fixed-pool selection comparison only. The MoonGrammata campaign uses cached MoonSmith reference-path features and does not execute compilers or the live reference evaluator. Path coverage is also reported on an intersection subset with identical source-size quartile counts; duplicate campaign evaluations mean this subset may be smaller than the requested execution budget. This is not an end-to-end fuzzer effectiveness comparison.'
-        }
+        interpretation = $interpretation
         moonGrammataRevision = 'd9cf3512b636fd45e941f30010d3fceb7cc2e4fc'
         moonGrammataVersion = '0.1.1'
         moonGrammataApi = 'GrammarBuilder::dictionary + CampaignConfig + run_campaign; isolated benchmark dependency'
