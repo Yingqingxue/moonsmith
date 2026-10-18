@@ -71,10 +71,18 @@ forced into an injected failure. The check requires a smaller AST and source,
 at least one accepted step, and the same reducer finding, while the reducer
 itself independently checks the baseline and final replay against the same
 failure key. The report and original/minimized corpus sources are included in
-the CI artifact. On this Windows workstation there is no C compiler, so the
-new real-failure branch has not yet run locally; no reduction metrics are
-claimed until a Linux CI run records them. #1322 remains an upstream report,
-not a MoonSmith discovery.
+the CI artifact. The first Linux execution in [run 39102569713](https://github.com/Yingqingxue/moonsmith/actions/runs/39102569713)
+produced a reducer record: seed 4/depth 3, 859 → 536 source bytes, complexity
+10,110 → 1,001, three accepted steps in four attempts. The final record kept
+the same native-debug compile-failure reduction key; JS, Wasm, Wasm-GC, and
+native-release remained successful. The workflow was marked failed after this
+record was produced because the wrapper incorrectly required exit code 0,
+although `reduce_case.ps1` intentionally returns 1 for a retained finding.
+That wrapper now accepts only exit 0/1, then requires valid JSON and actual
+smaller source/AST output. A passing rerun of the corrected wrapper is still
+pending. On this Windows workstation there is no C compiler, so this real
+failure branch cannot run locally. #1322 remains an upstream report, not a
+MoonSmith discovery.
 
 A separate workstation run used a 100-attempt budget on the same deterministic
 seed and target matrix. It accepted 15 steps in 84 candidate attempts, reduced
