@@ -161,12 +161,37 @@ while ($high -gt $low + 1 -and $checks.Count -lt $MaxSearchChecks) {
     }
 }
 
+$binarySearchHigh = $high
+$stabilityAdjustmentChecks = [Collections.Generic.List[object]]::new()
 $finalChecks = @()
-for ($index = 0; $index -lt 3; $index++) {
-    $finalChecks += Test-RecursionDepth -Depth $high
+$stabilityAdjusted = $false
+$stabilityStep = [Math]::Max(1, [int][Math]::Ceiling($originalDepth / 100.0))
+for ($adjustment = 0; $adjustment -le 20; $adjustment++) {
+    $candidateChecks = @()
+    for ($index = 0; $index -lt 3; $index++) {
+        $candidateChecks += Test-RecursionDepth -Depth $high
+    }
+    $stabilityAdjustmentChecks.Add([pscustomobject]@{
+        depth = $high
+        reproducedRuns = @($candidateChecks | Where-Object reproduced).Count
+        replays = $candidateChecks
+    })
+    if (@($candidateChecks | Where-Object { -not $_.reproduced }).Count -eq 0) {
+        $finalChecks = $candidateChecks
+        $stabilityAdjusted = $high -ne $binarySearchHigh
+        break
+    }
+    if ($high -ge $originalDepth) {
+        $stabilityAdjustmentChecks | ConvertTo-Json -Depth 8 | Set-Content `
+            -LiteralPath (Join-Path $OutputDirectory 'unstable-final-replays.json') -Encoding utf8NoBOM
+        throw "The original endpoint is not stable across three final replays at recursion depth $high."
+    }
+    $high = [Math]::Min($originalDepth, $high + $stabilityStep)
 }
-if (@($finalChecks | Where-Object { -not $_.reproduced }).Count -gt 0) {
-    throw "Final independent replay was unstable at recursion depth $high."
+if ($finalChecks.Count -ne 3) {
+    $stabilityAdjustmentChecks | ConvertTo-Json -Depth 8 | Set-Content `
+        -LiteralPath (Join-Path $OutputDirectory 'unstable-final-replays.json') -Encoding utf8NoBOM
+    throw "No three-replay-stable candidate was found after bounded upward adjustment from depth $binarySearchHigh."
 }
 
 $reducedSourcePath = Join-Path $OutputDirectory 'reduced.mbt'
@@ -188,7 +213,11 @@ $summary = [pscustomobject]@{
     originalDepth = $originalDepth
     reducedDepth = $high
     lowerNonReproducingDepth = $low
-    minimalWithinMonotoneSearchInterval = ($high -eq $low + 1 -or $high -eq 1)
+    minimalWithinMonotoneSearchInterval = (-not $stabilityAdjusted -and ($high -eq $low + 1 -or $high -eq 1))
+    binarySearchCandidate = $binarySearchHigh
+    stabilityAdjusted = $stabilityAdjusted
+    stabilityAdjustmentStep = $stabilityStep
+    stabilityChecks = @($stabilityAdjustmentChecks.ToArray())
     monotonicityAssumption = 'greater recursive depth does not remove the same stack-overflow signature in this pinned runner/toolchain'
     originalBytes = $originalBytes
     reducedBytes = $reducedBytes

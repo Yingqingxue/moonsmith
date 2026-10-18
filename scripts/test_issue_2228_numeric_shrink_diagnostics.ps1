@@ -81,16 +81,25 @@ $layoutSourcePath = Join-Path $layoutDirectory 'reduced.txt'
 $layoutSource = [IO.File]::ReadAllText($checkedInSource) -replace '(?m)^///\|\r?\n', ''
 [IO.File]::WriteAllText($layoutSourcePath, $layoutSource, [Text.UTF8Encoding]::new($false))
 $composedDirectory = Join-Path $layoutDirectory 'parameter-pass'
-$composedOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
-    -SourcePath $layoutSourcePath `
-    -OutputDirectory $composedDirectory `
-    -VerifierScriptPath $mockVerifier
+try {
+    $env:MOONSMITH_MOCK_FLAKY_AT_750K = '1'
+    $composedOutput = & (Join-Path $PSScriptRoot 'test_issue_2228_numeric_shrink.ps1') `
+        -SourcePath $layoutSourcePath `
+        -OutputDirectory $composedDirectory `
+        -VerifierScriptPath $mockVerifier
+} finally {
+    Remove-Item Env:MOONSMITH_MOCK_FLAKY_AT_750K -ErrorAction SilentlyContinue
+}
 $composedResult = ($composedOutput -join [Environment]::NewLine) | ConvertFrom-Json
 if ($composedResult.status -ne 'verified_parameter_reduction' -or
     $composedResult.originalDepth -ne 1000000 -or
-    $composedResult.reducedDepth -ne 750000 -or
+    $composedResult.reducedDepth -ne 760000 -or
     -not $composedResult.sourceChangedOnlyAtDepthArgument -or
+    -not $composedResult.stabilityAdjusted -or
+    $composedResult.minimalWithinMonotoneSearchInterval -or
+    $composedResult.stabilityChecks[0].reproducedRuns -ne 2 -or
+    $composedResult.stabilityChecks[1].reproducedRuns -ne 3 -or
     $composedResult.inputSourcePath -ne (Resolve-Path -LiteralPath $layoutSourcePath).Path) {
-    throw 'The numeric reducer did not preserve and shrink a MoonReduce-style layout-only source artifact.'
+    throw 'The numeric reducer did not move a MoonReduce-style source away from an unstable threshold and preserve the paired signature.'
 }
 Write-Output 'Unknown outcomes fail closed with diagnostics; known partial signatures guide a tested bounded search.'
