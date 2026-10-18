@@ -1,0 +1,10 @@
+{
+  "value": "-22",
+  "visited": [
+    "function-call",
+    "int-literal",
+    "add",
+    "variable",
+    "int-literal"
+  ]
+}

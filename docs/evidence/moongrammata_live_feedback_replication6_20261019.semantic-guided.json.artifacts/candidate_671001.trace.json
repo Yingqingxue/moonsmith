@@ -1,0 +1,11 @@
+{
+  "value": "false",
+  "visited": [
+    "function-call",
+    "bool-literal",
+    "and",
+    "variable",
+    "and-rhs-executed",
+    "bool-literal"
+  ]
+}

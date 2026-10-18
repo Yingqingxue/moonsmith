@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 7,
+  "caseId": null,
+  "seed": 672660,
+  "depth": 1,
+  "casePath": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication6_20261019.moongrammata.json.artifacts\\callback_2\\candidate_672660\\source.mbt",
+  "finding": "consistent",
+  "signature": "consistent|2:js=succeeded,exit=0,out=2:8\n,err=0:|4:wasm=succeeded,exit=0,out=2:8\n,err=0:|7:wasm-gc=succeeded,exit=0,out=2:8\n,err=0:|reference=2:8\n",
+  "reductionKey": "consistent|2:js=succeeded,exit=0,out=2:8\n,err=0:|4:wasm=succeeded,exit=0,out=2:8\n,err=0:|7:wasm-gc=succeeded,exit=0,out=2:8\n,err=0:|reference=2:8\n",
+  "referenceChecked": true,
+  "expectedOutput": "8\n",
+  "targetParity": {
+    "scenario": "moonsmith-successful-backend-matrix",
+    "status": "pass",
+    "diagnostics": [],
+    "reference_target": "js",
+    "compared_targets": [
+      "js",
+      "wasm",
+      "wasm-gc"
+    ],
+    "missing_targets": [],
+    "unexpected_targets": [],
+    "duplicate_targets": [],
+    "differences": [],
+    "suppressed_differences": []
+  },
+  "referenceTrace": {
+    "value": "8",
+    "visited": [
+      "add",
+      "int-literal",
+      "int-literal"
+    ]
+  },
+  "injection": null,
+  "timeoutSeconds": 30,
+  "toolchainVersion": "moon 0.1.20260920 (914d7da 2026-09-20)",
+  "hostOS": "Microsoft Windows 10.0.26200",
+  "powerShellVersion": "7.6.5",
+  "sourceSha256": "00940909dd4289f4f4a1d809afa1cd89cf14455eb4f5c9aca127c3d1b80f05f3",
+  "sourceLineCount": 4,
+  "sourceLineLimit": 16300,
+  "generationDurationMs": 510,
+  "referenceEvaluationDurationMs": 481,
+  "referenceTraceDurationMs": 497,
+  "savedTo": null,
+  "artifactDirectory": "D:\\moon  bit\\docs\\evidence\\moongrammata_live_feedback_replication6_20261019.moongrammata.json.artifacts\\callback_2\\candidate_672660",
+  "runs": [
+    {
+      "target": "js",
+      "backend": "js",
+      "buildMode": "default",
+      "status": "succeeded",
+      "exitCode": 0,
+      "output": "8\n",
+      "error": "",
+      "durationMs": 1317,
+      "executionAttempted": true
+    },
+    {
+      "target": "wasm",
+      "backend": "wasm",
+      "buildMode": "default",
+      "status": "succeeded",
+      "exitCode": 0,
+      "output": "8\n",
+      "error": "",
+      "durationMs": 1305,
+      "executionAttempted": true
+    },
+    {
+      "target": "wasm-gc",
+      "backend": "wasm-gc",
+      "buildMode": "default",
+      "status": "succeeded",
+      "exitCode": 0,
+      "output": "8\n",
+      "error": "",
+      "durationMs": 1270,
+      "executionAttempted": true
+    }
+  ]
+}

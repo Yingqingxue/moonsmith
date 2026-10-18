@@ -1,0 +1,32 @@
+{
+  "value": "48",
+  "visited": [
+    "for-loop",
+    "int-literal",
+    "for-iteration",
+    "add",
+    "variable",
+    "subtract",
+    "int-literal",
+    "variable",
+    "for-iteration",
+    "add",
+    "variable",
+    "subtract",
+    "int-literal",
+    "variable",
+    "for-iteration",
+    "add",
+    "variable",
+    "subtract",
+    "int-literal",
+    "variable",
+    "for-iteration",
+    "add",
+    "variable",
+    "subtract",
+    "int-literal",
+    "variable",
+    "for-normal-exit"
+  ]
+}

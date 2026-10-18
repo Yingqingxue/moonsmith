@@ -1,16 +1,26 @@
 # Implementation status
 
-Last updated: 2026-10-17
+Last updated: 2026-10-19
 
 ## Competition-review follow-up: integration boundaries and evidence
+
+The live MoonGrammata adapter now has six exploratory synchronous-feedback
+cohorts, including a 24-case-per-arm run. In that sixth run, sequential,
+semantic-guided, and MoonGrammata arms observed 39/44/34 reference-path kinds
+over 72 backend executions each. The controls preflighted 96 proposals each,
+versus 24 MoonGrammata callbacks, so candidate-work and total-compute budgets
+remain unequal. This measures a path-diversity proxy, not bug-finding
+effectiveness. The raw artifacts and caveats are in the
+[sixth replication report](evidence/moongrammata_live_feedback_replication6_20261019.md).
 
 The current response to the four overlap/validation concerns is intentionally
 evidence-led and not a claim that all concerns are closed:
 
-The latest pushed state (`afd9cd9`) passed regular Linux/Windows verification
-and the focused scan/cross-check in [run 39063712489](https://github.com/Yingqingxue/moonsmith/actions/runs/39063712489).
-The corrected, manual MoonReduce interoperability workflow also passed in
-[run 39017854306](https://github.com/Yingqingxue/moonsmith/actions/runs/39017854306).
+The baseline for this evidence update was commit `3442728`, whose regular
+Linux/Windows CI passed in [run 39144400466](https://github.com/Yingqingxue/moonsmith/actions/runs/39144400466).
+The sixth online-feedback cohort is recorded below and in its raw evidence
+files; local MoonBit tests pass 111/111. The untracked application draft is
+preserved and excluded from the project changes.
 
 - A pinned CaseKit CI bridge serializes captured JS/Wasm stdout into CaseKit v1
   transcripts and calls CaseKit's comparator. Local integration-script tests

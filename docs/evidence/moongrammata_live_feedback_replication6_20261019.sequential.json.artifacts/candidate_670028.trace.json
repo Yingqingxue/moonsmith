@@ -1,0 +1,9 @@
+{
+  "value": "-16",
+  "visited": [
+    "if",
+    "bool-literal",
+    "if-then",
+    "int-literal"
+  ]
+}

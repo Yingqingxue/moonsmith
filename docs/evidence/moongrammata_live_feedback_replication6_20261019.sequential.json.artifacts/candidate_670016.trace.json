@@ -1,0 +1,32 @@
+{
+  "value": "-25",
+  "visited": [
+    "while-loop",
+    "int-literal",
+    "while-iteration",
+    "add",
+    "variable",
+    "add",
+    "variable",
+    "int-literal",
+    "while-iteration",
+    "add",
+    "variable",
+    "add",
+    "variable",
+    "int-literal",
+    "while-iteration",
+    "add",
+    "variable",
+    "add",
+    "variable",
+    "int-literal",
+    "while-iteration",
+    "add",
+    "variable",
+    "add",
+    "variable",
+    "int-literal",
+    "while-normal-exit"
+  ]
+}

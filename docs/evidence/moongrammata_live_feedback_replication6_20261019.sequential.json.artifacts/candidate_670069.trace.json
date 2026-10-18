@@ -1,0 +1,14 @@
+{
+  "value": "true",
+  "visited": [
+    "valtype-enum-array-probe",
+    "int-literal",
+    "valtype-enum-array-empty-init",
+    "valtype-enum-array-push",
+    "valtype-enum-array-growth-push",
+    "valtype-enum-array-index",
+    "valtype-enum-array-index-after-growth",
+    "valtype-raise-probe",
+    "valtype-raise-error-path"
+  ]
+}

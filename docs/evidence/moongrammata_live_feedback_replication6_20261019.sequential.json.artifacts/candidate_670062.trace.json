@@ -1,0 +1,11 @@
+{
+  "value": "9",
+  "visited": [
+    "let",
+    "bool-literal",
+    "if",
+    "variable",
+    "if-else",
+    "int-literal"
+  ]
+}
