@@ -469,3 +469,23 @@ cross-platform consistent. Across the eleven focused depth-10 cohorts (seeds
 19445–19499), 55 bodies are recorded: 39 were compiled on both platforms and
 16 were excluded by the source-size guard. Excluded inputs remain untested;
 this bounded exploration found no issue among the executed cases.
+
+## Twelfth focused depth-10 cohort
+
+Seeds 19500–19504 were scanned at depth 10 with Linux and Windows native
+cross-checks:
+
+- Workflow: [MoonSmith CI run 39080798051](https://github.com/Yingqingxue/moonsmith/actions/runs/39080798051)
+- Commit: `6ee1d63d6750ec55d334c2ee47a4eba7ee1eb252`
+- Cohort: seeds 19500–19504, all at depth 10.
+
+All workflow jobs passed, including CaseKit interoperability, regular
+verification, Windows native testing, and cross-platform report comparison.
+All five sources were within the 16,300-line bound (maximum 15,281 lines).
+They matched the reference outputs on 15 Linux JS/Wasm/Wasm-GC executions and
+five Windows native-release executions; all five cases were consistent and
+there were zero unexpected findings. Cumulatively, the twelve focused
+depth-10 cohorts (seeds 19445–19504) contain 60 bodies: 44 were compiled on
+both platforms and 16 were excluded by the size guard. No issue was found in
+this executed sample; this does not establish behavior for excluded inputs or
+prove absence of compiler bugs.
