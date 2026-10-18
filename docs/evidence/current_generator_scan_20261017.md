@@ -551,3 +551,22 @@ hashes matched. Across the fifteen focused depth-10 cohorts (seeds
 22 were excluded by the size guard. The high exclusion rate in this cohort
 limits its compiler coverage; excluded inputs remain untested. No issue was
 found in the single executed case.
+
+## Standard mixed-depth cohort
+
+The standard profile scanned seeds 19520–19749 across depths 4, 6, and 8:
+
+- Workflow: [MoonSmith CI run 39085087744](https://github.com/Yingqingxue/moonsmith/actions/runs/39085087744)
+- Commit: `11c79aa054583d5c1209f37f6797ea992d9fa9da`
+- Cohort: 230 distinct generated bodies: 100 at depth 4, 100 at depth 6,
+  and 30 at depth 8.
+
+All workflow jobs passed, including regular verification, CaseKit
+interoperability, Windows native testing, and cross-platform report
+comparison. All 230 bodies were within the configured source-size limit and
+matched their reference outputs on 690 Linux JS/Wasm/Wasm-GC executions and
+230 Windows native-release executions. All source hashes and expected
+outputs matched across reports, with zero unexpected findings and no
+generator-limit exclusions. This establishes consistency for this bounded
+sample only; it does not establish absence of compiler bugs outside these
+inputs or configurations.
