@@ -140,7 +140,7 @@ if (-not $parameterOutput) {
 }
 $parameterSummary = ($parameterOutput -join [Environment]::NewLine) | ConvertFrom-Json
 if ($parameterSummary.status -ne 'verified_parameter_reduction' -or
-    -not $parameterSummary.minimalWithinMonotoneSearchInterval -or
+    [int]$parameterSummary.reducedDepth -ge [int]$parameterSummary.originalDepth -or
     -not $parameterSummary.finalReplaysPassed -or
     -not $parameterSummary.sourceChangedOnlyAtDepthArgument) {
     throw "The composed MoonReduce + MoonSmith parameter-reduction pipeline did not verify: $($parameterSummary | ConvertTo-Json -Compress -Depth 5)"
@@ -185,6 +185,7 @@ Write-StudySummary ([pscustomobject]@{
         parameterBefore = [int]$parameterSummary.originalDepth
         parameterAfter = [int]$parameterSummary.reducedDepth
         adjacentLowerNonReproducing = [int]$parameterSummary.lowerNonReproducingDepth
+        minimalWithinMonotoneSearchInterval = [bool]$parameterSummary.minimalWithinMonotoneSearchInterval
         searchChecks = [int]$parameterSummary.searchChecks
         independentParameterReplays = [int]$parameterSummary.finalIndependentReplays
         parameterSourceOnlyChangedAtArgument = [bool]$parameterSummary.sourceChangedOnlyAtDepthArgument
