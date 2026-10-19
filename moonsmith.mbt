@@ -774,11 +774,10 @@ pub fn Program::to_source(self : Program) -> String {
     "  if i < 0L { raise MoonSmithValtypeError }\n" +
     "  { value: i.to_double() }\n" +
     "}\n\n" +
-    "#warnings(\"-deprecated\")\n" +
     "fn _ms_valtype_run(i : Int64) -> Double {\n" +
-    "  match (try? _ms_valtype_make(i)) {\n" +
-    "    Ok({ value }) => value\n" +
-    "    Err(_) => -1.0\n" +
+    "  match (try Some(_ms_valtype_make(i)) catch { _ => None }) {\n" +
+    "    Some({ value }) => value\n" +
+    "    None => -1.0\n" +
     "  }\n" +
     "}\n\n"
   } else {

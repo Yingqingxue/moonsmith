@@ -9,7 +9,8 @@ The current typed vertical slice provides:
 
 - a small typed expression IR for arithmetic, arrays, structs, enums, local
   functions, bounded primitive-array growth, and bounded `for` and `while` loops;
-- a dedicated `#valtype`/`raise`/`try?` probe for one historical trigger shape;
+- a dedicated `#valtype`/`raise`/`try ... catch` probe for one historical
+  trigger shape;
 - matching source generation, reference evaluation, differential execution,
   and trigger-preserving AST shrinking for that probe;
 - deterministic generation from an integer seed;

@@ -300,7 +300,7 @@ test "generated boolean corpus exercises valtype raise probes" {
     if program.to_source().contains("_ms_valtype_run") {
       has_probe = true
       has_scaffold = program.to_source().contains("#valtype") &&
-        program.to_source().contains("try? _ms_valtype_make")
+        program.to_source().contains("try Some(_ms_valtype_make")
     }
   }
   assert_true(has_probe && has_scaffold)

@@ -67,7 +67,7 @@ if (-not (Test-Path -LiteralPath $valtypeMinimalPath)) {
     throw "Missing valtype reduction artifact: $valtypeMinimalPath"
 }
 $valtypeMinimalSource = Get-Content -LiteralPath $valtypeMinimalPath -Raw -Encoding utf8
-foreach ($trigger in @('#valtype', 'value : Double', 'raise MoonSmithValtypeError', 'try? _ms_valtype_make', '_ms_valtype_run')) {
+foreach ($trigger in @('#valtype', 'value : Double', 'raise MoonSmithValtypeError', 'try Some(_ms_valtype_make', '_ms_valtype_run')) {
     if (-not $valtypeMinimalSource.Contains($trigger)) {
         throw "The valtype reduction lost required trigger fragment: $trigger"
     }
@@ -124,7 +124,7 @@ if ($combinedTargets -contains 'native-release' -and
 }
 $combinedMinimalPath = Join-Path $combinedResult.outputDirectory 'minimal.mbt'
 $combinedMinimalSource = Get-Content -LiteralPath $combinedMinimalPath -Raw -Encoding utf8
-foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valtype', 'Array[MoonSmithEntry]', 'let values : Array[MoonSmithEntry] = []', 'values.push({ id: i, kind: MoonSmithEntryKind::Ref("x") })', 'values.push({ id: i + 1, kind: MoonSmithEntryKind::Ref("x") })', 'values[1].id', 'try? _ms_valtype_make', '_ms_valtype_run')) {
+foreach ($trigger in @('let _ms_valtype_input = _ms_valtype_array_run(', '#valtype', 'Array[MoonSmithEntry]', 'let values : Array[MoonSmithEntry] = []', 'values.push({ id: i, kind: MoonSmithEntryKind::Ref("x") })', 'values.push({ id: i + 1, kind: MoonSmithEntryKind::Ref("x") })', 'values[1].id', 'try Some(_ms_valtype_make', '_ms_valtype_run')) {
     if (-not $combinedMinimalSource.Contains($trigger)) {
         throw "The combined valtype reduction lost required trigger fragment: $trigger"
     }

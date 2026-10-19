@@ -186,7 +186,9 @@ updated together, and models loop-carried values in the reference evaluator
 and AST reducer. The `while` form uses mutable locals and a fixed 0–5 iteration
 bound; it does not exercise arbitrary loop conditions or early exits. One narrow
 probe emits a `#valtype` struct with a `Double` first field
-through a `raise`/`try?` path. A second probe creates an empty array, pushes a
+through a `raise` path consumed with `try ... catch` (the current syntax
+equivalent of the historical issue's `try?` form). A second probe creates an
+empty array, pushes a
 `#valtype` struct with an enum field, reads the first element's enum, appends a
 second element, then reads its integer field to exercise array growth. Its
 first append mirrors the relevant source shape from upstream issue

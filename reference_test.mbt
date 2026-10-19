@@ -442,7 +442,12 @@ test "valtype raise probe keeps the sign boundary and upstream trigger shape" {
       "fn _ms_valtype_make(i : Int64) -> MoonSmithValtype raise MoonSmithValtypeError",
     ),
   )
-  assert_true(source.contains("match (try? _ms_valtype_make(i))"))
+  assert_true(
+    source.contains(
+      "match (try Some(_ms_valtype_make(i)) catch { _ => None })",
+    ),
+  )
+  assert_false(source.contains("try? _ms_valtype_make"))
 }
 
 ///|
