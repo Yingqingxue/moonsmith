@@ -417,6 +417,60 @@ commands were also running. Its hashes and aggregates audit, but the concurrent
 local workload makes it unsuitable as a clean comparison; it is excluded from
 the evidence tables and remains only in the ignored local run directory.
 
+### Interrupted resumed attempt and clean repeat
+
+An intervening 15-minute-per-arm attempt (output SHA-256
+`b48d19e396a6006754d008085bc9d46ed434bcf0888dda124477a6645e6d35fb`, 227
+indexed reports) was resumed from its saved checkpoint after checkpoint
+replacement failed with Windows `Access is denied`. The resumed output passes
+artifact/aggregate audit, but records `resumedAfterParentInterruption=true`
+and `wallClockUsageWithinOneSecondOfBudget=false`; the runner correctly
+refuses a matched realized-budget claim for any resumed campaign. A
+read-only checkpoint inspection occurred near the failed replacement and may
+have raced the atomic rename, but this cause is not confirmed. This run is
+therefore excluded from matched-budget evidence; the checkpoint and raw reports
+remain in the ignored local run directory.
+
+A new run with fresh disjoint seed streams was then started from scratch,
+without polling its checkpoint, and completed all three 900-second arms. It
+used the same selection-configuration SHA and depth-10 JS/Wasm/Wasm-GC matrix
+as the prior clean 15-minute replicate. The new seed starts were sequential
+`82,000,000+`, semantic-guided `83,000,000+`, MoonGrammata
+`84,000,000`–`84,000,999`, control order `85,000,000` and `86,000,000`,
+campaign `87,000,000`, and round-robin order `88,000,000`. The output is
+`.moonsmith/runs/live_feedback_wallclock_depth10_rep6_15min_20261019.json`,
+SHA-256 `8f84766781e5bae866b6dd02b19120a4a34775ab45b98a2a56c0a74b65090c41`;
+the auditor verified all 229 raw reports and confirmed realized use within
+one second of the configured budget. The harness digest remained unchanged at
+`67e24bfc29c638ac8f6956f6c9080e77d316cd69a08748991cad1e8b07a0cc20`.
+
+| Arm | Active ms | Completed / attempts | Work items | Backend checks | Path kinds | Outcomes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Sequential | 900,119 | 63 / 67 | 252 proposals | 189 | 56 | 63 consistent |
+| Semantic-guided | 900,107 | 63 / 65 | 252 proposals | 189 | 56 | 63 consistent |
+| MoonGrammata | 900,146 | 103 / 104 | 103 live callbacks | 204 | 56 | 68 consistent, 35 generator-limit |
+
+Each arm had one budget-censored attempt. Sequential and semantic-guided had
+three and one observed no-valid-preflight windows; these were not censored.
+MoonGrammata's 35 oversized outputs were stopped by the 16,300-line source
+guard before backend execution, not compiler failures. The other 68 callbacks
+produced 204 successful backend checks matching reference output. There were
+no mismatches or crashes. All arms again observed the same 56 path kinds; no
+path-vocabulary advantage was observed.
+
+Control counters were, respectively, 139,303 / 138,967 ms proposal generation,
+100,269 / 96,948 ms reference evaluation, 99,269 / 96,194 ms trace work, and
+431,007 / 435,913 ms selected-candidate verifier wall time. MoonGrammata
+counters were 54,889 ms generation, 37,511 ms reference evaluation, 36,807 ms
+trace, 327,727 ms backend build/execution, 630,418 ms total verifier time, and
+173,484 ms verifier residual. The component counters break down verifier
+time and are not additive to total verifier time. Arm usage ranged from
+900,107 to 900,146 ms (39 ms spread); scheduler time was 2,714,700 ms with
+14,328 ms uncharged scheduling/checkpoint overhead. As in the earlier clean
+repeat, equal wall-clock did not equalize proposal/callback work units. Across
+the two clean 15-minute replicates, identical path-kind counts are a repeated
+descriptive observation only, not a statistical effectiveness conclusion.
+
 ### Early smoke runs: excluded after discovering a state-reset defect
 
 The initial JS-only run used a 30-second budget per arm and completed 3, 3, and

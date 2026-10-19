@@ -85,6 +85,18 @@ evidence for report/config/harness hashes and cost counters. A separate
 10-minute-per-arm attempt overlapped local audit/regression commands and is
 explicitly excluded from comparisons.
 
+A subsequent attempt was interrupted during atomic checkpoint replacement and
+resumed; although its 227 raw reports pass integrity audit, the report correctly
+marks it as resumed and denies a realized-budget match, so it is excluded. A
+fresh-seed clean repeat then completed with 900 seconds per arm and passed audit
+over 229 raw reports. Again all three arms saw the same 56 reference-path kinds;
+all 582 backend checks succeeded. MoonGrammata had 35 source-size-limit
+callbacks before backend evaluation, while 68 callbacks completed all three
+backend checks. No mismatch or crash was observed. The two clean 15-minute
+replicates are descriptive only; the control proposal work and live callback
+units still differ, and equal-time path counts do not prove effectiveness.
+Hashes, cost counters, and the checkpoint caveat are in the protocol evidence.
+
 ## Competition-review follow-up: integration boundaries and evidence
 
 The live MoonGrammata adapter now has seven exploratory synchronous-feedback
