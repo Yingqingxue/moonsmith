@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $selectionRunner = Join-Path $PSScriptRoot 'compare_semantic_selection.ps1'
 $campaignRunner = Join-Path $PSScriptRoot 'run_live_feedback_wallclock_campaign.ps1'
+$reportAuditor = Join-Path $PSScriptRoot 'audit_live_feedback_wallclock_report.ps1'
 $mockWorker = Join-Path $PSScriptRoot 'testdata\mock_wallclock_arm_worker.ps1'
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('moonsmith-wallclock-campaign-test-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $testRoot | Out-Null
@@ -33,6 +34,44 @@ try {
         -not $checkpoint.completed -or $balanced.rawCaseReports.Count -ne 6) {
         throw 'Round-robin scheduler did not preserve reports or accurately aggregate candidates, callbacks, and backend checks.'
     }
+    $audit = (& $reportAuditor -ReportPath $balancedPath | ConvertFrom-Json)
+    if ($audit.audit -ne 'passed' -or $audit.claimScope -ne 'artifact-and-summary-integrity-only' -or
+        $audit.rawCaseReportsVerified -ne 6 -or $audit.realizedUsageWithinOneSecond) {
+        throw 'The report auditor must verify a complete balanced campaign without broadening the claim scope.'
+    }
+    $badSummaryPath = Join-Path $testRoot 'bad-aggregate.json'
+    $balanced.arms.sequential.completedCases++
+    [IO.File]::WriteAllText($badSummaryPath, ($balanced | ConvertTo-Json -Depth 24), [Text.UTF8Encoding]::new($false))
+    $aggregateMismatchRejected = $false
+    try { $null = & $reportAuditor -ReportPath $badSummaryPath }
+    catch {
+        if ($_.Exception.Message -notlike '*sequential completed-case count mismatch*') { throw }
+        $aggregateMismatchRejected = $true
+    }
+    if (-not $aggregateMismatchRejected) { throw 'The report auditor must reject a hand-edited aggregate count.' }
+
+    $badCensorPath = Join-Path $testRoot 'bad-censor.json'
+    $badCensor = Get-Content -LiteralPath $balancedPath -Raw -Encoding utf8 | ConvertFrom-Json
+    $badCensor.arms.semanticGuided.cases[0].censored = $true
+    [IO.File]::WriteAllText($badCensorPath, ($badCensor | ConvertTo-Json -Depth 24), [Text.UTF8Encoding]::new($false))
+    $censorMismatchRejected = $false
+    try { $null = & $reportAuditor -ReportPath $badCensorPath }
+    catch {
+        if ($_.Exception.Message -notlike '*timeout/censor flags mismatch*') { throw }
+        $censorMismatchRejected = $true
+    }
+    if (-not $censorMismatchRejected) { throw 'The report auditor must reject inconsistent timeout/censor flags.' }
+
+    $tamperedArtifact = [string]$balanced.rawCaseReports[0].path
+    [IO.File]::AppendAllText($tamperedArtifact, ' ')
+    $artifactMismatchRejected = $false
+    try { $null = & $reportAuditor -ReportPath $balancedPath }
+    catch {
+        if ($_.Exception.Message -notlike '*Raw report SHA-256*') { throw }
+        $artifactMismatchRejected = $true
+    }
+    if (-not $artifactMismatchRejected) { throw 'The report auditor must reject a modified raw report.' }
+
     foreach ($round in 0,1) {
         $roundOrder = @($balanced.taskOrder | Where-Object round -eq $round | ForEach-Object { $_.arm })
         if ($roundOrder.Count -ne 3 -or @($roundOrder | Select-Object -Unique).Count -ne 3) {
@@ -186,6 +225,9 @@ try {
         interruptedWorkerConservativelyCensored=$true; priorCompletedCasesRecoverable=$true; orderRotatesByRound=$true
         semanticFeedbackStateCarriedAcrossCases=$true; staleHarnessResumeRejected=$true
         noValidPreflightWindowClassifiedSeparately=$true
+        reportHashesAndAggregatesAudited=$true
+        aggregateAndArtifactTamperingRejected=$true
+        timeoutCensorMismatchRejected=$true
         testWorkerOnly=$true
     } | ConvertTo-Json -Compress
 }

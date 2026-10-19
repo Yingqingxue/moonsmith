@@ -63,6 +63,15 @@ measurements, not evidence of effectiveness. Details, hashes, and caveats are
 in the same
 [protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
 
+An offline integrity auditor now verifies a campaign's saved selection config,
+raw-report hashes/index, per-arm counts, and realized equal-budget flag. The
+corrected depth-10 replicate (70 raw reports) and final smoke report (9) pass;
+the earlier long report is rejected for its already-documented false censor
+flags rather than silently rewritten. The regression test checks that both a
+tampered aggregate and a modified raw report are rejected. This audit verifies
+artifact/summary integrity only; it does not replay compilers or establish
+effectiveness.
+
 ## Competition-review follow-up: integration boundaries and evidence
 
 The live MoonGrammata adapter now has seven exploratory synchronous-feedback

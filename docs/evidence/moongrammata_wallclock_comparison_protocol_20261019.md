@@ -341,6 +341,27 @@ covered by the mock regression. The results above are from the rerun after that
 fix, and the table's counts were cross-checked against each preserved case
 report.
 
+### Offline artifact and aggregate audit
+
+`scripts/audit_live_feedback_wallclock_report.ps1 -ReportPath <summary.json>`
+is a read-only integrity check for a completed wall-clock report. It verifies
+the saved selection-configuration hash, every indexed raw-case report hash,
+the one-to-one mapping from completed attempts to indexed reports, and the
+per-arm attempt/completion/work/backend/path aggregates. It also recomputes
+whether equal active-time usage was actually realized, including attempt-cap
+and interrupted-run exclusions. Its output explicitly limits its scope to
+artifact/summary integrity: it does not rerun MoonBit, replay target compilers,
+or establish that a fuzzer is effective.
+
+The corrected 5-minute depth-10 replication and the 30-second final smoke
+report both pass this audit (70 and 9 raw case reports, respectively). The
+earlier 10-minute report is intentionally rejected: its historically incorrect
+`censored` flags on non-timeout proposal-window failures violate the recorded
+attempt semantics. That legacy report remains immutable and is described with
+the correction in the preceding section; the auditor does not silently repair
+it. Regression tests also prove that editing an aggregate count, falsifying a
+timeout/censor flag, or mutating an indexed raw report makes the audit fail.
+
 ### Early smoke runs: excluded after discovering a state-reset defect
 
 The initial JS-only run used a 30-second budget per arm and completed 3, 3, and
