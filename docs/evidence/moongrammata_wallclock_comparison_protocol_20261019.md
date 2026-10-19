@@ -167,6 +167,43 @@ Preserved raw case reports and their hashes are indexed in the top-level JSON.
 This run is not a clean-tree hosted experiment: the selection and campaign
 were run locally from `ed1ca68` while the status document was being updated.
 
+### Depth-6 equal-wall-clock exploratory run
+
+A follow-up used the same JS/Wasm/Wasm-GC matrix and 30-second timeout, raising
+generator depth to 6 and active-worker allowance to 600 seconds per arm. Fresh,
+disjoint seed ranges were used: selection candidates from `17,000,000`, control
+proposal windows from `18,000,000` and `19,000,000`, MoonGrammata seeds
+`20,000,000`–`20,000,999`, proposal-order seeds `21,000,000` and `22,000,000`,
+campaign seed `23,000,000`, and scheduler seed `24,000,000`. The campaign JSON
+is retained locally at
+`.moonsmith/runs/live_feedback_wallclock_depth6_10min_20261019.json`, SHA-256
+`2b54869a3c947423b8315adeca0064968f01adf202103269e4f71307fdbf6dec`; the
+selection configuration SHA-256 is
+`fe3bd651b89cf383f3fc49f3a90e9a6526c0e8a7b4c8500c156a61f9db5cf279`. The
+harness digest stayed at
+`51114334a873756e9f289816dae758fb48a64f600896963ef2dbaa54f345b558`. All 139
+indexed raw reports and the selection configuration independently matched
+their recorded SHA-256 values.
+
+| Arm | Completed / attempts | Proposal or callback count | Backend checks | Unique reference path kinds | Findings |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 40 / 41 (1 censored) | 160 proposals | 120 | 56 | 40 consistent |
+| Semantic-guided | 41 / 42 (1 censored) | 164 proposals | 123 | 55 | 41 consistent |
+| MoonGrammata | 58 / 59 (1 censored) | 58 live callbacks | 174 | 55 | 58 consistent |
+
+Per-arm active times were 600,114 / 600,109 / 600,109 ms, within the
+one-second tolerance. Scheduler time was 1,807,287 ms, with 6,955 ms of
+unallocated scheduling/checkpoint overhead. All 417 backend executions
+succeeded on JS, Wasm, and Wasm-GC; no mismatch or crash was observed in this
+sample. Coverage changed as cases accrued (an early two-kind MoonGrammata lead
+disappeared, then sequential surpassed it), ending at 56/55/55. This shows why
+early snapshots cannot establish a stable advantage. Depth-4 and depth-6 path
+unions differ only by reference paths observed in the added sample; neither is
+a compiler bug. The selection report was created from `584e4f6` with the
+untracked application draft as the only dirty item. The campaign digest stayed
+stable. These are local exploratory runs, not clean-tree CI or powered
+effectiveness comparisons.
+
 An earlier corrected smoke report (before this final run) exposed a
 summary-accounting defect: raw reports contained the right counts but the
 per-arm aggregate fields serialized as zero. The explicit aggregation fix is

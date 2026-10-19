@@ -33,7 +33,13 @@ That sample found no mismatch or crash and did not distinguish reference-path
 coverage (53 kinds in each arm); it is not an effectiveness claim. Details and
 the report hash are recorded in the
 [wall-clock protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
-A depth-6, 10-minute-per-arm exploratory run is now in progress.
+A 10-minute-per-arm depth-6 follow-up completed 40, 41, and 58 consistent cases
+for sequential, semantic-guided, and MoonGrammata, respectively; all 417
+backend executions succeeded. Coverage ended at 56/55/55 reference-path kinds,
+and an early MoonGrammata lead disappeared during the run. This remains
+exploratory evidence, not proof of comparative effectiveness. A depth-8,
+10-minute-per-arm run is now in progress. Details, hashes, and caveats are in
+the same [protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
 
 ## Competition-review follow-up: integration boundaries and evidence
 
