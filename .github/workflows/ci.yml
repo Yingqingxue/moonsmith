@@ -104,6 +104,7 @@ jobs:
           ./scripts/test_reference.ps1
           ./scripts/test_reducer.ps1
           ./scripts/test_cli.ps1
+          ./scripts/test_live_feedback_wallclock_campaign.ps1
           ./scripts/test_batch_reports.ps1
           ./scripts/test_semantic_selection.ps1
           ./scripts/test_moongrammata_live_target.ps1

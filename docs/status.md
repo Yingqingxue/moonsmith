@@ -2,6 +2,28 @@
 
 Last updated: 2026-10-19
 
+## Equal-wall-clock online-feedback prototype
+
+A new three-arm runner (`scripts/run_live_feedback_wallclock_campaign.ps1`)
+interleaves sequential, semantic-guided, and MoonGrammata one-case workers,
+rotates which arm starts each round, and gives each arm the same active
+wall-clock allowance. Child startup, proposal generation/preflight, feedback,
+verification, and serialization count against that allowance. It preserves
+per-case JSON and hashes, checkpoints atomically, censors/kills an attempt at
+the limit without retry, and can recover a prior checkpoint. The semantic
+arm's accumulated selected-path state is passed across isolated workers.
+
+Mock tests cover the budget/interleave/timeout/recovery, stale-harness resume
+rejection, and aggregate metric contract, and are added to CI. A corrected local
+smoke run (30 seconds per arm; JS/Wasm/Wasm-GC; depth 1) completed three cases
+on each arm and censored its fourth attempt. All nine completed cases were
+consistent across all three backends.
+It is a small wiring/measurement smoke, not evidence of effectiveness or of a
+bug-finding advantage. The result and protocol caveats are recorded in
+[`moongrammata_wallclock_comparison_protocol_20261019.md`](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
+The worktree contains uncommitted harness changes at this update; local tests
+and hosted CI must pass before any commit/push.
+
 ## Competition-review follow-up: integration boundaries and evidence
 
 The live MoonGrammata adapter now has seven exploratory synchronous-feedback

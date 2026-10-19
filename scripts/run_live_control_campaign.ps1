@@ -5,12 +5,21 @@ param(
     [Parameter()][ValidateRange(1, 1000)][int]$ExecutionBudget = 6,
     [Parameter()][ValidateRange(1, 20)][int]$ProposalBatchSize = 4,
     [Parameter()][ValidateSet('js', 'wasm', 'wasm-gc', 'native', 'native-release')][string[]]$Targets = @('js', 'wasm', 'wasm-gc'),
+    [Parameter()][string]$TargetsCsv = '',
+    [Parameter()][string]$InitialSeenPathKindsCsv = '',
     [Parameter()][ValidateRange(0, 12)][int]$Depth = 2,
     [Parameter()][ValidateRange(1, 300)][int]$TimeoutSeconds = 30,
     [Parameter()][string]$OutputPath = ''
 )
 
 $ErrorActionPreference = 'Stop'
+if ($TargetsCsv) {
+    if ($PSBoundParameters.ContainsKey('Targets')) { throw 'Specify either Targets or TargetsCsv, not both.' }
+    $Targets = @($TargetsCsv -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+}
+foreach ($target in $Targets) {
+    if ($target -notin @('js', 'wasm', 'wasm-gc', 'native', 'native-release')) { throw "Unsupported target: $target" }
+}
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $moonExe = (Get-Command moon -ErrorAction Stop).Source
 $powerShell = (Get-Command pwsh -ErrorAction Stop).Source
@@ -21,6 +30,9 @@ $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('moonsmith-live-control-' + [g
 New-Item -ItemType Directory -Path $testRoot | Out-Null
 $campaignTimer = [Diagnostics.Stopwatch]::StartNew()
 $seenPathKinds = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+foreach ($pathKind in @($InitialSeenPathKindsCsv -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+    [void]$seenPathKinds.Add([string]$pathKind)
+}
 $seedStream = [int[]]@($SeedStart..([int]([long]$SeedStart + ([long]$ExecutionBudget * $ProposalBatchSize) - 1)))
 $seedOrderRandom = [Random]::new($ProposalOrderSeed)
 for ($shuffleIndex = $seedStream.Length - 1; $shuffleIndex -gt 0; $shuffleIndex--) {
@@ -228,6 +240,7 @@ try {
         selectionRule = if ($Policy -eq 'sequential') { 'first valid candidate in each ascending seed window' } else { 'maximum unseen reference-path kinds per source line within first valid candidate size band; ties by count then ascending seed' }
         seedStart = $SeedStart; seedEndExclusive = $SeedStart + ($ExecutionBudget * $ProposalBatchSize)
         proposalOrderSeed = $ProposalOrderSeed
+        initialSeenPathKinds = @($InitialSeenPathKindsCsv -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Sort-Object -Unique)
         executionBudget = $ExecutionBudget; proposalBatchSize = $ProposalBatchSize
         proposalCount = $proposals.Count; selectedCount = $cases.Count
         configuredTargets = @($Targets); depth = $Depth; timeoutSecondsPerTarget = $TimeoutSeconds
