@@ -204,6 +204,39 @@ untracked application draft as the only dirty item. The campaign digest stayed
 stable. These are local exploratory runs, not clean-tree CI or powered
 effectiveness comparisons.
 
+### Depth-8 equal-wall-clock exploratory run
+
+The next local run kept the same three backends and 30-second target timeout,
+with generator depth 8 and 600 seconds of active-worker time per arm. Seed
+streams were fresh and disjoint: selection `25,000,000`, sequential proposals
+`26,000,000`, semantic-guided proposals `27,000,000`, MoonGrammata
+`28,000,000`–`28,000,999`, control-order seeds `29,000,000` and `30,000,000`,
+campaign seed `31,000,000`, and scheduler seed `32,000,000`. The report was
+retained locally at
+`.moonsmith/runs/live_feedback_wallclock_depth8_10min_20261019.json`, SHA-256
+`1e1b22105c5b730f51e5d62de5b0998120609f8aa095cd3d0aadefc30e0ac249`; selection
+configuration SHA-256:
+`5a7dd49065bd82d123bb7c061cc9088e14765864668f7bdb9fc9fdd56b0e2718`. The
+harness digest remained `51114334a873756e9f289816dae758fb48a64f600896963ef2dbaa54f345b558`.
+All 137 raw reports and the selection configuration matched their indexed
+hashes.
+
+| Arm | Completed / attempts | Proposal or callback count | Backend checks | Unique reference path kinds | Findings |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 40 / 41 (1 censored) | 160 proposals | 120 | 55 | 40 consistent |
+| Semantic-guided | 40 / 40 | 160 proposals | 120 | 56 | 40 consistent |
+| MoonGrammata | 57 / 58 (1 censored) | 57 live callbacks | 171 | 55 | 57 consistent |
+
+Active times were 600,092 / 600,049 / 600,130 ms, within 130 ms of each other;
+scheduler time was 1,808,295 ms with 8,024 ms of unallocated scheduling /
+checkpoint overhead. All 411 backend executions succeeded on JS, Wasm, and
+Wasm-GC. No mismatch or crash was observed. The descriptive path-kind union
+was 55/56/55, so the single extra semantic-guided kind in this sample is not
+evidence of a repeatable effectiveness difference. This was a local run from
+`e92ba82`; the only worktree dirt was the preserved, untracked application
+draft. As with the previous runs, it is exploratory and not a powered
+effectiveness comparison.
+
 An earlier corrected smoke report (before this final run) exposed a
 summary-accounting defect: raw reports contained the right counts but the
 per-arm aggregate fields serialized as zero. The explicit aggregation fix is

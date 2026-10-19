@@ -38,8 +38,12 @@ for sequential, semantic-guided, and MoonGrammata, respectively; all 417
 backend executions succeeded. Coverage ended at 56/55/55 reference-path kinds,
 and an early MoonGrammata lead disappeared during the run. This remains
 exploratory evidence, not proof of comparative effectiveness. A depth-8,
-10-minute-per-arm run is now in progress. Details, hashes, and caveats are in
-the same [protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
+10-minute-per-arm run completed 40 sequential, 40 semantic-guided, and 57
+MoonGrammata cases; all 411 backend executions succeeded. Reference-path unions
+were 55/56/55, a one-kind semantic-guided lead in this sample only. It is not
+evidence of stable effectiveness. A depth-10, 10-minute-per-arm run is in
+progress. Details, hashes, and caveats are in the same
+[protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
 
 ## Competition-review follow-up: integration boundaries and evidence
 
