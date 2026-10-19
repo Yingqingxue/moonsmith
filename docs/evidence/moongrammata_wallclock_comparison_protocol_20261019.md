@@ -362,6 +362,61 @@ the correction in the preceding section; the auditor does not silently repair
 it. Regression tests also prove that editing an aggregate count, falsifying a
 timeout/censor flag, or mutating an indexed raw report makes the audit fail.
 
+### Clean depth-10 15-minute-per-arm replication
+
+After all local regression tests completed, a fresh run used the same frozen
+selection configuration and JS/Wasm/Wasm-GC matrix as the earlier depth-10
+cohorts. It used a 30-second per-target timeout, batch size four, and 900
+seconds per arm. Disjoint seed streams were sequential `65,000,000+`,
+semantic-guided `66,000,000+`, MoonGrammata `67,000,000`–`67,000,999`, control
+order seeds `68,000,000` and `69,000,000`, campaign seed `70,000,000`, and
+round-robin seed `71,000,000`. The frozen selection configuration SHA-256 was
+`befdd522ab8cfbd9a17d2116ff3ff52f596e382d318c718393a1d73190deea83`; the
+harness digest was unchanged at both boundaries:
+`67e24bfc29c638ac8f6956f6c9080e77d316cd69a08748991cad1e8b07a0cc20`.
+
+The ignored local report is
+`.moonsmith/runs/live_feedback_wallclock_depth10_rep4_15min_20261019.json`,
+SHA-256 `a4be39876dac02cd39e8f538c04394e1d1491ce885257cd87c713248a9bf6a5d`.
+The offline audit passed for all 219 indexed raw reports. No test or other
+local build process overlapped this run.
+
+| Arm | Completed / attempts | Work items | Backend checks | Unique path kinds | Outcomes |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 61 / 65 | 244 proposals | 183 | 56 | 61 consistent |
+| Semantic-guided | 62 / 67 | 248 proposals | 186 | 56 | 62 consistent |
+| MoonGrammata | 96 / 97 | 96 live callbacks | 222 | 56 | 74 consistent, 22 generator-limit |
+
+Each arm had one attempt censored at its budget. Sequential and semantic-guided
+had three and four fully observed `no-valid-preflight-candidate-window`
+outcomes, respectively; these were not censored and did not run backends.
+Twenty-two MoonGrammata callbacks exceeded the 16,300-line source safety bound;
+they were excluded before reference/backend evaluation, not counted as
+compiler failures. The other 74 callbacks yielded 222 successful backend
+checks with matching reference output. There were no backend mismatches or
+crashes. All arms observed the same 56 path kinds, so this replicate shows no
+path-vocabulary advantage.
+
+Measured work counters from completed case reports were: sequential 133,405 ms
+proposal generation, 107,101 ms reference evaluation, 106,588 ms trace work,
+and 417,934 ms selected-candidate verifier wall time; semantic-guided 136,985,
+98,488, 97,465, and 426,376 ms for those same respective counters. The
+MoonGrammata counters were 50,434 ms generation, 40,005 ms reference
+evaluation, 39,493 ms trace, 351,727 ms backend build/execution, 648,532 ms
+total verifier time, and 166,873 ms verifier residual (the component counters
+are a breakdown of verifier time, not additional additive wall time). The arm
+worker times were 900,199 / 900,123 / 900,124 ms, a maximum 199 ms spread.
+Total scheduler time was 2,714,296 ms, with 13,850 ms checkpoint/scheduling
+overhead not charged to an arm. Equal outer time does not make the 244/248
+control proposals and 96 live MoonGrammata callbacks equal units of candidate
+work. Treat these as local descriptive measurements, not a powered
+effectiveness result or throughput-superiority claim.
+
+A separate 10-minute-per-arm run was attempted while local audit/regression
+commands were also running. Its hashes and aggregates audit, but the concurrent
+local workload makes it unsuitable as a clean comparison; it is excluded from
+the evidence tables and remains only in the ignored local run directory.
+
 ### Early smoke runs: excluded after discovering a state-reset defect
 
 The initial JS-only run used a 30-second budget per arm and completed 3, 3, and

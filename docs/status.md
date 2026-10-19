@@ -72,6 +72,19 @@ tampered aggregate and a modified raw report are rejected. This audit verifies
 artifact/summary integrity only; it does not replay compilers or establish
 effectiveness.
 
+A clean depth-10 replication then ran for 15 minutes per arm after all local
+regression checks had finished. The saved 219-report artifact passed the
+offline audit. Sequential, semantic-guided, and MoonGrammata observed 56 path
+kinds each; all 591 backend checks succeeded with matching reference outputs.
+There were 22 MoonGrammata callbacks stopped by the 16,300-line source guard
+before backend execution, not compiler failures. The controls performed 244
+and 248 proposal work items while MoonGrammata performed 96 live callbacks, so
+equal wall-clock does not mean equal candidate work. This remains descriptive,
+not evidence of effectiveness or throughput superiority. See the protocol
+evidence for report/config/harness hashes and cost counters. A separate
+10-minute-per-arm attempt overlapped local audit/regression commands and is
+explicitly excluded from comparisons.
+
 ## Competition-review follow-up: integration boundaries and evidence
 
 The live MoonGrammata adapter now has seven exploratory synchronous-feedback
