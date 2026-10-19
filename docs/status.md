@@ -21,8 +21,19 @@ consistent across all three backends.
 It is a small wiring/measurement smoke, not evidence of effectiveness or of a
 bug-finding advantage. The result and protocol caveats are recorded in
 [`moongrammata_wallclock_comparison_protocol_20261019.md`](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
-The worktree contains uncommitted harness changes at this update; local tests
-and hosted CI must pass before any commit/push.
+The prototype and protocol were committed and fast-forward pushed in
+`ed1ca68268cc35cb3e9ba4a5aa6d7c27af2c62d1`. Local mock integration tests,
+the existing campaign tests, `test_cli.ps1`, and MoonBit `moon test` (111/111)
+passed. Hosted Linux verification and CaseKit interoperability passed in
+[CI run 39186347066](https://github.com/Yingqingxue/moonsmith/actions/runs/39186347066);
+the Windows native job also completed successfully. A 5-minute-per-arm depth-4
+exploratory run completed 20 sequential, 20 semantic-guided, and 29 live
+MoonGrammata cases; every completed case was consistent on JS/Wasm/Wasm-GC.
+That sample found no mismatch or crash and did not distinguish reference-path
+coverage (53 kinds in each arm); it is not an effectiveness claim. Details and
+the report hash are recorded in the
+[wall-clock protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
+A depth-6, 10-minute-per-arm exploratory run is now in progress.
 
 ## Competition-review follow-up: integration boundaries and evidence
 

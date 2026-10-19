@@ -128,6 +128,45 @@ callback and budgeted harness execute and preserve evidence; three
 callbacks per arm cannot meaningfully compare discovery effectiveness or path
 diversity.
 
+### Depth-4 equal-wall-clock exploratory run
+
+After the prototype passed hosted CI, a new depth-4 selection report was made
+with two prescreen candidates, one selected case per control arm, the JS/Wasm/
+Wasm-GC matrix, and a 30-second per-target timeout. The live campaign did not
+reuse those candidate seeds: it used disjoint control proposal windows
+(`10,000,000` and `11,000,000`), MoonGrammata seed range `12,000,000`–
+`12,000,999`, separate proposal-order seeds (`13,000,000` and `14,000,000`),
+campaign seed `15,000,000`, and scheduler-order seed `16,000,000`. Each arm
+received a 300-second active-worker budget; control proposal batches were four.
+
+The selection configuration SHA-256 is
+`e1642b0b29d51ff439c7225a770814f4ff6a3ea7356994a99e8d7bb15bcbae14`. The
+campaign JSON was retained locally at
+`.moonsmith/runs/live_feedback_wallclock_depth4_5min_20261019.json`, SHA-256
+`c568c823341a8890cfe9009cfdc09c622905890bca7b9b56db9c57d90b4b02c8`.
+Its harness start/end digest was unchanged at
+`51114334a873756e9f289816dae758fb48a64f600896963ef2dbaa54f345b558`.
+Scheduler wall time was 902,834 ms, with 2,402 ms of unallocated scheduler /
+checkpoint overhead. All per-arm active times were within one second of 300
+seconds:
+
+| Arm | Completed / attempts | Proposal or callback count | Backend checks | Unique reference path kinds | Findings |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 20 / 21 (1 censored) | 80 proposals | 60 | 53 | 20 consistent |
+| Semantic-guided | 20 / 21 (1 censored) | 80 proposals | 60 | 53 | 20 consistent |
+| MoonGrammata | 29 / 30 (1 censored) | 29 live callbacks | 87 | 53 | 29 consistent |
+
+Every completed case reported successful JS, Wasm, and Wasm-GC execution; no
+mismatch or crash was observed in the 69 completed cases. This is a small
+local exploratory sample, not an effectiveness result. The equal time budget
+does not equalize the amount or type of candidate work: controls preflighted
+four proposals per selected case, whereas MoonGrammata performed one live
+callback per generated seed. The common 53-kind union also saturates the
+current reference-path vocabulary and cannot distinguish the arms here.
+Preserved raw case reports and their hashes are indexed in the top-level JSON.
+This run is not a clean-tree hosted experiment: the selection and campaign
+were run locally from `ed1ca68` while the status document was being updated.
+
 An earlier corrected smoke report (before this final run) exposed a
 summary-accounting defect: raw reports contained the right counts but the
 per-arm aggregate fields serialized as zero. The explicit aggregation fix is
