@@ -128,11 +128,26 @@ seed emitted removed `try?` syntax, so combined reference/reducer integration
 failed before backend execution. The template now emits the equivalent
 `try Some(...) catch { _ => None }` syntax, with source and reducer assertions
 updated. Local checks on the available older MoonBit `0.1.20260920` pass;
-fresh hosted verification is still required because CI uses newer
-`0.1.20261016`. The checked-in upstream issue-1274 fixture is already ported to
-current syntax while its historical `try?` shape remains documented for
-provenance. This is generator compatibility maintenance, not a new compiler
-finding.
+hosted verification on `0.1.20261016` passed in CI run
+[`39223088924`](https://github.com/Yingqingxue/moonsmith/actions/runs/39223088924)
+for `196669a` (Linux all-backend/reference/reducer/CLI checks, Windows native
+smoke and integration, and CaseKit interop). The format-only follow-up
+[`39223279817`](https://github.com/Yingqingxue/moonsmith/actions/runs/39223279817)
+on `ddf3607` also passed all regular jobs.
+
+A manual nightly rerun on `ddf3607`,
+[`39223629943`](https://github.com/Yingqingxue/moonsmith/actions/runs/39223629943),
+passed the fixed 1,000-seed corpus at depth 4 (seeds 14990–15989) on JS, Wasm,
+and Wasm-GC: 1,000/1,000 reference checks and Target Parity matrices passed,
+all 3,000 backend executions agreed, and there were zero unexpected findings.
+The run had 1,000 distinct program bodies, a stable harness digest
+`692420ae44cdbbaa60008dd1c43e242336c2434c759f5968c1f57ea48f1b3fc9`, 599
+enum-array probe visits, and 334 raise-probe visits (182 success and 166 error
+paths). Its raw JSON SHA-256 is
+`2ac24b4c68f6018b9288ff8489d3d5a6a0df8c8c51816c5e6ca4690ded08d48c`.
+The checked-in upstream issue-1274 fixture is ported to current syntax while
+its historical `try?` shape remains documented for provenance. This is
+generator compatibility maintenance, not a new compiler finding.
 
 The baseline for this evidence update is commit `b177635`, whose regular
 Linux/Windows and CaseKit CI passed in [run 39148454828](https://github.com/Yingqingxue/moonsmith/actions/runs/39148454828).
