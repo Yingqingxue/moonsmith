@@ -237,6 +237,103 @@ evidence of a repeatable effectiveness difference. This was a local run from
 draft. As with the previous runs, it is exploratory and not a powered
 effectiveness comparison.
 
+### Depth-10 equal-wall-clock exploratory run
+
+The next run kept the JS/Wasm/Wasm-GC matrix, a 30-second timeout per target,
+and 600 seconds of active wall-clock time per arm, at generator depth 10. Fresh
+seed streams were used: selection starts at `33,000,000`, sequential proposals
+at `34,000,000`, semantic-guided proposals at `35,000,000`, MoonGrammata at
+`36,000,000`–`36,000,999`, control proposal-order seeds `37,000,000` and
+`38,000,000`, campaign seed `39,000,000`, and scheduler-order seed
+`40,000,000`. The selection configuration SHA-256 is
+`befdd522ab8cfbd9a17d2116ff3ff52f596e382d318c718393a1d73190deea83`. The
+campaign JSON is retained locally at
+`.moonsmith/runs/live_feedback_wallclock_depth10_10min_20261019.json`,
+SHA-256 `d1ba660c3217f6f9a55690bf77ccf52a314b3266ecc83ba4bc0a8e1bc3875187`.
+All 138 indexed raw-case reports and the selection configuration independently
+matched their recorded SHA-256 values. The harness digest remained unchanged at
+`51114334a873756e9f289816dae758fb48a64f600896963ef2dbaa54f345b558`.
+
+| Arm | Completed / attempts | Proposals or live callbacks | Backend checks | Unique reference path kinds | Outcome / accounting |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 40 / 41 (1 censored) | 160 proposals | 120 | 56 | 40 consistent |
+| Semantic-guided | 39 / 43 (3 no-valid-preflight windows, 1 censored) | 156 proposals | 117 | 56 | 39 consistent |
+| MoonGrammata | 59 / 60 (1 censored) | 59 live callbacks | 141 | 56 | 47 consistent, 12 generator-limit |
+
+Each arm used 600,108 / 600,098 / 600,110 ms, respectively; all are within
+one second of the configured budget. Scheduler time was 1,807,002 ms with
+6,686 ms of scheduler/checkpoint overhead not charged to an arm. There were 144
+interleaved attempts in the checkpoint. The three semantic-guided
+`no-valid-preflight` windows raised the selector's explicit “Proposal window
+has no candidate with a completed reference preflight” condition; these are
+selection/preflight failures, not backend executions or compiler mismatches.
+Each consumed time and remains counted in attempts, but did not create an
+indexed case report. One remaining attempt per arm was censored at the budget.
+Post-run audit found that this depth-10 JSON's historical `censored` boolean
+also marked those three fully observed, nonzero-exit selector windows as
+censored because the old expression classified every missing successful report
+that way. The stderr/status still identifies their actual cause; the old field
+must not be used to infer that they were time-censored. The harness now sets
+`censored` only when the scheduler kills a task at the budget, emits
+`no-valid-preflight-candidate-window` as a separate status, and aggregates
+per-attempt status counts. A mock regression exercises this exact failure and
+checks that the attempt is not marked censored. This correction changes future
+report bookkeeping, not the selection or backend behavior in this completed
+run; its preserved raw JSON and hash remain untouched.
+
+Twelve of the 59 MoonGrammata callbacks generated sources above MoonSmith's
+16,300-line safety bound (16,522–31,794 lines); they were reported as
+`generator-limit` before reference evaluation or backend compilation. This is
+an intentional bounded-input exclusion, not a compiler result or newly found
+issue. The remaining 47 MoonGrammata cases, 40 sequential cases, and 39
+semantic-guided cases made 378 total JS/Wasm/Wasm-GC backend checks, all
+successful with matching reference output. No backend mismatch or crash was
+observed among checked executions. Each arm's path-kind set was the same 56
+kinds, so path-count differences do not separate them at this depth. The
+attempt and callback counts are not equivalent units of candidate work, and
+the 12 pre-backend exclusions further limit throughput comparisons. This is
+local exploratory evidence only, not an effectiveness result. The selection
+configuration came from `e92ba82`; the worktree was dirty solely because the
+untracked application draft was preserved. Raw reports remain local and
+ignored; only this indexed summary and hashes are committed.
+
+### Depth-10 short replication after accounting correction
+
+After fixing the historical censor-flag accounting, a fresh depth-10 run used
+the same JS/Wasm/Wasm-GC targets and 30-second per-target timeout, with 300
+seconds of active time per arm. Its seed streams were disjoint from the prior
+run: selection `43,000,000`, sequential `44,000,000`, semantic-guided
+`45,000,000`, MoonGrammata `46,000,000`–`46,000,999`, control-order seeds
+`47,000,000` and `48,000,000`, campaign `49,000,000`, and scheduler
+`50,000,000`. Selection configuration SHA-256:
+`180b5c3da2ec8c1f99bcf87f4c8e47ac26fc643a60d2dec7c324524eddfdf707`. The
+local campaign report
+`.moonsmith/runs/live_feedback_wallclock_depth10_rep2_5min_20261019.json` has
+SHA-256 `8cd26f5570370200a58789e479b2f5671c7225cda63bf5b1bdfaf34ac2e10af8`.
+All 70 indexed raw reports and the selection configuration matched their
+recorded hashes. The new harness digest was stable at
+`67e24bfc29c638ac8f6956f6c9080e77d316cd69a08748991cad1e8b07a0cc20`.
+
+| Arm | Completed / attempts | Proposals or callbacks | Backend checks | Unique path kinds | Outcomes |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Sequential | 20 / 21 (1 censored) | 80 proposals | 60 | 56 | 20 consistent |
+| Semantic-guided | 19 / 20 (1 censored) | 76 proposals | 57 | 56 | 19 consistent |
+| MoonGrammata | 31 / 32 (1 censored) | 31 live callbacks | 69 | 55 | 23 consistent, 8 generator-limit |
+
+Active times were 300,101 / 300,163 / 300,100 ms (within 163 ms); scheduler
+time was 902,901 ms with 2,537 ms of uncharged checkpoint/scheduling overhead.
+All 186 backend checks succeeded and matched the reference; no mismatch or
+crash was observed. Eight MoonGrammata callbacks exceeded the 16,300-line
+source bound and therefore did not compile. There were no
+`no-valid-preflight-candidate-window` outcomes in this replicate, unlike the
+three such semantic-guided attempts in the longer depth-10 run. This supports
+only that the selector outcome can vary across independent proposal windows,
+not a rate estimate. The 56/56/55 path-kind sets again nearly saturated the
+same reference vocabulary and are not evidence of an advantage. The old
+depth-10 summary remains immutable; this replicate exercises the corrected
+`censored` and per-attempt status bookkeeping. It is still a short local
+exploratory sample, not an effectiveness comparison.
+
 An earlier corrected smoke report (before this final run) exposed a
 summary-accounting defect: raw reports contained the right counts but the
 per-arm aggregate fields serialized as zero. The explicit aggregation fix is

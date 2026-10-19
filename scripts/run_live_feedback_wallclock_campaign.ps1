@@ -14,7 +14,9 @@ param(
     [Parameter()][string]$OutputPath = '',
     [Parameter()][switch]$Resume,
     [Parameter()][string]$WorkerOverrideForTests = '',
-    [Parameter()][ValidateRange(0, 60000)][int]$MockWorkerDelayMilliseconds = 0
+    [Parameter()][ValidateRange(0, 60000)][int]$MockWorkerDelayMilliseconds = 0,
+    [Parameter()][ValidateSet('sequential', 'semanticGuided', 'moonGrammata')][string]$MockWorkerFailureArm = '',
+    [Parameter()][ValidateRange(0, 10000)][int]$MockWorkerFailureAttempt = 0
 )
 
 $ErrorActionPreference = 'Stop'
@@ -127,6 +129,7 @@ $config = [ordered]@{
     semanticProposalOrderSeed=$SemanticProposalOrderSeed; moonGrammataCampaignSeed=$MoonGrammataCampaignSeed
     roundRobinOrderSeed=$RoundRobinOrderSeed; targets=$targets; depth=$depth; timeoutSecondsPerTarget=$targetTimeout
     workerOverrideForTests=[bool]$WorkerOverrideForTests
+    mockWorkerFailureArm=$MockWorkerFailureArm; mockWorkerFailureAttempt=$MockWorkerFailureAttempt
 }
 $configJson = $config | ConvertTo-Json -Depth 8 -Compress
 $configFingerprint = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($configJson))).ToLowerInvariant()
@@ -247,6 +250,9 @@ function Invoke-WorkerTask {
         $worker = (Resolve-Path -LiteralPath $WorkerOverrideForTests -ErrorAction Stop).Path
         $arguments = @('-NoProfile','-File',$worker,'-Arm',$Arm,'-Attempt',[string]$Attempt,
             '-OutputPath',$ReportPath,'-DelayMilliseconds',[string]$MockWorkerDelayMilliseconds)
+        if ($Arm -eq $MockWorkerFailureArm -and $Attempt -eq $MockWorkerFailureAttempt) {
+            $arguments += @('-FailureMode','no-valid-preflight')
+        }
         if ($Arm -eq 'semanticGuided') {
             $arguments += @('-InitialSeenPathKindsCsv',(@($state.arms[$Arm].seenPathKinds) -join ','))
         }
@@ -320,9 +326,10 @@ while (@($armNames | Where-Object { Test-ArmHasBudget $_ }).Count -gt 0) {
         }
         $completed = ($null -ne $caseReport)
         $timedOut = -not $workerResult.finished
+        $attemptStatus = if ($timedOut) { 'wall-clock-budget-censored' } elseif ($completed) { 'complete' } elseif (-not $workerResult.finished) { 'worker-failed' } elseif ($workerResult.stderr -match 'Proposal window has no candidate with a completed reference preflight') { 'no-valid-preflight-candidate-window' } else { 'worker-failed-or-invalid-report' }
         $caseRecord = [ordered]@{
-            attempt=$attempt; completed=$completed; timedOut=$timedOut; censored=($timedOut -or -not $completed)
-            status=if ($timedOut) { 'wall-clock-budget-censored' } elseif ($completed) { 'complete' } elseif (-not $workerResult.finished) { 'worker-failed' } else { 'worker-failed-or-invalid-report' }
+            attempt=$attempt; completed=$completed; timedOut=$timedOut; censored=$timedOut
+            status=$attemptStatus
             exitCode=$workerResult.exitCode; elapsedMs=$workerResult.elapsedMs; remainingBudgetMsBefore=$remaining
             reportPath=if (Test-Path -LiteralPath $reportPath) { $reportPath } else { $null }
             stderr=if ($parseError) { $parseError + "`n" + $workerResult.stderr } else { $workerResult.stderr }
@@ -378,6 +385,12 @@ foreach ($arm in $armNames) {
     }
     $candidateOrCallbackCount = 0
     $backendCheckCount = 0
+    $attemptStatusCounts = @{}
+    foreach ($case in $armState.cases) {
+        $status = [string]$case.status
+        if (-not $attemptStatusCounts.ContainsKey($status)) { $attemptStatusCounts[$status] = 0 }
+        $attemptStatusCounts[$status]++
+    }
     foreach ($completedCase in @($armState.cases | Where-Object { $_.completed })) {
         $candidateOrCallbackCount += [int]$completedCase.candidateOrCallbackCount
         $backendCheckCount += [int]$completedCase.backendCheckCount
@@ -389,6 +402,7 @@ foreach ($arm in $armNames) {
         distinctReferencePathKinds=$pathKinds.Count
         candidateOrCallbackCount=$candidateOrCallbackCount
         backendCheckCount=$backendCheckCount
+        attemptStatusCounts=$attemptStatusCounts
         semanticFeedbackPathKindsSeen=@($armState.seenPathKinds)
         findingRecords=@($armState.cases | ForEach-Object { $_.findings })
         backendStatuses=@($armState.cases | ForEach-Object { $_.backendStatuses })

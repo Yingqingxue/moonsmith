@@ -3,11 +3,16 @@ param(
     [Parameter(Mandatory)][int]$Attempt,
     [Parameter(Mandatory)][string]$OutputPath,
     [Parameter(Mandatory)][int]$DelayMilliseconds,
-    [Parameter()][string]$InitialSeenPathKindsCsv = ''
+    [Parameter()][string]$InitialSeenPathKindsCsv = '',
+    [Parameter()][string]$FailureMode = ''
 )
 
 $ErrorActionPreference = 'Stop'
 if ($DelayMilliseconds -gt 0) { Start-Sleep -Milliseconds $DelayMilliseconds }
+if ($FailureMode -eq 'no-valid-preflight') {
+    [Console]::Error.WriteLine('Proposal window has no candidate with a completed reference preflight.')
+    exit 1
+}
 $target = 'js'
 if ($Arm -eq 'moonGrammata') {
     $result = [ordered]@{

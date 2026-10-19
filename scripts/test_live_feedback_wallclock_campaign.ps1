@@ -49,6 +49,25 @@ try {
         throw 'Semantic-guided novelty state must carry the prior selected candidate paths across isolated child processes.'
     }
 
+    $noPreflightPath = Join-Path $testRoot 'no-valid-preflight.json'
+    $null = & $campaignRunner -SelectionReport $selectionPath `
+        -SequentialSeedStart 435000 -SemanticGuidedSeedStart 436000 `
+        -MoonGrammataSeedMinimum 437000 -MoonGrammataSeedMaximum 437002 `
+        -WallClockBudgetSecondsPerArm 2 -ProposalBatchSize 2 -MaximumAttemptsPerArm 2 `
+        -SequentialProposalOrderSeed 101 -SemanticProposalOrderSeed 201 -MoonGrammataCampaignSeed 301 `
+        -RoundRobinOrderSeed 401 -OutputPath $noPreflightPath -WorkerOverrideForTests $mockWorker `
+        -MockWorkerDelayMilliseconds 25 -MockWorkerFailureArm semanticGuided -MockWorkerFailureAttempt 1
+    $noPreflight = Get-Content -LiteralPath $noPreflightPath -Raw -Encoding utf8 | ConvertFrom-Json
+    $failedProposal = $noPreflight.arms.semanticGuided.cases | Where-Object { $_.status -eq 'no-valid-preflight-candidate-window' }
+    if ($noPreflight.arms.semanticGuided.completedCases -ne 1 -or
+        $noPreflight.arms.semanticGuided.attempts -ne 2 -or
+        $noPreflight.arms.semanticGuided.attemptStatusCounts.'no-valid-preflight-candidate-window' -ne 1 -or
+        $null -eq $failedProposal -or $failedProposal.completed -or $failedProposal.censored -or
+        $failedProposal.stderr -notmatch 'Proposal window has no candidate with a completed reference preflight' -or
+        $noPreflight.arms.semanticGuided.backendCheckCount -ne 1) {
+        throw 'An empty reference-preflight proposal window must be reported separately from a worker/backend failure.'
+    }
+
     $timeoutPath = Join-Path $testRoot 'censored.json'
     $null = & $campaignRunner -SelectionReport $selectionPath `
         -SequentialSeedStart 450000 -SemanticGuidedSeedStart 460000 `
@@ -166,6 +185,7 @@ try {
         perCaseRawReportsPreserved=$true; atomicCheckpointWritten=$true; mismatchedResumeRejected=$true
         interruptedWorkerConservativelyCensored=$true; priorCompletedCasesRecoverable=$true; orderRotatesByRound=$true
         semanticFeedbackStateCarriedAcrossCases=$true; staleHarnessResumeRejected=$true
+        noValidPreflightWindowClassifiedSeparately=$true
         testWorkerOnly=$true
     } | ConvertTo-Json -Compress
 }

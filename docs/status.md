@@ -12,6 +12,18 @@ verification, and serialization count against that allowance. It preserves
 per-case JSON and hashes, checkpoints atomically, censors/kills an attempt at
 the limit without retry, and can recover a prior checkpoint. The semantic
 arm's accumulated selected-path state is passed across isolated workers.
+After the first depth-10 run, report review caught a bookkeeping defect: the old
+`censored` flag also labeled fully observed nonzero-exit selection windows as
+censored. The runner now records no-valid-preflight windows separately and
+sets censoring only for an attempt terminated at its wall-clock budget. A mock
+regression verifies the distinction. A second, disjoint five-minute-per-arm
+depth-10 replicate completed 20 sequential, 19 semantic-guided, and 23
+executable MoonGrammata cases; 8 additional MoonGrammata callbacks were stopped
+by the source-size guard. All 186 backend checks succeeded, with no mismatch or
+crash. Its path sets were 56/56/55. Unlike the first depth-10 run, it had no
+empty semantic proposal windows. This confirms only that those observed
+selection failures did not recur in this small replicate; it does not estimate
+the underlying candidate rate. Hashes and caveats are in the protocol evidence.
 
 Mock tests cover the budget/interleave/timeout/recovery, stale-harness resume
 rejection, and aggregate metric contract, and are added to CI. A corrected local
@@ -41,8 +53,14 @@ exploratory evidence, not proof of comparative effectiveness. A depth-8,
 10-minute-per-arm run completed 40 sequential, 40 semantic-guided, and 57
 MoonGrammata cases; all 411 backend executions succeeded. Reference-path unions
 were 55/56/55, a one-kind semantic-guided lead in this sample only. It is not
-evidence of stable effectiveness. A depth-10, 10-minute-per-arm run is in
-progress. Details, hashes, and caveats are in the same
+evidence of stable effectiveness. The depth-10, 10-minute-per-arm run completed
+40 sequential, 39 semantic-guided, and 47 executable MoonGrammata cases. All
+378 backend checks succeeded; semantic-guided had three proposal windows with
+no preflight-valid candidate, and MoonGrammata had 12 generator-limit outcomes
+before any backend check. Each arm reached the matched time budget and the
+path-kind sets all contained the same 56 kinds. These remain exploratory
+measurements, not evidence of effectiveness. Details, hashes, and caveats are
+in the same
 [protocol evidence](evidence/moongrammata_wallclock_comparison_protocol_20261019.md).
 
 ## Competition-review follow-up: integration boundaries and evidence
