@@ -17,9 +17,9 @@ fn make(i : Int64) -> W raise E {
 
 ///|
 fn run(i : Int64) -> Double {
-  match (try? make(i)) {
-    Ok({ value, }) => value
-    Err(_) => -1.0
+  match (Some(make(i)) catch { _ => None }) {
+    Some(result) => result.value
+    None => -1.0
   }
 }
 

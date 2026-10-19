@@ -111,6 +111,16 @@ effectiveness. The raw artifacts and caveats are in the
 The current response to the four overlap/validation concerns is intentionally
 evidence-led and not a claim that all concerns are closed:
 
+The 2026-10-19 nightly corpus run at `19cef0b` failed preflight because the
+upstream issue-1274 reproduction still used `try?`, which the current MoonBit
+toolchain has removed. The regression fixture was ported to the equivalent
+`Some(make(i)) catch { _ => None }` form without changing its asserted
+success/error behavior. Its targeted `moon check --deny-warn --fmt` and JS,
+Wasm, and Wasm-GC tests now pass locally. Native execution was not verified on
+this host because no system C compiler is installed. This is fixture
+compatibility maintenance; issue 1274 remains an upstream-reported issue, not
+a MoonSmith discovery.
+
 The baseline for this evidence update is commit `b177635`, whose regular
 Linux/Windows and CaseKit CI passed in [run 39148454828](https://github.com/Yingqingxue/moonsmith/actions/runs/39148454828).
 The seventh online-feedback cohort is recorded below and in its raw evidence
