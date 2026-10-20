@@ -61,6 +61,14 @@ correctness evidence. Protocol, hashes, and reproduction command are in
 [`generator_scan_depth9_cohort3_20261020.md`](evidence/generator_scan_depth9_cohort3_20261020.md)
 and the corresponding raw JSON.
 
+A fourth disjoint depth-9 cohort (seeds 20150–20169) completed 20/20 reference
+checks and 20/20 Target Parity passes (60 backend executions), with no
+failures, mismatches, timeouts, or source-limit exclusions. Source sizes were
+609–9,590 lines; the reference interpreter observed 56 path-kind labels. This
+is another bounded negative result on the same toolchain and does not establish
+compiler correctness. The raw report, hash, and reproduction command are in
+[`generator_scan_depth9_cohort4_20261020.md`](evidence/generator_scan_depth9_cohort4_20261020.md).
+
 A second depth-10 cohort (seeds 20060–20079) exposed substantial censoring:
 10/20 passed the source guard and were checked against the reference and all
 three targets (30 successful backend executions); 10/20 exceeded the
