@@ -2,6 +2,28 @@
 
 Last updated: 2026-10-20
 
+## New cross-platform and toolchain-differential evidence
+
+The ninth standard mixed-depth cohort, seeds 21360–21589 (depths 4, 6, and
+8), completed on MoonBit `0.1.20261016` in
+[workflow 39439726435](https://github.com/Yingqingxue/moonsmith/actions/runs/39439726435).
+All 230 programs passed their reference checks and Linux JS/Wasm/Wasm-GC
+Target Parity checks (690 executions); matching Windows native-release checks
+also passed for all 230 programs. Source hashes and expected outputs matched
+across platforms; there were no source-limit exclusions or unexpected
+findings. This is bounded generated-subset coverage, not compiler-correctness
+or bug-detection-recall evidence. Raw reports and exact reproduction settings
+are in [`generator_scan_standard_cohort9_20261020`](evidence/generator_scan_standard_cohort9_20261020/README.md).
+
+A separate same-host pilot compared the identical 20 depth-8 seeds under Moon
+`0.1.20260920` / MoonC `0.10.14+7d59c7ec9` and Moon `0.1.20261012` / MoonC
+`0.10.15+943464bfa`. All 20 source hashes, reference outputs, findings,
+aggregate backend signatures, and Target Parity objects matched. No version
+difference was observed. This was one Windows host and three portable targets;
+native backends were not available locally. The raw reports and tested
+comparison utility are in
+[`toolchain_diff_20261020`](evidence/toolchain_diff_20261020/README.md).
+
 ## Bounded depth-8 cross-backend scan
 
 A fresh, disjoint local cohort (seeds 20020–20029, depth 8) completed 10/10

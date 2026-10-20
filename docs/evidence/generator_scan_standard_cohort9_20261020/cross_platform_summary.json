@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "seedStart": 21360,
+  "seedEnd": 21589,
+  "seedsCompared": 230,
+  "executableSeedsCompared": 230,
+  "generatorLimitedSeeds": 0,
+  "unexpectedFindings": 0,
+  "distinctProgramBodies": 230,
+  "matchingSourceHashes": 230,
+  "matchingExpectedOutputs": 230,
+  "linuxTargets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "linuxExecutions": 690,
+  "windowsTargets": [
+    "native-release"
+  ],
+  "windowsExecutions": 230,
+  "consistentOnBothPlatforms": 230,
+  "toolchainVersion": "moon 0.1.20261016 (1af328f 2026-10-16)",
+  "linuxReportFiles": [
+    "batch_20261020_143007_596.json",
+    "batch_20261020_143058_024.json",
+    "batch_20261020_143150_397.json"
+  ],
+  "windowsReportFiles": [
+    "batch_20261020_143033_702.json",
+    "batch_20261020_143748_522.json",
+    "batch_20261020_144451_649.json"
+  ]
+}

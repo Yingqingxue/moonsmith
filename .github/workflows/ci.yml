@@ -111,6 +111,7 @@ jobs:
           ./scripts/test_live_feedback_comparison.ps1
           ./scripts/test_live_control_campaign.ps1
           ./scripts/test_live_feedback_campaign_comparison.ps1
+          ./scripts/test_toolchain_report_comparison.ps1
 
       - name: Smoke-test generated programs
         shell: pwsh
@@ -235,6 +236,7 @@ jobs:
           ./scripts/test_reference.ps1
           ./scripts/test_reducer.ps1
           ./scripts/test_cli.ps1
+          ./scripts/test_toolchain_report_comparison.ps1
 
       - name: Preserve Windows native smoke report
         if: always()
