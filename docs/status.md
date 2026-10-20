@@ -43,6 +43,15 @@ among the six executed cases. Details and the raw report are in
 [`generator_scan_depth10_20261020.md`](evidence/generator_scan_depth10_20261020.md)
 and [`generator_scan_depth10_20261020.json`](evidence/generator_scan_depth10_20261020.json).
 
+A second, disjoint depth-9 cohort (seeds 20100–20129) then completed 30/30
+reference checks and 30/30 Target Parity passes (90 backend executions),
+with no failures, mismatches, timeouts, or source-limit exclusions. The
+reference interpreter visited 56 path-kind labels. This adds sample coverage
+but remains a bounded negative result, not a compiler-correctness claim. See
+[`generator_scan_depth9_cohort2_20261020.md`](evidence/generator_scan_depth9_cohort2_20261020.md)
+and its raw
+[`generator_scan_depth9_cohort2_20261020.json`](evidence/generator_scan_depth9_cohort2_20261020.json).
+
 ## AST reducer structural evidence
 
 MoonSmith's reducer now emits an unweighted expression-node count and tracks
