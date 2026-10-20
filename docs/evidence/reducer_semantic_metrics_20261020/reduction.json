@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "caseId": "3aae6fd6c08d7537",
+  "runId": "20261020_111154_293_6f1c6767",
+  "seed": 0,
+  "depth": 2,
+  "targets": [
+    "js",
+    "wasm",
+    "wasm-gc"
+  ],
+  "finding": "output-mismatch",
+  "reductionKey": "output-mismatch|2:js=succeeded:0:expected=yes|4:wasm=succeeded:0:expected=yes|7:wasm-gc=succeeded:2:expected=no",
+  "originalSignature": "output-mismatch|2:js=succeeded,exit=0,out=4:-13\n,err=0:|4:wasm=succeeded,exit=0,out=4:-13\n,err=0:|7:wasm-gc=succeeded,exit=0,out=34:-13\n\n[moonsmith-injected-mismatch],err=0:|reference=4:-13\n",
+  "finalSignature": "output-mismatch|2:js=succeeded,exit=0,out=2:0\n,err=0:|4:wasm=succeeded,exit=0,out=2:0\n,err=0:|7:wasm-gc=succeeded,exit=0,out=32:0\n\n[moonsmith-injected-mismatch],err=0:|reference=2:0\n",
+  "originalComplexity": 4045,
+  "finalComplexity": 2004,
+  "originalNodeCount": 11,
+  "finalNodeCount": 6,
+  "originalBytes": 148,
+  "finalBytes": 113,
+  "attempts": 8,
+  "acceptedSteps": 3,
+  "verificationCount": 11,
+  "backendRunCount": 33,
+  "backendExecutionCount": 18,
+  "backendCommandDurationMs": 27695,
+  "generationDurationMs": 1934,
+  "referenceEvaluationDurationMs": 1012,
+  "referenceTraceDurationMs": 1024,
+  "candidateGenerationWallClockMs": 2523,
+  "verificationWallClockMs": 42705,
+  "reductionWallClockMs": 45292,
+  "attemptBudgetHit": false,
+  "acceptedIndices": [
+    0,
+    2,
+    2
+  ],
+  "history": [
+    {
+      "attempt": 1,
+      "index": 0,
+      "complexity": 2031,
+      "finding": "output-mismatch"
+    },
+    {
+      "attempt": 4,
+      "index": 2,
+      "complexity": 2024,
+      "finding": "output-mismatch"
+    },
+    {
+      "attempt": 7,
+      "index": 2,
+      "complexity": 2004,
+      "finding": "output-mismatch"
+    }
+  ],
+  "outputDirectory": "D:\\moon  bit\\.moonsmith\\reduced\\injected\\3aae6fd6c08d7537\\20261020_111154_293_6f1c6767",
+  "injection": {
+    "kind": "output-mismatch",
+    "target": "wasm-gc",
+    "sourceTrigger": "(if"
+  }
+}

@@ -19,6 +19,19 @@ coverage. No new compiler issue was found. Raw report and reproduction command
 are in [`generator_scan_depth8_20261020.json`](evidence/generator_scan_depth8_20261020.json)
 and [`generator_scan_depth8_20261020.md`](evidence/generator_scan_depth8_20261020.md).
 
+## AST reducer structural evidence
+
+MoonSmith's reducer now emits an unweighted expression-node count and tracks
+verification calls and local phase/wall-clock costs in its reduction report.
+The injected seed-0/depth-2 regression reduced 11 → 6 AST nodes and 148 → 113
+source bytes while preserving the finding class and backend-partition
+`reductionKey`; all 112 MoonBit tests per JS/Wasm/Wasm-GC target, the reducer
+integration, and CLI tests passed locally. This is evidence for MoonSmith's
+generated-AST reducer on a synthetic injected mismatch, not a real compiler
+bug and not a MoonReduce capability/result. Exact report and sources are in
+[`reduction.md`](reduction.md) and
+[`reducer_semantic_metrics_20261020`](evidence/reducer_semantic_metrics_20261020/).
+
 ## Equal-wall-clock online-feedback prototype
 
 A new three-arm runner (`scripts/run_live_feedback_wallclock_campaign.ps1`)

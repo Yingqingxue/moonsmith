@@ -58,6 +58,31 @@ test "minimum integer literals retain a nonnegative shrink complexity" {
 }
 
 ///|
+test "AST node count measures structure independently from literal magnitude" {
+  let expression = @moonsmith.Let(
+    @moonsmith.IntType,
+    "x",
+    @moonsmith.Add(@moonsmith.IntLiteral(1), @moonsmith.IntLiteral(2)),
+    @moonsmith.If(
+      @moonsmith.IntType,
+      @moonsmith.BoolLiteral(true),
+      @moonsmith.Variable(@moonsmith.IntType, "x"),
+      @moonsmith.IntLiteral(0),
+    ),
+  )
+  assert_eq(expression.node_count(), 8L)
+  assert_eq(@moonsmith.IntLiteral(2147483647).node_count(), 1L)
+
+  let expression = @moonsmith.Add(
+    @moonsmith.IntLiteral(5),
+    @moonsmith.IntLiteral(8),
+  )
+  let candidates = expression.shrink_candidates()
+  assert_eq(expression.node_count(), 3L)
+  assert_true(candidates[0].node_count() < 3L)
+}
+
+///|
 test "FMA probe is a minimal typed leaf and has no invalid shrink candidates" {
   let expression = @moonsmith.FmaContractionProbe
   assert_true(expression.value_type() is @moonsmith.BoolType)

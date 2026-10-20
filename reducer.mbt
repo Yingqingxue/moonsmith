@@ -57,6 +57,47 @@ pub fn Expr::complexity(self : Expr) -> Int64 {
 }
 
 ///|
+/// Count structural expression nodes without weighting literal magnitudes.
+/// This is a reporting metric for reduction evidence, not the search ordering.
+pub fn Expr::node_count(self : Expr) -> Int64 {
+  match self {
+    IntLiteral(_) | BoolLiteral(_) | Variable(_, _) | FmaContractionProbe => 1L
+    Let(_, _, value, body) => 1L + value.node_count() + body.node_count()
+    ArraySelect(_, first, second, _) | ArrayGrowSelect(_, first, second, _) =>
+      1L + first.node_count() + second.node_count()
+    ArrayAliasUpdateSelect(_, first, second, replacement, _) =>
+      1L + first.node_count() + second.node_count() + replacement.node_count()
+    StructSelect(_, number, flag) =>
+      1L + number.node_count() + flag.node_count()
+    ChoiceValue(_, payload) => 1L + payload.node_count()
+    MatchChoice(_, choice, _, number_body, _, flag_body) =>
+      1L +
+      choice.node_count() +
+      number_body.node_count() +
+      flag_body.node_count()
+    FunctionApply(_, _, argument, body) =>
+      1L + argument.node_count() + body.node_count()
+    ForLoop(_, initial, body) | WhileLoop(_, initial, body) =>
+      1L + initial.node_count() + body.node_count()
+    ValtypeRaiseProbe(value) | ValtypeEnumArrayProbe(value) =>
+      1L + value.node_count()
+    Add(left, right)
+    | Subtract(left, right)
+    | And(left, right)
+    | Or(left, right)
+    | LessThan(left, right)
+    | EqualInt(left, right) => 1L + left.node_count() + right.node_count()
+    Not(value) => 1L + value.node_count()
+    If(_, condition, then_expr, else_expr)
+    | MatchBool(_, condition, then_expr, else_expr) =>
+      1L +
+      condition.node_count() +
+      then_expr.node_count() +
+      else_expr.node_count()
+  }
+}
+
+///|
 /// A binding in a nested body shadows the searched name; its initializer is
 /// still evaluated in the enclosing scope.
 fn Expr::uses_variable(self : Expr, name : String) -> Bool {
@@ -580,6 +621,8 @@ pub fn Program::candidates_json(self : Program) -> String {
   let buffer = StringBuilder()
   buffer.write_string("{\"complexity\":")
   buffer.write_string(self.result.complexity().to_string())
+  buffer.write_string(",\"nodeCount\":")
+  buffer.write_string(self.result.node_count().to_string())
   buffer.write_string(",\"expectedOutput\":\"")
   buffer.write_string(json_escape(self.expected_output()))
   buffer.write_char('"')
@@ -594,6 +637,8 @@ pub fn Program::candidates_json(self : Program) -> String {
     buffer.write_string(index.to_string())
     buffer.write_string(",\"complexity\":")
     buffer.write_string(candidates[index].result.complexity().to_string())
+    buffer.write_string(",\"nodeCount\":")
+    buffer.write_string(candidates[index].result.node_count().to_string())
     buffer.write_string(",\"expectedOutput\":\"")
     buffer.write_string(json_escape(candidates[index].expected_output()))
     buffer.write_char('"')

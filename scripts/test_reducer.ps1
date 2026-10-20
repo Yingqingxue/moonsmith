@@ -16,6 +16,15 @@ if ($result.acceptedSteps -lt 1) {
 if ($result.finalComplexity -ge $result.originalComplexity) {
     throw 'The final AST is not simpler than the original.'
 }
+if ($result.finalNodeCount -ge $result.originalNodeCount -or
+    $result.finalBytes -ge $result.originalBytes) {
+    throw 'The injected semantic reduction did not remove AST nodes and source bytes.'
+}
+if ($result.verificationCount -ne ($result.attempts + 3) -or
+    $result.backendExecutionCount -lt 1 -or
+    $result.reductionWallClockMs -lt 1) {
+    throw 'The reducer did not report consistent verification and timing metrics.'
+}
 if ($result.attemptBudgetHit) {
     throw 'The integration fixture exhausted its attempt budget.'
 }
@@ -52,7 +61,9 @@ $valtypeExitCode = $LASTEXITCODE
 $valtypeResult = $valtypeRaw | ConvertFrom-Json
 if ($valtypeResult.finding -ne 'output-mismatch' -or
     $valtypeResult.acceptedSteps -lt 1 -or
-    $valtypeResult.finalComplexity -ge $valtypeResult.originalComplexity) {
+    $valtypeResult.finalComplexity -ge $valtypeResult.originalComplexity -or
+    $valtypeResult.finalNodeCount -ge $valtypeResult.originalNodeCount -or
+    $valtypeResult.finalBytes -ge $valtypeResult.originalBytes) {
     throw 'The valtype probe did not retain a reducible injected mismatch.'
 }
 if ($valtypeTargets -contains 'native-release' -and
@@ -227,8 +238,16 @@ if (-not $aliasAssignment.Success -or
     passed             = $true
     originalComplexity = $result.originalComplexity
     finalComplexity    = $result.finalComplexity
+    originalNodeCount  = $result.originalNodeCount
+    finalNodeCount     = $result.finalNodeCount
+    originalBytes      = $result.originalBytes
+    finalBytes         = $result.finalBytes
     acceptedSteps      = $result.acceptedSteps
     attempts           = $result.attempts
+    verificationCount  = $result.verificationCount
+    backendExecutionCount = $result.backendExecutionCount
+    backendCommandDurationMs = $result.backendCommandDurationMs
+    reductionWallClockMs = $result.reductionWallClockMs
     minimalPath        = $minimalPath
     valtypeOriginalComplexity = $valtypeResult.originalComplexity
     valtypeFinalComplexity = $valtypeResult.finalComplexity

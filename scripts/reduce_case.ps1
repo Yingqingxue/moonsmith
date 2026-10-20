@@ -36,6 +36,17 @@ $verifyScript = Join-Path $PSScriptRoot 'verify_seed.ps1'
 $workDirectory = Join-Path $projectRoot '.moonsmith\reduction'
 $candidatePath = Join-Path $workDirectory ("seed_{0}_candidate.mbt" -f $Seed)
 New-Item -ItemType Directory -Force -Path $workDirectory | Out-Null
+$metrics = [ordered]@{
+    verificationCount = 0
+    verificationWallClockMs = 0L
+    backendRunCount = 0
+    backendExecutionCount = 0
+    backendCommandDurationMs = 0L
+    generationDurationMs = 0L
+    referenceEvaluationDurationMs = 0L
+    referenceTraceDurationMs = 0L
+    candidateGenerationWallClockMs = 0L
+}
 
 function Invoke-Verification {
     param(
@@ -56,11 +67,24 @@ function Invoke-Verification {
         $options.SourcePath = $Path
         $options.ExpectedOutput = $ReferenceOutput
     }
+    $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $raw = & $verifyScript @options
+    $watch.Stop()
     if (-not $raw) {
         throw 'Verification returned no JSON report.'
     }
-    $raw | ConvertFrom-Json
+    $report = $raw | ConvertFrom-Json
+    $metrics.verificationCount++
+    $metrics.verificationWallClockMs += $watch.ElapsedMilliseconds
+    $metrics.generationDurationMs += [long]$report.generationDurationMs
+    $metrics.referenceEvaluationDurationMs += [long]$report.referenceEvaluationDurationMs
+    $metrics.referenceTraceDurationMs += [long]$report.referenceTraceDurationMs
+    foreach ($run in @($report.runs)) {
+        $metrics.backendRunCount++
+        $metrics.backendCommandDurationMs += [long]$run.durationMs
+        if ($run.executionAttempted) { $metrics.backendExecutionCount++ }
+    }
+    return $report
 }
 
 function Get-Candidates {
@@ -69,13 +93,17 @@ function Get-Candidates {
     foreach ($index in $AcceptedIndices) {
         $commandArgs += [string]$index
     }
+    $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $raw = & moon @commandArgs
+    $watch.Stop()
+    $metrics.candidateGenerationWallClockMs += $watch.ElapsedMilliseconds
     if ($LASTEXITCODE -ne 0) {
         throw "MoonBit candidate generator failed for seed $Seed."
     }
     $raw | ConvertFrom-Json
 }
 
+$reductionWatch = [System.Diagnostics.Stopwatch]::StartNew()
 $baseline = Invoke-Verification
 if ($baseline.finding -eq 'consistent') {
     throw "Seed $Seed has no failure to reduce."
@@ -94,6 +122,7 @@ $history = [System.Collections.Generic.List[object]]::new()
 $current = Get-Candidates -AcceptedIndices @()
 $originalSource = [string]$current.source
 $originalComplexity = [long]$current.complexity
+$originalNodeCount = [long]$current.nodeCount
 $lastReport = $baseline
 $attempts = 0
 $exhausted = $false
@@ -149,6 +178,7 @@ if ($finalConfirmation.finding -ne $baseline.finding -or
     throw "Minimal case did not preserve the failure on final replay. Seed=$Seed Depth=$Depth Attempts=$attempts Baseline=[$($baseline.reductionKey)] Final=[$($finalConfirmation.reductionKey)] SourceSha256=$($finalConfirmation.sourceSha256)"
 }
 $lastReport = $finalConfirmation
+$reductionWatch.Stop()
 $signatureBytes = [System.Text.Encoding]::UTF8.GetBytes([string]$baseline.signature)
 $signatureHash = [System.Security.Cryptography.SHA256]::HashData($signatureBytes)
 $caseId = [System.Convert]::ToHexString($signatureHash).Substring(0, 16).ToLowerInvariant()
@@ -179,10 +209,22 @@ $result = [pscustomobject]@{
     finalSignature      = $lastReport.signature
     originalComplexity  = $originalComplexity
     finalComplexity     = [long]$current.complexity
+    originalNodeCount   = $originalNodeCount
+    finalNodeCount      = [long]$current.nodeCount
     originalBytes       = [System.Text.Encoding]::UTF8.GetByteCount($originalSource)
     finalBytes          = [System.Text.Encoding]::UTF8.GetByteCount($finalSource)
     attempts            = $attempts
     acceptedSteps       = $acceptedIndices.Count
+    verificationCount   = [int]$metrics.verificationCount
+    backendRunCount     = [int]$metrics.backendRunCount
+    backendExecutionCount = [int]$metrics.backendExecutionCount
+    backendCommandDurationMs = [long]$metrics.backendCommandDurationMs
+    generationDurationMs = [long]$metrics.generationDurationMs
+    referenceEvaluationDurationMs = [long]$metrics.referenceEvaluationDurationMs
+    referenceTraceDurationMs = [long]$metrics.referenceTraceDurationMs
+    candidateGenerationWallClockMs = [long]$metrics.candidateGenerationWallClockMs
+    verificationWallClockMs = [long]$metrics.verificationWallClockMs
+    reductionWallClockMs = [long]$reductionWatch.ElapsedMilliseconds
     attemptBudgetHit    = $exhausted -or $attempts -ge $MaxAttempts
     acceptedIndices     = @($acceptedIndices.ToArray())
     history             = @($history.ToArray())

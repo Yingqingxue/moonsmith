@@ -72,6 +72,7 @@ pub(all) enum Expr {
 pub fn Expr::complexity(Self) -> Int64
 pub fn Expr::evaluate(Self) -> EvaluatedValue
 pub fn Expr::evaluate_with_trace(Self) -> (EvaluatedValue, Array[String])
+pub fn Expr::node_count(Self) -> Int64
 pub fn Expr::shrink_candidates(Self) -> Array[Self]
 pub fn Expr::to_source(Self) -> String
 pub fn Expr::value_type(Self) -> ValueType

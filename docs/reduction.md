@@ -95,6 +95,42 @@ ignored local run directory `.moonsmith/reduced/injected/0c412107c3170279/`
 on the development workstation; CI uploads the test-run versions as an
 artifact for 30 days.
 
+## AST-node and cost metrics (2026-10-20)
+
+The reducer manifest now reports an unweighted expression-node count in
+addition to its weighted complexity score and source byte count. It also
+records verifier invocations, target runs/executions, backend command time,
+generation/reference/trace time, candidate-generation time, summed verifier
+wall time, and total reduction wall time. Node count deliberately excludes
+literal magnitude and loop bounds; it is an additional structural measure, not
+the reducer's candidate-ordering score.
+
+The deterministic injected-output-mismatch regression (seed 0, depth 2,
+JS/Wasm/Wasm-GC; mismatch injected only when the source contains `(if`) was
+rerun on MoonBit `0.1.20260920`. It reduced from 11 to 6 expression nodes
+(45.5%), 148 to 113 UTF-8 source bytes (23.6%), and weighted complexity 4,045
+to 2,004. It accepted 3 candidates in 8 attempts without hitting its attempt
+budget; the final output is replay-checked. The run performed 11 verifier
+calls (two baseline checks, 8 candidate attempts, and one final check), 33
+target runs, and 18 backend execution attempts. On this workstation the
+baseline-through-final-replay reduction phase took 45,292 ms; artifact hashing
+and persistence are outside that stopwatch. Summed backend command time was
+27,695 ms and summed verifier wall time 42,705 ms. These are single-run local
+timings, not a benchmark. Component durations are separately rounded and
+should not be added to claim an exact decomposition.
+
+The injected finding is synthetic: the harness appends a marker to Wasm-GC
+stdout. The final `finding` and `reductionKey` are preserved, including the
+same backend agreement partition, but the full signature's literal stdout
+changes from `-13` to `0` as the candidate source changes. This demonstrates
+failure-class-preserving structural reduction on MoonSmith's generated AST;
+it is neither a real compiler defect nor evidence about MoonReduce's
+layout-only reducer. The raw report and exact sources are archived under
+[`reducer_semantic_metrics_20261020`](evidence/reducer_semantic_metrics_20261020/).
+The regression now requires both AST-node and byte counts to decrease and
+checks that the verifier-call count equals candidate attempts plus the two
+baseline and one final verification.
+
 Current limits:
 
 - Only MoonSmith generated programs can be reduced; arbitrary `.mbt` parsing
