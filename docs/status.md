@@ -69,6 +69,16 @@ is another bounded negative result on the same toolchain and does not establish
 compiler correctness. The raw report, hash, and reproduction command are in
 [`generator_scan_depth9_cohort4_20261020.md`](evidence/generator_scan_depth9_cohort4_20261020.md).
 
+A fifth disjoint depth-9 cohort (seeds 20200–20239) completed 40/40 reference
+checks and 40/40 Target Parity passes (120 backend executions), with no
+failures, mismatches, timeouts, harness errors, or source-limit exclusions.
+The largest source had 15,683 lines, just below the 16,300-line guard. The
+reference interpreter again observed the same 56 path-kind labels; this is not
+backend runtime coverage. This remains a bounded negative result, not compiler
+correctness or bug-discovery evidence. Protocol and raw report are in
+[`generator_scan_depth9_cohort5_20261020.md`](evidence/generator_scan_depth9_cohort5_20261020.md)
+and [`generator_scan_depth9_cohort5_20261020.json`](evidence/generator_scan_depth9_cohort5_20261020.json).
+
 A second depth-10 cohort (seeds 20060–20079) exposed substantial censoring:
 10/20 passed the source guard and were checked against the reference and all
 three targets (30 successful backend executions); 10/20 exceeded the
