@@ -1,6 +1,23 @@
 # Implementation status
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
+
+## Bounded depth-8 cross-backend scan
+
+A fresh, disjoint local cohort (seeds 20020–20029, depth 8) completed 10/10
+reference checks and 10/10 Target Parity passes across JS, Wasm, and Wasm-GC
+(30 backend executions). All ten cases were classified `consistent`; there
+were no failures, timeouts, size-limit exclusions, or harness errors. The
+largest generated source had 4,054 lines, and the harness digest was unchanged
+throughout. The run took 62,799 ms on the local MoonBit
+`0.1.20260920 (914d7da 2026-09-20)` toolchain.
+
+This is a small exploratory negative result, not evidence that the compiler is
+free of bugs. The batch exercises only MoonSmith's generated language subset;
+reference-path counts are interpreter observations, not backend runtime
+coverage. No new compiler issue was found. Raw report and reproduction command
+are in [`generator_scan_depth8_20261020.json`](evidence/generator_scan_depth8_20261020.json)
+and [`generator_scan_depth8_20261020.md`](evidence/generator_scan_depth8_20261020.md).
 
 ## Equal-wall-clock online-feedback prototype
 
