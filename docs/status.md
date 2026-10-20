@@ -32,6 +32,17 @@ correctness. Full protocol, hash, limits, and reproduction command are in
 and the raw report
 [`generator_scan_depth9_20261020.json`](evidence/generator_scan_depth9_20261020.json).
 
+## Bounded depth-10 cross-backend scan
+
+A fresh ten-seed depth-10 cohort (20050–20059) had six reference checks and
+six Target Parity passes across JS, Wasm, and Wasm-GC (18 successful backend
+executions). Four additional generated programs exceeded the 16,300-line
+pre-compilation source guard and are explicitly excluded, not counted as
+compiler failures or passes. No mismatch or new compiler issue was observed
+among the six executed cases. Details and the raw report are in
+[`generator_scan_depth10_20261020.md`](evidence/generator_scan_depth10_20261020.md)
+and [`generator_scan_depth10_20261020.json`](evidence/generator_scan_depth10_20261020.json).
+
 ## AST reducer structural evidence
 
 MoonSmith's reducer now emits an unweighted expression-node count and tracks
