@@ -54,6 +54,10 @@ try {
     }
 
     Write-Output 'Toolchain report comparison test passed.'
+    # The two negative fixtures intentionally launch the comparator with exit
+    # code 1. Clear that native-process status so callers that dot-source this
+    # test (such as the CI pwsh shell) observe the test's success instead.
+    $global:LASTEXITCODE = 0
 } finally {
     $resolvedTemp = (Resolve-Path -LiteralPath $tempDirectory).Path
     $directorySeparators = [char[]]@(
