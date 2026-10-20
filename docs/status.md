@@ -98,6 +98,16 @@ report are in
 [`generator_scan_depth10_cohort2_20261020.md`](evidence/generator_scan_depth10_cohort2_20261020.md)
 and [`generator_scan_depth10_cohort2_20261020.json`](evidence/generator_scan_depth10_cohort2_20261020.json).
 
+A third disjoint depth-10 cohort (seeds 20080–20089) had 5/10 cases pass the
+16,300-line source guard and receive reference and three-target checks; all
+five were consistent (15 successful backend executions). The remaining 5/10
+were excluded before compilation, so this executed subset is not representative
+of the requested cohort. No backend difference was observed among the executed
+cases. The run took 42,052 ms; checked sources ranged from 12,708 to 15,716
+lines. Full details, limitations, and raw report are in
+[`generator_scan_depth10_cohort3_20261020.md`](evidence/generator_scan_depth10_cohort3_20261020.md)
+and [`generator_scan_depth10_cohort3_20261020.json`](evidence/generator_scan_depth10_cohort3_20261020.json).
+
 ## AST reducer structural evidence
 
 MoonSmith's reducer now emits an unweighted expression-node count and tracks
