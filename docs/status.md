@@ -79,6 +79,15 @@ correctness or bug-discovery evidence. Protocol and raw report are in
 [`generator_scan_depth9_cohort5_20261020.md`](evidence/generator_scan_depth9_cohort5_20261020.md)
 and [`generator_scan_depth9_cohort5_20261020.json`](evidence/generator_scan_depth9_cohort5_20261020.json).
 
+A sixth disjoint depth-9 cohort (seeds 20240–20279) completed 40/40 reference
+checks and Target Parity passes (120 backend executions). All were consistent;
+there were no failures, mismatches, timeouts, harness errors, or source-limit
+exclusions. Source sizes were 1,378–11,368 lines and the interpreter again
+observed 56 path-kind labels. This is another bounded negative result, not
+compiler correctness or bug-discovery evidence. Protocol and raw report are in
+[`generator_scan_depth9_cohort6_20261020.md`](evidence/generator_scan_depth9_cohort6_20261020.md)
+and [`generator_scan_depth9_cohort6_20261020.json`](evidence/generator_scan_depth9_cohort6_20261020.json).
+
 A second depth-10 cohort (seeds 20060–20079) exposed substantial censoring:
 10/20 passed the source guard and were checked against the reference and all
 three targets (30 successful backend executions); 10/20 exceeded the
