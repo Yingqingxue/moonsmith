@@ -19,6 +19,19 @@ coverage. No new compiler issue was found. Raw report and reproduction command
 are in [`generator_scan_depth8_20261020.json`](evidence/generator_scan_depth8_20261020.json)
 and [`generator_scan_depth8_20261020.md`](evidence/generator_scan_depth8_20261020.md).
 
+## Bounded depth-9 cross-backend scan
+
+A disjoint local cohort (seeds 20030–20049, depth 9) completed 20/20
+reference checks and 20/20 Target Parity passes across JS, Wasm, and Wasm-GC
+(60 backend executions). All cases were consistent; there were no compiler or
+runtime failures, mismatches, timeouts, environment/harness errors, or
+size-limit exclusions. The maximum generated source was 8,895 lines. This
+single-toolchain scan found no new issue and does not establish compiler
+correctness. Full protocol, hash, limits, and reproduction command are in
+[`generator_scan_depth9_20261020.md`](evidence/generator_scan_depth9_20261020.md)
+and the raw report
+[`generator_scan_depth9_20261020.json`](evidence/generator_scan_depth9_20261020.json).
+
 ## AST reducer structural evidence
 
 MoonSmith's reducer now emits an unweighted expression-node count and tracks
