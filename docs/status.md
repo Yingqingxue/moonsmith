@@ -52,6 +52,16 @@ but remains a bounded negative result, not a compiler-correctness claim. See
 and its raw
 [`generator_scan_depth9_cohort2_20261020.json`](evidence/generator_scan_depth9_cohort2_20261020.json).
 
+A second depth-10 cohort (seeds 20060–20079) exposed substantial censoring:
+10/20 passed the source guard and were checked against the reference and all
+three targets (30 successful backend executions); 10/20 exceeded the
+16,300-line pre-compilation limit. All executable cases were consistent, with
+no failures or mismatches. Because half the cohort was excluded, the executed
+half is not a representative sample of depth-10 generation. Details and raw
+report are in
+[`generator_scan_depth10_cohort2_20261020.md`](evidence/generator_scan_depth10_cohort2_20261020.md)
+and [`generator_scan_depth10_cohort2_20261020.json`](evidence/generator_scan_depth10_cohort2_20261020.json).
+
 ## AST reducer structural evidence
 
 MoonSmith's reducer now emits an unweighted expression-node count and tracks
