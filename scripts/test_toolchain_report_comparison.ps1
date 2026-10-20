@@ -4,7 +4,8 @@ $compareScript = Join-Path $PSScriptRoot 'compare_toolchain_reports.ps1'
 $evidenceDirectory = Join-Path $projectRoot 'docs/evidence/toolchain_diff_20261020'
 $baseline = Join-Path $evidenceDirectory 'moon_0.1.20260920_seed21400_depth8.json'
 $candidate = Join-Path $evidenceDirectory 'moon_0.1.20261012_seed21400_depth8.json'
-$tempDirectory = Join-Path $env:TEMP ("moonsmith-toolchain-compare-test-" + [guid]::NewGuid())
+$tempRoot = [IO.Path]::GetTempPath()
+$tempDirectory = Join-Path $tempRoot ("moonsmith-toolchain-compare-test-" + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $tempDirectory | Out-Null
 
 try {
@@ -55,8 +56,12 @@ try {
     Write-Output 'Toolchain report comparison test passed.'
 } finally {
     $resolvedTemp = (Resolve-Path -LiteralPath $tempDirectory).Path
-    $expectedParent = (Resolve-Path -LiteralPath $env:TEMP).Path
-    $actualParent = [IO.Path]::GetDirectoryName($resolvedTemp)
+    $directorySeparators = [char[]]@(
+        [IO.Path]::DirectorySeparatorChar,
+        [IO.Path]::AltDirectorySeparatorChar
+    )
+    $expectedParent = (Resolve-Path -LiteralPath $tempRoot).Path.TrimEnd($directorySeparators)
+    $actualParent = [IO.Path]::GetDirectoryName($resolvedTemp).TrimEnd($directorySeparators)
     if (-not [string]::Equals(
         $actualParent,
         $expectedParent,
